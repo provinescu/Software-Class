@@ -1237,6 +1237,7 @@ G                           Init Genome Agent (solo).
 		~initAllSynth={arg path, file;
 			if(File.exists(path++file), {file=File(path++file,"r");~listSynth=file.readAllString.interpret;file.close},
 				{~listSynth=[
+					// Sampler
 					"PlayBuf",
 					"PlayBuf2",
 					"BufRd",
@@ -1300,13 +1301,7 @@ G                           Init Genome Agent (solo).
 					"PV_RectComb2",
 					"PV_Morph",
 					"Convolution",
-					"SinOsc",
-					"SinOscVibrato",
-					"FMsynth",
-					"SawSynth",
-					"Formant",
-					"Guitare",
-					"Klang",
+					// Piano
 					"MdaPiano",
 					"Piano Resonz",
 					"Piano Synthesizer",
@@ -1344,6 +1339,24 @@ G                           Init Genome Agent (solo).
 					"Piano PV_RectComb2",
 					"Piano PV_Morph",
 					"Piano Convolution",
+					// Synth
+					"SinOsc",
+					"SinOscVibrato",
+					"FMsynth",
+					"SawSynth",
+					"Formant",
+					"Guitare",
+					"Blip",
+					/*"Osc",
+					"VOsc",
+					"VOsc3",*/
+					"VarSaw",
+					"Pulse",
+					"Klang",
+					"Klank",
+					"Klank2",
+					"Gendy3",
+					"Spring",
 					"SynthOnFly",
 				];
 				file=File(~nompathdata++"List Synth.scd","w");file.write("~listSynth="++~listSynth.asCompileString);file.close});
@@ -1374,13 +1387,6 @@ G                           Init Genome Agent (solo).
 			"GrainBuf",
 		];
 		~listeWithoutSample=[
-			"SinOsc",
-			"SinOscVibrato",
-			"FMsynth",
-			"SawSynth",
-			"Formant",
-			"Guitare",
-			"Klang",
 			"MdaPiano",
 			"Piano Resonz",
 			"Piano Synthesizer",
@@ -1407,6 +1413,23 @@ G                           Init Genome Agent (solo).
 			"Piano PV_RectComb",
 			"Piano PV_ConformalMap",
 			"Piano PV_Compander",
+			"SinOsc",
+			"SinOscVibrato",
+			"FMsynth",
+			"SawSynth",
+			"Formant",
+			"Guitare",
+			"Blip",
+			/*"Osc",
+			"VOsc",
+			"VOsc3",*/
+			"VarSaw",
+			"Pulse",
+			"Klang",
+			"Klank",
+			"Klank2",
+			"Gendy3",
+			"Spring",
 		];
 		~listeWith1Sample=[
 			"PlayBuf",
@@ -10208,6 +10231,265 @@ G                           Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
 					main = Klang.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [ampreal / 3, ampreal / 3, ampreal / 3], nil], freq);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("Klank",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = DynKlank.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [ampreal / 3, ampreal / 3, ampreal / 3], nil], Dust2.ar(duree.reciprocal * 100), freq);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("Klank2",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = DynKlank.ar(`[[Rand(32.7, 4186), Rand(32.7, 4186), Rand(32.7, 4186)] * controlF, [ampreal / 3, ampreal / 3, ampreal / 3], nil], Impulse.ar(duree.reciprocal * controlD * 64), freq);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("Blip",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = Blip.ar(freq, Line.kr(50 * controlF + 1,50 * controlA + 1, duree * controlD), 0.5);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("Pulse",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = Pulse.ar(freq, controlF, 0.5);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("VarSaw",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = VarSaw.ar(freq, controlF, controlA, 0.5);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("Gendy3",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = Gendy3.ar(Rand(0, 6), controlF, controlA, controlD, freq, controlA, controlF, 12, controlD * 12);
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * ampreal);
+					Out.ar(busverb, Mix(main) * ampreal);
+					Out.ar(out, main * amp);
+			}).send(s);
+
+			SynthDef("Spring",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var main, envelope, pluck, ambisonic;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
+					// Synth
+					main = PMOsc.ar(freq, Spring.ar(LFPulse.ar(controlF * duree), duree / 10 / controlD, controlA * duree / 10) * controlF * 1000 + freq, 0.5);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
