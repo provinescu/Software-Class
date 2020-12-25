@@ -10452,7 +10452,7 @@ G                           Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Gendy3.ar(Rand(0, 6), controlF, controlA, controlD, freq, controlA, controlF, 12, controlD * 12);
+					main = Gendy3.ar(controlF * 6, 4, controlA * 0.1, controlD * 0.1, freq, controlA * 0.1, controlD * 0.1, mul: 0.25);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -10484,12 +10484,19 @@ G                           Init Genome Agent (solo).
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
-					var main, envelope, pluck, ambisonic;
+					var main, envelope, pluck, ambisonic, k, d, inforce, outforce;
 					// envelope
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = PMOsc.ar(freq, Spring.ar(LFPulse.ar(controlF * duree), duree / 10 / controlD, controlA * duree / 10) * controlF * 1000 + freq, 0.5);
+					//main = PMOsc.ar(freq, Spring.ar(LFPulse.ar(controlF * duree), duree / 10 / controlD, controlA * duree / 10) * controlF * 1000 + freq, 0.5);
+					inforce = LFPulse.ar(controlF * duree);
+					k = controlA * 20;
+					d = controlD * 0.001;
+					outforce = Spring.ar(inforce, k, d);
+					outforce = outforce * freq + freq;
+					//main = SinOsc.ar(freq, 0, 0.5);
+					main = PMOsc.ar(freq, outforce, Line.kr(0, duree * 2pi), 0, 0.25);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out

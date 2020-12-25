@@ -7959,16 +7959,18 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{// listes de arguments (identique pour chaque synth !!!!!)
 					arg out=0,  buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 					// liste des variables (identique pour chaque synth !!!!!)
-					var main, envelope, inforce, damp, freqspring, ambisonic;
+					var main, envelope, inforce, k, d, outforce, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1/6, doneAction: 2);
 					// Synth
-					inforce=LFPulse.ar(controls.at(0)*100);
-					damp=controls.at(1)*duree/10;
-					freqspring=controls.at(2)*1000;
-					freq=Spring.ar(inforce,duree/10/controls.at(3),damp)*freqspring+freq;
-					main=SinOsc.ar(freq);
+					inforce = LFPulse.ar(controls.at(0) * duree);
+					k = controls.at(1) * 20;
+					d = controls.at(2) * 0.001;
+					outforce = Spring.ar(inforce, k, d);
+					outforce = outforce * freq + freq;
+					//main = SinOsc.ar(freq, 0, 0.5);
+					main = PMOsc.ar(freq, outforce, Line.kr(controls.at(3), controls.at(4) * 2pi));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -8079,7 +8081,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main=Gendy3.ar(controls.at(0)*6,controls.at(1)*6,controls.at(2),controls.at(3),freq,controls.at(4),controls.at(5)*12,controls.at(6)*12);
+					main = Gendy3.ar(controls.at(0) * 6, controls.at(1) * 6, controls.at(2) * 0.1, controls.at(3) * 0.1, freq, controls.at(4) * 0.1, controls.at(5) * 0.1);
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out

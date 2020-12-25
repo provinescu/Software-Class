@@ -152,8 +152,17 @@ MatrixBand {
 			'Formant',
 			'SawSynth',
 			'Guitare',
-			'Gendy3',
+			'Blip',
+			/*"Osc",
+			"VOsc",
+			"VOsc3",*/
+			'VarSaw',
+			'Pulse',
 			'Klang',
+			'Klank',
+			'Klank2',
+			'Gendy3',
+			'Spring',
 			//////// Sampler one sample
 			'SAMPLER 1 BUFFER (',
 			'SamplerSynth',
@@ -1431,10 +1440,10 @@ y ... -					Musical keys.
 					// Set Bus OSC
 					if(flagDataOSC == 'on', {busOSC.at(0).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI)});
 					//Analyze Data
-						if(dureeMIDI > timeMemory and: {flagDataOSC == 'on'}, {
-							lastTimeMIDI = Main.elapsedTime;
-							(numFhzBand + 1).do({arg i; indexDataMusic.put(i, 0);listeDataOSC.put(i, []); lastTimeBand.put(i, time)});
-						});
+					if(dureeMIDI > timeMemory and: {flagDataOSC == 'on'}, {
+						lastTimeMIDI = Main.elapsedTime;
+						(numFhzBand + 1).do({arg i; indexDataMusic.put(i, 0);listeDataOSC.put(i, []); lastTimeBand.put(i, time)});
+					});
 					//if(abs(freqMIDI.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(ampMIDI.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(dureeMIDI - dureeBefore) >= durFilter}, {
 					// Send Music to Instruments
 					if(dureeMIDI > timeMaximum, {dureeMIDI=timeMaximum});
@@ -1445,51 +1454,51 @@ y ... -					Musical keys.
 						musicData=musicData.add(energyMIDI);musicData=musicData.add(fluxMIDI);
 						// Set All Data
 						if(signalBuffer > listeDataOSC.at(0).size,
-								{
-									listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
-									lastTimeBand.put(0, time);
-								},
-								{
-									if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
-									listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
-									indexDataMusic.put(0, indexDataMusic.at(0) + 1);
-									lastTimeBand.put(0, time);
-							});
+							{
+								listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
+								lastTimeBand.put(0, time);
+							},
+							{
+								if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
+								listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
+								indexDataMusic.put(0, indexDataMusic.at(0) + 1);
+								lastTimeBand.put(0, time);
+						});
 						//
 						// Dispatch Band FHZ
 						//
 						for(1, numFhzBand, {arg i;
-								if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
-									// Buses
-									busOSC.at(i).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
-									// Add Data
-									if(signalBuffer > listeDataOSC.at(i).size,
-										{
-											listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
-											lastTimeBand.put(i, time);
-										},
-										{
-											if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
-											listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
-											indexDataMusic.put(i, indexDataMusic.at(i) + 1);
-											lastTimeBand.put(i, time);
-									});
-								},
-								{
-									if(i <= numFhzBand, {
-										if((time - lastTimeBand.at(i)) > timeMemory, {
-											indexDataMusic.put(i, 0);
-											listeDataOSC.put(i, []);
-											lastTimeBand.put(i, time);
-										});
+							if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+								// Buses
+								busOSC.at(i).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
+								// Add Data
+								if(signalBuffer > listeDataOSC.at(i).size,
+									{
+										listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
+										lastTimeBand.put(i, time);
+									},
+									{
+										if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
+										listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
+										indexDataMusic.put(i, indexDataMusic.at(i) + 1);
+										lastTimeBand.put(i, time);
+								});
+							},
+							{
+								if(i <= numFhzBand, {
+									if((time - lastTimeBand.at(i)) > timeMemory, {
+										indexDataMusic.put(i, 0);
+										listeDataOSC.put(i, []);
+										lastTimeBand.put(i, time);
 									});
 								});
 							});
+						});
 						freqBefore=freqMIDI;ampBefore=ampMIDI;dureeBefore=dureeMIDI;
 					});
 					//});
 					// Setup Automation Preset
-							fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
+					fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
 				});
 			}, (0..127), nil);
 
@@ -10326,7 +10335,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
 				// Synth
-				chain = Mix(Gendy3.ar(ctrl1 * 6, ctrl2 * 6, ctrl3, ctrl4, freq, ctrl5, ctrl6, 12));
+				chain = Mix(Gendy3.ar(ctrl1 * 6, ctrl2 * 6, ctrl3 * 0.1, ctrl4 * 0.1, freq, ctrl5 * 0.1, ctrl6 * 0.1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -10398,6 +10407,289 @@ y ... -					Musical keys.
 				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
+
+		SynthDef('Blip',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, envelope, ambisonic;
+				// Set Music Data
+				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
+				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
+				// Synth
+				chain = Mix(Blip.ar(freq, Line.kr(50 * ctrl1 + 1,50 * ctrl2 + 1, duree * ctrl3), 0.5));
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('VarSaw',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, envelope, ambisonic;
+				// Set Music Data
+				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
+				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
+				// Synth
+				chain = Mix(VarSaw.ar(freq, ctrl1, ctrl2, 0.5));
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('Pulse',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, envelope, ambisonic;
+				// Set Music Data
+				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
+				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
+				// Synth
+				chain = Mix(Pulse.ar(freq, ctrl1, 0.5));
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('Klank',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, envelope, ambisonic;
+				// Set Music Data
+				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
+				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
+				// Synth
+				chain = Mix(DynKlank.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, amp / 12, nil], Dust2.ar(duree.reciprocal * 100), freq));
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('Klank2',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, envelope, ambisonic;
+				// Set Music Data
+				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
+				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
+				// Synth
+				chain = Mix(DynKlank.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, amp / 12, nil], Impulse.ar(duree.reciprocal * 64), freq));
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('Spring',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, envelope, inforce, k, d, outforce, ambisonic;
+				// Set Music Data
+				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
+				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
+				// Synth
+				inforce = LFPulse.ar(ctrl1 * duree);
+					k = ctrl2 * 20;
+					d = ctrl3 * 0.001;
+					outforce = Spring.ar(inforce, k, d);
+					outforce = outforce * freq + freq;
+					//main = SinOsc.ar(freq, 0, 0.5);
+					chain = PMOsc.ar(freq, outforce, Line.kr(ctrl4, ctrl5 * 2pi), 0, 0.25);
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
 
 		//////////////////////////// FX //////////////////////////////////////
 
