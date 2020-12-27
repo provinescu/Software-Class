@@ -3634,6 +3634,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(view.value == 1, {
 				~setAudioInSoft.enabled(true);
 				// set ON les routines de calcul file
+				~listesamplein = ~listesampleinFile;
 				s.bind{
 					~audioIn.run(false);~audioFile.run(true);
 					~tempoIn.value.run(false);~tempoFile.value.run(true);
@@ -3646,12 +3647,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~listesampleinAudio.wrapAt(i).run(false);
 						~listesampleinFile.wrapAt(i).run(true);
 						~listesampleinFile.wrapAt(i).set(\triggerRec, 1);
-						~listesampleinFile.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~busFileIn.index);
+						~listesampleinFile.wrapAt(i).set(\in, ~busFileIn.index);
 						~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value);
 					});
 					s.sync};
 				~flagEntreeMode='File IN';
-				~listesamplein = ~listesampleinFile;
 				~volumeFileIn.enabled_(true);
 				~offsetFileIn.enabled_(true);
 			});
