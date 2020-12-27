@@ -2724,14 +2724,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~recsamplebutton.wrapAt(i).states = [["Rec off", Color.black,  Color.green(0.8, 0.25)],["Rec on", Color.white, Color.red(0.8, 0.25)]];
 			~recsamplebutton.wrapAt(i).action = {|view| var level;
 				~writepartitions.value(i,'rec sample',~numerobuffer.wrapAt(i),"~recsamplebutton",view.value);
-				level=~synthcontrolviewlevels.wrapAt(i).value;~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~canalAudioInInstr.at(i), \run, view.value, \trigger,  view.value,\loop,  ~looprecsamplebutton.wrapAt(i).value);
+				level=~synthcontrolviewlevels.wrapAt(i).value;
+				if(~flagEntreeMode =='Audio IN', {
+					//~listesamplein = ~listesampleinAudio;
+					~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~canalAudioInInstr.at(i), \run, view.value, \trigger,  view.value,\loop,  ~looprecsamplebutton.wrapAt(i).value);
+				},
+				{
+					//~listesampleinFile.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~busFileIn.index);
+					//~listesamplein = ~listesampleinFile;
+					~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~busFileIn.index, \run, view.value, \trigger,  view.value,\loop,  ~looprecsamplebutton.wrapAt(i).value)
+				});
 				~busreclevel.wrapAt(~numerobuffer.wrapAt(i)).set(level.wrapAt(0).value, level.wrapAt(1).value);
 				// Copy buffer
 				if(view.value == 1 ,{~listebuffer.wrapAt(~numerobuffer.wrapAt(i)).copyData(~listebufferTampon.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)))});
 				~nombreinstrument.do({arg instr;
-					if(~numerobuffer.wrapAt(instr) == ~numerobuffer.wrapAt(i),{level=~synthcontrolviewlevels.wrapAt(i).value;~listesamplein.wrapAt(~numerobuffer.wrapAt(instr)).set(\in, ~canalAudioInInstr.at(i), \run, view.value, \trigger,  view.value,\loop, ~looprecsamplebutton.wrapAt(i).value);
-						~busreclevel.wrapAt(~numerobuffer.wrapAt(instr)).set(level.wrapAt(0).value, level.wrapAt(1).value);
-						~recsamplebutton.wrapAt(instr).value=~recsamplebutton.wrapAt(i).value});
+					if(~numerobuffer.wrapAt(instr) == ~numerobuffer.wrapAt(i),
+						{
+							level=~synthcontrolviewlevels.wrapAt(i).value;
+							if(~flagEntreeMode =='Audio IN', {
+								//~listesamplein = ~listesampleinAudio;
+								~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~canalAudioInInstr.at(i), \run, view.value, \trigger,  view.value,\loop,  ~looprecsamplebutton.wrapAt(i).value);
+							},
+							{
+								//~listesampleinFile.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~busFileIn.index);
+								//~listesamplein = ~listesampleinFile;
+								~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\in, ~busFileIn.index, \run, view.value, \trigger,  view.value,\loop,  ~looprecsamplebutton.wrapAt(i).value);
+							});
+							~busreclevel.wrapAt(~numerobuffer.wrapAt(instr)).set(level.wrapAt(0).value, level.wrapAt(1).value);
+							~recsamplebutton.wrapAt(instr).value=~recsamplebutton.wrapAt(i).value});
 				});
 				~recsamplebuttondatas.wrapPut(~numerobuffer.wrapAt(i).value,view.value);
 			};
