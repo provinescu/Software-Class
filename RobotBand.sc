@@ -6,13 +6,13 @@ RobotBand {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut;
 
-	*new {arg path="~/Documents/RobotBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output";
+	*new {arg path="~/Documents/RobotBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
-		^super.new.init(path, o, r, f, devIn, devOut);
+		^super.new.init(path, o, r, f, devIn, devOut, size);
 
 	}
 
-	init {arg path, o, r, f, devIn, devOut;
+	init {arg path, o, r, f, devIn, devOut, size;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -30,12 +30,12 @@ RobotBand {
 		s.options.memSize = 2**20;
 		s.options.inDevice = devIn;
 		s.options.outDevice = devOut;
-		s.options.device = "JackRouter";// use a specific soundcard
+		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
+		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
 		s.options.numInputBusChannels_(20);
 		s.options.numOutputBusChannels_(o);
-		//s.options.hardwareBufferSize_(256);
+		s.options.hardwareBufferSize_(size);
 		~numberAudioOut=o;
 		~recChannels = r;
 		~flagRecording = 'off';
@@ -739,6 +739,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~pointeurplaypart=[];
 			~freqMidi=[];
 			~canalMidiOutInstr=[];
+			~displayRecLevel = [];
+			~numRecLevel1 = [];
+			~numRecLevel2 = [];
 			40.do({arg i, f;~flagrecpart=~flagrecpart.add(0);~flagplaypart=~flagplaypart.add(0);~flaglooppart=~flaglooppart.add(0);~dureerecpart=~dureerecpart.add(0);~dureeplaypart=~dureeplaypart.add(0);~pointeurplaypart=~pointeurplaypart.add(0);
 				i=i+1;f="score " ++ i.asString;~partitionsliste=~partitionsliste.add(f);
 				~listeplaypart=~listeplaypart.add([]);
@@ -1106,7 +1109,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// init les synth buffer pour les sons sampler
 				~nombrebuffer.do({arg i;
 					~looprecordingValue=~looprecordingValue.add(0);
-					~busreclevel=~busreclevel.add(Bus.control(s, 2));// 2 controls reclevel sample
+					~busreclevel=~busreclevel.add(Bus.control(s, 2));// 1 controls reclevel1 sample
 					~file = SoundFile.new;
 					s.sync;
 					~file.openRead(~sounds.wrapAt(i).standardizePath);
@@ -1133,9 +1136,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					//~listebuffer.wrapPut(i, ~listebuffer.wrapAt(i).normalize(1.0));
 					~file.close;
 					s.sync;
-					~listesampleinAudio=~listesampleinAudio.add(Synth.newPaused("SampleIn",['in', ~canalAudioIn, 'buffer',~listebuffer.wrapAt(i).bufnum], ~groupeBuffer,\addToTail).mapn('reclevel1',~busreclevel.wrapAt(i).index,2));
+					~listesampleinAudio=~listesampleinAudio.add(Synth.newPaused("SampleIn",['in', ~canalAudioIn, 'buffer',~listebuffer.wrapAt(i).bufnum], ~groupeBuffer,\addToTail).map('reclevel1',~busreclevel.wrapAt(i).index,'reclevel2', ~busreclevel.wrapAt(i).index + 1));
 					s.sync;
-					~listesampleinFile=~listesampleinFile.add(Synth.newPaused("FileIn", ['buffer',~listebuffer.wrapAt(i).bufnum,  'in', ~busFileIn.index],~groupeBuffer,\addToTail).mapn('reclevel1',~busreclevel.wrapAt(i).index,2));
+					~listesampleinFile=~listesampleinFile.add(Synth.newPaused("FileIn", ['buffer',~listebuffer.wrapAt(i).bufnum,  'in', ~busFileIn.index],~groupeBuffer,\addToTail).map('reclevel1',~busreclevel.wrapAt(i).index, 'reclevel2', ~busreclevel.wrapAt(i).index + 1));
 					s.sync;
 				});
 
@@ -2816,7 +2819,23 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//// Version avec envelope pour chaque synth
 				//~levelenvsynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value,val.wrapAt(1));
 				~synthsliderenvelope.wrapAt(i).value=val};
-			StaticText(w, Rect(0, 0, 100, 12)).string_("     REC LEVEL").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)));
+			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)));
+			~numRecLevel1.wrapAt(i).action={arg level;
+				var levels;
+				~writepartitions.value(i,'normal','off',"~numRecLevel1",level.value);
+				levels = ~synthcontrolviewlevels.wrapAt(i).value;
+				levels.put(0, level.value);
+				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
+				};
+			~numRecLevel2 = ~numRecLevel2.add(NumberBox(w,Rect(0,0,35,12)));
+			~numRecLevel2.wrapAt(i).action={arg level;
+				var levels;
+				~writepartitions.value(i,'normal','off',"~numRecLevel2",level.value);
+				levels = ~synthcontrolviewlevels.wrapAt(i).value;
+				levels.put(1, level.value);
+				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
+				};
 			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
 			~syntheffetsPrenumber=~syntheffetsPrenumber.add(NumberBox(w,Rect(0,0,50,12)));
 			~syntheffetsPrenumber.wrapAt(i).action={arg nombre;var datas;
@@ -2907,19 +2926,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				c=~synthcontrolviewlevels.wrapAt(i).value;
 				c.wrapPut(control.index,control.currentvalue);
 				~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebutton.wrapAt(i).value,\loop, ~looprecsamplebutton.wrapAt(i).value);
-				~busreclevel.wrapAt(~numerobuffer.wrapAt(i)).set(c.wrapAt(0).value, c.wrapAt(1).value);
-				string="RecLevel Sample |"+(control.index+1).asString+control.currentvalue.round(0.001).asString;
+				~busreclevel.wrapAt(~numerobuffer.wrapAt(i)).set(control.value.wrapAt(0).value, control.value.wrapAt(1).value);
+				~numRecLevel1.wrapAt(i).value_(control.value.wrapAt(0).value);
+				~numRecLevel2.wrapAt(i).value_(control.value.wrapAt(1).value);
+				//~displayRecLevel.wrapAt(i).string_("     LEVEL" + control.value.at(0).round(0.001).asString + control.value.at(1).round(0.001).asString);
 				~nombreinstrument.do({arg instr;
-					if(~numerobuffer.wrapAt(instr) == ~numerobuffer.wrapAt(i),{~busreclevel.wrapAt(~numerobuffer.wrapAt(instr)).set(c.wrapAt(0).value, c.wrapAt(1).value);
+					if(~numerobuffer.wrapAt(instr) == ~numerobuffer.wrapAt(i),{~busreclevel.wrapAt(~numerobuffer.wrapAt(instr)).set(control.value.wrapAt(0).value, control.value.wrapAt(1).value);
 						~synthcontrolviewlevels.wrapAt(instr).value=~synthcontrolviewlevels.wrapAt(i).value})});
-				~synthcontrolviewlevelsdatas.wrapPut(~numerobuffer.wrapAt(i).value,c)};
+				~synthcontrolviewlevelsdatas.wrapPut(~numerobuffer.wrapAt(i).value, control.value)};
 			~synthcontrolviewlevels.wrapAt(i).value_([1,0]);
 			~synthcontrolviewlevels.wrapAt(i).xOffset_(4);
-			~synthcontrolviewlevels.wrapAt(i).thumbSize_(18);
+			~synthcontrolviewlevels.wrapAt(i).thumbSize_(16);
 			~synthcontrolviewlevels.wrapAt(i).strokeColor_(Color.cyan);
 			~synthcontrolviewlevels.wrapAt(i).fillColor_(Color.blue);
 			~synthcontrolviewlevels.wrapAt(i).drawLines(false);
 			~synthcontrolviewlevels.wrapAt(i).elasticMode_(1);
+			~synthcontrolviewlevels.wrapAt(i).step_(0.001);
 			//effet pre slider
 			~synthcontrolvieweffetsPre=~synthcontrolvieweffetsPre.add(MultiSliderView(w, Rect(0, 0, 205, 100)));
 			~synthcontrolvieweffetsPre.wrapAt(i).action = {arg control;
@@ -3158,14 +3180,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					range = [];
 					for(0, band,
 						{arg index;
-							if(index != 0, {w.view.children.at(86 + index).enabled_(true); range = range.add(index)});// Band active
+							if(index != 0, {w.view.children.at(88 + index).enabled_(true); range = range.add(index)});// Band active
 					});
 					~rangeSynthBand.put(i, range);
 					if(band < 12, {
 						for(band + 1, 12,
 							{arg index;
-								w.view.children.at(86 + index).enabled_(false);
-								w.view.children.at(86 + index).valueAction_(0);
+								w.view.children.at(88 + index).enabled_(false);
+								w.view.children.at(88 + index).valueAction_(0);
 						});
 					});
 			}, 12, layout: \horz);
@@ -3272,12 +3294,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					if(flag.value == 0,
 						{~flagSynthBand.put(i, 'off');
 
-							w.view.children.at(85).enabled_(false);
-							w.view.children.at(86).enabled_(false);
 							w.view.children.at(87).enabled_(false);
 							w.view.children.at(88).enabled_(false);
 							w.view.children.at(89).enabled_(false);
-							w.view.children.at(90).enabled_(false);
+							w.view.children.at(88).enabled_(false);
 							w.view.children.at(91).enabled_(false);
 							w.view.children.at(92).enabled_(false);
 							w.view.children.at(93).enabled_(false);
@@ -3286,17 +3306,19 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							w.view.children.at(96).enabled_(false);
 							w.view.children.at(97).enabled_(false);
 							w.view.children.at(98).enabled_(false);
+							w.view.children.at(99).enabled_(false);
+							w.view.children.at(100).enabled_(false);
 						},
 						{~flagSynthBand.put(i, 'on');
-							w.view.children.at(85).enabled_(true);
+							w.view.children.at(87).enabled_(true);
 							for(0, ~numFhzBand.at(i),
 								{arg index;
-									if(index != 0, {w.view.children.at(86 + index).enabled_(true)});
+									if(index != 0, {w.view.children.at(88 + index).enabled_(true)});
 							});
 							if(~numFhzBand.at(i) < 12, {
 								for(~numFhzBand.at(i) + 1, 12,
 									{arg index;
-										w.view.children.at(86 + index).enabled_(false);
+										w.view.children.at(88 + index).enabled_(false);
 								});
 							});
 					});
@@ -3311,18 +3333,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~writepartitions.value(i,'normal','off',"~listTuning",item.value);
 					~tuningIndex.put(i, item.value);
 					// Setup GUI Value
-					/*w.view.children.at(102).children.at(1).valueAction_(12);
-					w.view.children.at(102).children.at(1).valueAction_(0);*/
-					w.view.children.at(102).enabled_(true);
-					w.view.children.at(103).enabled_(true);
+					w.view.children.at(104).enabled_(true);
+					w.view.children.at(105).enabled_(true);
 					switch(item.value,
 						// No Scale
 						0, {~flagScaling.put(i, 'off');
 							// Setup GUI Value
-							/*w.view.children.at(102).children.at(1).valueAction_(12);
-							w.view.children.at(102).children.at(1).valueAction_(0);*/
-							w.view.children.at(102).enabled_(false);
-							w.view.children.at(103).enabled_(false);
+							w.view.children.at(104).enabled_(false);
+							w.view.children.at(105).enabled_(false);
 						},
 						// Tempered
 						1, {nil},
@@ -3408,12 +3426,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					if(item.value > 1 and: {item.value < 28}, {~tuning.put(i, Tuning.et12); ~scale.put(i, Scale.new(((~degrees.at(i) + ~root.at(i))%~tuning.at(i).size).sort, ~tuning.at(i).size, ~tuning.at(i)));
 						~flagScaling.put(i,'on');
 						// Setup GUI Value
-						w.view.children.at(103).children.at(1).valueAction = ~degrees.at(i);
+						w.view.children.at(105).children.at(1).valueAction = ~degrees.at(i);
 					});
 					if(item.value > 28, {~tuning.put(i, Tuning.sruti); ~scale.put(i, Scale.new(((~degrees.at(i) + ~root.at(i))%~tuning.at(i).size).sort, ~tuning.at(i).size, ~tuning.at(i)));
 						~flagScaling.put(i, 'on');
 						// Setup GUI Value
-						w.view.children.at(103).children.at(1).valueAction = ~degrees.at(i);
+						w.view.children.at(105).children.at(1).valueAction = ~degrees.at(i);
 					});
 				};
 			);
@@ -3516,6 +3534,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			});
 			~listewindow=~listewindow.add(w);
+
+			w.front;
+			~startbutton.at(i).hasFocus;
 
 		});
 
@@ -5776,6 +5797,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg in=[0, 1], buffer, bufferPlay, offset=0, run=0, loop=0, trigger=0, reclevel1=1, reclevel2=0;
 					var fileIn;
 					fileIn=In.ar(in);
+					/*Poll.kr(Impulse.kr(10), reclevel1, "rec1");
+					Poll.kr(Impulse.kr(10), reclevel2, "rec2");*/
 					RecordBuf.ar(fileIn, buffer, offset, reclevel1, reclevel2, run, loop, trigger);
 			}).send(s);
 
