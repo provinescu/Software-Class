@@ -1698,6 +1698,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							~freqtampon.wrapPut(instr,freq);~amptampon.wrapPut(instr,amp);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time)}
 						);
 					});
+				},
+				{
+					{
+						~audioDisplay.string_(msg.wrapAt(4).value.round(0.01)).stringColor_(Color.red(msg.wrapAt(3).value, 1));
+					}.defer;
 			});
 		}, '/RobotBand_Analyse_Audio', ~serverAdresse);
 
@@ -2827,7 +2832,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				levels = ~synthcontrolviewlevels.wrapAt(i).value;
 				levels.put(0, level.value);
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
-				};
+			};
 			~numRecLevel2 = ~numRecLevel2.add(NumberBox(w,Rect(0,0,35,12)));
 			~numRecLevel2.wrapAt(i).action={arg level;
 				var levels;
@@ -2835,7 +2840,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				levels = ~synthcontrolviewlevels.wrapAt(i).value;
 				levels.put(1, level.value);
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
-				};
+			};
 			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
 			~syntheffetsPrenumber=~syntheffetsPrenumber.add(NumberBox(w,Rect(0,0,50,12)));
 			~syntheffetsPrenumber.wrapAt(i).action={arg nombre;var datas;
@@ -3969,14 +3974,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(~oscStateFlag == 'master', {~slaveAppAddr.sendMsg('/HPbare', ez.value)});
 			~tempoSystem.schedAbs(~tempoSystem.nextBar, {~tempoSystem.beatsPerBar_(~nombreBeatsBare); nil})}, 1, labelWidth: 115,numberWidth:50);
 		~wg.view.decorator.nextLine;
-		~tempoprocesschaos=EZSlider(~wg, 250 @ 18, "ChaosIn speed", ControlSpec(1, 64, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocesschaos",ez.value);~tempochaos=ez.value;
+		~tempoprocesschaos=EZSlider(~wg, 250 @ 18, "ChaosIn speed", ControlSpec(1, 100, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocesschaos",ez.value);~tempochaos=ez.value;
 		}, 16, labelWidth: 115,numberWidth:50);
 		~wg.view.decorator.nextLine;
-		~tempoprocessneurone=EZSlider(~wg, 250 @ 18, "NeuroneIn Speed", ControlSpec(1, 64, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessneurone",ez.value);~temponeurone=ez.value}, 64, labelWidth: 115,numberWidth:50);
+		~tempoprocessneurone=EZSlider(~wg, 250 @ 18, "NeuroneIn Speed", ControlSpec(1, 100, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessneurone",ez.value);~temponeurone=ez.value}, 64, labelWidth: 115,numberWidth:50);
 		~wg.view.decorator.nextLine;
-		~tempoprocessgenetique=EZSlider(~wg, 250 @ 18, "GenetiqueIn Speed", ControlSpec(1, 64, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessgenetique",ez.value);~tempogenetique=ez.value}, 16, labelWidth: 115,numberWidth:50);
+		~tempoprocessgenetique=EZSlider(~wg, 250 @ 18, "GenetiqueIn Speed", ControlSpec(1, 100, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessgenetique",ez.value);~tempogenetique=ez.value}, 16, labelWidth: 115,numberWidth:50);
 		~wg.view.decorator.nextLine;
-		~tempoprocessalgorithmes=EZSlider(~wg, 250 @ 18, "Algorithm Speed", ControlSpec(1, 64, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessalgorithmes",ez.value);~tempoalgorithmes=ez.value}, 16, labelWidth: 115,numberWidth:50);
+		~tempoprocessalgorithmes=EZSlider(~wg, 250 @ 18, "Algorithm Speed", ControlSpec(1, 100, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessalgorithmes",ez.value);~tempoalgorithmes=ez.value}, 16, labelWidth: 115,numberWidth:50);
 		~wg.view.decorator.nextLine;
 		~tempoprocessautomation=EZSlider(~wg, 250 @ 18, "Automation Speed", ControlSpec(1, 100, \lin,1), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~tempoprocessautomation",ez.value);~tempoautomation=ez.value}, 24, labelWidth: 115,numberWidth:50);
 		// instrument en cours
@@ -4067,6 +4072,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~canalAudioIn = view.value;
 			~groupeAnalyse.set(\in, view.value);
 		};
+
+		// Audio In Display (for testing)
+		~audioDisplay = StaticText(~wg, Rect(0, 0, 40, 12)).string_("Audio").background_(Color.white(1, 1));
 
 		// PARTITIONS PANEL
 		~wp =Window("RobotBand by HP Scores", Rect(475, 275, 555, 465), scroll: true);
@@ -5274,7 +5282,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			freq=~freq.wrapAt(i).cpsmidi / 127;freq=(freq*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo)  + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps;
 			freq.size.do({arg ii;~busfreqsynth.wrapAt(i).wrapAt(ii).set(freq.wrapAt(ii))});
 			~synthamprange.wrapAt(i).value_(datas.wrapAt(17).value);
-			~sendFXPre.wrapAt(i).value=datas.wrapAt(18).value;
+			~sendFXPre.wrapAt(i).valueAction_(datas.wrapAt(18).value);
 			/*~busampsynth.wrapAt(i).set(~amp.wrapAt(i).value*(~synthamprange.wrapAt(i).hi.dbamp - ~synthamprange.wrapAt(i).lo.dbamp) + ~synthamprange.wrapAt(i).lo.dbamp);*/
 			~kchaosviewfreq.wrapAt(i).value=datas.wrapAt(19).value;~instanceChaosF.wrapAt(i).init(datas.wrapAt(19).value);
 			~kchaosviewamp.wrapAt(i).value=datas.wrapAt(20).value;~instanceChaosA.wrapAt(i).init(datas.wrapAt(20).value);
@@ -5456,7 +5464,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//Audio In Rec
 			~canalAudioInInstr.put(i, datas.wrapAt(101).value);
 			~setAudioInstr.wrapAt(i).valueAction = datas.wrapAt(101).value;
-			~sendFXPost.wrapAt(i).value=datas.wrapAt(102).value;
+			~sendFXPost.wrapAt(i).valueAction_(datas.wrapAt(102).value);
 			~byPassSynth.wrapAt(i).value = datas.wrapAt(103).value;
 			// datas musique 104
 			~listeaudiofreq.wrapPut(i,datas.wrapAt(104).wrapAt(0)/127);~listeaudioamp.wrapPut(i,datas.wrapAt(104).wrapAt(1).dbamp);~listeaudioduree.wrapPut(i,datas.wrapAt(104).wrapAt(2));
