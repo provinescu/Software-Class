@@ -399,7 +399,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~algorithmesmusicauxamp=["Amp Out","Amp Out Neurone","Amp Out  Neurone2","Amp Out Genetic","Amp Out Probability","Amp Out CreatePhrase1","Amp Out CreatePhrase2"];
 			~algorithmesmusicauxduree=["Dur Out","Dur Out Neurone","Dur Out  Neurone2","Dur Out Genetic","Dur Out Probability","Dur Out CreatePhrase1","Dur Out CreatePhrase2"];
 			~canalout=[];
-			~numberAudioOut.do({arg i;var x;
+			32.do({arg i;var x;
 				i=i+1;x="Audio Out"+i.asString;~canalout=~canalout.add(x.asSymbol);
 			});
 			~instrumentsOSchoiceControl=[
