@@ -5264,7 +5264,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~wavetable.wrapAt(i).sine2([1,2,3,4,5,6,7,8,9,10],~synthcontrolviewparametres.wrapAt(i).value);
 			tampon=datas.wrapAt(49);while({tampon.size < ~listSynth.size} , {tampon=tampon.add([0,0,0,0,0,0,0,0,0,0])});
 			~synthcontrolviewparametresdatas.wrapPut(i,tampon);
-			~synthcontrolviewlevels.wrapAt(i).value_(datas.wrapAt(12).value);~busreclevel.wrapAt(~numerobuffer.wrapAt(i)).set(datas.wrapAt(12).wrapAt(0).value, datas.wrapAt(12).wrapAt(1).value);
+			~synthcontrolviewlevels.wrapAt(i).valueAction_(datas.wrapAt(12).value);~busreclevel.wrapAt(~numerobuffer.wrapAt(i)).set(datas.wrapAt(12).wrapAt(0).value, datas.wrapAt(12).wrapAt(1).value);
 			~sampleroffsetcontrol.wrapAt(i).value=datas.wrapAt(13).value; if(~reversebutton.wrapAt(i).value == 0, {~busoffsetplaysampler.wrapAt(i).set(~sampleroffsetcontrol.wrapAt(i).value)},{~busoffsetplaysampler.wrapAt(i).set(1-~sampleroffsetcontrol.wrapAt(i).value)});
 			~synthpancontrol.wrapAt(i).value_(datas.wrapAt(14).value);
 			~buspansynthLo.wrapAt(i).set(datas.wrapAt(14).wrapAt(0));
