@@ -5465,7 +5465,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~canalAudioInInstr.put(i, datas.wrapAt(101).value);
 			~setAudioInstr.wrapAt(i).valueAction = datas.wrapAt(101).value;
 			~sendFXPost.wrapAt(i).valueAction_(datas.wrapAt(102).value);
-			~byPassSynth.wrapAt(i).value = datas.wrapAt(103).value;
+			~byPassSynth.wrapAt(i).valueAction_(datas.wrapAt(103).value);
 			// datas musique 104
 			~listeaudiofreq.wrapPut(i,datas.wrapAt(104).wrapAt(0)/127);~listeaudioamp.wrapPut(i,datas.wrapAt(104).wrapAt(1).dbamp);~listeaudioduree.wrapPut(i,datas.wrapAt(104).wrapAt(2));
 			~listemidifreq.wrapPut(i,datas.wrapAt(104).wrapAt(3)/127);~listemidiamp.wrapPut(i,datas.wrapAt(104).wrapAt(4).dbamp);~listemididuree.wrapPut(i,datas.wrapAt(104).wrapAt(5));
