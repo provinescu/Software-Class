@@ -3122,11 +3122,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Send FX Pre
 			~sendFXPre = ~sendFXPre.add(EZSlider(w, 128 @ 18, "FXpre", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'normal','off',"~sendFXPre",ez.value);
+					~geffet.at(i).set(~ampPre.at(i).value);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
 			// Send FX Post
 			~sendFXPost = ~sendFXPost.add(EZSlider(w, 128 @ 18, "FXpost", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'normal','off',"~sendFXPost",ez.value);
+					~geffet.at(i).set(~ampPost.at(i).value);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
 			//StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
