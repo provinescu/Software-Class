@@ -6524,7 +6524,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
-					main = PV_BinScramble(main, controls.at(0),  controls.at(1), LFNoise2.kr(controls.at(2).reciprocal));
+					main = PV_BinScramble(main, controls.at(0), controls.at(1), LFNoise2.kr(controls.at(2).reciprocal));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
@@ -10364,8 +10364,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 					// liste des variables (identique pour chaque sample !!!!!)
 					var main, envelope, rate1, rate2, in1, in2, fft1, fft2, dureesample1, dureesample2, dureesample, ambisonic;
-					rate1=(2**(freqRate.cpsmidi+(controls.at(3)*8-4*12)).midicps.cpsoct*reverse);
-					rate2=(2**(freqRate.cpsmidi+(controls.at(4)*8-4*12)).midicps.cpsoct*reverse2);
+					rate1=(2**(freqRate.cpsmidi+(controls.at(1)*8-4*12)).midicps.cpsoct*reverse);
+					rate2=(2**(freqRate.cpsmidi+(controls.at(2)*8-4*12)).midicps.cpsoct*reverse2);
 					dureesample1=BufDur.kr(buffer)/rate1.abs;dureesample1=dureesample1+(loop*(duree-dureesample1));dureesample1=clip2(duree,dureesample1);
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
