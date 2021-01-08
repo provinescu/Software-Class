@@ -7,13 +7,13 @@ AgentsBand {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut;
 
-	*new	{arg path="~/Documents/AgentsBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output";
+	*new	{arg path="~/Documents/AgentsBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
-		^super.new.init(path, o, r, f, devIn, devOut);
+		^super.new.init(path, o, r, f, devIn, devOut, size);
 
 	}
 
-	init	{arg path, o, r, f, devIn, devOut;
+	init	{arg path, o, r, f, devIn, devOut, size;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -31,12 +31,12 @@ AgentsBand {
 		s.options.memSize = 2**20;
 		s.options.inDevice = devIn;
 		s.options.outDevice = devOut;
-		s.options.device = "JackRouter";// use a specific soundcard
+		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
+		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
 		s.options.numInputBusChannels_(20);
 		s.options.numOutputBusChannels_(~numberAudioOut);
-		//s.options.hardwareBufferSize_(256);
+		s.options.hardwareBufferSize_(size);
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
@@ -7602,7 +7602,7 @@ G                           Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
-					main=PlayBuf.ar(1, buffer,  BufRateScale.kr(buffer) * rate, Impulse.kr(controlF * 500), BufFrames.kr(buffer)*offset, loop);
+					main=PlayBuf.ar(1, buffer,  BufRateScale.kr(buffer) * rate, Impulse.kr(controlF * 100), BufFrames.kr(buffer)*offset, loop);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -7730,7 +7730,7 @@ G                           Init Genome Agent (solo).
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
 					// Main Synth
 					offset2 = (controlF+controlA).clip(0, 1);
-					main=BufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*500), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop);
+					main=BufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -8070,7 +8070,7 @@ G                           Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
-					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, Impulse.kr(controlF*500), BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
+					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, Impulse.kr(controlF*100), BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -8113,7 +8113,7 @@ G                           Init Genome Agent (solo).
 					// Main Synth
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
-					main = HPbufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*500), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2);
+					main = HPbufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
