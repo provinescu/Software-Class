@@ -1944,8 +1944,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// normalise amp
 			if(flagAccords == 'on', {amp=amp/freq.size;
 			});
-			amp=amp*~amplitudegeneraleinstrument.dbamp;
-
 			// sortie algorithme
 			[freq, amp, duree];
 		};
@@ -2074,6 +2072,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						});
 						// Accords
 						~freq.wrapPut(i,freq);
+						amp = amp * ~amplitudegeneraleinstrument.dbamp;
 						~amp.wrapPut(i,amp);
 						~ampPre.wrapPut(i, ~sendFXPre.wrapAt(i).value.dbamp);
 						~ampPost.wrapPut(i, ~sendFXPost.wrapAt(i).value.dbamp);
@@ -4076,7 +4075,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		};
 
 		// Audio In Display (for testing)
-		~audioDisplay = StaticText(~wg, Rect(0, 0, 40, 12)).string_("Audio").background_(Color.white(1, 1));
+		~audioDisplay = StaticText(~wg, Rect(0, 0, 40, 18)).string_("Audio").background_(Color.white(1, 1));
 
 		// PARTITIONS PANEL
 		~wp =Window("RobotBand by HP Scores", Rect(475, 275, 555, 465), scroll: true);
@@ -4134,7 +4133,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				file=File(~nompathdata++"instrument"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;
 				~listewindow.wrapAt(~instrumentactuel).name="RobotBand by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+item.value.asString++".scd";
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
-				if(~startsysteme.value==1, {
+				//if(~startsysteme.value==1, {
 					~tempoSystem.schedAbs(duree, {
 						~routineinstrument.wrapAt(~instrumentactuel).stop;
 						// Set MIDI Off
@@ -4144,7 +4143,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~flagfreq.wrapPut(~instrumentactuel, 0);~flagamp.wrapPut(~instrumentactuel, 0);~flagduree.wrapPut(~instrumentactuel, 0);~flagneuronefreq.wrapPut(~instrumentactuel, 0);~flagneuroneamp.wrapPut(~instrumentactuel, 0);~flagneuroneduree.wrapPut(~instrumentactuel, 0);~flagoutneuronefreq.wrapPut(~instrumentactuel, 0);~flagoutneuroneamp.wrapPut(~instrumentactuel, 0);~flagoutneuroneduree.wrapPut(~instrumentactuel, 0);~flaggenetiquefreq.wrapPut(~instrumentactuel, 0);~flaggenetiqueamp.wrapPut(~instrumentactuel, 0);~flaggenetiqueduree.wrapPut(~instrumentactuel, 0);
 						{~fonctionloaddatasinstrument.value(~instrumentactuel, datas.wrapAt(0),'on')}.defer;
 						~routineinstrument.wrapAt(~instrumentactuel).play(quant: Quant.new(1)); nil});
-				});
+				//});
 			})});
 		};
 
@@ -4156,7 +4155,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~listewindow.wrapAt(ii).name="RobotBand by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
 				});
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
-				if(~startsysteme.value==1, {
+				//if(~startsysteme.value==1, {
 					~tempoSystem.schedAbs(duree, {
 						//+ Load datas Control Panel
 						{~readcontrolpanel.value(datas.last.at(0))}.defer;
@@ -4169,7 +4168,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
 							{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
 							~routineinstrument.wrapAt(ii).play(quant: Quant.new(1))}); nil});
-				});
+				//});
 			})});
 		};
 
@@ -5493,8 +5492,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~algoAnalyse.valueAction=d.wrapAt(0);
 			~seuilanalyse.value=d.wrapAt(1);
 			~filtreanalyse.value=d.wrapAt(2);
-			~amplitudegeneraleinstrument=d.wrapAt(3);
-			~amplitudegenerale.value=d.wrapAt(3);
+			//~amplitudegeneraleinstrument=d.wrapAt(3);
+			//~amplitudegenerale.value=d.wrapAt(3);
 			~canalmidiin=d.wrapAt(4);
 			~tempoprocesschaos.value=d.wrapAt(5);
 			~tempoprocessneurone.value=d.wrapAt(6);
