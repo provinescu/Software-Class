@@ -3124,13 +3124,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Send FX Pre
 			~sendFXPre = ~sendFXPre.add(EZSlider(w, 128 @ 18, "FXpre", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'normal','off',"~sendFXPre",ez.value);
-					~geffet.at(i).set(~ampPre.at(i).value);
+					~ampPre.put(i, ez.value.dbamp);
+					//~geffet.at(i).setn(\ampPre, ez.value.dbamp);
+					~gsynth.at(i).setn(\ampPre, ez.value.dbamp);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
 			// Send FX Post
 			~sendFXPost = ~sendFXPost.add(EZSlider(w, 128 @ 18, "FXpost", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'normal','off',"~sendFXPost",ez.value);
-					~geffet.at(i).set(~ampPost.at(i).value);
+					~ampPost.put(i, ez.value.dbamp);
+					~geffet.at(i).setn(\ampPost, ez.value.dbamp);
+					~gsynth.at(i).setn(\ampPost, ez.value.dbamp);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
 			//StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
@@ -5911,7 +5915,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -5948,7 +5952,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -5985,7 +5989,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6023,7 +6027,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6064,7 +6068,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6104,7 +6108,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6144,7 +6148,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6184,7 +6188,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6230,7 +6234,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 
@@ -6276,7 +6280,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 
@@ -6322,7 +6326,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6368,7 +6372,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6414,7 +6418,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6460,7 +6464,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6506,7 +6510,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6552,7 +6556,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6598,7 +6602,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6644,7 +6648,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6690,7 +6694,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6736,7 +6740,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6782,7 +6786,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6828,7 +6832,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6874,7 +6878,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6920,7 +6924,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -6966,7 +6970,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7012,7 +7016,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7058,7 +7062,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7104,7 +7108,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7155,7 +7159,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7206,7 +7210,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7257,7 +7261,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7308,7 +7312,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7359,7 +7363,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7410,7 +7414,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7461,7 +7465,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7512,7 +7516,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7563,7 +7567,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7614,7 +7618,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7662,7 +7666,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7703,7 +7707,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7740,7 +7744,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7777,7 +7781,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7814,7 +7818,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7851,7 +7855,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7888,7 +7892,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7928,7 +7932,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -7968,7 +7972,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8008,7 +8012,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8051,7 +8055,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8088,7 +8092,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8125,7 +8129,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8162,7 +8166,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8199,7 +8203,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8236,7 +8240,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8282,7 +8286,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8327,7 +8331,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8367,7 +8371,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8402,7 +8406,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8437,7 +8441,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8472,7 +8476,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8510,7 +8514,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8552,7 +8556,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8596,7 +8600,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8639,7 +8643,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8678,7 +8682,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8719,7 +8723,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 
@@ -8759,7 +8763,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8800,7 +8804,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8840,7 +8844,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8880,7 +8884,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8920,7 +8924,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -8963,7 +8967,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9004,7 +9008,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9046,7 +9050,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9088,7 +9092,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9128,7 +9132,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9168,7 +9172,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9208,7 +9212,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9318,7 +9322,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 
@@ -9361,7 +9365,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 
@@ -9405,7 +9409,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 			//
@@ -9447,7 +9451,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
 			//Out.ar(buseffetsPre, main * amp * ampPre);
-			//Out.ar(buseffetsPost, main * amp * ampPost);
+			//Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 			//Out.ar(out, main * amp * byPass);
 			//}).send(s);
 
@@ -9490,7 +9494,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9533,7 +9537,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9576,7 +9580,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9619,7 +9623,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9662,7 +9666,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9705,7 +9709,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9748,7 +9752,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9791,7 +9795,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9834,7 +9838,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9877,7 +9881,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9920,7 +9924,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -9963,7 +9967,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10006,7 +10010,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10049,7 +10053,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10092,7 +10096,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10135,7 +10139,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10178,7 +10182,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10225,7 +10229,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10269,7 +10273,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10316,7 +10320,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10363,7 +10367,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10410,7 +10414,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10457,7 +10461,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10504,7 +10508,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10551,7 +10555,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10598,7 +10602,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10645,7 +10649,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10692,7 +10696,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10737,7 +10741,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10783,7 +10787,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10824,7 +10828,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10865,7 +10869,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10906,7 +10910,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10946,7 +10950,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -10993,7 +10997,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -11039,7 +11043,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -11083,7 +11087,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffetsPre, main * amp * ampPre);
-					Out.ar(buseffetsPost, main * amp * ampPost);
+					Out.ar(buseffetsPost, main * amp * ampPost * byPass);
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
@@ -11091,7 +11095,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("Ringz_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree du effet + controles
@@ -11113,13 +11117,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("TwoPole_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree du effet + controles
@@ -11141,13 +11145,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("PitchShift_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.1, control2=0.1, control3=0.1, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.1, control2=0.1, control3=0.1, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree du effet + controles
@@ -11169,13 +11173,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("AllpassC_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11197,13 +11201,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("CombC_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11225,13 +11229,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("DelayC_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11253,13 +11257,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("DelayCtempo_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0.60, control8=0.1, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0.60, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, tempo, beat, duree;
 					tempo = (control7*100).floor;
@@ -11284,13 +11288,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("BPF_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11312,13 +11316,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("BRF_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11340,13 +11344,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("Formlet_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11368,13 +11372,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("FOS_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11396,13 +11400,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("HPF_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11424,13 +11428,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("LPF_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11452,13 +11456,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("Median_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11480,13 +11484,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("Resonz_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11508,13 +11512,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("RHPF_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11536,13 +11540,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("RLPF_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11564,13 +11568,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("SOS_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11592,13 +11596,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("FreeVerb_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11620,13 +11624,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("GVerb_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right;
 					// son en entree de la effet + controles
@@ -11649,13 +11653,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("JPverb_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right;
 					// son en entree de la effet + controles
@@ -11677,13 +11681,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("WarpDelay_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right, local, localBuf;
 					// son en entree de la effet + controles
@@ -11709,13 +11713,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
 			SynthDef("RandRateDelay_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, buseffetsPost, control1=0.0625, control2=0.5, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right, local, localBuf, buffer, rate;
 					// son en entree de la effet + controles
@@ -11744,7 +11748,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffetsPost, Mix(effet));
+					Out.ar(buseffetsPost,  effet * ampPost);
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -11752,7 +11756,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("Ringz_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree du effet + controles
@@ -11779,7 +11783,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("TwoPole_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.125, control2=0.125, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree du effet + controles
@@ -11806,7 +11810,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("PitchShift_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.1, control2=0.1, control3=0.1, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.1, control2=0.1, control3=0.1, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree du effet + controles
@@ -11833,7 +11837,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("AllpassC_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.0625, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.0625, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11860,7 +11864,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("CombC_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11887,7 +11891,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("DelayC_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11914,7 +11918,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("DelayCtempo_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0.60, control8=0.1, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0.60, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, tempo, beat, duree;
 					tempo = (control7*100).floor;
@@ -11944,7 +11948,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("BPF_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11971,7 +11975,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("BRF_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -11998,7 +12002,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("Formlet_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12025,7 +12029,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("FOS_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12052,7 +12056,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("HPF_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12079,7 +12083,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("LPF_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12106,7 +12110,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("Median_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12133,7 +12137,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("Resonz_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12160,7 +12164,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("RHPF_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12187,7 +12191,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("RLPF_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12214,7 +12218,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("SOS_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12241,7 +12245,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("FreeVerb_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic;
 					// son en entree de la effet + controles
@@ -12268,7 +12272,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("GVerb_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right;
 					// son en entree de la effet + controles
@@ -12296,7 +12300,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("JPverb_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right;
 					// son en entree de la effet + controles
@@ -12323,7 +12327,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("WarpDelay_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right, local, localBuf;
 					// son en entree de la effet + controles
@@ -12354,7 +12358,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			SynthDef("RandRateDelay_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0;
+					arg out=0, in, control1=0.3, control2=0.1, control3=0.1, control4=0.1, control5=0.1, control6=0.1, control7=0.1, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, left, right, local, localBuf, buffer, rate;
 					// son en entree de la effet + controles
