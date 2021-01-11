@@ -3320,7 +3320,7 @@ G                           Init Genome Agent (solo).
 
 		// Automation Effets
 		~routineAutomationEffets=Tdef(\AutoEffet, {
-		// Random Effets
+			// Random Effets
 			loop({
 				~listEffets.size.do({arg i;var val;
 					if(~playSynthEffets.wrapAt(i) == 1, {
@@ -3337,13 +3337,13 @@ G                           Init Genome Agent (solo).
 						});
 					});
 				});
-			~speedEffets.reciprocal.wait;
+				~speedEffets.reciprocal.wait;
 			});
 		});
 
 		// Automation Verb
 		~routineAutomationVerb=Tdef(\AutoVerb, {
-				// Random Verb
+			// Random Verb
 			loop({
 				~listVerb.size.do({arg i;var val;
 					if(~playSynthVerb.wrapAt(i) == 1, {
@@ -3360,7 +3360,7 @@ G                           Init Genome Agent (solo).
 						});
 					});
 				});
-			~speedVerb.reciprocal.wait;
+				~speedVerb.reciprocal.wait;
 			});
 		});
 
@@ -6820,8 +6820,8 @@ G                           Init Genome Agent (solo).
 			datafile=datafile.add(~jitterPanVerb.value);//202
 			datafile=datafile.add(~jitterPanSynthVerb);//203
 			datafile=datafile.add(~jitterControlsSynthVerb);//204
-			datafile=datafile.add(~speedAutoEffets);//205
-			datafile=datafile.add(~speedAutoVerb);//206
+			datafile=datafile.add(~speedAutoEffets.value);//205
+			datafile=datafile.add(~speedAutoVerb.value);//206
 			// + Genome
 			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//207
 			// + Sequence

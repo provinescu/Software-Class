@@ -1271,14 +1271,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Par Instruments
 			~nombreinstrument.do({arg i;var x,y,z,w,n1,n2,g;
 				//init les variables de jeux indispensables
-				~differencefreq=~differencefreq.add(1);// intervalle minimum entre 2 freq (1 ton)
-				~differenceamp=~differenceamp.add((4));// intervalle maximum entre 2 amp (4db)
-				~differenceduree=~differenceduree.add(1/32);// intervalle minimum entre 2 durees analyse
-				~dureeaccord=~dureeaccord.add(1/16);// intervalle duree minimum pour accord (1/16 seconde)
+				~differencefreq=~differencefreq.add(0.5);// intervalle minimum entre 2 freq (1 ton)
+				~differenceamp=~differenceamp.add((1));// intervalle maximum entre 2 amp (4db)
+				~differenceduree=~differenceduree.add(1/16);// intervalle minimum entre 2 durees analyse
+				~dureeaccord=~dureeaccord.add(1/12);// intervalle duree minimum pour accord (1/16 seconde)
 				~maxaccord=~maxaccord.add(6);// accord maximum 6 notes
-				~listedatassize=~listedatassize.add(128);// 128 evenements maximum dans listes datas
-				~dureeanalysemax=~dureeanalysemax.add(2);// 2 secondes de silence
-				~dureeanalysesil=~dureeanalysesil.add(4);// 8 secondes de silence
+				~listedatassize=~listedatassize.add(24);// 24 evenements maximum dans listes datas
+				~dureeanalysemax=~dureeanalysemax.add(4);// 4 secondes de silence
+				~dureeanalysesil=~dureeanalysesil.add(4);// 4 secondes de silence
 				~listesynth=~listesynth.add("PlayBuf");
 				~numeroSynth=~numeroSynth.add(0);
 				~dureeMul=~dureeMul.add(1.0);
@@ -1935,7 +1935,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 			});
 			// normalise et quantize note amplitude et duree
-			duree=duree * (~dureerange.wrapAt(i).hi - ~dureerange.wrapAt(i).lo)  + ~dureerange.wrapAt(i).lo;
+			duree = duree / ~dureeanalysemax.at(i);
+			duree = duree * (~dureerange.wrapAt(i).hi - ~dureerange.wrapAt(i).lo)  + ~dureerange.wrapAt(i).lo;
 			if(duree < ~quantization.wrapAt(i).value.reciprocal, {duree=~quantization.wrapAt(i).value.reciprocal},
 				{
 					// Quanta Music
@@ -2134,7 +2135,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		~foncpart={arg i, item;
 			var file, datas, datasfile;
-			 item = item.value.asInteger;
+			item = item.value.asInteger;
 			if(item == 0 ,{nil},{if(File.exists(~nompathdata++"score"+item.asString++".scd"),{file=File(~nompathdata++"score"+item.asString++".scd","r");datas=file.readAllString.interpret;file.close;
 				~listeplaypart.wrapPut(item-1,datas);
 				~flagplaypart.wrapPut(item-1,0);
@@ -2589,34 +2590,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// inter fhz
 			~differencefreqinstrument = ~differencefreqinstrument.add(EZSlider(w, 200 @ 18, "Dist Freq",ControlSpec(0.0, 12.0, \lin, 0.0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~differencefreqinstrument",ez.value);~differencefreq.wrapPut(i,ez.value)},
-				0,labelWidth: 65,numberWidth: 40));
+				0.5,labelWidth: 65,numberWidth: 40));
 			// diff amp
 			~differenceampinstrument = ~differenceampinstrument.add(EZSlider(w, 200 @ 18, "Dist Amp",ControlSpec(0.0, 60.0, \lin, 0.0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~differenceampinstrument",ez.value);~differenceamp.wrapPut(i,ez.value)},
-				0,labelWidth: 65,numberWidth: 40));
+				1,labelWidth: 65,numberWidth: 40));
 			// diff duree
 			~differencedureeinstrument = ~differencedureeinstrument.add(EZSlider(w, 200 @ 18, "Dist Dur",ControlSpec(0.01, 16, \exp, 0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~differencedureeinstrument",ez.value);~differenceduree.wrapPut(i,ez.value)},
-				0,labelWidth: 65,numberWidth: 40));
+				0.0625,labelWidth: 65,numberWidth: 40));
 			~dureeanalysesilence = ~dureeanalysesilence.add(EZSlider(w, 200 @ 18, "Dur Off",ControlSpec(1, 3600, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysesilence",ez.value);~dureeanalysesil.wrapPut(i,ez.value)},
 				4,labelWidth: 65,numberWidth: 35));
 			w.view.decorator.nextLine;
 			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "MaxDur",ControlSpec(1, 16, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysemaxinstrument",ez.value);~dureeanalysemax.wrapPut(i,ez.value);
-					if(ez.value > ~dureeanalysesil.wrapAt(i), {~dureeanalysesil.wrapPut(i, ez.value);~dureeanalysesilence.value_(ez.value)})},
-				2, false, 65, 35));
+					if(ez.value > ~dureeanalysesil.wrapAt(i), {~dureeanalysesil.wrapPut(i, ez.value);~dureeanalysesilence.wrapAt(i).value_(ez.value)})},
+				4, false, 65, 35));
 			// Chords
 			~maxaccordinstrument = ~maxaccordinstrument.add(EZSlider(w, 200 @ 18, "Chord",ControlSpec(1, 12, \lin, 1),
 				{|ez| ~writepartitions.value(i,'normal','off',"~maxaccordinstrument",ez.value);~maxaccord.wrapPut(i,ez.value)},
 				6,labelWidth: 65,numberWidth: 20));
 			~dureeaccordinstrument = ~dureeaccordinstrument.add(EZSlider(w, 200 @ 18, "ChordDur",ControlSpec(0.01, 1.0, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeaccordinstrument",ez.value);~dureeaccord.wrapPut(i,ez.value)},
-				(1/16),labelWidth: 65,numberWidth: 35));
+				(1/12),labelWidth: 65,numberWidth: 35));
 			// Datas
 			~datassizeinstrument = ~datassizeinstrument.add(EZSlider(w, 200 @ 18, "MaxDatas",ControlSpec(1, 256, \lin, 1),
 				{|ez| ~writepartitions.value(i,'normal','off',"~datassizeinstrument",ez.value);~listedatassize.wrapPut(i,ez.value)},
-				128,labelWidth: 65,numberWidth: 25));
+				24,labelWidth: 65,numberWidth: 25));
 			w.view.decorator.nextLine;
 			StaticText(w, Rect(0, 0, 890, 12)).string_("ALGORITHM PARAMETERS").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
 			w.view.decorator.nextLine;
@@ -3150,9 +3151,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~randomValueEffetPanPost.wrapAt(i).wrapPut(~syntheffetsPostcontrol.wrapAt(i).value, view.value)};
 			w.view.decorator.nextLine;
 			// Datas duree
-			~dureerange= ~dureerange.add(EZRanger(w, 205 @ 18, "Dur", ControlSpec(0, 1, \lin, 0),
+			~dureerange= ~dureerange.add(EZRanger(w, 205 @ 18, "Dur", ControlSpec(0, 60, \lin, 0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureerange",ez.value)},
-				[0, 1],labelWidth: 40,numberWidth: 35));
+				[0, 4],labelWidth: 40,numberWidth: 35));
 			~dureestep=~dureestep.add(EZSliderTempo(w, 205 @ 18, "Stretch", ControlSpec(-16, 64, \lin, 0),
 				{|ez| var tempo;
 					if(ez.value >= 1.neg and: {ez.value < 1}, {ez.value = 1.0});
@@ -3175,7 +3176,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~quantizationview=~quantizationview.add(EZSlider(w, 205 @ 18, "Quanta", ControlSpec(1, 100, \exp, 0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~quantizationview",ez.value);
 					~tempoSystem.schedAbs(~tempoSystem.beats, {~quantization.wrapPut(i, ez.value);nil})},
-				64,labelWidth: 42,numberWidth: 35));
+				100,labelWidth: 42,numberWidth: 35));
 
 			//Band + Tunes
 			// Number FhzBand 85
@@ -4141,15 +4142,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~listewindow.wrapAt(~instrumentactuel).name="RobotBand by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+item.value.asString++".scd";
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
 				//if(~startsysteme.value==1, {
-					~tempoSystem.schedAbs(duree, {
-						~routineinstrument.wrapAt(~instrumentactuel).stop;
-						// Set MIDI Off
-						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(~instrumentactuel).value >= 0}, {
-							~freqMidi.wrapAt(~instrumentactuel).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0)});
-						});
-						~flagfreq.wrapPut(~instrumentactuel, 0);~flagamp.wrapPut(~instrumentactuel, 0);~flagduree.wrapPut(~instrumentactuel, 0);~flagneuronefreq.wrapPut(~instrumentactuel, 0);~flagneuroneamp.wrapPut(~instrumentactuel, 0);~flagneuroneduree.wrapPut(~instrumentactuel, 0);~flagoutneuronefreq.wrapPut(~instrumentactuel, 0);~flagoutneuroneamp.wrapPut(~instrumentactuel, 0);~flagoutneuroneduree.wrapPut(~instrumentactuel, 0);~flaggenetiquefreq.wrapPut(~instrumentactuel, 0);~flaggenetiqueamp.wrapPut(~instrumentactuel, 0);~flaggenetiqueduree.wrapPut(~instrumentactuel, 0);
-						{~fonctionloaddatasinstrument.value(~instrumentactuel, datas.wrapAt(0),'on')}.defer;
-						~routineinstrument.wrapAt(~instrumentactuel).play(quant: Quant.new(1)); nil});
+				~tempoSystem.schedAbs(duree, {
+					~routineinstrument.wrapAt(~instrumentactuel).stop;
+					// Set MIDI Off
+					if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(~instrumentactuel).value >= 0}, {
+						~freqMidi.wrapAt(~instrumentactuel).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0)});
+					});
+					~flagfreq.wrapPut(~instrumentactuel, 0);~flagamp.wrapPut(~instrumentactuel, 0);~flagduree.wrapPut(~instrumentactuel, 0);~flagneuronefreq.wrapPut(~instrumentactuel, 0);~flagneuroneamp.wrapPut(~instrumentactuel, 0);~flagneuroneduree.wrapPut(~instrumentactuel, 0);~flagoutneuronefreq.wrapPut(~instrumentactuel, 0);~flagoutneuroneamp.wrapPut(~instrumentactuel, 0);~flagoutneuroneduree.wrapPut(~instrumentactuel, 0);~flaggenetiquefreq.wrapPut(~instrumentactuel, 0);~flaggenetiqueamp.wrapPut(~instrumentactuel, 0);~flaggenetiqueduree.wrapPut(~instrumentactuel, 0);
+					{~fonctionloaddatasinstrument.value(~instrumentactuel, datas.wrapAt(0),'on')}.defer;
+					~routineinstrument.wrapAt(~instrumentactuel).play(quant: Quant.new(1)); nil});
 				//});
 			})});
 		};
@@ -4163,18 +4164,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
 				//if(~startsysteme.value==1, {
-					~tempoSystem.schedAbs(duree, {
-						//+ Load datas Control Panel
-						{~readcontrolpanel.value(datas.last.at(0))}.defer;
-						for(0, ~nombreinstrument-1, {arg ii;
-							~routineinstrument.wrapAt(ii).stop;
-							// Set MIDI Off
-							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(ii).value >= 0}, {
-								~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
-							});
-							~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
-							{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
-							~routineinstrument.wrapAt(ii).play(quant: Quant.new(1))}); nil});
+				~tempoSystem.schedAbs(duree, {
+					//+ Load datas Control Panel
+					{~readcontrolpanel.value(datas.last.at(0))}.defer;
+					for(0, ~nombreinstrument-1, {arg ii;
+						~routineinstrument.wrapAt(ii).stop;
+						// Set MIDI Off
+						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(ii).value >= 0}, {
+							~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+						});
+						~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
+						{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
+						~routineinstrument.wrapAt(ii).play(quant: Quant.new(1))}); nil});
 				//});
 			})});
 		};
