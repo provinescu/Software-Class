@@ -1304,6 +1304,27 @@ G                           Init Genome Agent (solo).
 					"PV_RectComb2",
 					"PV_Morph",
 					"Convolution",
+
+					// Synth
+					"SinOsc",
+					"SinOscVibrato",
+					"FMsynth",
+					"SawSynth",
+					"Formant",
+					"Guitare",
+					"Blip",
+					/*"Osc",
+					"VOsc",
+					"VOsc3",*/
+					"VarSaw",
+					"Pulse",
+					"Klang",
+					"Klank",
+					"Klank2",
+					"Gendy3",
+					"Spring",
+					"SynthOnFly",
+
 					// Piano
 					"MdaPiano",
 					"Piano Resonz",
@@ -1342,25 +1363,6 @@ G                           Init Genome Agent (solo).
 					"Piano PV_RectComb2",
 					"Piano PV_Morph",
 					"Piano Convolution",
-					// Synth
-					"SinOsc",
-					"SinOscVibrato",
-					"FMsynth",
-					"SawSynth",
-					"Formant",
-					"Guitare",
-					"Blip",
-					/*"Osc",
-					"VOsc",
-					"VOsc3",*/
-					"VarSaw",
-					"Pulse",
-					"Klang",
-					"Klank",
-					"Klank2",
-					"Gendy3",
-					"Spring",
-					"SynthOnFly",
 				];
 				file=File(~nompathdata++"List Synth.scd","w");file.write("~listSynth="++~listSynth.asCompileString);file.close});
 			~audioOutSynth=[];
@@ -1390,6 +1392,23 @@ G                           Init Genome Agent (solo).
 			"GrainBuf",
 		];
 		~listeWithoutSample=[
+			"SinOsc",
+			"SinOscVibrato",
+			"FMsynth",
+			"SawSynth",
+			"Formant",
+			"Guitare",
+			"Blip",
+			/*"Osc",
+			"VOsc",
+			"VOsc3",*/
+			"VarSaw",
+			"Pulse",
+			"Klang",
+			"Klank",
+			"Klank2",
+			"Gendy3",
+			"Spring",
 			"MdaPiano",
 			"Piano Resonz",
 			"Piano Synthesizer",
@@ -1416,23 +1435,6 @@ G                           Init Genome Agent (solo).
 			"Piano PV_RectComb",
 			"Piano PV_ConformalMap",
 			"Piano PV_Compander",
-			"SinOsc",
-			"SinOscVibrato",
-			"FMsynth",
-			"SawSynth",
-			"Formant",
-			"Guitare",
-			"Blip",
-			/*"Osc",
-			"VOsc",
-			"VOsc3",*/
-			"VarSaw",
-			"Pulse",
-			"Klang",
-			"Klank",
-			"Klank2",
-			"Gendy3",
-			"Spring",
 		];
 		~listeWith1Sample=[
 			"PlayBuf",
