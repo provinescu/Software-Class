@@ -853,9 +853,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						// Free Buffer different time
 						Platform.resourceDir  +/+ "sounds/Buffer/100milliseconde.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/64samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/128samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/256samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/512samples.wav",
+						Platform.resourceDir  +/+ "sounds/Buffer/128samples.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/256samples.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/512samples.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/1024samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/2048samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/4096samples.wav",
