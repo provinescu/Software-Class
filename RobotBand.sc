@@ -556,6 +556,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~flagBandSynth = [];
 			~flagSynthBand = [];
 			~bandFHZ = [];
+			~lastTimeBand = [];
 			~tuning = [];
 			~tuningIndex = [];
 			~degrees = [];
@@ -757,6 +758,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Keyboard
 			keyboardTranslateBefore = 0;
 			keyVolume = 12.neg.dbamp;
+
+			~flagAlgorithm = 0;
 
 			// run the soft
 			this.run;
@@ -1435,6 +1438,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~flagBandSynth = ~flagBandSynth.add([0,1,1,1,0,0,0,0,0,0,0,0,0]);
 				~flagSynthBand = ~flagSynthBand.add('off');
 				~bandFHZ = ~bandFHZ.add([0.0, 52.0, 80.0, 108.0, 127.0]);
+				~lastTimeBand = ~lastTimeBand.add([Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
 				// Tuning
 				~tuning = ~tuning.add(Tuning.et12);
 				~tuningIndex = ~tuningIndex.add(0);
@@ -1636,70 +1640,119 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~freqbefore=[];~ampbefore=[];~dureebefore=[];~freqtampon=[];~amptampon=[];~listeaudiofreq=[];~listeaudioamp=[];~listeaudioduree=[];~lastDureeInstrAudio=[];
 		~nombreinstrument.do({arg instr;
 			~freqbefore=~freqbefore.add(0);~ampbefore=~ampbefore.add(0);~dureebefore=~dureebefore.add(0);~freqtampon=~freqtampon.add(nil);~amptampon=~amptampon.add(nil);~listeaudiofreq=~listeaudiofreq.add([]);~listeaudioamp=~listeaudioamp.add([]);~listeaudioduree=~listeaudioduree.add([]);~lastDureeInstrAudio=~lastDureeInstrAudio.add(~lastTimeAudio)});
+
 		// Analyse AudioIn
 		~oscAudioIn = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-			var freq=0, amp=0, duree=0, flag;
+			var freq=0, amp=0, duree=0, flag, synth, flagBand;
 			if(msg.wrapAt(2) == 2 and: {~flagEntreeMode == 'Audio IN' or: {~flagEntreeMode == 'File IN'}},
 				{// Normalise
 					duree = time - ~lastTimeAudio;
 					freq=msg.wrapAt(3);
 					freq=freq.clip(0,1);
 					amp=msg.wrapAt(4).clip(0.001, 1.0);
-					{flag = ~algoAnalyse.value}.defer;
 					~nombreinstrument.do({arg instr;
+						flagBand = 0;
 						if(~dureeanalysesil.wrapAt(instr) <= duree , // ici duree silence
 							{~listeaudiofreq.wrapPut(instr,[]);~listeaudioamp.wrapPut(instr,[]);~listeaudioduree.wrapPut(instr,[]);~freqtampon.wrapPut(instr,nil);~amptampon.wrapPut(instr,nil);~freqbefore.wrapPut(instr,0);~ampbefore.wrapPut(instr,0);~dureebefore.wrapPut(instr,0);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time);
+								(~numFhzBand + 1).do({arg b;
+									synth = ~lastTimeBand.at(instr); synth.put(b, time);
+									~lastTimeBand.put(instr, synth);
+								});
 								// Set MIDI Off
 								if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(instr).value >= 0}, {
 									~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)})});
 						});
 						if(~listeaudiofreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr) or: {~listeaudioamp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~listeaudioduree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~dureeanalysemax.wrapAt(instr) <= duree},
 							{~listeaudiofreq.wrapPut(instr,[]);~listeaudioamp.wrapPut(instr,[]);~listeaudioduree.wrapPut(instr,[])});
-						if(abs(freq*127 - (~freqbefore.wrapAt(instr)*127)) >= ~differencefreq.wrapAt(instr) and: {abs(amp.ampdb - ~ampbefore.wrapAt(instr).ampdb) >= ~differenceamp.wrapAt(instr)} and: {abs(duree - ~lastTimeAudio) >= ~differenceduree.wrapAt(instr)} and: {duree >= ~differenceduree.wrapAt(instr)} and: {flag != 4},
-							{if(~freqtampon.wrapAt(instr) !=nil and: {~amptampon.wrapAt(instr) != nil},
-								{
-									if(~flagSynthBand.at(instr) == 'on' and: {~flagBandSynth.at(instr).sum > 0}, {
-										for(1, ~numFhzBand.at(instr), {arg b;
-											if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)} and: {~flagBandSynth.at(instr).at(b) == 1},
+						if(~flagAlgorithm != 4,
+							{
+								if(abs(freq * 127 - (~freqbefore.wrapAt(instr) * 127)) >= ~differencefreq.wrapAt(instr) and: {abs(amp.ampdb - ~ampbefore.wrapAt(instr).ampdb) >= ~differenceamp.wrapAt(instr)} and: {abs(duree - ~lastTimeAudio) >= ~differenceduree.wrapAt(instr)} and: {duree >= ~differenceduree.wrapAt(instr)},
+									{
+										if(~freqtampon.wrapAt(instr) !=nil and: {~amptampon.wrapAt(instr) != nil},
+											{
+												if(~flagSynthBand.at(instr) == 'on' and: {~flagBandSynth.at(instr).sum > 0}, {
+													for(1, ~numFhzBand.at(instr), {arg b;
+														if(~flagBandSynth.at(instr).at(b) == 1,
+															{
+																if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
+																	{
+																		if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)},
+																			{~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
+																				~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
+																				~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+																				~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
+																				synth = ~lastTimeBand.at(instr); synth.put(b, time);
+																				~lastTimeBand.put(instr, synth);
+																		});
+																	},
+																	{
+																		flagBand = flagBand + 1;
+																		synth = ~lastTimeBand.at(instr); synth.put(b, time);
+																		~lastTimeBand.put(instr, synth);
+																});
+														});
+													});
+													// Test Silence Band
+													if(flagBand > 0, {
+														~listeaudiofreq.wrapPut(instr,[]);~listeaudioamp.wrapPut(instr,[]);~listeaudioduree.wrapPut(instr,[]);
+														/*~freqtampon.wrapPut(instr,nil);~amptampon.wrapPut(instr,nil);
+														~freqbefore.wrapPut(instr,0);~ampbefore.wrapPut(instr,0);~dureebefore.wrapPut(instr,0);
+														~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time);*/
+													});
+												},
 												{
 													~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 													~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 													~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
 													~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
-											});
+												});
 										});
-									},
-									{
-										~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
-										~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
-										~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
-										~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
-									});
-							});
-							~freqtampon.wrapPut(instr,freq);~amptampon.wrapPut(instr,amp);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time)},
+										~freqtampon.wrapPut(instr,freq);~amptampon.wrapPut(instr,amp);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time);
+								});
+							},
 							// Keyboard
-							{if(~freqtampon.wrapAt(instr) !=nil and: {~amptampon.wrapAt(instr) != nil},
-								{
-									if(~flagSynthBand.at(instr) == 'on' and: {~flagBandSynth.at(instr).sum > 0}, {
-										for(1, ~numFhzBand.at(instr), {arg b;
-											if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)} and: {~flagBandSynth.at(instr).at(b) == 1},
-												{
-													~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
-													~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
-													~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
-													~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
-											});
-										});
-									},
+							{
+								if(~freqtampon.wrapAt(instr) !=nil and: {~amptampon.wrapAt(instr) != nil},
 									{
-										~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
-										~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
-										~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
-										~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
-									});
-							});
-							~freqtampon.wrapPut(instr,freq);~amptampon.wrapPut(instr,amp);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time)}
-						);
+										if(~flagSynthBand.at(instr) == 'on' and: {~flagBandSynth.at(instr).sum > 0}, {
+											for(1, ~numFhzBand.at(instr), {arg b;
+												if(~flagBandSynth.at(instr).at(b) == 1,
+													{
+														if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
+															{
+																if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)},
+																	{~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
+																		~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
+																		~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+																		~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
+																		synth = ~lastTimeBand.at(instr); synth.put(b, time);
+																		~lastTimeBand.put(instr, synth);
+																});
+															},
+															{
+																flagBand = flagBand + 1;
+																synth = ~lastTimeBand.at(instr); synth.put(b, time);
+																~lastTimeBand.put(instr, synth);
+														});
+												});
+											});
+											// Test Silence Band
+											if(flagBand > 0, {
+												~listeaudiofreq.wrapPut(instr,[]);~listeaudioamp.wrapPut(instr,[]);~listeaudioduree.wrapPut(instr,[]);
+												/*~freqtampon.wrapPut(instr,nil);~amptampon.wrapPut(instr,nil);
+												~freqbefore.wrapPut(instr,0);~ampbefore.wrapPut(instr,0);~dureebefore.wrapPut(instr,0);
+												~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time);*/
+											});
+										},
+										{
+											~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
+											~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
+											~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+											~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
+										});
+								});
+								~freqtampon.wrapPut(instr,freq);~amptampon.wrapPut(instr,amp);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time);
+						});
 					});
 				},
 				{
@@ -1717,30 +1770,64 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~lastTimeMidi=[]; 16.do({arg i; ~lastTimeMidi=~lastTimeMidi.add(Main.elapsedTime)});//Init duree canaux
 		~fonctionOSCMidiIn={
 			~oscMidiIn=MIDIdef.noteOn(\midiNoteOn, {arg amp, freq, canal, src;
-				var duree, time=Main.elapsedTime;
+				var duree, time=Main.elapsedTime, synth, flagBand;
 				if(~flagEntreeMidi == 'on', {
 					duree = time - ~lastTimeMidi.wrapAt(canal);
-					freq=freq/127;amp=amp/127;
+					freq=freq/127;
+					amp=amp/127;
 					~nombreinstrument.do({arg instr;
+						flagBand = 0;
 						if(~canalmidiin.wrapAt(instr) == canal,
-							{if(~dureeanalysesil.wrapAt(instr) <= duree or: {duree >= ~dureeanalysemax.wrapAt(instr)}, // ici duree silence
-								{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, []);~freqtamponMidi.wrapPut(instr, nil);~amptamponMidi.wrapPut(instr,nil);~freqbeforeMidi.wrapPut(instr,0);~ampbeforeMidi.wrapPut(instr,0);~dureebeforeMidi.wrapPut(instr,0);~lastTimeMidi.wrapPut(canal,  time);~lastDureeInstrMidi.wrapPut(instr, time);
-									// Set MIDI Off
-									if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(instr).value >= 0}, {
-										~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)});
-									});
-							});
-							if(~listemidifreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr) or: {~listemidiamp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~listemididuree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~dureeanalysemax.wrapAt(instr) <= duree},
-								{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, [])});
-							//if(abs(freq*127 - (~freqbefore.wrapAt(instr)*127)) >= ~differencefreq.wrapAt(instr) and: {abs(amp.ampdb - ~ampbeforeMidi.wrapAt(instr).ampdb) >= ~differenceamp.wrapAt(instr)} and: {abs(duree -  ~lastTimeMidi.wrapAt(canal)) >= ~differenceduree.wrapAt(instr)} and: {duree >= ~differenceduree.wrapAt(instr)},
-							//{
-							if(~freqtamponMidi.wrapAt(instr) !=nil and: {~amptamponMidi.wrapAt(instr) != nil},
-								{~listemidifreq.wrapPut(instr, ~listemidifreq.wrapAt(instr).add(~freqtamponMidi.wrapAt(instr)));
-									~listemidiamp.wrapPut(instr, ~listemidiamp.wrapAt(instr).add(~amptamponMidi.wrapAt(instr)));
-									~listemididuree.wrapPut(instr,~listemididuree.wrapAt(instr).add(duree));
-									~freqbeforeMidi.wrapPut(instr, ~freqtamponMidi.wrapAt(instr));~ampbeforeMidi.wrapPut(instr, ~amptamponMidi.wrapAt(instr));~dureebeforeMidi.wrapPut(instr, ~duree.wrapAt(instr))});
-							~freqtamponMidi.wrapPut(instr, freq);~amptamponMidi.wrapPut(instr, amp);~lastTimeMidi.wrapPut(canal, time);~lastDureeInstrMidi.wrapPut(instr, time);
-							//});
+							{
+								if(~dureeanalysesil.wrapAt(instr) <= duree or: {duree >= ~dureeanalysemax.wrapAt(instr)}, // ici duree silence
+									{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, []);~freqtamponMidi.wrapPut(instr, nil);~amptamponMidi.wrapPut(instr,nil);~freqbeforeMidi.wrapPut(instr,0);~ampbeforeMidi.wrapPut(instr,0);~dureebeforeMidi.wrapPut(instr,0);~lastTimeMidi.wrapPut(canal,  time);~lastDureeInstrMidi.wrapPut(instr, time);
+										// Set MIDI Off
+										if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(instr).value >= 0}, {
+											~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)});
+										});
+										(~numFhzBand + 1).do({arg b;
+											synth = ~lastTimeBand.at(instr); synth.put(b, time);
+											~lastTimeBand.put(instr, synth);
+										});
+								});
+								if(~listemidifreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr) or: {~listemidiamp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~listemididuree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~dureeanalysemax.wrapAt(instr) <= duree},
+									{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, [])});
+								// MIDI BAND
+								if(~freqtamponMidi.wrapAt(instr) !=nil and: {~amptamponMidi.wrapAt(instr) != nil},
+									{
+										if(~flagSynthBand.at(instr) == 'on' and: {~flagBandSynth.at(instr).sum > 0},
+											{
+												for(1, ~numFhzBand.at(instr), {arg b;
+													if(~flagBandSynth.at(instr).at(b) == 1,
+														{
+															if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
+																{
+																	if((~freqtamponMidi.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtamponMidi.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)},
+																		{
+																			~listemidifreq.wrapPut(instr, ~listemidifreq.wrapAt(instr).add(~freqtamponMidi.wrapAt(instr)));
+																			~listemidiamp.wrapPut(instr, ~listemidiamp.wrapAt(instr).add(~amptamponMidi.wrapAt(instr)));
+																			~listemididuree.wrapPut(instr,~listemididuree.wrapAt(instr).add(duree));
+																			~freqbeforeMidi.wrapPut(instr, ~freqtamponMidi.wrapAt(instr));~ampbeforeMidi.wrapPut(instr, ~amptamponMidi.wrapAt(instr));~dureebeforeMidi.wrapPut(instr, ~duree.wrapAt(instr));
+																			synth = ~lastTimeBand.at(instr); synth.put(b, time);
+																			~lastTimeBand.put(instr, synth);
+																		},
+																		{
+																			flagBand = flagBand + 1;
+																			synth = ~lastTimeBand.at(instr); synth.put(b, time);
+																			~lastTimeBand.put(instr, synth);
+																	});
+															});
+													});
+												});
+											},
+											{
+												~listemidifreq.wrapPut(instr, ~listemidifreq.wrapAt(instr).add(~freqtamponMidi.wrapAt(instr)));
+												~listemidiamp.wrapPut(instr, ~listemidiamp.wrapAt(instr).add(~amptamponMidi.wrapAt(instr)));
+												~listemididuree.wrapPut(instr,~listemididuree.wrapAt(instr).add(duree));
+												~freqbeforeMidi.wrapPut(instr, ~freqtamponMidi.wrapAt(instr));~ampbeforeMidi.wrapPut(instr, ~amptamponMidi.wrapAt(instr));~dureebeforeMidi.wrapPut(instr, ~duree.wrapAt(instr));
+										});
+								});
+								~freqtamponMidi.wrapPut(instr, freq);~amptamponMidi.wrapPut(instr, amp);~lastTimeMidi.wrapPut(canal, time);~lastDureeInstrMidi.wrapPut(instr, time);
 						});
 					});
 				});
@@ -1884,14 +1971,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{~playinstrument.wrapPut(i,"off")},{~playinstrument.wrapPut(i,"on");
 					if(~algoinstrumentfreq.wrapAt(i) != ~algorithmesmusicauxfreq.wrapAt(4),{
 						// non-probabilite
-						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0)});
+						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
 						freq=freq.add((listeoutfreq.wrapAt(~flagfreq.wrapAt(i))*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat;
 						~flagfreq.wrapPut(i,~flagfreq.wrapAt(i)+1)},{
 						// probabilite
 						freq=freq.add((listeoutfreq.wrapAt(listeoutfreq.size.rand)*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat});
 					if(~algoinstrumentamp.wrapAt(i) != ~algorithmesmusicauxamp.wrapAt(4),{
 						// non-probabilite
-						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0)});
+						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
 						amp=amp+(listeoutamp.wrapAt(~flagamp.wrapAt(i))* (~synthamprange.wrapAt(i).hi.dbamp - ~synthamprange.wrapAt(i).lo.dbamp) + ~synthamprange.wrapAt(i).lo.dbamp);
 						~flagamp.wrapPut(i,~flagamp.wrapAt(i)+1)},{
 						// probabilite
@@ -1900,7 +1987,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					if(~algoinstrumentduree.wrapAt(i) != ~algorithmesmusicauxduree.wrapAt(4),{
 						// non-probabilite
-						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0)});
+						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
 						duree=listeoutduree.wrapAt(~flagduree.wrapAt(i));
 						~flagduree.wrapPut(i,~flagduree.wrapAt(i)+1)},{
 						// probabilite
@@ -1908,14 +1995,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// test accord
 					while({duree < ~dureeaccord.wrapAt(i) and: {freq.size < ~maxaccord.wrapAt(i)} and: {~flagfreq.wrapAt(i).value < listeoutfreq.size} and: {~flagamp.wrapAt(i).value < listeoutamp.size} and: {~flagduree.wrapAt(i).value < listeoutduree.size}}, {if(~algoinstrumentfreq.wrapAt(i) != ~algorithmesmusicauxfreq.wrapAt(4),{
 						// non-probabilite
-						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0)});
+						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
 						freq=freq.add((listeoutfreq.wrapAt(~flagfreq.wrapAt(i))*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat;
 						~flagfreq.wrapPut(i,~flagfreq.wrapAt(i)+1)},{
 						// probabilite
 						freq=freq.add((listeoutfreq.wrapAt(listeoutfreq.size.rand)*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat});
 					if(~algoinstrumentamp.wrapAt(i) != ~algorithmesmusicauxamp.wrapAt(4),{
 						// non-probabilite
-						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0)});
+						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
 						if(listeoutamp.wrapAt(~flagamp.wrapAt(i)) >= 0.001, {
 							amp=amp+(listeoutamp.wrapAt(~flagamp.wrapAt(i))*(~synthamprange.wrapAt(i).hi.dbamp - ~synthamprange.wrapAt(i).lo.dbamp) + ~synthamprange.wrapAt(i).lo.dbamp);
 						},
@@ -1929,7 +2016,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					if(~algoinstrumentduree.wrapAt(i) != ~algorithmesmusicauxduree.wrapAt(4),{
 						// non-probabilite
-						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0)});
+						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
 						duree=listeoutduree.wrapAt(~flagduree.wrapAt(i));
 						~flagduree.wrapPut(i,~flagduree.wrapAt(i)+1)},{
 						// probabilite
@@ -1949,6 +2036,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(flagAccords == 'on', {amp=amp/freq.size;
 			});
 			// sortie algorithme
+			if(~playinstrument.wrapAt(i) == "off", {freq = []; amp =[]});
 			[freq, amp, duree];
 		};
 
@@ -2035,7 +2123,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					})});
 					// set les datas calculees par les algorithmes pour playing
 					# freq, amp, duree = ~setdatasplaying.value(i, flagInstrPlay, listeoutfreq, listeoutamp, listeoutduree);
-					~duree.wrapPut(i,duree);if(~playinstrument.wrapAt(i) != "off",{
+					~duree.wrapPut(i,duree);
+					if(~playinstrument.wrapAt(i) != "off",{
 						if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
 							// Copy buffers
 							if(~looprecordingValue.wrapAt(~numerobuffer.wrapAt(i)).value == 1 ,{
@@ -3207,6 +3296,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								w.view.children.at(88 + index).valueAction_(0);
 						});
 					});
+					~lastTimeBand.put(i, [Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
+					~listeaudiofreq.wrapPut(i,[]);~listeaudioamp.wrapPut(i,[]);~listeaudioduree.wrapPut(i,[]);~freqtampon.wrapPut(i,nil);~amptampon.wrapPut(i,nil);~freqbefore.wrapPut(i,0);~ampbefore.wrapPut(i,0);~dureebefore.wrapPut(i,0);~lastTimeAudio = Main.elapsedTime;~lastDureeInstrAudio.wrapPut(i, Main.elapsedTime);
 			}, 12, layout: \horz);
 			);
 			// SynthBand 86 to 98
@@ -3747,6 +3838,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// algo analyse
 		~algoAnalyse = PopUpMenu(~wg,Rect(0,0,120,18)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.white).items=["Onsets","Pitch","Pitch2","KeyTrack","Keyboard"];
 		~algoAnalyse.action = {|view| ~writepartitions.value(nil,'control panel normal','off',"~algoAnalyse",view.value);
+			~flagAlgorithm = view.value;
 			~seuilanalyse.valueAction_(~paraAlgoAnalyseAudio.wrapAt(view.value).wrapAt(0));
 			if(view.value == 0, {~filtreanalyse.valueAction_(~paraAlgoAnalyseAudio.wrapAt(view.value).wrapAt(1))});
 			if(view.value == 1, {~filtreanalyse.valueAction_(~paraAlgoAnalyseAudio.wrapAt(view.value).wrapAt(1))});
@@ -5464,6 +5556,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				if(index == 12, {if(~flagBandSynth.at(i).at(index) == 0, {~synthBand12.at(i).value = 0},
 					{~synthBand12.at(i).value = 1})});
 			});
+			~lastTimeBand.put(i, [Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
+			~listeaudiofreq.wrapPut(i,[]);~listeaudioamp.wrapPut(i,[]);~listeaudioduree.wrapPut(i,[]);~freqtampon.wrapPut(i,nil);~amptampon.wrapPut(i,nil);~freqbefore.wrapPut(i,0);~ampbefore.wrapPut(i,0);~dureebefore.wrapPut(i,0);~lastTimeAudio = Main.elapsedTime;~lastDureeInstrAudio.wrapPut(i, Main.elapsedTime);
 			// Tuning
 			~tuning.wrapPut(i,datas.wrapAt(96).value);
 			~scale.wrapPut(i,datas.wrapAt(97).value);
@@ -5691,7 +5785,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, smallCutoff: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/RobotBand_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5703,8 +5797,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					inputFilter;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);// \rcomplex
-					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
+					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
+					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 60, maxFreq: 4186, median: 3, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/RobotBand_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5731,8 +5825,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					var input, detect, freqin, ampin, key;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \rcomplex);// \rcomplex
-					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), filtre, 0.5);
-					freqin = if(key < 12, key, key - 12) + 60;
+					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
+					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/RobotBand_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5759,7 +5853,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, smallCutoff: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Convertir hertz en midi puis entre (0 et 1) !!!!!
 					SendReply.kr(detect, '/RobotBand_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5772,7 +5866,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);// \rcomplex
-					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
+					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/RobotBand_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5799,8 +5893,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					var input, detect, freqin, ampin, key;
 					input = In.ar(busFileIn);
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \rcomplex);// \rcomplex
-					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), filtre, 0.5);
-					freqin = if(key < 12, key, key - 12) + 60;
+					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
+					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/RobotBand_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
