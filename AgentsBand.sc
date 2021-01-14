@@ -4373,10 +4373,12 @@ G                           Init Genome Agent (solo).
 				~synthRecAudioAgents.wrapAt(agent).set(\reclevel1, levels.value.wrapAt(0), \reclevel2, levels.value.wrapAt(1));
 				~synthRecFileAgents.wrapAt(agent).set(\reclevel1, levels.value.wrapAt(0), \reclevel2, levels.value.wrapAt(1));
 			});
+			~valRec1.value = ~levelsValues.wrapAt(0);
+			~valRec2.value = ~levelsValues.wrapAt(1);
 		};
 		~wi.view.decorator.nextLine;
 		// REC
-		~recSamplesButton=Button(~wi,Rect(10, 10, 75, 18)).states=[["Rec On", Color.black, Color.green(0.8, 0.25)],["Rec Off", Color.black, Color.red(0.8, 0.25)]];
+		~recSamplesButton=Button(~wi,Rect(10, 10, 50, 18)).states=[["Rec On", Color.black, Color.green(0.8, 0.25)],["Rec Off", Color.black, Color.red(0.8, 0.25)]];
 		~recSamplesButton.action = {arg rec;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~recSamplesButton", rec.value)});
 			~listesamplein.wrapAt(~soundsInstrMenu.value).set(\run, rec.value, \trigger, rec.value);
@@ -4400,9 +4402,27 @@ G                           Init Genome Agent (solo).
 			~reverseSynthSons.wrapPut(~soundsInstrMenu.value, reverse.value);
 		};
 		// Amp Synth on/off
-		~ampSynth = Button(~wi,Rect(10,10, 160, 18)).states=[["Bypass Amp Synth->FX On", Color.black, Color.green(0.8, 0.25)],["Bypass Amp Synth->FX Off", Color.black, Color.red(0.8, 0.25)]];
+		~ampSynth = Button(~wi,Rect(10,10, 150, 18)).states=[["Bypass Amp Synth->FX On", Color.black, Color.green(0.8, 0.25)],["Bypass Amp Synth->FX Off", Color.black, Color.red(0.8, 0.25)]];
 		~ampSynth.action = {arg view; if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~ampSynth", view.value)});
 			if(view.value == 0 , {~flagAmpSynth = 'off'},{~flagAmpSynth = 'on'});
+		};
+		// Display value recbutton 1
+		~valRec1 = NumberBox(~wi, Rect(0, 0, 35, 18));
+		~valRec1.value = 1;
+		~valRec1.action = {arg num;
+			var levels;
+			levels = ~recSamplesLevelsMenu.value;
+			levels.put(0, num.value);
+			~recSamplesLevelsMenu.valueAction_(levels);
+		};
+		// Display value recbutton 2
+		~valRec2 = NumberBox(~wi, Rect(0, 0, 35, 18));
+		~valRec2.value = 0;
+		~valRec2.action = {arg num;
+			var levels;
+			levels = ~recSamplesLevelsMenu.value;
+			levels.put(1, num.value);
+			~recSamplesLevelsMenu.valueAction_(levels);
 		};
 		// PAN
 		~panInstr=EZRanger(~wi, 200 @ 18, "Pan", \bipolar,
@@ -6825,6 +6845,8 @@ G                           Init Genome Agent (solo).
 			datafile=datafile.add(~jitterControlsSynthVerb);//204
 			datafile=datafile.add(~speedAutoEffets.value);//205
 			datafile=datafile.add(~speedAutoVerb.value);//206
+			/*datafile=datafile.add(~valRec1.value);//207
+			datafile=datafile.add(~valRec2.value);//208*/
 			// + Genome
 			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//207
 			// + Sequence
@@ -7202,6 +7224,8 @@ G                           Init Genome Agent (solo).
 			//~automationControlsVerb=datafile.wrapAt(204);
 			~speedAutoEffets.valueAction_(datafile.wrapAt(205));
 			~speedAutoVerb.valueAction_(datafile.wrapAt(206));
+			/*~valRec1.value_(datafile.wrapAt(207));
+			~valRec2.value_(datafile.wrapAt(208));*/
 			// + Genome (207) + Sequence (208)
 			if(flagGenome == 'on' and: {datafile.wrapAt(207).size != 0}, {
 				~genomes=datafile.wrapAt(207);// Load Genomes
