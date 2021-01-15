@@ -2487,7 +2487,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							s.sync;
 						};
 						hpRobotBand.kill;
-						HPRobotBandQT.new(p);
+						HPRobotBand.new(p);
 					});
 				},
 				// OSC Off
