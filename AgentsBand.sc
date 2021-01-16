@@ -10293,7 +10293,7 @@ G                           Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
-					main = Klang.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [ampreal / 3, ampreal / 3, ampreal / 3], nil], freq);
+					main = Klang.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], freq);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -10330,7 +10330,7 @@ G                           Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = DynKlank.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [ampreal / 3, ampreal / 3, ampreal / 3], nil], Dust2.ar(duree.reciprocal * 100), freq);
+					main = DynKlank.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], Dust2.ar(duree.reciprocal * 100), freq);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -10367,7 +10367,7 @@ G                           Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = DynKlank.ar(`[[Rand(32.7, 4186), Rand(32.7, 4186), Rand(32.7, 4186)] * controlF, [ampreal / 3, ampreal / 3, ampreal / 3], nil], Impulse.ar(duree.reciprocal * controlD * 64), freq);
+					main = DynKlank.ar(`[[Rand(32.7, 4186), Rand(32.7, 4186), Rand(32.7, 4186)] * controlF, [amp / 3, amp / 3, amp / 3], nil], Impulse.ar(duree.reciprocal * controlD * 64), freq);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
