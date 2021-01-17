@@ -1326,7 +1326,6 @@ G                           Init Genome Agent (solo).
 					"Klank2",
 					"Gendy3",
 					"Spring",
-					"SynthOnFly",
 
 					// Piano
 					"MdaPiano",
@@ -1366,6 +1365,9 @@ G                           Init Genome Agent (solo).
 					"Piano PV_RectComb2",
 					"Piano PV_Morph",
 					"Piano Convolution",
+
+					// OnFly
+					"SynthOnFly",
 				];
 				file=File(~nompathdata++"List Synth.scd","w");file.write("~listSynth="++~listSynth.asCompileString);file.close});
 			~audioOutSynth=[];
@@ -4608,7 +4610,7 @@ G                           Init Genome Agent (solo).
 			if(view.value == 0, {~listSynthEffets.wrapAt(~effetsInstrMenu.value).set('pan', ~panSynthEffets.wrapAt(~effetsInstrMenu.value))});
 		};
 		// Speed Autoamtion Effets
-		~speedAutoEffets = EZKnob(~we, 55 @ 75, "Speed",ControlSpec(1, 100, \exp, 0.1),
+		~speedAutoEffets = EZKnob(~we, 55 @ 75, "Speed",ControlSpec(0.01, 100, \exp, 0.01),
 			{|ez| ~speedEffets = ez.value ; if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~speedAutoEffets", ez.value)})},24, labelWidth: 40,unitWidth: 0, layout: 'vert');
 	}
 
@@ -4698,7 +4700,7 @@ G                           Init Genome Agent (solo).
 				.wrapAt(~verbInstrMenu.value).set('pan', ~panSynthVerb.wrapAt(~verbInstrMenu.value))});
 		};
 		// Speed Autoamtion Verb
-		~speedAutoVerb = EZKnob(~wv, 55 @ 75, "Speed",ControlSpec(1, 100, \exp, 0.1),
+		~speedAutoVerb = EZKnob(~wv, 55 @ 75, "Speed",ControlSpec(0.01, 100, \exp, 0.01),
 			{|ez| ~speedVerb = ez.value ; if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~speedAutoVerb", ez.value)})},24, labelWidth: 40,unitWidth: 0, layout: 'vert');
 
 	}
