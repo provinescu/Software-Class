@@ -262,7 +262,7 @@ G                           Init Genome Agent (solo).
 			~automationPanEffets=[];
 			~automationControlsEffets=[];
 			~listEffets.size.do({arg i;
-				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 0.7, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
+				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', -12.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 				~audioOutEffets=~audioOutEffets.add(0);
 				~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
 				~playSynthEffets=~playSynthEffets.add(0);
@@ -1598,7 +1598,6 @@ G                           Init Genome Agent (solo).
 		~groupeMasterFX=Group.new(s, \addToTail);
 		~flagFreqSamples='off';
 		~busFileIn=Bus.audio(s, 1);
-		s.sync;
 		~busEffetsAudio=Bus.audio(s, 1);
 		~busVerbAudio=Bus.audio(s, 1);
 		s.sync;
@@ -1713,7 +1712,7 @@ G                           Init Genome Agent (solo).
 			~automationPanEffets=[];
 			~automationControlsEffets=[];
 			~listEffets.size.do({arg i;
-				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 0.7, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
+				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 				s.sync;
 				~audioOutEffets=~audioOutEffets.add(0);
 				~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
@@ -1741,7 +1740,7 @@ G                           Init Genome Agent (solo).
 			~automationPanVerb=[];
 			~automationControlsVerb=[];
 			~listVerb.size.do({arg i;
-				~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 0.7, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
+				~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
 				s.sync;
 				~audioOutVerb=~audioOutVerb.add(0);
 				~controlsSynthVerb=~controlsSynthVerb.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
@@ -2800,7 +2799,7 @@ G                           Init Genome Agent (solo).
 
 		// Playing musique agents
 		~agentsmusique={arg agent;
-			var freq=[], freqRate=[], amp=[], ampReal=[], duree=0, compteuraccord=0, reverse=[], bufferSon, bufferSon2, freqLow, freqRange, freqTrans, ampRange, ampLow, dureeRange, dureeLow, dureeTempo, envLevel=[], envDuree=[], timeEnv=[], pan, offset, synth, indexSynth=0, loopSample, reverseSample, audioOut, indexOut, controlF, controlA, controlD, testLoop, sourceInAgent, flagInput = 0, octave, ratio, degre, difL, difH, pos=~scale.degrees.size - 1, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie,  transOctave, transTranspose, transCompExpAdd, transCompExpMul, newDuree=[], newFreq=[], newAmp=[], distances, maxTraining, numAlgo, sourceAlgorithm;
+			var freq=[], freqRate=[], amp=[], ampReal, duree=0, compteuraccord=0, reverse=[], bufferSon, bufferSon2, freqLow, freqRange, freqTrans, ampRange, ampLow, dureeRange, dureeLow, dureeTempo, envLevel=[], envDuree=[], timeEnv=[], pan, offset, synth, indexSynth=0, loopSample, reverseSample, audioOut, indexOut, controlF, controlA, controlD, testLoop, sourceInAgent, flagInput = 0, octave, ratio, degre, difL, difH, pos=~scale.degrees.size - 1, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie,  transOctave, transTranspose, transCompExpAdd, transCompExpMul, newDuree=[], newFreq=[], newAmp=[], distances, maxTraining, numAlgo, sourceAlgorithm;
 			if(~flagGeneLoopMusic == 'on', {if(~genomes.wrapAt(agent).wrapAt(41) <= 0.5, {testLoop='off'},{testLoop='on'})},{if(~flagloop == 'on', {testLoop='on'},{testLoop='off'})});
 			if(~flagplayagent.wrapAt(agent) == 'new' and: {testLoop != 'on'}, {~flagplayagent.wrapPut(agent, 'on')});
 			if(~flagCompteurPlayingAgents.wrapAt(agent) >= ~listeagentfreq.wrapAt(agent).size, {
@@ -3184,7 +3183,7 @@ G                           Init Genome Agent (solo).
 			freqRate=freqRate.midicps.flat;
 			//Amp
 			amp = amp * ampRange + ampLow;
-			if(~flagAmpSynth == 'off', {ampReal = 1}, {ampReal = 0});
+			if(~flagAmpSynth == 'off', {ampReal = 1.0}, {ampReal = 0.0});
 			// Duree
 			duree = duree / ~dureeanalysemax * dureeRange + dureeLow;
 			// Quanta Music
@@ -4595,7 +4594,7 @@ G                           Init Genome Agent (solo).
 		~we.view.decorator.nextLine;
 		// AMP
 		~ampEffets=EZKnob(~we, 55 @ 75, "Amp",ControlSpec(-inf, 12, \db, 0.001),
-			{|ez| ~listSynthEffets.wrapAt(~effetsInstrMenu.value).set('amp', ez.value.dbamp); ~ampSynthEffets.wrapPut(~effetsInstrMenu.value, ez.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~ampEffets", ez.value)})}, -3, labelWidth: 50,unitWidth: 0, layout: 'vert');
+			{|ez| ~listSynthEffets.wrapAt(~effetsInstrMenu.value).set('amp', ez.value.dbamp); ~ampSynthEffets.wrapPut(~effetsInstrMenu.value, ez.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~ampEffets", ez.value)})}, -12, labelWidth: 50,unitWidth: 0, layout: 'vert');
 		// PAN
 		~panEffets=EZKnob(~we, 55 @ 75, "Pan",ControlSpec(-1, 1, \lin, 0.001),
 			{|ez| ~listSynthEffets.wrapAt(~effetsInstrMenu.value).set('pan', ez.value);~panSynthEffets.wrapPut(~effetsInstrMenu.value, ez.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~panEffets", ez.value)})},0.0, labelWidth: 40,unitWidth: 0, layout: 'vert');
@@ -4683,8 +4682,8 @@ G                           Init Genome Agent (solo).
 		};
 		~wv.view.decorator.nextLine;
 		// Amp
-		~ampVerb=EZKnob(~wv, 55 @ 75, "amp", \db,
-			{|ez| ~listSynthVerb.wrapAt(~verbInstrMenu.value).set('amp', ez.value.dbamp); ~ampSynthVerb.wrapPut(~verbInstrMenu.value, ez.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~ampVerb", ez.value)})}, -3, labelWidth: 50,unitWidth: 0, layout: 'vert');
+		~ampVerb=EZKnob(~wv, 55 @ 75, "Amp", \db,
+			{|ez| ~listSynthVerb.wrapAt(~verbInstrMenu.value).set('amp', ez.value.dbamp); ~ampSynthVerb.wrapPut(~verbInstrMenu.value, ez.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~ampVerb", ez.value)})}, -12, labelWidth: 50,unitWidth: 0, layout: 'vert');
 		// PAN
 		~panVerb=EZKnob(~wv, 55 @ 75, "Pan",ControlSpec(-1, 1, \lin, 0.001),
 			{|ez| ~listSynthVerb.wrapAt(~verbInstrMenu.value).set('pan', ez.value);~panSynthVerb.wrapPut(~verbInstrMenu.value, ez.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~panVerb", ez.value)})},0.0, labelWidth: 40,unitWidth: 0, layout: 'vert');
@@ -5840,7 +5839,7 @@ G                           Init Genome Agent (solo).
 					~automationPanEffets=[];
 					~automationControlsEffets=[];
 					~listEffets.size.do({arg i;
-						~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 0.7, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
+						~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 						~audioOutEffets=~audioOutEffets.add(0);
 						~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
 						~playSynthEffets=~playSynthEffets.add(0);
@@ -5887,7 +5886,7 @@ G                           Init Genome Agent (solo).
 					~automationPanEffets=[];
 					~automationControlsEffets=[];
 					~listEffets.size.do({arg i;
-					~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 0.7, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
+					~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 					~audioOutEffets=~audioOutEffets.add(0);
 					~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
 					~playSynthEffets=~playSynthEffets.add(0);
@@ -5927,7 +5926,7 @@ G                           Init Genome Agent (solo).
 					~automationPanVerb=[];
 					~automationControlsVerb=[];
 					~listVerb.size.do({arg i;
-						~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 0.7, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
+						~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
 						~audioOutVerb=~audioOutVerb.add(0);
 						~controlsSynthVerb=~controlsSynthVerb.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
 						~playSynthVerb=~playSynthVerb.add(0);
@@ -12811,7 +12810,6 @@ G                           Init Genome Agent (solo).
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(busverb, effet);
-					Out.ar(out, effet);
 					Out.ar(out, effet);
 			}).send(s);
 
