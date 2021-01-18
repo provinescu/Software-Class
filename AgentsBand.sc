@@ -3134,8 +3134,8 @@ G                           Init Genome Agent (solo).
 				{audioOut =  ~genomes.wrapAt(agent).wrapAt(38)*~sourceOutAgents.size - 1});
 			// source Input
 			if(~flagGeneInput == 'off',
-				{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions))); sourceInAgent = ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions))},
-				{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40))); sourceInAgent = ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40))});
+				{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions)) - 1); sourceInAgent = ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions)) - 1},
+				{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40)) - 1); sourceInAgent = ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40)) - 1});
 			// test if File In
 			if(~flagEntreeMode == 'File', {sourceInAgent = ~busFileIn.index; flagInput = 1});
 			//envelope
@@ -7056,7 +7056,7 @@ G                           Init Genome Agent (solo).
 			~audioInputButton.valueAction=datafile.wrapAt(86);
 			~sounds.size.do({arg son;
 				~listesamplein.wrapAt(son).set(\run, ~recSamplesButtonSons.wrapAt(son), \trigger, ~recSamplesButtonSons.wrapAt(son),\loop, ~recSamplesLoopSons.wrapAt(son), \reclevel1, ~recSamplesLevelsSons.wrapAt(son).wrapAt(0), \reclevel2, ~recSamplesLevelsSons.wrapAt(son).wrapAt(1));
-				~recSamples.wrapAt(son).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(son)))});
+				~recSamples.wrapAt(son).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(son)) - 1)});
 			~panInstr.valueAction_(datafile.wrapAt(87));
 			~freqInstr.valueAction_(datafile.wrapAt(88));
 			~freqTransposeInstr.valueAction=datafile.wrapAt(89);
