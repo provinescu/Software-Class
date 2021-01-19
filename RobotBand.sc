@@ -3218,7 +3218,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~sendFXPre = ~sendFXPre.add(EZSlider(w, 128 @ 18, "FXpre", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'normal','off',"~sendFXPre",ez.value);
 					~ampPre.put(i, ez.value.dbamp);
-					//~geffet.at(i).setn(\ampPre, ez.value.dbamp);
 					~gsynth.at(i).setn(\ampPre, ez.value.dbamp);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
