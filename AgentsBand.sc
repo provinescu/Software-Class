@@ -250,7 +250,7 @@ G                           Init Genome Agent (solo).
 			~groupeSynthAgents.freeAll;
 			~groupeEffets.freeAll;
 			~busEffetsAudio.free;
-			~busEffetsAudio=Bus.audio(s, 1);
+			~busEffetsAudio=Bus.audio(s, 2);
 			~listSynthEffets=[];
 			~audioOutEffets=[];
 			~playSynthEffets=[];
@@ -1598,8 +1598,8 @@ G                           Init Genome Agent (solo).
 		~groupeMasterFX=Group.new(s, \addToTail);
 		~flagFreqSamples='off';
 		~busFileIn=Bus.audio(s, 1);
-		~busEffetsAudio=Bus.audio(s, 1);
-		~busVerbAudio=Bus.audio(s, 1);
+		~busEffetsAudio=Bus.audio(s, 2);
+		~busVerbAudio=Bus.audio(s, 2);
 		s.sync;
 		//Buffer file analyse
 		~bufferAudioAgents=[];
@@ -7647,8 +7647,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7689,8 +7689,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7731,8 +7731,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7773,8 +7773,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7817,8 +7817,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7859,8 +7859,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7900,8 +7900,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -7947,8 +7947,8 @@ G                           Init Genome Agent (solo).
 			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1);
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
-			//Out.ar(buseffets, main * amp);
-			//Out.ar(busverb, main * amp * ampreal);
+			//Out.ar(buseffets, Mix(main) * amp);
+			//Out.ar(busverb, Mix(main) * amp * ampreal);
 			//Out.ar(out, main * amp * ampreal);
 			//}).send(s);
 
@@ -7989,8 +7989,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8031,8 +8031,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8073,8 +8073,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8115,8 +8115,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8157,8 +8157,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8200,8 +8200,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8242,8 +8242,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8286,8 +8286,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8327,8 +8327,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8368,8 +8368,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8409,8 +8409,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8450,8 +8450,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8494,8 +8494,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8536,8 +8536,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8582,8 +8582,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8626,8 +8626,8 @@ G                           Init Genome Agent (solo).
 			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
-			//Out.ar(buseffets, main * amp);
-			//Out.ar(busverb, main * amp * ampreal);
+			//Out.ar(buseffets, Mix(main) * amp);
+			//Out.ar(busverb, Mix(main) * amp * ampreal);
 			//Out.ar(out, main * amp * ampreal);
 			//}).send(s);
 
@@ -8670,8 +8670,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8714,8 +8714,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8758,8 +8758,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8802,8 +8802,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8846,8 +8846,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8890,8 +8890,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8934,8 +8934,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -8978,8 +8978,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9022,8 +9022,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9066,8 +9066,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9110,8 +9110,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9154,8 +9154,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9198,8 +9198,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9242,8 +9242,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9286,8 +9286,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9330,8 +9330,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9374,8 +9374,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9418,8 +9418,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9462,8 +9462,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9506,8 +9506,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9552,8 +9552,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9598,8 +9598,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9644,8 +9644,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9690,8 +9690,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9736,8 +9736,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9782,8 +9782,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9828,8 +9828,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9874,8 +9874,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9920,8 +9920,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -9966,8 +9966,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10012,8 +10012,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10056,8 +10056,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10095,8 +10095,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);}).send(s);
 
 			SynthDef("FMsynth",
@@ -10131,8 +10131,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10170,8 +10170,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10207,8 +10207,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10242,8 +10242,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10280,8 +10280,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10317,8 +10317,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10354,8 +10354,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10391,8 +10391,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10428,8 +10428,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10465,8 +10465,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10502,8 +10502,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10539,8 +10539,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10583,8 +10583,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10622,8 +10622,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10664,8 +10664,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10705,8 +10705,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10745,8 +10745,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10785,8 +10785,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10825,8 +10825,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10865,8 +10865,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10913,8 +10913,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -10959,8 +10959,8 @@ G                           Init Genome Agent (solo).
 			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
-			//Out.ar(buseffets, main * amp);
-			//Out.ar(busverb, main * amp * ampreal);
+			//Out.ar(buseffets, Mix(main) * amp);
+			//Out.ar(busverb, Mix(main) * amp * ampreal);
 			//Out.ar(out, main * amp * ampreal);
 			//}).send(s);
 
@@ -11005,8 +11005,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11051,8 +11051,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11097,8 +11097,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11143,8 +11143,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11189,8 +11189,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11235,8 +11235,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11281,8 +11281,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11327,8 +11327,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11373,8 +11373,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11419,8 +11419,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11465,8 +11465,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11511,8 +11511,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11557,8 +11557,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11603,8 +11603,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11649,8 +11649,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11695,8 +11695,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11741,8 +11741,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11789,8 +11789,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11837,8 +11837,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11885,8 +11885,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11933,8 +11933,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -11981,8 +11981,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12029,8 +12029,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12077,8 +12077,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12126,8 +12126,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12174,8 +12174,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12222,8 +12222,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12267,8 +12267,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12312,8 +12312,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12357,8 +12357,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12403,8 +12403,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12445,8 +12445,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12487,8 +12487,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12529,8 +12529,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12570,8 +12570,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12618,8 +12618,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12674,8 +12674,8 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(buseffets, main * amp);
-					Out.ar(busverb, main * amp * ampreal);
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
@@ -12705,7 +12705,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12731,7 +12731,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12757,7 +12757,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12783,7 +12783,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12809,7 +12809,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12835,7 +12835,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12861,7 +12861,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12887,7 +12887,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12913,7 +12913,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12939,7 +12939,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12965,7 +12965,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -12991,7 +12991,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13017,7 +13017,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13043,7 +13043,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13069,7 +13069,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13106,7 +13106,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13142,7 +13142,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13170,7 +13170,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13199,7 +13199,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13229,7 +13229,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13259,7 +13259,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13289,7 +13289,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13318,7 +13318,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13347,7 +13347,7 @@ G                           Init Genome Agent (solo).
 			//(ambisonic = PanB2.ar(effet, pan);
 			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 			//// Out
-			//Out.ar(busverb, effet);
+			//Out.ar(busverb, Mix(effet));
 			//Out.ar(out, effet);
 			//}).send(s);
 
@@ -13376,7 +13376,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13405,7 +13405,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13434,7 +13434,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13463,7 +13463,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13492,7 +13492,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13521,7 +13521,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13550,7 +13550,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13579,7 +13579,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13608,7 +13608,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13637,7 +13637,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13666,7 +13666,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13695,7 +13695,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13724,7 +13724,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13753,7 +13753,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13782,7 +13782,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13811,7 +13811,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13840,7 +13840,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13869,7 +13869,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13898,7 +13898,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13927,7 +13927,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13956,7 +13956,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -13986,7 +13986,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
@@ -14017,7 +14017,7 @@ G                           Init Genome Agent (solo).
 								(ambisonic = PanB2.ar(effet, pan);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
-					Out.ar(busverb, effet);
+					Out.ar(busverb, Mix(effet));
 					Out.ar(out, effet);
 			}).send(s);
 
