@@ -3700,8 +3700,8 @@ G                           Init Genome Agent (solo).
 		StaticText(~wm, Rect(0, 0, 40, 10)).string_("Signal").stringColor_(Color.red);// red
 		StaticText(~wm, Rect(45, 0, 40, 10)).string_("Playing").stringColor_(Color.new(1, 1, 1));// white
 		StaticText(~wm, Rect(90, 0, 40, 10)).string_("Young").stringColor_(Color.new(0,0,1));// bleu fonce
-		StaticText(~wm, Rect(135, 0, 40, 10)).string_("Adult").stringColor_(Color.new(0, 1, 0));// Green
-		StaticText(~wm, Rect(175, 0, 40, 10)).string_("Old").stringColor_(Color.new(1, 1, 0));// yellow
+		StaticText(~wm, Rect(135, 0, 30, 10)).string_("Adult").stringColor_(Color.new(0, 1, 0));// Green
+		StaticText(~wm, Rect(165, 0, 30, 10)).string_("Old").stringColor_(Color.new(1, 1, 0));// yellow
 		StaticText(~wm, Rect(0, 12, 40, 10)).string_("Neighbour").stringColor_(Color.new(1, 0, 1));// magenta
 		StaticText(~wm, Rect(45, 12, 40, 10)).string_("Hearing").stringColor_(Color.new(0, 1, 1));// bleu clair
 		~wm.drawFunc = {
