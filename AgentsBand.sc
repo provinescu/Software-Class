@@ -261,6 +261,8 @@ G                           Init Genome Agent (solo).
 			~ampSynthEffets=[];
 			~automationPanEffets=[];
 			~automationControlsEffets=[];
+			~automationSpeedEffets = [];
+			~listeFXTime = [];
 			~listEffets.size.do({arg i;
 				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', -12.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 				~audioOutEffets=~audioOutEffets.add(0);
@@ -272,6 +274,8 @@ G                           Init Genome Agent (solo).
 				~ampSynthEffets=~ampSynthEffets.add(-3);
 				~automationPanEffets=~automationPanEffets.add(0);
 				~automationControlsEffets=~automationControlsEffets.add(0);
+				~automationSpeedEffets = ~automationSpeedEffets.add(24);
+				~listeFXTime = ~listeFXTime.add(24.reciprocal);
 			});
 			~listSynthEffets.size.do({arg effet;
 				~listSynthEffets.wrapAt(effet).set('busverb', ~busVerbAudio.index, 'amp', ~ampSynthEffets.wrapAt(effet).dbamp, 'pan', ~panSynthEffets.wrapAt(effet), 'control1', ~controlsSynthEffets.wrapAt(effet).wrapAt(0),  'control2', ~controlsSynthEffets.wrapAt(effet).wrapAt(1),  'control3', ~controlsSynthEffets.wrapAt(effet).wrapAt(2),  'control4', ~controlsSynthEffets.wrapAt(effet).wrapAt(3),  'control5', ~controlsSynthEffets.wrapAt(effet).wrapAt(4),  'control6', ~controlsSynthEffets.wrapAt(effet).wrapAt(5),  'control7', ~controlsSynthEffets.wrapAt(effet).wrapAt(6),  'control8', ~controlsSynthEffets.wrapAt(effet).wrapAt(7));
@@ -691,6 +695,7 @@ G                           Init Genome Agent (solo).
 							~ampEffets.valueAction_(-3);
 							~randomPanEffets.value_(0);
 							~randomControlsEffets.value_(0);
+							~speedEffets.valueAction_(24);
 							s.sync;
 							~listeWindows.do({arg w; w.do({arg v; v.refresh})});
 							s.sync;
@@ -770,6 +775,7 @@ G                           Init Genome Agent (solo).
 							~ampEffets.valueAction_(-3);
 							~randomPanEffets.value_(0);
 							~randomControlsEffets.value_(0);
+							~speedEffets.valueAction_(24);
 							s.sync;
 							//Document.listener.string="";
 							s.queryAllNodes;
@@ -1121,9 +1127,6 @@ G                           Init Genome Agent (solo).
 			// Keyboard
 			keyboardTranslateBefore = 0;
 			keyVolume = 12.neg.dbamp;
-
-			~speedEffets = 24;
-			~speedVerb = 24;
 
 			// run the soft
 			this.run;
@@ -1711,6 +1714,8 @@ G                           Init Genome Agent (solo).
 			~ampSynthEffets=[];
 			~automationPanEffets=[];
 			~automationControlsEffets=[];
+			~automationSpeedEffets = [];
+			~listeFXTime = [];
 			~listEffets.size.do({arg i;
 				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 				s.sync;
@@ -1723,6 +1728,8 @@ G                           Init Genome Agent (solo).
 				~ampSynthEffets=~ampSynthEffets.add(-3);
 				~automationPanEffets=~automationPanEffets.add(0);
 				~automationControlsEffets=~automationControlsEffets.add(0);
+				~automationSpeedEffets = ~automationSpeedEffets.add(24);
+				~listeFXTime = ~listeFXTime.add(24.reciprocal);
 			});
 		};
 		~initSynthEffets.value;
@@ -1739,6 +1746,8 @@ G                           Init Genome Agent (solo).
 			~ampSynthVerb=[];
 			~automationPanVerb=[];
 			~automationControlsVerb=[];
+			~automationSpeedVerb = [];
+			~listeVerbTime = [];
 			~listVerb.size.do({arg i;
 				~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
 				s.sync;
@@ -1751,6 +1760,8 @@ G                           Init Genome Agent (solo).
 				~ampSynthVerb=~ampSynthVerb.add(-3);
 				~automationPanVerb=~automationPanVerb.add(0);
 				~automationControlsVerb=~automationControlsVerb.add(0);
+				~automationSpeedVerb=~automationSpeedVerb.add(24);
+				~listeVerbTime = ~listeVerbTime.add(24.reciprocal);
 			});
 		};
 		~initSynthVerb.value;
@@ -3328,20 +3339,29 @@ G                           Init Genome Agent (solo).
 			loop({
 				~listEffets.size.do({arg i;var val;
 					if(~playSynthEffets.wrapAt(i) == 1, {
-						// Pan
-						if(rrand(0.0, 1.0) <= 0.25, {
-							if(~automationPanEffets.wrapAt(i) == 1, {
-								val = (~panSynthEffets.wrapAt(i) + (~jitterPanSynthEffets.wrapAt(i) * rrand(-1.0, 1.0))).clip(-1.0, 1.0);
-								~listSynthEffets.wrapAt(i).set('pan', val)});
-						});
-						// Controls
-						if(~automationControlsEffets.wrapAt(i) == 1, {
-							val = (~controlsSynthEffets.wrapAt(i) + (~jitterControlsSynthEffets.wrapAt(i) * rrand(-1.0, 1.0))).clip(0.05, 0.99);
-							~listSynthEffets.wrapAt(i).set(\control1, val.wrapAt(0), \control2, val.wrapAt(1), \control3, val.wrapAt(2), \control4, val.wrapAt(3), \control5, val.wrapAt(4), \control6, val.wrapAt(5), \control7, val.wrapAt(6), \control8, val.wrapAt(7));
+						if(~listeFXTime.at(i).value <= 0.01,
+							{
+								// Pan
+								if(rrand(0.0, 1.0) <= 0.25, {
+									if(~automationPanEffets.wrapAt(i) == 1, {
+										val = (~panSynthEffets.wrapAt(i) + (~jitterPanSynthEffets.wrapAt(i) * rrand(-1.0, 1.0))).clip(-1.0, 1.0);
+										~listSynthEffets.wrapAt(i).set('pan', val)});
+								});
+								// Controls
+								if(~automationControlsEffets.wrapAt(i) == 1, {
+									val = (~controlsSynthEffets.wrapAt(i) + (~jitterControlsSynthEffets.wrapAt(i) * rrand(-1.0, 1.0))).clip(0.05, 0.99);
+									~listSynthEffets.wrapAt(i).set(\control1, val.wrapAt(0), \control2, val.wrapAt(1), \control3, val.wrapAt(2), \control4, val.wrapAt(3), \control5, val.wrapAt(4), \control6, val.wrapAt(5), \control7, val.wrapAt(6), \control8, val.wrapAt(7));
+								});
+								// Reset Time
+								~listeFXTime.put(i, ~automationSpeedEffets.at(i).value.reciprocal);
+							},
+							{
+								// Dec time effet
+								~listeFXTime.put(i, ~listeFXTime.at(i) - 0.01);
 						});
 					});
 				});
-				~speedEffets.reciprocal.wait;
+				100.reciprocal.wait;
 			});
 		});
 
@@ -3351,20 +3371,29 @@ G                           Init Genome Agent (solo).
 			loop({
 				~listVerb.size.do({arg i;var val;
 					if(~playSynthVerb.wrapAt(i) == 1, {
-						// Pan
-						if(rrand(0.0, 1.0) <= 0.25, {
-							if(~automationPanVerb.wrapAt(i) == 1, {
-								val = (~panSynthVerb.wrapAt(i) + (~jitterPanSynthVerb.wrapAt(i) * rrand(-1.0, 1.0))).clip(-1.0, 1.0);
-								~listSynthVerb.wrapAt(i).set('pan', val)});
-						});
-						// Controls
-						if(~automationControlsVerb.wrapAt(i) == 1, {
-							val = (~controlsSynthVerb.wrapAt(i) + (~jitterControlsSynthVerb.wrapAt(i) * rrand(-1.0, 1.0))).clip(0.05, 0.99);
-							~listSynthVerb.wrapAt(i).set(\control1, val.wrapAt(0), \control2, val.wrapAt(1), \control3, val.wrapAt(2), \control4, val.wrapAt(3), \control5, val.wrapAt(4), \control6, val.wrapAt(5), \control7, val.wrapAt(6), \control8, val.wrapAt(7));
+						if(~listeVerbTime.at(i).value <= 0.01,
+							{
+								// Pan
+								if(rrand(0.0, 1.0) <= 0.25, {
+									if(~automationPanVerb.wrapAt(i) == 1, {
+										val = (~panSynthVerb.wrapAt(i) + (~jitterPanSynthVerb.wrapAt(i) * rrand(-1.0, 1.0))).clip(-1.0, 1.0);
+										~listSynthVerb.wrapAt(i).set('pan', val)});
+								});
+								// Controls
+								if(~automationControlsVerb.wrapAt(i) == 1, {
+									val = (~controlsSynthVerb.wrapAt(i) + (~jitterControlsSynthVerb.wrapAt(i) * rrand(-1.0, 1.0))).clip(0.05, 0.99);
+									~listSynthVerb.wrapAt(i).set(\control1, val.wrapAt(0), \control2, val.wrapAt(1), \control3, val.wrapAt(2), \control4, val.wrapAt(3), \control5, val.wrapAt(4), \control6, val.wrapAt(5), \control7, val.wrapAt(6), \control8, val.wrapAt(7));
+								});
+								// Reset Time
+								~listeVerbTime.put(i, ~automationSpeedVerb.at(i).value.reciprocal);
+							},
+							{
+								// Dec time effet
+								~listeVerbTime.put(i, ~listeVerbTime.at(i) - 0.01);
 						});
 					});
 				});
-				~speedVerb.reciprocal.wait;
+				100.reciprocal.wait;
 			});
 		});
 
@@ -4550,13 +4579,17 @@ G                           Init Genome Agent (solo).
 					~jitterPanSynthEffets=~jitterPanSynthEffets.add(~jitterPanEffets.value);
 					~jitterControlsSynthEffets=~jitterControlsSynthEffets.add(~jitterControlsEffets.value);
 					~ampSynthEffets=~ampSynthEffets.add(~ampEffets.value);
-					~audioOutEffets=~audioOutEffets.add(~sourceOutEffets.value)}, {~playEffetsButton.value_(~playSynthEffets.wrapAt(effet.value));
+					~audioOutEffets=~audioOutEffets.add(~sourceOutEffets.value);
+					~automationSpeedEffets=~automationSpeedEffets.add(~speedEffets.value);
+				}, {~playEffetsButton.value_(~playSynthEffets.wrapAt(effet.value));
 					~controlsEffetsMenu.value_(~controlsSynthEffets.wrapAt(effet.value));
 					~panEffets.value_(~panSynthEffets.wrapAt(effet.value));
 					~jitterPanEffets.value_(~jitterPanSynthEffets.wrapAt(effet.value));
 					~jitterControlsEffets.value_(~jitterControlsSynthEffets.wrapAt(effet.value));
 					~ampEffets.value_(~ampSynthEffets.wrapAt(effet.value));
-					~sourceOutEffets.value_(~audioOutEffets.wrapAt(effet.value))});
+					~sourceOutEffets.value_(~audioOutEffets.wrapAt(effet.value));
+					~speedEffets.value_(~automationSpeedEffets.wrapAt(effet.value));
+			});
 			~randomPanEffets.value_(~automationPanEffets.wrapAt(effet.value));
 			~randomControlsEffets.value_(~automationControlsEffets.wrapAt(effet.value));
 		};
@@ -4609,8 +4642,10 @@ G                           Init Genome Agent (solo).
 			if(view.value == 0, {~listSynthEffets.wrapAt(~effetsInstrMenu.value).set('pan', ~panSynthEffets.wrapAt(~effetsInstrMenu.value))});
 		};
 		// Speed Autoamtion Effets
-		~speedAutoEffets = EZKnob(~we, 55 @ 75, "Speed",ControlSpec(0.01, 100, \exp, 0.01),
-			{|ez| ~speedEffets = ez.value ; if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~speedAutoEffets", ez.value)})},24, labelWidth: 40,unitWidth: 0, layout: 'vert');
+		~speedEffets = EZKnob(~we, 55 @ 75, "Speed",ControlSpec(0.01, 100, \exp, 0.01),
+			{|view| ~automationSpeedEffets.wrapPut(~effetsInstrMenu.value, view.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~speedEffets", view.value)});
+				~listeFXTime.put(~effetsInstrMenu.value, view.value.reciprocal);
+		},24, labelWidth: 40,unitWidth: 0, layout: 'vert');
 	}
 
 	verbPanel {
@@ -4639,13 +4674,17 @@ G                           Init Genome Agent (solo).
 					~jitterPanSynthVerb=~jitterPanSynthVerb.add(~jitterPanVerb.value);
 					~jitterControlsSynthVerb=~jitterControlsSynthVerb.add(~jitterControlsVerb.value);
 					~ampSynthVerb=~ampSynthVerb.add(~ampVerb.value);
-					~audioOutVerb=~audioOutVerb.add(~sourceOutVerb.value)}, {~playVerbButton.value_(~playSynthVerb.wrapAt(verb.value));
+					~audioOutVerb=~audioOutVerb.add(~sourceOutVerb.value);
+					~automationSpeedVerb=~automationSpeedVerb.add(~speedVerb.value);
+				}, {~playVerbButton.value_(~playSynthVerb.wrapAt(verb.value));
 					~controlsVerbMenu.value_(~controlsSynthVerb.wrapAt(verb.value));
 					~panVerb.value_(~panSynthVerb.wrapAt(verb.value));
 					~jitterPanVerb.value_(~jitterPanSynthVerb.wrapAt(verb.value));
 					~jitterControlsVerb.value_(~jitterControlsSynthVerb.wrapAt(verb.value));
 					~ampVerb.value_(~ampSynthVerb.wrapAt(verb.value));
-					~sourceOutVerb.value_(~audioOutVerb.wrapAt(verb.value))});
+					~sourceOutVerb.value_(~audioOutVerb.wrapAt(verb.value));
+					~speedVerb.value_(~automationSpeedVerb.wrapAt(verb.value));
+			});
 			~randomPanVerb.value_(~automationPanVerb.wrapAt(verb.value));
 			~randomControlsVerb.value_(~automationControlsVerb.wrapAt(verb.value));
 		};
@@ -4699,8 +4738,10 @@ G                           Init Genome Agent (solo).
 				.wrapAt(~verbInstrMenu.value).set('pan', ~panSynthVerb.wrapAt(~verbInstrMenu.value))});
 		};
 		// Speed Autoamtion Verb
-		~speedAutoVerb = EZKnob(~wv, 55 @ 75, "Speed",ControlSpec(0.01, 100, \exp, 0.01),
-			{|ez| ~speedVerb = ez.value ; if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~speedAutoVerb", ez.value)})},24, labelWidth: 40,unitWidth: 0, layout: 'vert');
+		~speedVerb = EZKnob(~wv, 55 @ 75, "Speed",ControlSpec(0.01, 100, \exp, 0.01),
+			{|view| ~automationSpeedVerb.wrapPut(~verbInstrMenu.value, view.value); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~speedVerb", view.value)});
+				~listeVerbTime.put(~verbInstrMenu.value, 24.reciprocal);
+		},24, labelWidth: 40,unitWidth: 0, layout: 'vert');
 
 	}
 
@@ -5399,18 +5440,18 @@ G                           Init Genome Agent (solo).
 		~wp.view.decorator.nextLine;
 
 		StaticText(~wp, Rect(10,10, 150, 20)).string_("Mean State System").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
-		~viewgenomes = StaticText(~wp, Rect(10,10, 1000, 20)).string_(~genomes.mean.asString);
-		~viewpopulation = StaticText(~wp, Rect(10,10, 125, 20)).string_("Crew"+~agents.asString);
-		~viewagesagents = StaticText(~wp, Rect(10,10, 80, 20)).string_("Age"+~ages.mediane.asString);
-		~viewviesagents = StaticText(~wp, Rect(10,10, 90, 20)).string_("Life"+~vies.mediane.asString);
-		~viewenfantsagents = StaticText(~wp, Rect(10,10, 100, 20)).string_("Children"+~enfants.mediane.asString);
-		~viewvoisins = StaticText(~wp, Rect(10,10, 113, 20)).string_("Neightboring");
-		~viewsignaux = StaticText(~wp, Rect(10,10, 113, 20)).string_("Signal");
-		~viewout = StaticText(~wp, Rect(10,10, 100, 20)).string_("Music OUT");
-		~viewin = StaticText(~wp, Rect(10,10, 100, 20)).string_("Signal IN"+~compteurAnalyse.asString);
-		~stateOSC = StaticText(~wp, Rect(10, 100, 150, 20)).string_("OSC Off");
+		~viewgenomes = StaticText(~wp, Rect(10,10, 1000, 20)).string_(~genomes.mean.asString).stringColor_(Color.yellow);
+		~viewpopulation = StaticText(~wp, Rect(10,10, 125, 20)).string_("Crew"+~agents.asString).stringColor_(Color.yellow);
+		~viewagesagents = StaticText(~wp, Rect(10,10, 80, 20)).string_("Age"+~ages.mediane.asString).stringColor_(Color.yellow);
+		~viewviesagents = StaticText(~wp, Rect(10,10, 90, 20)).string_("Life"+~vies.mediane.asString).stringColor_(Color.yellow);
+		~viewenfantsagents = StaticText(~wp, Rect(10,10, 100, 20)).string_("Children"+~enfants.mediane.asString).stringColor_(Color.yellow);
+		~viewvoisins = StaticText(~wp, Rect(10,10, 113, 20)).string_("Neightboring").stringColor_(Color.yellow);
+		~viewsignaux = StaticText(~wp, Rect(10,10, 113, 20)).string_("Signal").stringColor_(Color.yellow);
+		~viewout = StaticText(~wp, Rect(10,10, 100, 20)).string_("Music OUT").stringColor_(Color.yellow);
+		~viewin = StaticText(~wp, Rect(10,10, 100, 20)).string_("Signal IN"+~compteurAnalyse.asString).stringColor_(Color.yellow);
+		~stateOSC = StaticText(~wp, Rect(10, 100, 150, 20)).string_("OSC Off").stringColor_(Color.yellow);
 		~stateOSC.align = \center;
-		~stateOSC.stringColor_(Color.white).font_(Font("Georgia", 12));
+		~stateOSC.stringColor_(Color.blue).font_(Font("Georgia", 12));
 		~stateOSC.background = Color.grey;
 	}
 
@@ -5838,6 +5879,7 @@ G                           Init Genome Agent (solo).
 					~ampSynthEffets=[];
 					~automationPanEffets=[];
 					~automationControlsEffets=[];
+					~automationSpeedEffets = [];
 					~listEffets.size.do({arg i;
 						~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 						~audioOutEffets=~audioOutEffets.add(0);
@@ -5849,6 +5891,8 @@ G                           Init Genome Agent (solo).
 						~ampSynthEffets=~ampSynthEffets.add(-3);
 						~automationPanEffets=~automationPanEffets.add(0);
 						~automationControlsEffets=~automationControlsEffets.add(0);
+						~automationSpeedEffets = ~automationSpeedEffets.add(24);
+						~listeFXTime = ~listeFXTime.add(24.reciprocal);
 					});
 					~listSynthEffets.size.do({arg effet;
 						~listSynthEffets.wrapAt(effet).set('out', ~audioOutEffets.wrapAt(effet) + ~startChannelAudioOut, 'amp', ~ampSynthEffets.wrapAt(effet).dbamp, 'pan', ~panSynthEffets.wrapAt(effet), 'control1', ~controlsSynthEffets.wrapAt(effet).wrapAt(0),  'control2', ~controlsSynthEffets.wrapAt(effet).wrapAt(1),  'control3', ~controlsSynthEffets.wrapAt(effet).wrapAt(2),  'control4', ~controlsSynthEffets.wrapAt(effet).wrapAt(3),  'control5', ~controlsSynthEffets.wrapAt(effet).wrapAt(4),  'control6', ~controlsSynthEffets.wrapAt(effet).wrapAt(5),  'control7', ~controlsSynthEffets.wrapAt(effet).wrapAt(6),  'control8', ~controlsSynthEffets.wrapAt(effet).wrapAt(7));
@@ -5862,8 +5906,7 @@ G                           Init Genome Agent (solo).
 					~ampEffets.valueAction_(-3);
 					~randomPanEffets.value_(0);
 					~randomControlsEffets.value_(0);
-					~speedAutoEffets.value_(24);
-					~speedAutoVerb.value_(24);
+					~speedEffets.valueAction_(24);
 				});
 				// key E -> Reset groupe des effets + Stop all effets
 				if(modifiers==131072 and: {unicode==69} and: {keycode==14}, {
@@ -5885,6 +5928,7 @@ G                           Init Genome Agent (solo).
 					~ampSynthEffets=[];
 					~automationPanEffets=[];
 					~automationControlsEffets=[];
+					~automationSpeedEffets = [];
 					~listEffets.size.do({arg i;
 					~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
 					~audioOutEffets=~audioOutEffets.add(0);
@@ -5896,6 +5940,8 @@ G                           Init Genome Agent (solo).
 					~ampSynthEffets=~ampSynthEffets.add(-3);
 					~automationPanEffets=~automationPanEffets.add(0);
 					~automationControlsEffets=~automationControlsEffets.add(0);
+					~automationSpeedEffets = ~automationSpeedEffets.add(24);
+					~listeFXTime = ~listeFXTime.add(24.reciprocal);
 					});
 					~listSynthEffets.size.do({arg effet;
 					~listSynthEffets.wrapAt(effet).set('out', ~audioOutEffets.wrapAt(effet) + ~startChannelAudioOut, 'amp', ~ampSynthEffets.wrapAt(effet).dbamp, 'pan', ~panSynthEffets.wrapAt(effet), 'control1', ~controlsSynthEffets.wrapAt(effet).wrapAt(0),  'control2', ~controlsSynthEffets.wrapAt(effet).wrapAt(1),  'control3', ~controlsSynthEffets.wrapAt(effet).wrapAt(2),  'control4', ~controlsSynthEffets.wrapAt(effet).wrapAt(3),  'control5', ~controlsSynthEffets.wrapAt(effet).wrapAt(4),  'control6', ~controlsSynthEffets.wrapAt(effet).wrapAt(5),  'control7', ~controlsSynthEffets.wrapAt(effet).wrapAt(6),  'control8', ~controlsSynthEffets.wrapAt(effet).wrapAt(7));
@@ -5909,8 +5955,7 @@ G                           Init Genome Agent (solo).
 					~ampEffets.valueAction_(-3);
 					~randomPanEffets.value_(0);
 					~randomControlsEffets.value_(0);
-					~speedAutoEffets.vlue_(24);
-					~speedAutoVerb.value_(24)*/
+					~speedEffets.valueAction_(24)*/
 					// Verb
 					~groupeVerb.freeAll;
 					/*~busVerbAudio.free;
@@ -5925,6 +5970,8 @@ G                           Init Genome Agent (solo).
 					~ampSynthVerb=[];
 					~automationPanVerb=[];
 					~automationControlsVerb=[];
+					~automationSpeedVerb = [];
+					~listeVerbTime = [];
 					~listVerb.size.do({arg i;
 						~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
 						~audioOutVerb=~audioOutVerb.add(0);
@@ -5936,6 +5983,8 @@ G                           Init Genome Agent (solo).
 						~ampSynthVerb=~ampSynthVerb.add(-3);
 						~automationPanVerb=~automationPanVerb.add(0);
 						~automationControlsVerb=~automationControlsVerb.add(0);
+						~automationSpeedVerb=~automationSpeedVerb.add(24);
+						~listeVerbTime = ~listeVerbTime.add(24.reciprocal);
 					});
 					~listSynthVerb.size.do({arg verb;
 						~listSynthVerb.wrapAt(verb).set('out', ~audioOutVerb.wrapAt(verb) + ~startChannelAudioOut, 'amp', ~ampSynthVerb.wrapAt(verb).dbamp, 'pan', ~panSynthVerb.wrapAt(verb), 'control1', ~controlsSynthVerb.wrapAt(verb).wrapAt(0),  'control2', ~controlsSynthVerb.wrapAt(verb).wrapAt(1),  'control3', ~controlsSynthVerb.wrapAt(verb).wrapAt(2),  'control4', ~controlsSynthVerb.wrapAt(verb).wrapAt(3),  'control5', ~controlsSynthVerb.wrapAt(verb).wrapAt(4),  'control6', ~controlsSynthVerb.wrapAt(verb).wrapAt(5),  'control7', ~controlsSynthVerb.wrapAt(verb).wrapAt(6),  'control8', ~controlsSynthVerb.wrapAt(verb).wrapAt(7));
@@ -5949,6 +5998,7 @@ G                           Init Genome Agent (solo).
 					~ampVerb.valueAction_(-3);
 					~randomPanVerb.value_(0);
 					~randomControlsVerb.value_(0);
+					~speedVerb.valueAction_(24);
 				});
 				// key e -> Mode elitiste on/off
 				if(modifiers==0 and: {unicode==101} and: {keycode==14}, {
@@ -6844,14 +6894,14 @@ G                           Init Genome Agent (solo).
 			datafile=datafile.add(~jitterPanVerb.value);//202
 			datafile=datafile.add(~jitterPanSynthVerb);//203
 			datafile=datafile.add(~jitterControlsSynthVerb);//204
-			datafile=datafile.add(~speedAutoEffets.value);//205
-			datafile=datafile.add(~speedAutoVerb.value);//206
-			/*datafile=datafile.add(~valRec1.value);//207
-			datafile=datafile.add(~valRec2.value);//208*/
+			datafile=datafile.add(~speedEffets.value);//205
+			datafile=datafile.add(~automationSpeedEffets);//206
+			datafile=datafile.add(~speedVerb.value);//207
+			datafile=datafile.add(~automationSpeedVerb);//208
 			// + Genome
-			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//207
+			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//209
 			// + Sequence
-			if(flagSequence == 'on', {datafile=datafile.add([~listeagentfreq,~listeagentamp,~listeagentduree])});//208
+			if(flagSequence == 'on', {datafile=datafile.add([~listeagentfreq,~listeagentamp,~listeagentduree])});//210
 			datafile.value;
 		};
 
@@ -7072,6 +7122,7 @@ G                           Init Genome Agent (solo).
 			~ampSynthEffets=datafile.wrapAt(97);
 			~automationPanEffets=datafile.wrapAt(118);
 			~automationControlsEffets=datafile.wrapAt(119);
+			~automationSpeedEffets=datafile.wrapAt(206);
 			~listSynthEffets.size.do({arg effet;
 				~listSynthEffets.wrapAt(effet).set('out', ~audioOutEffets.wrapAt(effet), 'amp', ~ampSynthEffets.wrapAt(effet).dbamp, 'pan', ~panSynthEffets.wrapAt(effet), 'control1', ~controlsSynthEffets.wrapAt(effet).wrapAt(0),  'control2', ~controlsSynthEffets.wrapAt(effet).wrapAt(1),  'control3', ~controlsSynthEffets.wrapAt(effet).wrapAt(2),  'control4', ~controlsSynthEffets.wrapAt(effet).wrapAt(3),  'control5', ~controlsSynthEffets.wrapAt(effet).wrapAt(4),  'control6', ~controlsSynthEffets.wrapAt(effet).wrapAt(5),  'control7', ~controlsSynthEffets.wrapAt(effet).wrapAt(6),  'control8', ~controlsSynthEffets.wrapAt(effet).wrapAt(7));
 				if(~playSynthEffets.wrapAt(effet) == 1, {~listSynthEffets.wrapAt(effet).run(true)},{~listSynthEffets.wrapAt(effet).run(false)});
@@ -7085,6 +7136,7 @@ G                           Init Genome Agent (solo).
 			~jitterPanEffets.valueAction_(datafile.wrapAt(148));
 			~randomPanEffets.value_(~automationPanEffets.wrapAt(datafile.wrapAt(99)));
 			~randomControlsEffets.value_(~automationControlsEffets.wrapAt(datafile.wrapAt(99)));
+			~speedEffets.valueAction_(datafile.wrapAt(205));
 			//~startAutomation.valueAction_(datafile.wrapAt(104));
 			//~flagInitAutomation=datafile.wrapAt(103);if(~flagInitAutomation=='on',{~initAutomation.valueAction_(1)},{~initAutomation.valueAction_(0)});
 			//~flagUniversAutomation=datafile.wrapAt(106);if(~flagUniversAutomation=='on',{~universAutomation.valueAction_(1)},{~universAutomation.valueAction_(0)});
@@ -7208,6 +7260,7 @@ G                           Init Genome Agent (solo).
 			~ampSynthVerb=datafile.wrapAt(193);
 			~automationPanVerb=datafile.wrapAt(200);
 			~automationControlsVerb=datafile.wrapAt(201);
+			~automationSpeedVerb=datafile.wrapAt(208);
 			~listSynthVerb.size.do({arg verb;
 				~listSynthVerb.wrapAt(verb).set('out', ~audioOutVerb.wrapAt(verb), 'amp', ~ampSynthVerb.wrapAt(verb).dbamp, 'pan', ~panSynthVerb.wrapAt(verb), 'control1', ~controlsSynthVerb.wrapAt(verb).wrapAt(0),  'control2', ~controlsSynthVerb.wrapAt(verb).wrapAt(1),  'control3', ~controlsSynthVerb.wrapAt(verb).wrapAt(2),  'control4', ~controlsSynthVerb.wrapAt(verb).wrapAt(3),  'control5', ~controlsSynthVerb.wrapAt(verb).wrapAt(4),  'control6', ~controlsSynthVerb.wrapAt(verb).wrapAt(5),  'control7', ~controlsSynthVerb.wrapAt(verb).wrapAt(6),  'control8', ~controlsSynthVerb.wrapAt(verb).wrapAt(7));
 				if(~playSynthVerb.wrapAt(verb) == 1, {~listSynthVerb.wrapAt(verb).run(true)},{~listSynthVerb.wrapAt(verb).run(false)});
@@ -7221,19 +7274,15 @@ G                           Init Genome Agent (solo).
 			~jitterPanVerb.valueAction_(datafile.wrapAt(202));
 			~randomPanVerb.value_(~automationPanVerb.wrapAt(datafile.wrapAt(195)));
 			~randomControlsVerb.value_(~automationControlsVerb.wrapAt(datafile.wrapAt(195)));
-			//~automationPanVerb=datafile.wrapAt(203);
-			//~automationControlsVerb=datafile.wrapAt(204);
-			~speedAutoEffets.valueAction_(datafile.wrapAt(205));
-			~speedAutoVerb.valueAction_(datafile.wrapAt(206));
-			/*~valRec1.value_(datafile.wrapAt(207));
-			~valRec2.value_(datafile.wrapAt(208));*/
-			// + Genome (207) + Sequence (208)
+			~speedEffets.valueAction_(datafile.wrapAt(205));
+			~speedVerb.valueAction_(datafile.wrapAt(207));
+			// + Genome (209) + Sequence (210)
 			if(flagGenome == 'on' and: {datafile.wrapAt(207).size != 0}, {
-				~genomes=datafile.wrapAt(207);// Load Genomes
+				~genomes=datafile.wrapAt(209);// Load Genomes
 				~startpopulation = ~agents = ~genomes.size;
 				~foncInitAgents.value;
-				~genomes=datafile.wrapAt(207); // Load Genomes again for INIT
-				if(flagSequence == 'on' and: {datafile.wrapAt(208).wrapAt(0).size != 0}, {sequence=datafile.wrapAt(208);~listeagentfreq=sequence.wrapAt(0);~listeagentamp=sequence.wrapAt(1);~listeagentduree=sequence.wrapAt(2)}, {flagSequence='off'})},
+				~genomes=datafile.wrapAt(209); // Load Genomes again for INIT
+				if(flagSequence == 'on' and: {datafile.wrapAt(210).wrapAt(0).size != 0}, {sequence=datafile.wrapAt(210);~listeagentfreq=sequence.wrapAt(0);~listeagentamp=sequence.wrapAt(1);~listeagentduree=sequence.wrapAt(2)}, {flagSequence='off'})},
 			{~foncInitAgents.value});
 		};
 
