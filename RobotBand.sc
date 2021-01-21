@@ -11790,7 +11790,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6);// + ou - local;
@@ -11822,7 +11822,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					buffer = RecordBuf.ar(ineffet, localBuf);
 					rate = control1*4;
 					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
@@ -12430,7 +12430,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6);// + ou - local;
@@ -12461,7 +12461,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					buffer = RecordBuf.ar(ineffet, localBuf);
 					rate = control1*4;
 					// effet

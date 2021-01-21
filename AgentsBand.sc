@@ -12416,7 +12416,7 @@ G                           Init Genome Agent (solo).
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, in1, in2, fft1, fft2, rate2, local, ambisonic;
-					local = LocalBuf(44100, 1).clear;
+					local = LocalBuf(s.sampleRate, 1).clear;
 					// Set Rate Freq
 					rate=2**rate.cpsoct;
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
@@ -12678,7 +12678,7 @@ G                           Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125, in=0, flag;
 					var dureesample, envelope, ambisonic, main, inputSig, recHead, playHead, playRate, playHeadGreaterOne, playHeadMinusOne, recHeadGreaterOne, recHeadMinusOne, trigger;
 					// Set Data
-					buffer = LocalBuf(44100 * BufDur.kr(buffer), 1).clear;
+					buffer = LocalBuf(s.sampleRate * BufDur.kr(buffer), 1).clear;
 					inputSig = if(flag < 1, Mix(SoundIn.ar(in)), In.ar(in));
 					// Set Rate Freq
 					rate=2**rate.cpsoct;
@@ -13127,7 +13127,7 @@ G                           Init Genome Agent (solo).
 					var ineffet, effet, ambisonic, localBuf, buffer, local, rate;
 					// Input
 					ineffet=Mix(In.ar(in, 2));
-					localBuf = LocalBuf(44100, 1);
+					localBuf = LocalBuf(s.sampleRate, 1);
 					buffer = RecordBuf.ar(ineffet, localBuf);
 					local = LocalIn.ar(1);
 					rate = control3*4;
@@ -13164,7 +13164,7 @@ G                           Init Genome Agent (solo).
 					var ineffet, effet, ambisonic, localBuf, buffer, local, rate;
 					// Input
 					ineffet=Mix(In.ar(in, 2));
-					localBuf = LocalBuf(44100, 1);
+					localBuf = LocalBuf(s.sampleRate, 1);
 					buffer = RecordBuf.ar(ineffet, localBuf);
 					local = LocalIn.ar(1);
 					rate = control3*4;
@@ -13200,7 +13200,7 @@ G                           Init Genome Agent (solo).
 					var ineffet, effet, ambisonic, localBuf, buffer, local, rate;
 					// Input
 					local = LocalIn.ar(1);
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, 2);// + ou - local;
@@ -13228,7 +13228,7 @@ G                           Init Genome Agent (solo).
 					var ineffet, effet, ambisonic, localBuf, buffer, local, rate;
 					// Input
 					local = LocalIn.ar(1);
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2.reciprocal) + (control3*4), Dust.kr(control4.reciprocal), Logistic.kr(control5 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(localBuf), 1, 0.333, 0.5) + local * amp;
@@ -13255,7 +13255,7 @@ G                           Init Genome Agent (solo).
 			SynthDef("PV_MagFreeze",
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control2 * 2).clip(0.0625, 2.0), 1.0, control3 * BufFrames.kr(localBuf), 1);
@@ -13285,7 +13285,7 @@ G                           Init Genome Agent (solo).
 			SynthDef("PV_PlayBuf",
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
@@ -13315,7 +13315,7 @@ G                           Init Genome Agent (solo).
 			SynthDef("PV_BinPlayBuf",
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
-					localBuf = LocalBuf(44100, 1).clear;
+					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
@@ -14014,7 +14014,7 @@ G                           Init Genome Agent (solo).
 					var ineffet, effet, buffer, trig, ambisonic;
 					// Input
 					ineffet=Mix(In.ar(in, 2));
-					buffer = LocalBuf(44100, 1).clear;
+					buffer = LocalBuf(s.sampleRate, 1).clear;
 					trig = Dust.kr(control1 * 64 + 0.01);
 					RecordBuf.ar(ineffet, buffer, Saw.kr(control2 * 16 + 0.01).abs, trigger: trig);
 					// effet
@@ -14043,7 +14043,7 @@ G                           Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf, buffer, local,rate;
 					ineffet=Mix(In.ar(in, 2));
-					localBuf = LocalBuf(44100, 1);
+					localBuf = LocalBuf(s.sampleRate, 1);
 					buffer = RecordBuf.ar(ineffet, localBuf);
 					local = LocalIn.ar(1);
 					rate = control1*4;

@@ -7736,7 +7736,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		SynthDef('PV_MagFreeze',
 			{arg in=0, out=0, gate=0.5, xFade=0.5,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
-				var chain, buffer=LocalBuf(44100, 1).clear, envelope;
+				var chain, buffer=LocalBuf(s.sampleRate, 1).clear, envelope;
 				in = In.ar(in);
 				// Envelope
 				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
@@ -7796,7 +7796,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				//FX
-				buffer = LocalBuf(44100 * 1, 1).clear;
+				buffer = LocalBuf(s.sampleRate * 1, 1).clear;
 				trig = Impulse.kr(bpm);
 				RecordBuf.ar(in, buffer, Saw.kr(energy).abs, trigger: trig);
 				chain = Convolution2.ar(in, buffer, trig, 2048) * envelope;

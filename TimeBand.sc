@@ -8,13 +8,13 @@ TimeBand {
 
 	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth;
 
-	*new	{arg path="~/Documents/TimeBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output";
+	*new	{arg path="~/Documents/TimeBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
-		^super.new.init(path, numberOut, numberRec, format, devIn, devOut);
+		^super.new.init(path, numberOut, numberRec, format, devIn, devOut, size);
 
 	}
 
-	init	{arg path, numberOut, numberRec, format, devIn, devOut;
+	init	{arg path, numberOut, numberRec, format, devIn, devOut, size;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -31,15 +31,15 @@ TimeBand {
 		s.options.memSize = 2 ** 20;
 		s.options.inDevice = devIn;
 		s.options.outDevice = devOut;
-		s.options.device = "JackRouter";// use a specific soundcard
-		s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware*/
+		//s.options.device = "JackRouter";// use a specific soundcard
+		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware*/
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
 		numberAudioOut = numberOut;
 		recChannels = numberRec;
 		s.recChannels_(numberRec);
 		s.options.numInputBusChannels_(20);
 		s.options.numOutputBusChannels_(numberOut);
-		//s.options.hardwareBufferSize_(256);
+		s.options.hardwareBufferSize_(size);
 		typeMasterOut = format;
 
 		// Run the Soft
@@ -4053,7 +4053,7 @@ f						Switch File for Analyze.
 		// PV_MagFreeze
 		SynthDef('PV_MagFreeze',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
-				var chain, signal=In.ar(in, 1), buffer=LocalBuf(44100, 1).clear;
+				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear;
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
 				chain = PlayBuf.ar(1, buffer, (ctrl1 / 20000 * 4).clip(0.25, 4), 1, loop: 1);
 				chain = FFT(LocalBuf(2048, 1), chain);
@@ -4286,7 +4286,7 @@ f						Switch File for Analyze.
 		// DJ_FX
 		SynthDef('DJ_FX',
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol;
-				var chain, signal=In.ar(in, 1), buffer=LocalBuf(44100, 1).clear, local=LocalIn.ar(1);
+				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear, local=LocalIn.ar(1);
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
 				chain = Mix(PlayBuf.ar(1, buffer, (ctrl1 / 20000 * 4) + LFNoise2.kr(ctrl2.reciprocal), 1, 0, loop: 1) + (local * 0.5));
 				LocalOut.ar(DelayC.ar(chain, 1, ctrl3.clip(0.01, 1)));
@@ -4366,7 +4366,7 @@ f						Switch File for Analyze.
 		// WarpDelay
 		SynthDef('WarpDelay',
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol;
-				var chain, signal=In.ar(in, 1), buffer=LocalBuf(44100 * 4, 1).clear;
+				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
 				LocalIn.ar(1).clear;
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
 				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), ctrl3.clip(0.01, 1), -1, (ctrl4 * 16).clip(1, 16), 0, 2, vol, signal * (1 - vol)));
