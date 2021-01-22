@@ -7,13 +7,13 @@ MatrixBand {
 	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrixBand, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrixBand, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrixBand, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, groupeBuffer, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, switchAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm;
 	var flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand;
 
-	*new	{arg path="~/Documents/MatrixBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output";
+	*new	{arg path="~/Documents/MatrixBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
-		^super.new.init(path, o, r, f, devIn, devOut);
+		^super.new.init(path, o, r, f, devIn, devOut, size);
 
 	}
 
-	init	{arg path, o, r, f, devIn, devOut;
+	init	{arg path, o, r, f, devIn, devOut, size;
 
 		//// Setup GUI style
 		//GUI.qt;
@@ -36,12 +36,12 @@ MatrixBand {
 		s.options.inDevice = devIn;
 		s.options.outDevice = devOut;
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		s.options.device = "JackRouter";// use Jack if is available
-		s.options.sampleRate = nil;// use the currently selected samplerate of the select hardware
+		//s.options.device = "JackRouter";// use Jack if is available
+		//s.options.sampleRate = nil;// use the currently selected samplerate of the select hardware
 		s.options.numInputBusChannels_(20);
 		s.recChannels_(recChannels);
 		s.options.numOutputBusChannels_(numberAudioOut);
-		//s.options.hardwareBufferSize_(256);
+		s.options.hardwareBufferSize_(size);
 		headerFormat = "aiff";
 		s.recHeaderFormat_(headerFormat);
 		sampleFormat = "float";
@@ -3153,15 +3153,11 @@ y ... -					Musical keys.
 				s.bind{
 					recBuffer1.free;
 					s.sync;
-					/*bufferRecording1.free;
-					s.sync;*/
-					if(bufferOne == "Nil", {bufferOne.free; bufferOne = Buffer.alloc(s, 44100 * time.value, 1); groupe.set(\bufferOne, bufferOne)});
+					recBuffer1 = Buffer.alloc(s, s.sampleRate * time.value, 1);
 					s.sync;
-					recBuffer1 = Buffer.alloc(s, 44100 * time.value, 1);
+					bufferRecording1.free;
 					s.sync;
-					/*bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run,  ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToHead);
-					s.sync;*/
-					groupe.set(\buffer, recBuffer1.bufnum);
+					bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run,  ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToHead);
 					s.sync;
 				};
 			};
@@ -3206,15 +3202,11 @@ y ... -					Musical keys.
 				s.bind{
 					recBuffer2.free;
 					s.sync;
-					/*bufferRecording2.free;
-					s.sync;*/
-					if(bufferTwo == "Nil", {bufferTwo.free; bufferTwo = Buffer.alloc(s, 44100 * time.value, 1); groupe.set(\bufferOne, bufferTwo)});
+					recBuffer2 = Buffer.alloc(s, s.sampleRate * time.value, 1);
 					s.sync;
-					recBuffer2 = Buffer.alloc(s, 44100 * time.value, 1);
+					bufferRecording2.free;
 					s.sync;
-					/*bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToHead);
-					s.sync;*/
-					groupe.set(\buffer, recBuffer2.bufnum);
+					bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToHead);
 					s.sync;
 				};
 			};
@@ -3236,13 +3228,13 @@ y ... -					Musical keys.
 
 			// Load and Set Buffer 1 et 2
 			s.bind{
-				if(bufferOne != "Nil", {bufferOne = fonctionLoadSample.value(bufferOne, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferOne = Buffer.alloc(s, 44100 * durSampleOneSlider.value, 1)});
+				if(bufferOne != "Nil", {bufferOne = fonctionLoadSample.value(bufferOne, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferOne = Buffer.alloc(s, s.sampleRate * durSampleOneSlider.value, 1)});
 				s.sync;
-				if(bufferTwo != "Nil", {bufferTwo = fonctionLoadSample.value(bufferTwo, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferTwo = Buffer.alloc(s, 44100 * durSampleTwoSlider.value, 1)});
+				if(bufferTwo != "Nil", {bufferTwo = fonctionLoadSample.value(bufferTwo, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferTwo = Buffer.alloc(s, s.sampleRate * durSampleTwoSlider.value, 1)});
 				s.sync;
-				recBuffer1 = Buffer.alloc(s, 44100 * durSampleOneSlider.value, 1);
+				recBuffer1 = Buffer.alloc(s, s.sampleRate * durSampleOneSlider.value, 1);
 				s.sync;
-				recBuffer2 = Buffer.alloc(s, 44100 * durSampleTwoSlider.value, 1);
+				recBuffer2 = Buffer.alloc(s, s.sampleRate * durSampleTwoSlider.value, 1);
 				s.sync;
 
 				// New RecBuffer Recording
@@ -4938,7 +4930,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -4992,7 +4984,7 @@ y ... -					Musical keys.
 				// Set Direct AudioIn (levelLocalIn)
 				in = In.ar(busIn);
 				// Synth
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl1, mul: 128 * ctrl2), 1, BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl2, mul: 128 * ctrl3), Impulse.kr(ctrl1 * 100), BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5045,7 +5037,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl1 * dureeSample.reciprocal * 10, mul: ctrl2, add: BufRateScale.kr(buffer) * rate * reverse1), 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl2 * dureeSample.reciprocal * 10, mul: ctrl3, add: BufRateScale.kr(buffer) * rate * reverse1), Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5205,8 +5197,8 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Resonz.ar(chain, XLine.ar(108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2 + 1.midicps, dureeSample*ctrl3));
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = Resonz.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5262,8 +5254,8 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				freq = freq.clip(20, 20000);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2 + 1.midicps, dureeSample*ctrl3), 0.333), RHPF.ar(chain, XLine.ar(108.midicps*ctrl4+1.midicps, 108.midicps*ctrl5 + 1.midicps, dureeSample*ctrl6), 0.333));
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4), 0.333), RHPF.ar(chain, XLine.ar(108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6 + 1.midicps, dureeSample*ctrl7), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5317,7 +5309,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = Squiz.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne), ctrl1 * 10, ctrl2 * 10);
+				chain = Squiz.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne), ctrl2 * 10, ctrl3 * 10);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5371,7 +5363,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = WaveLoss.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne), ctrl1 * 40, 40, abs(ctrl1 * 2 - 1));
+				chain = WaveLoss.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne), ctrl2 * 40, 40, abs(ctrl3 * 2 - 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5425,7 +5417,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = FreqShift.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne), ctrl1 * 1024 - 512, ctrl2 * 2pi);
+				chain = FreqShift.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne), ctrl2 * 1024 - 512, ctrl3 * 2pi);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5531,13 +5523,13 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set offset
-				offset1 = if(ctrl1.value <= 0.0 , offset1, Logistic.kr(ctrl1*4, 1, Rand(0, 1)));
+				offset1 = if(ctrl2.value <= 0.0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				local = LocalBuf(4096, 1).clear;
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPbufRd.ar(1, local, Phasor.ar(0, ctrl2 + 1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2);
-				BufWr.ar(in1 + chain * 0.5, local, Phasor.ar(0, ctrl3 + 0.001, 0, BufFrames.kr(local)), 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPbufRd.ar(1, local, Phasor.ar(0, ctrl4 + 1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2);
+				BufWr.ar(in1 + chain * 0.5, local, Phasor.ar(0, ctrl5 + 0.001, 0, BufFrames.kr(local)), 1);
 				// chain = Limiter.ar(chain + in1, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5587,14 +5579,14 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set offset
-				offset1 = if(ctrl1.value <= 0 , offset1, Logistic.kr(ctrl1*4, 1, Rand(0, 1)));
+				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3 , ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				local = LocalBuf(4096, 1).clear;
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				in1=HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)* offset1,loopOne, ctrlHP1, ctrlHP2) * envelope;
-				in2 = HPbufRd.ar(1, local, Phasor.ar(0, ctrl2+1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2);
+				in1=HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)* offset1,loopOne, ctrlHP1, ctrlHP2) * envelope;
+				in2 = HPbufRd.ar(1, local, Phasor.ar(0, ctrl4+1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2);
 				chain = in1 + in2 * 0.5;
-				BufWr.ar(chain, local, Phasor.ar(0, ctrl3+0.01, 0, BufFrames.kr(local)), 1);
+				BufWr.ar(chain, local, Phasor.ar(0, ctrl5+0.01, 0, BufFrames.kr(local)), 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5644,11 +5636,11 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set offset
-				offset1 = if(ctrl4.value <= 0 , offset1, Logistic.kr(ctrl4*4, 1, Rand(0, 1)));
+				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 10, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1.0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Line.kr(ctrl1.clip(0.01, 0.99)/100, ctrl2.clip(0.01, 0.99)/100, ctrl3.clip(0.01, 1.0)*dureeSample), 1, 0.5);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = CombC.ar(chain, 0.1, Line.kr(ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5698,11 +5690,11 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set offset
-				offset1 = if(ctrl5.value <= 0 , offset1, Logistic.kr(ctrl5*4, 1, Rand(0, 1)));
+				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1.0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Line.kr(Rand(ctrl1.clip(0.01, 0.99), ctrl2.clip(0.01, 0.99))/100, Rand(ctrl1.clip(0.01, 0.99), ctrl2.clip(0.01, 0.99))/100, ctrl3.clip(0.01, 1.0)*dureeSample), 1, 0.5);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = CombC.ar(chain, 0.1, Line.kr(Rand(ctrl2.clip(0.01, 0.99), ctrl3.clip(0.01, 0.99))/100, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5753,8 +5745,8 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1.0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, ctrl1, ctrl2, ctrl3);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, ctrl2, ctrl3, ctrl4);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5864,9 +5856,9 @@ y ... -					Musical keys.
 				//ctrl4 = if(ctrl4.value <= 0 , ctrl4.value, Logistic.kr(ctrl4*4, 1, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain =  HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1.0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain= Mix(RHPF.ar(chain,  formantfreqs * freq * ctrl1, formantbandwidths / (formantfreqs * freq * ctrl1.clip(0.01, 1.0)) * (ctrl2.clip(0.01, 1.0) / 33), 0.5));
-				chain = BBandPass.ar(chain, LFNoise2.kr(dureeSample) + 1 * 1000, ctrl3.clip(0.01, 1.0), 1);
+				chain =  HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain= Mix(RHPF.ar(chain,  formantfreqs * freq * ctrl2, formantbandwidths / (formantfreqs * freq * ctrl3.clip(0.01, 1.0)) * (ctrl4.clip(0.01, 1.0) / 33), 0.5));
+				chain = BBandPass.ar(chain, LFNoise2.kr(dureeSample) + 1 * 1000, ctrl5.clip(0.01, 1.0), 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -5916,11 +5908,11 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set offset
-				ctrl3 = if(ctrl3.value <= 0 , ctrl3.value, Logistic.kr(ctrl3 * 4, 1, Rand(0, 1)));
+				ctrl3 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1.0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, 1));
+				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -8041,9 +8033,9 @@ y ... -					Musical keys.
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
 				// Synth
-				chain1 = PlayBuf.ar(1, buffer1, BufRateScale.kr(buffer1) * rate * reverse1, 0, BufFrames.kr(buffer1) * offset1, loop: loopOne);
-				chain2 = PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, 0, BufFrames.kr(buffer2) * offset2, loop: loopTwo);
-				chain = Concat.ar(chain2, chain1, (ctrl1 * 4).clip(1, 4), ctrl2.clip(0.01, 1.0), (ctrl3 * 4).clip(1, 4), ctrl4.clip(0.01,0.5), ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, mul: 0.5);
+				chain1 = PlayBuf.ar(1, buffer1, BufRateScale.kr(buffer1) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer1) * offset1, loop: loopOne);
+				chain2 = PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, Impulse.kr(ctrl2 * 100), BufFrames.kr(buffer2) * offset2, loop: loopTwo);
+				chain = Concat.ar(chain2, chain1, (ctrl3 * 4).clip(1, 4), ctrl4.clip(0.01, 1.0), (ctrl5 * 4).clip(1, 4), ctrl6.clip(0.01,0.5), ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, mul: 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -9377,7 +9369,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9435,7 +9427,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9493,7 +9485,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9551,7 +9543,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9609,7 +9601,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9667,7 +9659,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9725,7 +9717,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9783,7 +9775,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9841,7 +9833,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9899,7 +9891,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
 				fft2 = FFT(LocalBuf(2048, 1), in2);
@@ -9957,7 +9949,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-				RecordBuf.ar(in1, LocalBuf(44100 * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loop: loopOne) * amp;
 				chain = Convolution(in1, in2, 2048) * 0.1;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
@@ -10658,12 +10650,12 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
 				// Synth
 				inforce = LFPulse.ar(ctrl1 * duree);
-					k = ctrl2 * 20;
-					d = ctrl3 * 0.001;
-					outforce = Spring.ar(inforce, k, d);
-					outforce = outforce * freq + freq;
-					//main = SinOsc.ar(freq, 0, 0.5);
-					chain = PMOsc.ar(freq, outforce, Line.kr(ctrl4, ctrl5 * 2pi), 0, 0.25);
+				k = ctrl2 * 20;
+				d = ctrl3 * 0.001;
+				outforce = Spring.ar(inforce, k, d);
+				outforce = outforce * freq + freq;
+				//main = SinOsc.ar(freq, 0, 0.5);
+				chain = PMOsc.ar(freq, outforce, Line.kr(ctrl4, ctrl5 * 2pi), 0, 0.25);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',
@@ -11456,7 +11448,7 @@ y ... -					Musical keys.
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set Reverse sample
 				reverse = if(ctrl4.value >= 0.5, 1.neg, 1);
-				local = LocalBuf(44100 * BufDur.kr(bufferOne), 1);
+				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, loop: 1);
@@ -11501,7 +11493,7 @@ y ... -					Musical keys.
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set Reverse sample
 				reverse = if(ctrl4.value >= 0.5, 1.neg, 1);
-				local = LocalBuf(44100 * BufDur.kr(bufferOne), 1);
+				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, loop: 1);
@@ -11546,7 +11538,7 @@ y ... -					Musical keys.
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set Reverse sample
 				reverse = if(ctrl7.value >= 0.5, 1.neg, 1);
-				local = LocalBuf(44100 * BufDur.kr(bufferOne), 1);
+				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, loop: 1);
@@ -12489,7 +12481,7 @@ y ... -					Musical keys.
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
-				buffer = LocalBuf(44100, 1).clear;
+				buffer = LocalBuf(s.sampleRate, 1).clear;
 				trig = Dust.kr(duree.reciprocal);
 				RecordBuf.ar(in, buffer, Saw.kr(freq).abs, trigger: trig);
 				chain = Convolution2L.ar(in, buffer, trig * tempo, 2048) * 0.1;
