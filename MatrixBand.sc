@@ -3159,10 +3159,10 @@ y ... -					Musical keys.
 					s.sync;
 					recBuffer1 = Buffer.alloc(s, s.sampleRate * time.value, 1);
 					s.sync;
-					bufferRecording1.free;
+					/*bufferRecording1.free;
 					s.sync;
 					bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run,  ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToHead);
-					s.sync;
+					s.sync;*/
 				};
 			};
 			durSampleOneSlider.value_(timeBuf1);
@@ -3208,10 +3208,10 @@ y ... -					Musical keys.
 					s.sync;
 					recBuffer2 = Buffer.alloc(s, s.sampleRate * time.value, 1);
 					s.sync;
-					bufferRecording2.free;
+					/*bufferRecording2.free;
 					s.sync;
 					bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToHead);
-					s.sync;
+					s.sync;*/
 				};
 			};
 			durSampleTwoSlider.value_(timeBuf2);
@@ -3240,7 +3240,6 @@ y ... -					Musical keys.
 				s.sync;
 				recBuffer2 = Buffer.alloc(s, s.sampleRate * timeBuf2, 1);
 				s.sync;
-
 				// New RecBuffer Recording
 				synthRec = Synth.new("MatrixBand AudioIn",
 					[\in, canalIn, 'busIn', listeBusInOut.at(canalIn)], groupe, \addToTail);
@@ -3248,8 +3247,6 @@ y ... -					Musical keys.
 				bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run, ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToTail);
 				s.sync;
 				bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToTail);
-				s.sync;
-				groupe.set(\busIn, listeBusInOut.at(canalIn));
 				s.sync;
 			};
 
