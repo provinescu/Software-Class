@@ -810,7 +810,7 @@ y ... -					Musical keys.
 		};
 
 		fonctionLoadSynthesizer = {arg data;
-			var name, index, buffer1, buffer2, canalIn;
+			var name, index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2;
 			// Set name Synthesizer or FX
 			name = data.last.split($[).at(0);
 			choiceSynth.do({arg synth, item; if(name == synth.asString, {index = item})});
@@ -818,7 +818,9 @@ y ... -					Musical keys.
 			buffer1 = data.at(22);
 			buffer2 = data.at(32);
 			canalIn = data.at(4);
-			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn);
+			timeBuf1 = data.at(20);
+			timeBuf2 = data.at(30);
+			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2);
 			listeWindowSynth.last.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
 				// StaticText
@@ -863,7 +865,9 @@ y ... -					Musical keys.
 				// Load Sample 1 et 2
 				if(item == 18 or: {item == 28}, {nil});
 				// Duree sample 1 et 2
-				if(item == 20 or: {item == 30}, {view.valueAction_(data.at(item).value)});
+				if(item == 20 or: {item == 30}, {
+					//view.valueAction_(data.at(item).value);
+				});
 				//Bus In no evaluation
 				if(item == 4, {view.value_(data.at(item))});
 				// All others Sliders
@@ -1006,12 +1010,12 @@ y ... -					Musical keys.
 			});
 		};
 
-		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn;
+		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2;
 			// New Group
 			listeGroupeSynth=listeGroupeSynth.add(Group.new(groupeSynth, \addToTail));
 			listeGroupeSynthID = listeGroupeSynthID.add(listeGroupeSynth.at(listeGroupeSynth.size - 1).nodeID);
 			// New Window
-			listeWindowSynth=listeWindowSynth.add(fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn));
+			listeWindowSynth=listeWindowSynth.add(fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2));
 			// Init Band for Synth
 			fonctionInitBand.value(numFhzBand);
 			//Document.listener.string="";
@@ -1899,7 +1903,7 @@ y ... -					Musical keys.
 				});
 				// key N -> Add a new synth or fx
 				if(char == $N, {
-					fonctionAddSynthFX.value(2, "Nil", "Nil", 0);// Fonction Add SinOsc by default
+					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0);// Fonction Add SinOsc by default
 				});
 				// Key b -> switch recording buffer data OSC on/off
 				if(char == $b,  {
@@ -2846,7 +2850,7 @@ y ... -					Musical keys.
 		//Add a New Synth or FX
 		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = choiceSynth;
 		addNewSynth.action = {arg item;
-			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0)});// Fonction Add Synth or FX
+			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0)});// Fonction Add Synth or FX
 			s.bind{
 				listeWindowSynth.last.view.children.at(0).valueAction_(1);// Synth Play On
 				s.sync;
@@ -2914,7 +2918,7 @@ y ... -					Musical keys.
 		////// Fonction Window for controling Synth + FX (listeGroupeSynth) ///////
 		///////////////////
 
-		fonctionWindowSynth={arg name, groupe, synthNumber, bufferOne, bufferTwo, canalIn;
+		fonctionWindowSynth={arg name, groupe, synthNumber, bufferOne, bufferTwo, canalIn, timeBuf1, timeBuf2;
 			var windowSynth, startStop, sourceOut, sendBusOut, sendBusFX, sendLocalBuf, panSlider, freqSlider, freqTranSlider, ampSlider, dureeSlider, dureeTranSlider, quantaSlider, moveNodeAfter, moveNodeBefore, controlsAntiClick, controlsNode, startAutomationSynthControls, jitterAutomationSynthControls, tempoAutomationSynthControls, startAutomationSynthMusicData, tempoAutomationSynthMusicData, jitterAutomationMusicData, tdefControls, tdefMusicData, switchBufferOne, textBufferOne, switchBufferTwo, textBufferTwo, loopBufferOne, loopBufferTwo, switchBufferOneAction, reverseBufferOneAction, reverseBufferTwoAction, knobPreLevel1, knobPostLevel1, knobRecOn1, knobOffset1, knobPreLevel2, knobPostLevel2, knobRecOn2, knobOffset2,
 			switchBufferTwoAction, sourceBusIn, sourceBusOut, sourceFXin, sourceFXout, synthRec, userOperatingSystemSynth, windowView=[], envelopeSynth, tdefSynthesizer, bufferRecording1, bufferRecording2, changeSynth, fonctionEnabledSlider, fonctionEnabledControls, fonctionSynthTdefFX, synthAndFX=nil, recBuffer1, recBuffer2, automationSliderFreq, automationSliderDur, automationSliderSynth, automationNumberSynth, automationSliderBuffer, durSampleOneSlider, durSampleTwoSlider,
 			freq=0, amp=0, duree=0.01, dureeTdef=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0, indexMusicData=9999, compteurChord=0, listeFreq=[], listeAmp=[],
@@ -3161,7 +3165,7 @@ y ... -					Musical keys.
 					s.sync;
 				};
 			};
-			durSampleOneSlider.value_(timeMaximum);
+			durSampleOneSlider.value_(timeBuf1);
 			durSampleOneSlider.step_(0.01);
 			// Button Reverse one
 			reverseBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
@@ -3210,7 +3214,7 @@ y ... -					Musical keys.
 					s.sync;
 				};
 			};
-			durSampleTwoSlider.value_(timeMaximum);
+			durSampleTwoSlider.value_(timeBuf2);
 			durSampleTwoSlider.step_(0.01);
 			// Button Reverse two
 			reverseBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
@@ -3228,13 +3232,13 @@ y ... -					Musical keys.
 
 			// Load and Set Buffer 1 et 2
 			s.bind{
-				if(bufferOne != "Nil", {bufferOne = fonctionLoadSample.value(bufferOne, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferOne = Buffer.alloc(s, s.sampleRate * durSampleOneSlider.value, 1)});
+				if(bufferOne != "Nil", {bufferOne = fonctionLoadSample.value(bufferOne, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferOne = Buffer.alloc(s, s.sampleRate * timeBuf1, 1)});
 				s.sync;
-				if(bufferTwo != "Nil", {bufferTwo = fonctionLoadSample.value(bufferTwo, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferTwo = Buffer.alloc(s, s.sampleRate * durSampleTwoSlider.value, 1)});
+				if(bufferTwo != "Nil", {bufferTwo = fonctionLoadSample.value(bufferTwo, listeGroupeSynth.at(listeGroupeSynth.size - 1), nil)},{bufferTwo = Buffer.alloc(s, s.sampleRate * timeBuf2, 1)});
 				s.sync;
-				recBuffer1 = Buffer.alloc(s, s.sampleRate * durSampleOneSlider.value, 1);
+				recBuffer1 = Buffer.alloc(s, s.sampleRate * timeBuf1, 1);
 				s.sync;
-				recBuffer2 = Buffer.alloc(s, s.sampleRate * durSampleTwoSlider.value, 1);
+				recBuffer2 = Buffer.alloc(s, s.sampleRate * timeBuf2, 1);
 				s.sync;
 
 				// New RecBuffer Recording
