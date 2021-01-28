@@ -2695,7 +2695,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysesilence",ez.value);~dureeanalysesil.wrapPut(i,ez.value)},
 				4,labelWidth: 65,numberWidth: 35));
 			w.view.decorator.nextLine;
-			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "MaxDur",ControlSpec(1, 16, \exp),
+			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "MaxDur",ControlSpec(1, 60, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysemaxinstrument",ez.value);~dureeanalysemax.wrapPut(i,ez.value);
 					if(ez.value > ~dureeanalysesil.wrapAt(i), {~dureeanalysesil.wrapPut(i, ez.value);~dureeanalysesilence.wrapAt(i).value_(ez.value)})},
 				4, false, 65, 35));
