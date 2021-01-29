@@ -63,7 +63,7 @@ RobotBand {
 		~helpRobotBand="
 Single Commandes�:
 
-esc								System on/off
+esc	or SpaveBar					System on/off
 alt + b							Write active buffer sound (Active Window Instrument)
 alt + d							De-Synchro duration all Instr
 e								Switch Algo Analyse
@@ -4449,8 +4449,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 										{if(~windowactive == 'instrument 5',{~writepartitions.value(nil,'key','off',"~windowactive='instrument 4';~listewindow.wrapAt(3).front",nil);~windowactive='instrument 4';~listewindow.wrapAt(3).front;~instractu.valueAction=3},
 											{if(~windowactive == 'instrument 6',{~writepartitions.value(nil,'key','off',"~windowactive='instrument 5';~listewindow.wrapAt(4).front",nil);~windowactive='instrument 5';~listewindow.wrapAt(4).front;~instractu.valueAction=4;~commande=nil},
 												{if(~windowactive=='partitions',{~writepartitions.value(nil,'key','off',"~windowactive='instrument 6';~listewindow.wrapAt(5).front",nil);~windowactive='instrument 6';~listewindow.wrapAt(5).front;~instractu.valueAction=5},{~commande=nil})})})})})})})})});
-					// key esc-> All System on/off
-					if(modifiers==0 and: {unicode==27} and: {keycode==53},{~writepartitions.value(nil,'key','off',"~wg.front",nil);~startsysteme.valueAction=(~startsysteme.value-1).abs;~wg.front;~commande=nil});
+					// key esc or SpaceBar-> All System on/off
+					if(unicode==27 and: {keycode==53} or: {unicode == 32 and: {keycode == 49}},{~writepartitions.value(nil,'key','off',"~wg.front",nil);~startsysteme.valueAction=(~startsysteme.value-1).abs;~wg.front;~commande=nil});
 					// key y -> next instrumentwork
 					if(modifiers==0 and: {unicode==121} and: {keycode==6},{~instractu.valueAction=~instractu.value+1;~commande=nil});
 					// key ctrl y -> next instrumentwork

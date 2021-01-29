@@ -73,7 +73,7 @@ TimeBand {
 		helpTimeBand="
 Single commandes:
 
-esc						System on/off.
+esc	or SpaceBar			System on/off.
 alt + r					Start Recording.
 ctrl + alt + r			Stop Recording.
 R						Pause Recording.
@@ -1711,8 +1711,8 @@ f						Switch File for Analyze.
 				if(modifiers==655360 and: {unicode==210} and: {keycode==28},{fonctionCommandes.value(window, commande, 38)});
 				if(modifiers==655360 and: {unicode==212} and: {keycode==25},{fonctionCommandes.value(window, commande, 39)});
 				if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(window, commande, 40)});
-				// key esc-> All System on/off
-				if(unicode==27 and: {keycode==53},{if(windowExternalControlGUI.view.children.at(0).value == 1,{windowExternalControlGUI.view.children.at(0).valueAction_(0)},{windowExternalControlGUI.view.children.at(0).valueAction_(1)});
+				// key esc or SpaceBar-> All System on/off
+				if(unicode==27 and: {keycode==53} or: {unicode == 32 and: {keycode == 49}},{if(windowExternalControlGUI.view.children.at(0).value == 1,{windowExternalControlGUI.view.children.at(0).valueAction_(0)},{windowExternalControlGUI.view.children.at(0).valueAction_(1)});
 				});
 				// key l -> load Preset
 				if(char == $l, {commande = 'Load Preset';

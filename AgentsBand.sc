@@ -81,7 +81,7 @@ AgentsBand {
 		~helpHPAgentsBand="
 Single commandes:
 
-esc						System on/off.
+esc	or SpaceBar			System on/off.
 a						Display datas on/off.
 b						Switch loopMusic on/off.
 d				 		Reset start sequences agents.
@@ -5684,8 +5684,8 @@ G                           Init Genome Agent (solo).
 				if(modifiers==262144 and: {unicode==23} and: {keycode==13},{~indexwindow=~indexwindow-1;
 					if(~indexwindow < 0, {~indexwindow=~listeWindows.size - 1});
 					~listeWindows.wrapAt(~indexwindow).front});
-				// key esc-> All System on/off
-				if(unicode==27 and: {keycode==53},{if(~startsysteme.value == 1,{~startsysteme.valueAction_(0)},{~startsysteme.valueAction_(1)})});
+				// key esc or SpaceBar-> All System on/off
+				if(unicode==27 and: {keycode==53} or: {unicode == 32 and: {keycode == 49}},{if(~startsysteme.value == 1,{~startsysteme.valueAction_(0)},{~startsysteme.valueAction_(1)})});
 				// key m-> musique on/off
 				if(modifiers==0 and: {unicode==109} and: {keycode==46},{
 					if(~musique.value == 1,{~musique.valueAction_(0)},{~musique.valueAction_(1)})});

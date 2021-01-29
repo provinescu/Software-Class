@@ -356,7 +356,7 @@ MatrixBand {
 		helpMatrixBand="
 Single commandes:
 
-esc						System on/off.
+esc	or SpaceBar			System on/off.
 b						Switch recording buffer data OSC on/off.
 alt + c					Copy Preset.
 C						Copy Synthesizer.
@@ -1752,8 +1752,8 @@ y ... -					Musical keys.
 				if(modifiers==524288 and: {unicode==119} and: {keycode==13},{
 					listeWindows.at(3).front;indexWindows=3;
 				});
-				// key esc-> All System on/off
-				if(unicode==27 and: {keycode==53},{if(windowControl.view.children.at(1).value == 1,{windowControl.view.children.at(1).valueAction_(0)},{windowControl.view.children.at(1).valueAction_(1)});
+				// key esc or SpaceBar-> All System on/off
+				if(unicode==27 and: {keycode==53} or: {unicode == 32 and: {keycode == 49}},{if(windowControl.view.children.at(1).value == 1,{windowControl.view.children.at(1).valueAction_(0)},{windowControl.view.children.at(1).valueAction_(1)});
 				});
 				//key k New Environment
 				if(char == $k, {

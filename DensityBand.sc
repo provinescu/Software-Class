@@ -2,7 +2,7 @@
 
 DensityBand {
 
-	classvar <> server;
+	classvar <> s;
 
 	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, freqBefore, ampBefore, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensityBand, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file;
 
@@ -44,21 +44,21 @@ DensityBand {
 		recChannels = numberRec;
 		typeMasterOut = format;// Type Format stereo, ambisonic, etc...
 
-		/*server = Server.new(\DensityBand, NetAddr("127.0.0.1", 57105));
-		server.makeWindow;*/
-		//Server.supernova;
-		server = Server.default;
+		/*s = s.new(\DensityBand, NetAddr("127.0.0.1", 57105));
+		s.makeWindow;*/
+		//s.supernova;
+		s = Server.default;
 
-		server.options.memSize = 2**20;
-		server.options.inDevice = devIn;
-		server.options.outDevice = devOut;
-		//server.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		//server.options.device = "JackRouter";// use Jack if is available
-		//server.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
-		server.options.numInputBusChannels_(20);
-		server.options.hardwareBufferSize_(size);
-		server.options.numOutputBusChannels_(numberAudioOut);
-		server.recChannels_(recChannels);
+		s.options.memSize = 2**20;
+		s.options.inDevice = devIn;
+		s.options.outDevice = devOut;
+		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
+		//s.options.device = "JackRouter";// use Jack if is available
+		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
+		s.options.numInputBusChannels_(20);
+		s.options.hardwareBufferSize_(size);
+		s.options.numOutputBusChannels_(numberAudioOut);
+		s.recChannels_(recChannels);
 		headerFormat = "aiff";
 		sampleFormat = "float";
 
@@ -616,9 +616,9 @@ DensityBand {
 			if(allData.at(index) != soundOrchestra, {
 				"... LOAD SOUNDORCHESTRA... !!!".postln;
 				soundOrchestra = allData.at(index);
-				server.bind{
+				s.bind{
 					fonctionLoadSoundOrchestra.value(soundOrchestra);
-					server.sync;
+					s.sync;
 				};
 			}, {soundOrchestra = allData.at(index)});
 			index = index + 1;
@@ -684,7 +684,7 @@ DensityBand {
 
 		//Fonction Load file for analyze
 		fonctionLoadFileForAnalyse = {arg p, f, d;
-			server.bind{
+			s.bind{
 				f = SoundFile.new;
 				f.openRead(p);
 				if(f.numChannels == 1,
@@ -692,18 +692,18 @@ DensityBand {
 						f.readData(d);
 						Post << "Loading sound mono for analyze" << p << Char.nl;
 						d = Array.newFrom(d).stutter(2) / 2;
-						bufferFile=Buffer.loadCollection(server, d, 2, action: {arg buf; Post << "Finished" << Char.nl});
+						bufferFile=Buffer.loadCollection(s, d, 2, action: {arg buf; Post << "Finished" << Char.nl});
 					},
 					{Post << "Loading sound stereo for analyze" << p << Char.nl;
-						bufferFile=Buffer.readChannel(server, p, channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
+						bufferFile=Buffer.readChannel(s, p, channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
 				});
 				f.close;
 				synthFileIn.set(\trigger, 0);
-				server.sync;
+				s.sync;
 				synthFileIn.set(\bufferplay, bufferFile);
-				server.sync;
+				s.sync;
 				synthFileIn.set(\trigger, 1);
-				server.sync;
+				s.sync;
 			};
 			bufferFile.value;
 		};
@@ -712,34 +712,34 @@ DensityBand {
 		fonctionLoadSoundOrchestra = {arg listeSound;
 			// Free Buffer
 			listeBuffer.soloArray.do({arg buffer; buffer.free});
-			server.sync;
+			s.sync;
 			listeBuffer=[];
 			listeSound.do({arg arraySound, file, rawData, collect=[];
 				arraySound.do({arg path;
 					path = path.standardizePath;
 					file = SoundFile.new;
-					server.sync;
+					s.sync;
 					file.openRead(path);
-					server.sync;
+					s.sync;
 					if(file.numChannels == 1,
 						{Post << "Loading mono sound" << " " << path << Char.nl;
-							collect = collect.add(Buffer.read(server, path, action: {arg buf; Post << "Finished" << Char.nl}));
-							server.sync;
+							collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
+							s.sync;
 						},
 						{rawData= FloatArray.newClear(file.numFrames * 2);
-							server.sync;
+							s.sync;
 							file.readData(rawData);
-							server.sync;
+							s.sync;
 							rawData = Array.newFrom(rawData);
-							server.sync;
+							s.sync;
 							Post << "Loading stereo sound" << " " << path << Char.nl;
 							rawData = rawData.unlace(2).sum / 2;
-							server.sync;
-							collect = collect.add(Buffer.loadCollection(server, rawData, 1, action: {arg buf; Post << "Finished" << Char.nl}).path = path);
-							server.sync;
+							s.sync;
+							collect = collect.add(Buffer.loadCollection(s, rawData, 1, action: {arg buf; Post << "Finished" << Char.nl}).path = path);
+							s.sync;
 					});
 					file.close;
-					server.sync;
+					s.sync;
 				});
 				listeBuffer = listeBuffer.add(collect);
 			});
@@ -750,17 +750,17 @@ DensityBand {
 			if(oscStateFlag == 'master', {~slaveAppAddr.sendMsg('/HPrec', "Rec On")});// Send Synchro Rec On
 			if(flagRecording == 'off', {
 				flagRecording = 'on';
-				server.bind{
-					server.recChannels_(recChannels);
-					server.sync;
-					/*server.recHeaderFormat_(headerFormat);
-					server.sync;
-					server.recSampleFormat_(sampleFormat);
-					server.sync;*/
-					server.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "DensityBand_" ++ Date.localtime.stamp ++ ".aiff");
-					server.sync;
-					server.record;
-					server.sync;
+				s.bind{
+					s.recChannels_(recChannels);
+					s.sync;
+					/*s.recHeaderFormat_(headerFormat);
+					s.sync;
+					s.recSampleFormat_(sampleFormat);
+					s.sync;*/
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "DensityBand_" ++ Date.localtime.stamp ++ ".aiff");
+					s.sync;
+					s.record;
+					s.sync;
 				};
 			});
 		};
@@ -768,13 +768,13 @@ DensityBand {
 		fonctionRecOff={
 			if(oscStateFlag == 'master', {~slaveAppAddr.sendMsg('/HPrec', "Rec Off")});// Send Synchro Rec On
 			flagRecording = 'off';
-			server.stopRecording;
+			s.stopRecording;
 		};
 
 		fonctionRecPause={
 			if(oscStateFlag == 'master', {~slaveAppAddr.sendMsg('/HPrec', "Rec Pause")});// Send Synchro Rec On
 			if(startSystem.value == 1, {
-				if(flagRecording == 'on', {server.pauseRecording; flagRecording = 'pause'},{server.record; flagRecording = 'on'});
+				if(flagRecording == 'on', {s.pauseRecording; flagRecording = 'pause'},{s.record; flagRecording = 'on'});
 			});
 		};
 
@@ -800,23 +800,23 @@ DensityBand {
 		"Please Wait... Loading DensityBand...".postln;
 
 		// Run Soft
-		server.waitForBoot({
+		s.waitForBoot({
 
 			/*			// MIDI INIT
 			MIDIClient.init;
-			server.sync;
+			s.sync;
 			// Connect first device by default
 			MIDIIn.connect(0, 0);
-			server.sync;
+			s.sync;
 			midiOut = MIDIOut(0);
 			//midiOut.connect(0);
-			server.sync;
+			s.sync;
 			16.do({arg canal; midiOut.allNotesOff(canal)});
-			server.sync;*/
+			s.sync;*/
 
 			// Init SynthDef
 			this.initSynthDef;
-			server.sync;
+			s.sync;
 
 			// Init Tempo System
 			tempoClock = TempoClock.new;
@@ -826,13 +826,13 @@ DensityBand {
 
 			// Load Sound Orchestra
 			fonctionLoadSoundOrchestra.value(soundOrchestra);
-			server.sync;
+			s.sync;
 			// Load file for analyze
 			fonctionLoadFileForAnalyse.value(pathSound +/+ "sounds/a11wlk01-44_1.aiff");
-			server.sync;
+			s.sync;
 
 			// OSC Setting
-			serveurAdresse = server.addr; // Adresse s -> NetAddr(0.0.0.0, 0)
+			serveurAdresse = s.addr; // Adresse s -> NetAddr(0.0.0.0, 0)
 			masterAppAddr = NetAddr.localAddr;
 			slaveAppAddr = NetAddr.localAddr;
 			oscStateFlag = 'off';
@@ -845,108 +845,108 @@ DensityBand {
 			//
 
 			// Group
-			groupeAnalyse = ParGroup.new(server, \addToTail);
-			groupeRecBuffer = ParGroup.new(server, \addToTail);
-			groupeSynth = ParGroup.new(server, \addToTail);
-			groupeFX = ParGroup.new(server, \addToTail);
-			groupeMasterOut = ParGroup.new(server, \addToTail);
-			groupeVerb = ParGroup.new(server, \addToTail);
-			groupeLimiter = ParGroup.new(server, \addToTail);
+			groupeAnalyse = ParGroup.new(s, \addToTail);
+			groupeRecBuffer = ParGroup.new(s, \addToTail);
+			groupeSynth = ParGroup.new(s, \addToTail);
+			groupeFX = ParGroup.new(s, \addToTail);
+			groupeMasterOut = ParGroup.new(s, \addToTail);
+			groupeVerb = ParGroup.new(s, \addToTail);
+			groupeLimiter = ParGroup.new(s, \addToTail);
 
 			// Bus OSC Data
-			busAnalyzeIn = Bus.audio(server, 1);
-			busRecAudioIn = Bus.audio(server, 1);
+			busAnalyzeIn = Bus.audio(s, 1);
+			busRecAudioIn = Bus.audio(s, 1);
 
 			// Bus OSC Data
 			// Init Bus Array max 12
 			(12 + 1).do({arg i;
-				busOSCflux = busOSCflux.add(Bus.control(server, 1));
-				busOSCflatness = busOSCflatness.add(Bus.control(server, 1));
-				busOSCcentroid = busOSCcentroid.add(Bus.control(server, 1));
-				busOSCenergy = busOSCenergy.add(Bus.control(server, 1));
-				busOSCbpm = busOSCbpm.add(Bus.control(server, 1));
-				busOSCfreq = busOSCfreq.add(Bus.control(server, 1));
-				busOSCamp = busOSCamp.add(Bus.control(server, 1));
-				busOSCduree = busOSCduree.add(Bus.control(server, 1));
+				busOSCflux = busOSCflux.add(Bus.control(s, 1));
+				busOSCflatness = busOSCflatness.add(Bus.control(s, 1));
+				busOSCcentroid = busOSCcentroid.add(Bus.control(s, 1));
+				busOSCenergy = busOSCenergy.add(Bus.control(s, 1));
+				busOSCbpm = busOSCbpm.add(Bus.control(s, 1));
+				busOSCfreq = busOSCfreq.add(Bus.control(s, 1));
+				busOSCamp = busOSCamp.add(Bus.control(s, 1));
+				busOSCduree = busOSCduree.add(Bus.control(s, 1));
 			});
 
 			// Create Bus pour instruments (max 32)
-			32.do({arg i; busSynthInOut = busSynthInOut.add(Bus.audio(server, 1))});
-			server.sync;
+			32.do({arg i; busSynthInOut = busSynthInOut.add(Bus.audio(s, 1))});
+			s.sync;
 
 			// Synth AudioIn
 			synthAudioIn = Synth.newPaused("DensityBand AudioIn",
 				[\in, 0, 'busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Synth play file
 			synthFileIn = Synth.newPaused("DensityBand FileIn",
 				[\bufferplay, bufferFile, 'busIn', busAnalyzeIn, \busRec, busRecAudioIn, \volume, 0.2], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Synth audio analyze FFT
 			synthAnalyseFFT = Synth.newPaused("OSC DensityBand FFT",
 				['busIn', busAnalyzeIn, \speed, 24], groupeAnalyse, \addToTail); // 24 * each second
-			server.sync;
+			s.sync;
 
 			// Synth audio analyze Onsets
 			synthAnalyseOnsets = Synth.newPaused("OSC DensityBand Onsets",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Synth audio analyze Pitch
 			synthAnalysePitch = Synth.newPaused("OSC DensityBand Pitch",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Synth audio analyze Pitch Version 2
 			synthAnalysePitch2 = Synth.newPaused("OSC DensityBand Pitch2",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Synth audio analyze KeyTrack
 			synthAnalyseKeyTrack = Synth.newPaused("OSC DensityBand KeyTrack",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Synth Keyboard
 			synthKeyboard = Synth.newPaused("OSC DensityBand Keyboard",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// MIDI Keyboard
 			synthMIDI = Synth.newPaused("OSC DensityBand MIDI",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Create synth RecAudioBus for Analyze
 			synthAnalyzeAudioIn = Synth.newPaused("AnalyzeAudioIn", [\in, 0, \busIn, busAnalyzeIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Create synth RecAudioBus for Buffer Synth
 			synthRecAudioIn = Synth.newPaused("RecAudioIn", [\in, 0, \busIn, busRecAudioIn], groupeAnalyse, \addToTail);
-			server.sync;
+			s.sync;
 
 			//Init EndProcessing
 
 			gVerb = Synth.new("GVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
-			server.sync;
+			s.sync;
 
 			freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
-			server.sync;
+			s.sync;
 
 			allPass = Synth.newPaused("Allpass" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
-			server.sync;
+			s.sync;
 
 			jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
-			server.sync;
+			s.sync;
 
 			Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-			server.sync;
+			s.sync;
 
 			// Init GUI
 			this.createGUI;
-			server.sync;
+			s.sync;
 
 			// Init Start GUI
 			// Setup GUI Value
@@ -1339,11 +1339,11 @@ DensityBand {
 				if(canal == canalMIDI, {
 					freq = freq.midicps;
 					amp = amp / 127;
-					server.bind{
+					s.bind{
 						synthMIDI.set(\trigger, 0);
-						server.sync;
+						s.sync;
 						synthMIDI.set(\note, freq, \amp, amp, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 				});
 			}, (0..127), nil);
@@ -2050,12 +2050,12 @@ DensityBand {
 				// Buffer
 				if(flagSampler == "Sampler+Sound", {
 					if(coin(0.5), {
-						buffer = Buffer.alloc(server, server.sampleRate * dureeSample, 1).path = "Buffer for Sampler";
-						server.sync;
+						buffer = Buffer.alloc(s, s.sampleRate * dureeSample, 1).path = "Buffer for Sampler";
+						s.sync;
 						recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
 						//busRec = [0,1,2,3,4,5,6,7].scramble.choose;
 						//recBuffer = Synth.new("RecBufferSynth", [\in, busRec, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
-						server.sync;
+						s.sync;
 						// For testing if playing or notserbpm
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
@@ -2074,12 +2074,12 @@ DensityBand {
 				},
 				{
 					if(flagSampler == "Sampler", {
-						buffer = Buffer.alloc(server, server.sampleRate * dureeSample, 1).path = "Buffer for Sampler";
-						server.sync;
+						buffer = Buffer.alloc(s, s.sampleRate * dureeSample, 1).path = "Buffer for Sampler";
+						s.sync;
 						recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
 						//busRec = [0,1,2,3,4,5,6,7].scramble.choose;
 						//recBuffer = Synth.new("RecBufferSynth", [\in, busRec, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
-						server.sync;
+						s.sync;
 						// For testing if playing or not
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
@@ -2124,7 +2124,7 @@ DensityBand {
 					\durSynth, dureeInstrument
 				], groupeMasterOut, \addToTail).map(
 					\bpm, busOSCbpm.at(indexBandFhz));
-				server.sync;
+				s.sync;
 				// For testing if playing or not
 				NodeWatcher.register(masterOut, true);
 				// FX
@@ -2144,7 +2144,7 @@ DensityBand {
 					\centroid, busOSCcentroid.at(indexBandFhz),
 					\energy, busOSCenergy.at(indexBandFhz),
 					\bpm, busOSCbpm.at(indexBandFhz));
-				server.sync;
+				s.sync;
 				// For testing if playing or not
 				NodeWatcher.register(fx, true);
 				// SETUP SYNTH STEPS OR STREAM
@@ -2188,7 +2188,7 @@ DensityBand {
 							\envTime5, envelopeTime.at(4),
 							\envTime6, envelopeTime.at(5),
 							\envTime7, envelopeTime.at(6),
-							//\server, server,
+							//\s, s,
 							\group, groupeSynth,
 							\addAction, 1);
 						// MIDI
@@ -2202,7 +2202,7 @@ DensityBand {
 								\amp, Pseq(amp, inf),
 								\dur, Pseq(duree, inf),
 								\stretch, Pfuncn({stretchDuree}, inf),
-								//\server, server,
+								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
 						}, {synthMidi = nil});
@@ -2249,7 +2249,7 @@ DensityBand {
 							\centroid, busOSCcentroid.at(indexBandFhz),
 							\energy, busOSCenergy.at(indexBandFhz),
 							\bpm, busOSCbpm.at(indexBandFhz));
-						server.sync;
+						s.sync;
 						// For testing if playing or not
 						NodeWatcher.register(synth, true);
 						// MIDI
@@ -2488,7 +2488,7 @@ DensityBand {
 				data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 			});
 			listeWindows.do({arg w; w.close});
-			server.quit;
+			s.quit;
 		};
 
 		CmdPeriod.doOnce(cmdperiodfunc);
@@ -2501,7 +2501,7 @@ DensityBand {
 		helpDensityBand = "
 Single commandes:
 
-esc						System on/off.
+esc	or SpaceBar			System on/off.
 q / ctrl + q			Switch Algorithm Analyze.
 h						Switch Source IN.
 i						Init Synth.
@@ -2577,20 +2577,20 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		menuInitAll = Menu(
 			MenuAction("Init All", {arg file;
 				//Init Orchestra Sounds FX
-				server.bind{
+				s.bind{
 					file = File(pathData ++ "Synth.scd","r");
 					synthOrchestra = file.readAllString.interpret;
 					file.close;
-					server.sync;
+					s.sync;
 					file = File(pathData ++ "Sounds.scd","r");
 					soundOrchestra = file.readAllString.interpret;
 					file.close;
 					fonctionLoadSoundOrchestra.value(soundOrchestra);
-					server.sync;
+					s.sync;
 					file = File(pathData ++ "FX.scd","r");
 					fxOrchestra = file.readAllString.interpret;
 					file.close;
-					server.sync;
+					s.sync;
 				};
 			}),
 			Menu(
@@ -2610,18 +2610,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					file = File(path,"r");
 					soundOrchestra = file.readAllString.interpret;
 					file.close;
-					server.bind{
+					s.bind{
 						fonctionLoadSoundOrchestra.value(soundOrchestra);
-						server.sync;
+						s.sync;
 					};
 				},
 				{"cancelled".postln});
 				}),
 				MenuAction("Edit/Save", {arg window, text;
 					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret;
-						server.bind{
+						s.bind{
 							fonctionLoadSoundOrchestra.value(soundOrchestra);
-							server.sync;
+							s.sync;
 						};
 					};
 				});
@@ -2656,9 +2656,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		menuAudio = Menu(
 			MenuAction("Stereo", {recChannels = 2; numberAudioOut = 2;
-				server.recChannels_(recChannels);
-				server.options.numInputBusChannels_(20);
-				//server.options.numOutputBusChannels_(8);
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
 				typeMasterOut = listeMasterOut.at(0);
 				startSystem.valueAction_(0);
 				groupeVerb.freeAll;
@@ -2676,9 +2676,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo";
 			}),
 			MenuAction("Rotate2", {recChannels = 2; numberAudioOut = 2;
-				server.recChannels_(recChannels);
-				server.options.numInputBusChannels_(20);
-				//server.options.numOutputBusChannels_(8);
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
 				typeMasterOut = listeMasterOut.at(1);
 				startSystem.valueAction_(0);
 				groupeVerb.freeAll;
@@ -2697,9 +2697,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			}),
 			MenuAction("MultiSpeaker", {
 				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
-					server.recChannels_(recChannels);
-					server.options.numInputBusChannels_(20);
-					//server.options.numOutputBusChannels_(8);
+					s.recChannels_(recChannels);
+					s.options.numInputBusChannels_(20);
+					//s.options.numOutputBusChannels_(8);
 					typeMasterOut = listeMasterOut.at(2);
 					startSystem.valueAction_(0);
 					groupeVerb.freeAll;
@@ -2719,9 +2719,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			}),
 			MenuAction("Ambisonic", {
 				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
-					server.recChannels_(recChannels);
-					server.options.numInputBusChannels_(20);
-					//server.options.numOutputBusChannels_(8);
+					s.recChannels_(recChannels);
+					s.options.numInputBusChannels_(20);
+					//s.options.numOutputBusChannels_(8);
 					typeMasterOut = listeMasterOut.at(3);
 					startSystem.valueAction_(0);
 					groupeVerb.freeAll;
@@ -2740,9 +2740,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			}),
 			MenuAction("Dolby5.1", {recChannels = 6; numberAudioOut = 6;
-				server.recChannels_(recChannels);
-				server.options.numInputBusChannels_(20);
-				//server.options.numOutputBusChannels_(8);
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
 				typeMasterOut = listeMasterOut.at(4);
 				startSystem.valueAction_(0);
 				groupeVerb.freeAll;
@@ -2923,8 +2923,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(shortCutCommande != nil and: {number != nil}, {
 					fonctionShortCutCommande.value(number);
 				});
-				// key Esc
-				if(unicode == 27 and: {keycode==53}, {
+				// key esc or SpaceBar-> All System on/off
+				if(unicode==27 and: {keycode==53} or: {unicode == 32 and: {keycode == 49}}, {
 					if(startSystem.value == 0, {startSystem.valueAction_(1)}, {startSystem.valueAction_(0)});
 				});
 				// key q -> Switch Algo Analyze
@@ -3152,12 +3152,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			});
 			if(shortCutCommande == 'Switch File for Analyze', {
 				if(listeFileAnalyze.at(number - 1) != nil, {
-					server.bind{
+					s.bind{
 						synthFileIn.set(\trigger, 0);
 						synthFileIn.set(\bufferplay, listeFileAnalyze.at(number - 1));
-						server.sync;
+						s.sync;
 						synthFileIn.set(\trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					// Setup GUI Value
 					windowEar.view.children.at(6).string = "File In :" + listeNameFileAnalyze.at(number - 1);
@@ -3182,11 +3182,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $y, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (60 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 60 + keyboardTranslate.value;
 					keyboard.setColor(60 + keyboardTranslate.value, Color.red);
@@ -3194,11 +3194,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $s, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (61 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 61 + keyboardTranslate.value;
 					keyboard.setColor(61 + keyboardTranslate.value, Color.red);
@@ -3206,11 +3206,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $x, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (62 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 62 + keyboardTranslate.value;
 					keyboard.setColor(62 + keyboardTranslate.value, Color.red);
@@ -3218,11 +3218,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $d, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (63 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 63 + keyboardTranslate.value;
 					keyboard.setColor(63 + keyboardTranslate.value, Color.red);
@@ -3230,11 +3230,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $c, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (64 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 64 + keyboardTranslate.value;
 					keyboard.setColor(64 + keyboardTranslate.value, Color.red);
@@ -3242,11 +3242,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $v, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (65 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 65 + keyboardTranslate.value;
 					keyboard.setColor(65 + keyboardTranslate.value, Color.red);
@@ -3254,11 +3254,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $g, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (66 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 66 + keyboardTranslate.value;
 					keyboard.setColor(66 + keyboardTranslate.value, Color.red);
@@ -3266,11 +3266,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $b, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (67 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 67 + keyboardTranslate.value;
 					keyboard.setColor(67 + keyboardTranslate.value, Color.red);
@@ -3278,11 +3278,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $h, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (68 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 68 + keyboardTranslate.value;
 					keyboard.setColor(68 + keyboardTranslate.value, Color.red);
@@ -3290,11 +3290,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $n, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (69 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 69 + keyboardTranslate.value;
 					keyboard.setColor(69 + keyboardTranslate.value, Color.red);
@@ -3302,11 +3302,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $j, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (70 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 70 + keyboardTranslate.value;
 					keyboard.setColor(70 + keyboardTranslate.value, Color.red);
@@ -3314,11 +3314,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $m, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (71 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 71 + keyboardTranslate.value;
 					keyboard.setColor(71 + keyboardTranslate.value, Color.red);
@@ -3326,11 +3326,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $,, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (72 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 72 + keyboardTranslate.value;
 					keyboard.setColor(72 + keyboardTranslate.value, Color.red);
@@ -3338,11 +3338,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $l, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (73 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 73 + keyboardTranslate.value;
 					keyboard.setColor(73 + keyboardTranslate.value, Color.red);
@@ -3350,11 +3350,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $., {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (74 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 74 + keyboardTranslate.value;
 					keyboard.setColor(74 + keyboardTranslate.value, Color.red);
@@ -3363,11 +3363,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(modifiers==0 and: {unicode==233} and: {keycode==41}, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (75 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 75 + keyboardTranslate.value;
 					keyboard.setColor(60 + keyboardTranslate.value, Color.red);
@@ -3375,11 +3375,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $-, {
 					keyboard.removeColor(lastNote);
 					keyboard.setColor(lastNote, Color.blue);
-					server.bind{
+					s.bind{
 						synthKeyboard.set(\note, lastNote.midicps, \amp, 0, \trigger, 0);
-						server.sync;
+						s.sync;
 						synthKeyboard.set(\note, (76 + keyboardTranslate.value).midicps, \amp, keyVolume, \trigger, 1);
-						server.sync;
+						s.sync;
 					};
 					lastNote = 76 + keyboardTranslate.value;
 					keyboard.setColor(76 + keyboardTranslate.value, Color.red);
@@ -3538,13 +3538,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Offset FileIn
 		EZKnob(windowEar, 150 @ 20, "Offset", \unipolar,
 			{|ez|
-				server.bind{
+				s.bind{
 					synthFileIn.set(\trigger, -1);
-					server.sync;
+					s.sync;
 					synthFileIn.set(\offset, ez.value);
-					server.sync;
+					s.sync;
 					synthFileIn.set(\trigger, 1);
-					server.sync};
+					s.sync};
 		}, 0, layout: \horz);
 		// File DB
 		EZKnob(windowEar, 150 @ 20, "db", \db,
@@ -4373,11 +4373,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		keyboard.keyTrackAction_({arg note;
 			note = note.value + keyboardTranslate.value;
 			note = note.midicps;
-			server.bind{
+			s.bind{
 				synthKeyboard.set(\note, note, \amp, keyVolume, \trigger, 1);
-				server.sync;
+				s.sync;
 				synthKeyboard.set(\note, note, \amp, 0, \trigger, 0);
-				server.sync;
+				s.sync;
 			};
 		});
 		setupKeyboardShortCut.focus;
@@ -5886,7 +5886,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, inputSig, rate, envelope, recHead;
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
@@ -5914,7 +5914,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -5942,7 +5942,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -5970,7 +5970,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6002,7 +6002,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6030,7 +6030,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6059,7 +6059,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6084,7 +6084,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.001, 1).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6112,7 +6112,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
@@ -6137,7 +6137,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6170,7 +6170,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6199,7 +6199,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6229,7 +6229,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6255,7 +6255,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6282,7 +6282,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6314,7 +6314,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				playHead = Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
@@ -6341,7 +6341,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6375,7 +6375,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6406,7 +6406,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6437,7 +6437,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6466,7 +6466,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6496,7 +6496,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -6521,7 +6521,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6548,7 +6548,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6577,7 +6577,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6606,7 +6606,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6636,7 +6636,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6665,7 +6665,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6692,7 +6692,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6721,7 +6721,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6750,7 +6750,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6780,7 +6780,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6814,7 +6814,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6846,7 +6846,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6878,7 +6878,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6910,7 +6910,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -6942,7 +6942,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				postBuffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
 				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
@@ -7000,7 +7000,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, rate, envA, envS, envR, recHead, localBuf, inputSig;
 				// Buffer
-				localBuf = LocalBuf(server.sampleRate * durSample, 1).clear;
+				localBuf = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(localBuf), 0, BufFrames.kr(localBuf));
 				BufWr.ar(inputSig, localBuf, recHead, loop: 1);
@@ -7025,7 +7025,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, rate, envelope, envA, envS, envR, recHead, localBuf, inputSig;
 				// Buffer
-				localBuf = LocalBuf(server.sampleRate * durSample, 1).clear;
+				localBuf = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(localBuf), 0, BufFrames.kr(localBuf));
 				BufWr.ar(inputSig, localBuf, recHead, loop: 1);
@@ -7055,7 +7055,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
-				localBuf = LocalBuf(server.sampleRate * durSample, 1).clear;
+				localBuf = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(localBuf), 0, BufFrames.kr(localBuf));
 				BufWr.ar(inputSig, localBuf, recHead, loop: 1);
@@ -7119,7 +7119,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, rate, playHead, trig, envelope, inputSig, recHead;
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
@@ -7144,7 +7144,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, rate, playHead, trig, envelope, inputSig, recHead;
 				// Buffer
-				buffer = LocalBuf(server.sampleRate * durSample, 1).clear;
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				BufWr.ar(inputSig, buffer, recHead, loop: 1);
