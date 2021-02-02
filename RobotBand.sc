@@ -5593,7 +5593,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 		// Read Datas Control Panel
 		~readcontrolpanel={arg d;
-			~algoAnalyse.valueAction=d.wrapAt(0);
+			//~algoAnalyse.valueAction=d.wrapAt(0);
 			~seuilanalyse.value=d.wrapAt(1);
 			~filtreanalyse.value=d.wrapAt(2);
 			//~amplitudegeneraleinstrument=d.wrapAt(3);
