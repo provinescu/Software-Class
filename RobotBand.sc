@@ -3745,7 +3745,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~routinealgorithmes.stop;
 				~metronomeGUI.value_(0);
 				// Pause Recording
-				if(~flagRecording == 'on', {s.pauseRecording;nil});
+				/*if(~flagRecording == 'on', {s.pauseRecording;nil});*/
 				~tempoSystem.clear;
 				//~volumeFileIn.enabled_(false);
 				//~offsetFileIn.enabled_(false);
