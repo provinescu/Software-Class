@@ -4322,6 +4322,8 @@ G                           Init Genome Agent (solo).
 				~reverseSynthButton.value_(~reverseSynthSons.wrapAt(son.value));
 				~audioInputButton.value_(~audioInputSons.wrapAt(son.value));
 				~flagFreqSamples=~flagFreqSamplesSons.wrapAt(son.value)});
+			~valRec1.value = ~recSamplesLevelsSons.wrapAt(son.value).wrapAt(0);
+			~valRec2.value = ~recSamplesLevelsSons.wrapAt(son.value).wrapAt(1);
 			~agents.do({arg agent;
 				~synthRecAudioAgents.wrapAt(agent).set(\reclevel1, ~recSamplesLevelsSons.wrapAt(son.value).wrapAt(0), \reclevel2, ~recSamplesLevelsSons.wrapAt(son.value).wrapAt(1));
 				~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(son.value)));
