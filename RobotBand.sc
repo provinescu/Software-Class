@@ -2819,6 +2819,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(~reversesampledatas.wrapAt(i).wrapAt(son.value) == 1 ,{~reversebutton.wrapAt(i).value=0},{~reversebutton.wrapAt(i).value=1});
 				~synthcontrolviewlevels.wrapAt(i).value_(~synthcontrolviewlevelsdatas.wrapAt(son.value));
 				~sampleroffsetcontrol.wrapAt(i).valueAction_(~sampleroffsetcontrolValue.wrapAt(i).wrapAt(son.value));
+				~numRecLevel1.at(i).value = ~synthcontrolviewlevelsdatas.wrapAt(son.value).value.at(0);
+				~numRecLevel2.at(i).value = ~synthcontrolviewlevelsdatas.wrapAt(son.value).value.at(1);
 			};
 			// Text
 			StaticText(w, Rect(0,0, 75, 18)).string_(" <- Sample1").stringColor_(Color.black);
