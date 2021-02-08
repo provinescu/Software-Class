@@ -887,6 +887,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"HPplayBufVibrato",
 					"HPbufRd",
 					"HPtGrains",
+					"HPplayBufMedianLeakDC",
 					"SampleResonz",
 					"Synthesizer",
 					"FreqShift",
@@ -1024,6 +1025,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"FOS_pre",
 					"SOS_pre",
 					"TwoPole_pre",
+					"Median_pre",
+					"LeakDC_pre",
+					"Median+LeakDC_pre",
 					"PitchShift_pre",
 					"WarpDelay_pre",
 					"RandRateDelay_pre",
@@ -1050,6 +1054,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"FOS_post",
 					"SOS_post",
 					"TwoPole_post",
+					"Median_post",
+					"LeakDC_post",
+					"Median+LeakDC_post",
 					"PitchShift_post",
 					"WarpDelay_post",
 					"RandRateDelay_post",
@@ -9153,6 +9160,48 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
+			SynthDef("HPplayBufMedianLeakDC",
+				{// listes de arguments (identique pour chaque sample !!!!!)
+					arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+					// liste des variables (identique pour chaque sample !!!!!)
+					var main, envelope, rate, dureesample, ambisonic;
+					rate=2**freqRate.cpsoct;
+					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					rate = rate * reverse;
+					// envelope (identique pour chaque sample !!!!!)
+					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
+					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
+					// Sample
+					trigger = Impulse.kr(controls.at(0)*100);
+					main=LeakDC.ar(Median.ar(controls.at(3) * 30 + 1, PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop)), controls.at(4));
+					//main = Limiter.ar(main, 1.0, 0.01);
+
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
+						if(~switchAudioOut == 'Multispeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
+					Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
+					Out.ar(out, main * amp * byPass);
+			}).send(s);
+
 			SynthDef("HPplayBufVibrato",
 				{// listes de arguments (identique pour chaque sample !!!!!)
 					arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -11559,34 +11608,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					Out.ar(out, effet);
 			}).send(s);
 
-			SynthDef("Median_pre",
-				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
-					// liste des variables (identique pour chaque effet !!!!)
-					var ineffet, effet, ambisonic;
-					// son en entree de la effet + controles
-					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
-					// effet
-					effet=Median.ar(control1*30+1, ineffet, amp);
-					effet = Limiter.ar(effet, 1.0, 0.01);
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffetsPost,  Mix(effet) * ampPost);
-					Out.ar(out, effet);
-			}).send(s);
-
 			SynthDef("Resonz_pre",
 				{// listes de arguments (identique pour chaque effet !!!!!)
 					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
@@ -11680,6 +11701,90 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
 					effet=SOS.ar(ineffet, control1, control2, control3, control4*(-1.0), control5*(-1.0), amp);
+					effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffetsPost,  Mix(effet) * ampPost);
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("Median_pre",
+				{// listes de arguments (identique pour chaque effet !!!!!)
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
+					// liste des variables (identique pour chaque effet !!!!)
+					var ineffet, effet, ambisonic;
+					// son en entree de la effet + controles
+					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
+					// effet
+					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
+					effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffetsPost,  Mix(effet) * ampPost);
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("LeakDC_pre",
+				{// listes de arguments (identique pour chaque effet !!!!!)
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
+					// liste des variables (identique pour chaque effet !!!!)
+					var ineffet, effet, ambisonic;
+					// son en entree de la effet + controles
+					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
+					// effet
+					effet=LeakDC.ar(ineffet, control1, amp);
+					effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffetsPost,  Mix(effet) * ampPost);
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("Median+LeakDC_pre",
+				{// listes de arguments (identique pour chaque effet !!!!!)
+					arg out=0, in, buseffetsPost, control1=0.03, control2=0.5, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
+					// liste des variables (identique pour chaque effet !!!!)
+					var ineffet, effet, ambisonic;
+					// son en entree de la effet + controles
+					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
+					// effet
+					effet=LeakDC.ar(Median.ar(control1 * 30 + 1 ,ineffet, amp), control2);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 'Stereo',
@@ -12207,33 +12312,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					Out.ar(out, effet);
 			}).send(s);
 
-			SynthDef("Median_post",
-				{// listes de arguments (identique pour chaque effet !!!!!)
-					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
-					// liste des variables (identique pour chaque effet !!!!)
-					var ineffet, effet, ambisonic;
-					// son en entree de la effet + controles
-					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
-					// effet
-					effet=Median.ar(control1*30+1, ineffet, amp);
-					effet = Limiter.ar(effet, 1.0, 0.01);
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(out, effet);
-			}).send(s);
-
 			SynthDef("Resonz_post",
 				{// listes de arguments (identique pour chaque effet !!!!!)
 					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
@@ -12324,6 +12402,87 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
 					effet=SOS.ar(ineffet, control1, control2, control3, control4*(-1.0), control5*(-1.0), amp);
+					effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("Median_post",
+				{// listes de arguments (identique pour chaque effet !!!!!)
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
+					// liste des variables (identique pour chaque effet !!!!)
+					var ineffet, effet, ambisonic;
+					// son en entree de la effet + controles
+					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
+					// effet
+					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
+					effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("LeakDC_post",
+				{// listes de arguments (identique pour chaque effet !!!!!)
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
+					// liste des variables (identique pour chaque effet !!!!)
+					var ineffet, effet, ambisonic;
+					// son en entree de la effet + controles
+					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
+					// effet
+					effet=LeakDC.ar(ineffet, control1, amp);
+					effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("Median+LeakDC_post",
+				{// listes de arguments (identique pour chaque effet !!!!!)
+					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0, control8=0, pan=0, amp=0, ampPre=0, ampPost=0;
+					// liste des variables (identique pour chaque effet !!!!)
+					var ineffet, effet, ambisonic;
+					// son en entree de la effet + controles
+					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
+					// effet
+					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 'Stereo',
