@@ -272,6 +272,9 @@ DensityBand {
 				"PlayBufElasticPreBuf",
 				"TGrainsPreBuf",
 				"Warp1PreBuf",
+				"MedianPreBuf",
+				"LeakDCPreBuf",
+				"MedianLeakDCPreBuf",
 			],
 			// PreBuf Stream
 			[
@@ -283,6 +286,9 @@ DensityBand {
 				"Warp1StreamPreBuf",
 				"GranularStreamPreBuf",
 				"DjScratchStreamPreBuf",
+				"MedianStreamPreBuf",
+				"LeakDCStreamPreBuf",
+				"MedianLeakDCStreamPreBuf",
 			],
 			// PreBuf StreamEnv
 			[
@@ -301,6 +307,9 @@ DensityBand {
 				"BufRdElasticPostBuf",
 				"Warp1PostBuf",
 				"GranularPostBuf",
+				"MedianPostBuf",
+				"LeakDCPostBuf",
+				"MedianLeakDCPostBuf",
 			],
 			// Postbuf Stream
 			[
@@ -311,6 +320,9 @@ DensityBand {
 				"Warp1StreamPostBuf",
 				"GranularStreamPostBuf",
 				"DjScratchStreamPostBuf",
+				"MedianStreamPostBuf",
+				"LeakDCStreamPostBuf",
+				"MedianLeakDCStreamPostBuf",
 			],
 			// Postbuf StreamEnv
 			[
@@ -384,6 +396,9 @@ DensityBand {
 				"HPF",
 				"RHPF",
 				"BHiPass4",
+				"Median",
+				"LeakDC",
+				"Median+LeakDC",
 			],
 			// Filtre Resonant
 			[
@@ -5595,6 +5610,54 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				Out.ar(out, chain);
 		}).add;
 
+		SynthDef("MedianPreBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
+				freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = Median.ar(flatness * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LeakDCPreBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
+				freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = LeakDC.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2), flux) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianLeakDCPreBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
+				freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2)), flux) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
 		/////////////////////// SAMPLER STREAM PREBUFFER//////////////////////////
 
 		SynthDef("PlayBufStreamPreBuf",
@@ -5770,6 +5833,57 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				trigger = LFNoise0.kr(rate / flatness);
 				chain = BufRd.ar(1, buffer, Phasor.ar(trigger, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * TRand.kr(0.0, 1.0, trigger), BufFrames.kr(buffer), BufFrames.kr(buffer) * offset).lag(durSynth), 1) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianStreamPreBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = Median.ar(flatness * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LeakDCStreamPreBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = LeakDC.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2), flux) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianLeakDCStreamPreBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2)), flux) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6101,6 +6215,78 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				Out.ar(out, chain);
 		}).add;
 
+		SynthDef("MedianPostBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+				BufWr.ar(inputSig, buffer, recHead, loop: 1);
+				//RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
+				//// Play Buffer
+				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, ctrlHP1, ctrlHP2) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LeakDCPostBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+				BufWr.ar(inputSig, buffer, recHead, loop: 1);
+				//RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = LeakDC.ar(HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2), flux) * envelope;
+				//// Play Buffer
+				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, ctrlHP1, ctrlHP2) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianLeakDCPostBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+				BufWr.ar(inputSig, buffer, recHead, loop: 1);
+				//RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2)), flux) * envelope;
+				//// Play Buffer
+				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, ctrlHP1, ctrlHP2) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
 		/////////////////////// SAMPLER STREAM POSTBUFFER//////////////////////////
 
 		SynthDef("BufRdStreamPostBuf",
@@ -6294,6 +6480,78 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset).lag(flatness.log10.abs/3), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianStreamPostBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
+				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+				BufWr.ar(inputSig, buffer, recHead, loop: 1);
+				//RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LeakDCStreamPostBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
+				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+				BufWr.ar(inputSig, buffer, recHead, loop: 1);
+				//RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = LeakDC.ar(HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2), flux) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianLeakDCStreamPostBuf",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
+				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+				BufWr.ar(inputSig, buffer, recHead, loop: 1);
+				//RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2)), flux) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -7299,6 +7557,54 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				//FX
 				chain = BHiPass4.ar(in, centroid, flatness) * envelope;
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		SynthDef('Median',
+			{arg in=0, out=0, gate=0.5, xFade=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
+				var chain, envelope;
+				in = In.ar(in);
+				// Envelope
+				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				//FX
+				chain = Median.ar(flatness * 30 + 1, in) * envelope;
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		SynthDef('LeakDC',
+			{arg in=0, out=0, gate=0.5, xFade=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
+				var chain, envelope;
+				in = In.ar(in);
+				// Envelope
+				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				//FX
+				chain = LeakDC.ar(in, flux) * envelope;
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		SynthDef('Median+LeakDC',
+			{arg in=0, out=0, gate=0.5, xFade=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
+				var chain, envelope;
+				in = In.ar(in);
+				// Envelope
+				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				//FX
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, in), flux) * envelope;
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;

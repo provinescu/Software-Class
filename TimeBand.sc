@@ -116,7 +116,7 @@ f						Switch File for Analyze.
 		indexSequence = 0;
 		changeChoiceMIDI = ['Translate', 'Note'];
 		choiceCanalMIDI = ['MIDI IN 1', 'MIDI IN 2', 'MIDI IN 3', 'MIDI IN 4', 'MIDI IN 5', 'MIDI IN 6', 'MIDI IN 7', 'MIDI IN 8', 'MIDI IN 9', 'MIDI IN 10', 'MIDI IN 11', 'MIDI IN 12', 'MIDI IN 13', 'MIDI IN 14', 'MIDI IN 15', 'MIDI IN 16'];
-		changeChoiceSynthDef = ['TGrains', 'TGrains2', 'Warp1', 'BufRd', 'LoopBuf', 'PlayBuf', 'SinOsc', 'SawSynth', 'CombSynth', 'MdaPiano', 'Guitare', 'StringSynth', 'Gendy3', 'Blip', 'DynKlang', 'Formant', 'FM', 'Ring', 'AnalogKick', 'AnalogSnare', 'AnalogHiHat', 'SOSkick', 'SOSsnare', 'SOShats', 'SOStom'];
+		changeChoiceSynthDef = ['TGrains', 'TGrains2', 'Warp1', 'BufRd', 'LoopBuf', 'PlayBuf', 'HPplayBufMedianLeakDC', 'SinOsc', 'SawSynth', 'CombSynth', 'MdaPiano', 'Guitare', 'StringSynth', 'Gendy3', 'Blip', 'DynKlang', 'Formant', 'FM', 'Ring', 'AnalogKick', 'AnalogSnare', 'AnalogHiHat', 'SOSkick', 'SOSsnare', 'SOShats', 'SOStom'];
 		userOSchoiceControl = ['UserOperatingSystem', 'Load Preset', 'Save Preset', 'Load Synthesizer', 'Save Synthesizer', 'Set Synth Source', 'Copy on Synth Target'];
 		modeMIDIOSC = [];
 		ampMIDIOSC = 0;
@@ -282,6 +282,9 @@ f						Switch File for Analyze.
 			'PV_MagShift+Stretch',
 			'DJ_FX',
 			'WaveLoss',
+			'Median',
+			'LeakDC',
+			'Median+leakDC',
 		];
 		listeFX = [
 			'ByPass',
@@ -3100,7 +3103,18 @@ f						Switch File for Analyze.
 					},
 					// WaveLoss
 					34, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("WaveLoss", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Drop", "Jitter %", "X", "Mode", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					},// Median
+					35, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Median", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					},
+					// LeakDC
+					36, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("LeakDC", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Coef", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					},
+					// Median+LeakDC
+					37, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Median+LeakDC", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "Coef", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					}
 				);
 			};
@@ -3569,6 +3583,21 @@ f						Switch File for Analyze.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('HPplayBufMedianLeakDC',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = LeakDC.ar(Median.ar(5, PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope), 0.5);
 				Out.ar(out, chain);
 		}).add;
 
@@ -4299,6 +4328,30 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol;
 				var chain, signal=In.ar(in, 1);
 				chain  = Mix(WaveLoss.ar(signal, ctrl1 / 20000 * 40, 40, abs(ctrl2 * 2 - 1), vol, signal * (1 - vol)));
+				Out.ar(out, chain);
+		}).add;
+
+		// Median
+		SynthDef('Median',
+			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(Median.ar(ctrl1 / 20000 * 30 + 1, signal, vol, signal * (1 - vol)));
+				Out.ar(out, chain);
+		}).add;
+
+		// LeakDC
+		SynthDef('LeakDC',
+			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(LeakDC.ar(signal, ctrl1 / 20000, vol, signal * (1 - vol)));
+				Out.ar(out, chain);
+		}).add;
+
+		// Median+LeakDC
+		SynthDef('Median+LeakDC',
+			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(LeakDC.ar(Median.ar(ctrl1 / 20000 * 30 + 1, signal, vol, signal * (1 - vol)), ctrl2 / 20000));
 				Out.ar(out, chain);
 		}).add;
 
