@@ -8409,10 +8409,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// envelope (identique pour chaque sample !!!!!)
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope1=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1 + controls.at(8), doneAction: 2);
-					envelope2=EnvGen.ar(Env.perc(controls.at(1),1,1,controls.at(2)*8-4),timeScale: dureesample, levelScale: controls.at(3), doneAction: 0);
+					envelope2=EnvGen.ar(Env.perc(controls.at(5),1,1,controls.at(6)*8-4),timeScale: dureesample, levelScale: controls.at(7), doneAction: 0);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
-					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop) * envelope1;
-					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2) * envelope2;
+					in1=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)) * envelope1;
+					in2=HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(4), loop2, controls.at(2), controls.at(3)) * envelope2;
 					main=in1+in2;
 					//main = Limiter.ar(main, 1.0, 0.01);
 
@@ -8452,7 +8452,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: dureesample, levelScale: 1/10, doneAction: 2);
 					// Synth
-					in = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Dust2.kr(0*100), BufFrames.kr(buffer)*pos, loop);
+					in = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Dust2.kr(0*100), BufFrames.kr(buffer)*pos, loop, 0.33, 0.5);
 					main=DynKlank.ar(`[[1,controls.at(1),controls.at(2)*2,controls.at(3)*3,controls.at(4)*4,controls.at(5)*5,controls.at(6)*6,controls.at(7)*7,controls.at(8)*8], nil, 1/freq.size], in*0.1, freq);
 					//main = Limiter.ar(main, 1.0, 0.01);
 
@@ -8678,7 +8678,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope1=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: duree, levelScale: controls.at(5), doneAction: 2);
 					envelope2=EnvGen.ar(Env.linen(controls.at(7),controls.at(8),controls.at(9),1,4),timeScale: dureesample, levelScale: 1, doneAction: 0);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
-					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, 0, loop) * envelope2;
+					in2=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, 0, loop, 0.33, 0.5) * envelope2;
 					listefreq=listefreq.add(1/freq);listefreq=listefreq.add(1/(freq-(controls.at(3)*8)));listefreq=listefreq.add(1/(freq+(controls.at(4)*8)));
 					in1=Mix.ar(Array.fill(3, {arg i;delaytime=listefreq.wrapAt(i);
 						CombL.ar(Decay2.ar(Impulse.ar(duree/1000),controls.at(1)/10,controls.at(2),LFNoise2.ar(3000*controls.at(0))),0.01,delaytime,duree,envelope1)}));
@@ -8722,7 +8722,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope1=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: controls.at(5), doneAction: 2);
 					envelope2=EnvGen.ar(Env.linen(controls.at(7),controls.at(8),controls.at(9),1,4),timeScale: dureesample, levelScale: 1, doneAction: 0);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
-					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, 0, loop2) * envelope2;
+					in2=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, 0, loop2, 0.33, 0.5) * envelope2;
 					listefreq=listefreq.add(1/freq);listefreq=listefreq.add(1/(freq-(controls.at(3)*8)));listefreq=listefreq.add(1/(freq+(controls.at(4)*8)));
 					in1=Klank.ar(`[Array.series(16, freq, freq),Array.geom(16,1,rrand(controls.at(3),controls.at(4))),Array.fill(16, {rrand(0.1,2.5)})],Decay2.ar(Impulse.ar(duree/1000),controls.at(1)/100,controls.at(2)/100,BrownNoise.ar(controls.at(0)/2))) * envelope1;
 					main=in1+in2;
@@ -8885,8 +8885,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
-					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=Resonz.ar(main, XLine.ar(20000*controls.at(0)+27.5, 110*controls.at(1) + 27.5, controls.at(2)*dureesample));
+					main=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1));
+					main=Resonz.ar(main, XLine.ar(20000*controls.at(2)+27.5, 110*controls.at(3) + 27.5, controls.at(4)*dureesample));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -8926,7 +8926,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
-					main=Squiz.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop), controls.at(0) * 10, controls.at(1) * 10);
+					main=Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)), controls.at(2) * 10, controls.at(3) * 10);
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -8966,7 +8966,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
-					main=WaveLoss.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop), controls.at(0) * 40, 40, abs(controls.at(1) * 2 - 1));
+					main=WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)), controls.at(2) * 40, 40, abs(controls.at(3) * 2 - 1));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -9006,7 +9006,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
-					main=Mix(FreqShift.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop), controls.at(0) * 512, controls.at(1) * 2pi));
+					main=Mix(FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)), controls.at(2) * 512, controls.at(3) * 2pi));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -9048,8 +9048,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
 					trigger = Impulse.kr(controls.at(0)*100);
-					osc = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controls.at(3)+27.5, freq, duree*controls.at(4)), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controls.at(5)+27.5, freq, duree*controls.at(6)), 0.333));
+					osc =HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(3), controls.at(4));
+					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controls.at(5)+27.5, freq, duree*controls.at(6)), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controls.at(7)+27.5, freq, duree*controls.at(8)), 0.333));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -9132,7 +9132,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
 					trigger = Impulse.kr(controls.at(0)*100);
-					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
+					main=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(3), controls.at(4));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -9174,7 +9174,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
 					trigger = Impulse.kr(controls.at(0)*100);
-					main=LeakDC.ar(Median.ar(controls.at(3) * 30 + 1, PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop)), controls.at(4));
+					main=LeakDC.ar(Median.ar(controls.at(5) * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(3), controls.at(4))), controls.at(6));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -9216,7 +9216,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
 					trigger = Impulse.kr(controls.at(0)*100);
-					main=PlayBuf.ar(1, buffer, SinOsc.kr(controls.at(3)*dureesample.reciprocal*10, mul: controls.at(4), add: rate), trigger, BufFrames.kr(buffer)*pos, loop);
+					main=HPplayBuf.ar(1, buffer, SinOsc.kr(controls.at(6)*dureesample.reciprocal*10, mul: controls.at(6), add: rate), trigger, BufFrames.kr(buffer)*pos, loop, controls.at(3), controls.at(4));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out

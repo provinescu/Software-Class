@@ -1460,6 +1460,7 @@ G                           Init Genome Agent (solo).
 			"HPbufRd",
 			"HPbufRd2",
 			"HPtGrains",
+			"HPplayBufMedianLeakDC",
 			"SampleResonz",
 			"Synthesizer",
 			"FreqShift",

@@ -3597,7 +3597,7 @@ f						Switch File for Analyze.
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = LeakDC.ar(Median.ar(5, PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope), 0.5);
+				chain = LeakDC.ar(Median.ar(5, HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, 0, 0.06) * envelope), 0.6);
 				Out.ar(out, chain);
 		}).add;
 
@@ -4084,7 +4084,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear;
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
-				chain = PlayBuf.ar(1, buffer, (ctrl1 / 20000 * 4).clip(0.25, 4), 1, loop: 1);
+				chain = HPplayBuf.ar(1, buffer, (ctrl1 / 20000 * 4).clip(0.25, 4), 1, loop: 1);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagFreeze(chain, SinOsc.kr(ctrl2.clip(0.0625, 1)));
 				chain= IFFT(chain);

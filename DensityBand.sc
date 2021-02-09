@@ -4016,7 +4016,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			envelopeSynth = arrayEnv;
 		};
 		// HP Threshold
-		EZKnob(windowEar, 80 @ 80, "Threshold", ControlSpec(0.01, 1, \lin, 0.01),
+		EZKnob(windowEar, 80 @ 80, "Threshold", ControlSpec(0, 1, \lin, 0.01),
 			{|ez| ctrlHP1 = ez.value; groupeSynth.set(\ctrlHP1, ctrlHP1)}, 0.5, layout: \vert2);
 		// HP Sensitivity
 		EZKnob(windowEar, 80 @ 80, "Sensitivity", ControlSpec(0.01, 1, \lin, 0.01),
@@ -5693,7 +5693,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
 				chain = chain * envelope * amp;
 				// Out
@@ -5720,7 +5720,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope * amp;
@@ -5744,7 +5744,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
 				// Play Buffer
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope * amp;
 				// Out
@@ -5930,7 +5930,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
 				chain = chain * envelope * amp;
 				// Out
@@ -5958,7 +5958,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope * amp;
@@ -5984,7 +5984,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
 				// Play Buffer
-				chain = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope * amp;
 				// Out
@@ -6932,7 +6932,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -6959,7 +6959,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -6988,7 +6988,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7017,7 +7017,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7047,7 +7047,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7081,7 +7081,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7113,7 +7113,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7145,7 +7145,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7177,7 +7177,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -7209,7 +7209,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(2048, 1), in1);
