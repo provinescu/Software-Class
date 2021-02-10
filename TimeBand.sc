@@ -3597,7 +3597,7 @@ f						Switch File for Analyze.
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = LeakDC.ar(Median.ar(5, HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, 0, 0.06) * envelope), 0.6);
+				chain = LeakDC.ar(Median.ar(oscFlatness * 30 + 1, HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, 0, 0.06) * envelope), oscFlux);
 				Out.ar(out, chain);
 		}).add;
 
