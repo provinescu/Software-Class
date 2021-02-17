@@ -1504,7 +1504,7 @@ f						Switch File for Analyze.
 							numberSynth.do({arg synth;
 								listeGroupDolby.at(synth).freeAll;
 								listeGroupDolby = listeGroupDolby.add(
-									Synth.new("Ambisonic", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
+									Synth.new("Ambisonic", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
 								)
 							});
 						});
@@ -2318,6 +2318,7 @@ f						Switch File for Analyze.
 
 		// Setup Bus synthAnalyzeAudioIn
 		PopUpMenu(windowExternalControlGUI, Rect(0, 0, 60, 20)).items_(['Bus 1', 'Bus 2', 'Bus 3', 'Bus 4', 'Bus 5', 'Bus 6', 'Bus 7', 'Bus 8', 'Bus 9', 'Bus 10', 'Bus 11', 'Bus 12', 'Bus 13', 'Bus 14', 'Bus 15', 'Bus 16', 'Bus 17', 'Bus 18', 'Bus 19', 'Bus 20', 'Bus 21', 'Bus 22', 'Bus 23', 'Bus 24', 'Bus 25', 'Bus 26', 'Bus 27', 'Bus 28', 'Bus 29', 'Bus 30', 'Bus 31', 'Bus 32']).action = {arg item;
+			//if(typeAudio.value == 0, {groupeAudioRec.set(\in, item.value, \busIn, busAudioIn.index)}, {groupeAudioRec.set(\in, 0, \busIn, busAudioIn.index)});
 			groupeAudioRec.set(\in, item.value, \busIn, busAudioIn.index);
 		};
 
@@ -2698,7 +2699,12 @@ f						Switch File for Analyze.
 			PopUpMenu(windowControlGUI, Rect(synth * 315 + 240, numberSynth * 25 + 75, 70, 20)).items_(['Bus 1', 'Bus 2', 'Bus 3', 'Bus 4', 'Bus 5', 'Bus 6', 'Bus 7', 'Bus 8', 'Bus 9', 'Bus 10', 'Bus 11', 'Bus 12', 'Bus 13', 'Bus 14', 'Bus 15', 'Bus 16', 'Bus 17', 'Bus 18', 'Bus 19', 'Bus 20', 'Bus 21', 'Bus 22', 'Bus 23', 'Bus 24', 'Bus 25', 'Bus 26', 'Bus 27', 'Bus 28', 'Bus 29', 'Bus 30', 'Bus 31', 'Bus 32']).action = {arg item;
 				listeBusSynth.put(synth, item.value);
 				synthAudioRec.at(synth).free;
+				if(typeAudio.value == 0, {
 				synthAudioRec.put(synth, Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail));
+				},
+				{
+				synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail)))
+				});
 			};
 
 			// Type Sequencer
@@ -4485,6 +4491,17 @@ f						Switch File for Analyze.
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				Out.ar(out, chain);
 		}).add;
+
+		/*// Ambisonic
+		SynthDef('Ambisonic',
+			{arg out=0, in, panX, panY;
+				var signal, chain, ambisonic, azimuth = [], elevation = [];
+		numberAudioOut.do({arg i; azimuth = azimuth.add(pi * (i / numberAudioOut - (numberAudioOut.reciprocal * (numberAudioOut / 2).floor))); elevation = elevation.add(0)});
+				signal = In.ar(in, 1);
+				ambisonic = BFEncode1.ar(signal, panX * 2pi - pi, panY * 2pi - pi);
+				chain = BFDecode1.ar( ambisonic[0], ambisonic[1], ambisonic[2], ambisonic[3], azimuth, elevation);
+				Out.ar(out, chain);
+		}).add;*/
 
 		////////////////////////////// Pre + Post Production //////////////////////
 
