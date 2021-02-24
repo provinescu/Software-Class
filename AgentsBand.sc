@@ -2536,8 +2536,7 @@ G                           Init Genome Agent (solo).
 						if(sqrt(sqrdif(ax , ~listeduree.wrapAt(signal)) + sqrdif(ay , ~listefreq.wrapAt(signal)) + sqrdif(az , ~listeamp.wrapAt(signal))) <= distance,
 							{
 								if(~flagGeneBand == 'on',
-									{geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)},
-									{geneFHZ = ~agentsBand.wrapAt(agent)});
+									{geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 								for(1, ~numFhzBand, {arg i;
 									if(fhz > ~bandFHZ.wrapAt(i-1) and: {fhz < ~bandFHZ.wrapAt(i)} and: {geneFHZ.wrapAt(i) == 1}, {
 										signaux=signaux.add(signal);
@@ -3628,7 +3627,7 @@ G                           Init Genome Agent (solo).
 			Tdef.removeAll;
 			MIDIdef.freeAll;
 			~menuAgentsBand.remove;// remove custom menu
-			s.quit;
+			//s.quit;
 		};
 
 		CmdPeriod.doOnce(~cmdperiodfunc);
@@ -7285,7 +7284,7 @@ G                           Init Genome Agent (solo).
 			~speedEffets.valueAction_(datafile.wrapAt(205));
 			~speedVerb.valueAction_(datafile.wrapAt(207));
 			// + Genome (209) + Sequence (210)
-			if(flagGenome == 'on' and: {datafile.wrapAt(207).size != 0}, {
+			if(flagGenome == 'on' and: {datafile.wrapAt(209).size != 0}, {
 				~genomes=datafile.wrapAt(209);// Load Genomes
 				~startpopulation = ~agents = ~genomes.size;
 				~foncInitAgents.value;
