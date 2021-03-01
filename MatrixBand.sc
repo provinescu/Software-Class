@@ -174,7 +174,7 @@ MatrixBand {
 			'HPplayBufVibrato',
 			'HPtGrains',
 			'Trig1PlayBuf',
-			'Trig1PlayBuf',
+			'HPplayBufResonz',
 			'Synthesizer',
 			'HPplayBufMedianLeakDC',
 			'FreqShift',
