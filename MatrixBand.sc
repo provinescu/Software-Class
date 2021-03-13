@@ -28,7 +28,7 @@ MatrixBand {
 
 		numberAudioOut = o;
 		recChannels = r;
-		switchAudioOut = f;// Type Format stereo, ambisonic, etc...
+		switchAudioOut = f.asSymbol;// Type Format stereo, ambisonic, etc...
 
 		s = Server.default;
 
