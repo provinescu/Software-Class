@@ -912,16 +912,18 @@ y ... -					Musical keys.
 			data.value;
 		};
 
-		fonctionLoadPreset = {arg preset;
+		fonctionLoadPreset = {arg preset, dataControlSynth;
 			listeDataOSC = preset.last;// Load OSCmusicData
 			preset.remove(preset.last);// Remove OSCmusicData
-			//fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
+			fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
 			preset.remove(preset.last);// Remove control panel
+			dataControlSynth = preset.last; // ControlSynth Panel
 			//fonctionLoadControlSynth.value(windowControlSynth, preset.last);//Load ControlSynth Panel
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data; fonctionLoadSynthesizer.value(data)});// Load Synthesizer
 			// Init Band for Synth
 			fonctionInitBand.value(numFhzBand);
+			fonctionLoadControlSynth.value(windowControlSynth, dataControlSynth);//Load ControlSynth Panel
 		};
 
 		fonctionSaveControl = {arg window;
