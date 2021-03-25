@@ -1808,6 +1808,7 @@ DensityBand {
 							});
 						});
 						// Set Range Amp
+						amp = amp / listeDataInstruments.size.max(1);
 						amp = amp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 						// Set Duree
 						// Check Duree for Chords
@@ -2503,7 +2504,7 @@ DensityBand {
 				data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 			});
 			listeWindows.do({arg w; w.close});
-			s.quit;
+			//s.quit;
 		};
 
 		CmdPeriod.doOnce(cmdperiodfunc);
