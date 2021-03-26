@@ -285,6 +285,7 @@ f						Switch File for Analyze.
 			'Median',
 			'LeakDC',
 			'Median+leakDC',
+			'PV_Cutoff',
 		];
 		listeFX = [
 			'ByPass',
@@ -1388,9 +1389,9 @@ f						Switch File for Analyze.
 					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
 					MIDIIn.disconnect;
 					MIDIdef.freeAll;
-					s.freeAll;
+					//s.freeAll;
 				};
-				s.quit;
+				//s.quit;
 			};
 
 			CmdPeriod.doOnce(cmdperiodfunc);
@@ -2700,10 +2701,10 @@ f						Switch File for Analyze.
 				listeBusSynth.put(synth, item.value);
 				synthAudioRec.at(synth).free;
 				if(typeAudio.value == 0, {
-				synthAudioRec.put(synth, Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail));
+					synthAudioRec.put(synth, Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail));
 				},
 				{
-				synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail)))
+					synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail)))
 				});
 			};
 
@@ -3121,6 +3122,9 @@ f						Switch File for Analyze.
 					// Median+LeakDC
 					37, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Median+LeakDC", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
 						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "Coef", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					},// PV_Cutoff
+					37, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_Cutoff", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Cutoff", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					}
 				);
 			};
@@ -4363,6 +4367,17 @@ f						Switch File for Analyze.
 				Out.ar(out, chain);
 		}).add;
 
+		// PV_Cutoff
+		SynthDef('PV_Cutoff',
+			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
+				var chain, signal=In.ar(in, 1);
+				chain = FFT(LocalBuf(2048, 1), signal);
+				chain = PV_Cutoff(chain, ctrl1 / 20000 * 2 - 1);
+				chain= IFFT(chain);
+				chain = Mix(chain * vol + (signal * (1 - vol)));
+				Out.ar(out, chain);
+		}).add;
+
 		////////////////////////////// FX ///////////////////////
 
 		// ByPassFX
@@ -4494,13 +4509,13 @@ f						Switch File for Analyze.
 
 		/*// Ambisonic
 		SynthDef('Ambisonic',
-			{arg out=0, in, panX, panY;
-				var signal, chain, ambisonic, azimuth = [], elevation = [];
+		{arg out=0, in, panX, panY;
+		var signal, chain, ambisonic, azimuth = [], elevation = [];
 		numberAudioOut.do({arg i; azimuth = azimuth.add(pi * (i / numberAudioOut - (numberAudioOut.reciprocal * (numberAudioOut / 2).floor))); elevation = elevation.add(0)});
-				signal = In.ar(in, 1);
-				ambisonic = BFEncode1.ar(signal, panX * 2pi - pi, panY * 2pi - pi);
-				chain = BFDecode1.ar( ambisonic[0], ambisonic[1], ambisonic[2], ambisonic[3], azimuth, elevation);
-				Out.ar(out, chain);
+		signal = In.ar(in, 1);
+		ambisonic = BFEncode1.ar(signal, panX * 2pi - pi, panY * 2pi - pi);
+		chain = BFDecode1.ar( ambisonic[0], ambisonic[1], ambisonic[2], ambisonic[3], azimuth, elevation);
+		Out.ar(out, chain);
 		}).add;*/
 
 		////////////////////////////// Pre + Post Production //////////////////////

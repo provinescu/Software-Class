@@ -1300,6 +1300,7 @@ G                           Init Genome Agent (solo).
 					"PV_SpectralEnhance",
 					"PV_MagStretch",
 					"PV_MagShift+Stretch",
+					"PV_Cutoff",
 					"PV_Max",
 					"PV_Min",
 					"PV_Add",
@@ -1499,6 +1500,7 @@ G                           Init Genome Agent (solo).
 			"PV_SpectralEnhance",
 			"PV_MagStretch",
 			"PV_MagShift+Stretch",
+			"PV_Cutoff",
 			"Piano PV_Max",
 			"Piano PV_Min",
 			"Piano PV_Add",
@@ -1576,6 +1578,7 @@ G                           Init Genome Agent (solo).
 					"PV_SpectralEnhanceFX",
 					"PV_MagStretchFX",
 					"PV_MagShift+StretchFX",
+					"PV_CutoffFX",
 					"ConvolutionFX",
 					"FXonFly",
 				];
@@ -9609,6 +9612,50 @@ G                           Init Genome Agent (solo).
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
+			SynthDef("PV_Cutoff",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var dureesample, envelope, ambisonic, main;
+					// Set Rate Freq
+					rate=2**rate.cpsoct;
+					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					rate=rate * reverse;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
+					// Main Synth
+					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
+					main = FFT(LocalBuf(2048, 1), main);
+					main = PV_Cutoff(main, controlF * 2 - 1);
+					main= IFFT(main) * 0.125;
+					// main = Limiter.ar(main, 1.0, 0.01);
+					//ampreal = if(amp <= 0, ampreal, amp);
+					// Switch Audio Out
+					main = if(~switchAudioOut == 'Stereo',
+						if(Rand(-1, 1 ) <= 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
+						if(~switchAudioOut == 'MultiSpeaker',
+							if(Rand(-1, 1 ) <= 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
+					Out.ar(out, main * amp * ampreal);
+			}).send(s);
+
 			SynthDef("PV_Max",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
@@ -14060,6 +14107,35 @@ G                           Init Genome Agent (solo).
 					// effet
 					effet = FFT(LocalBuf(2048, 1), ineffet);
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4), control2 - 0.5 * 128);
+					effet = IFFT(effet);
+					effet = effet * amp;
+					//effet = Limiter.ar(effet, 1.0, 0.01);
+					// Switch Audio Out
+					effet = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(effet, pan),
+						if(~switchAudioOut == 'MultiSpeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2 v1
+								Rotate2.ar(effet, effet, pan),
+								// Ambisonic v1
+								(ambisonic = PanB2.ar(effet, pan);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(busverb, Mix(effet));
+					Out.ar(out, effet);
+			}).send(s);
+
+			SynthDef("PV_CutoffFX",
+				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
+					var ineffet, effet, ambisonic;
+					// Input
+					ineffet=Mix(In.ar(in, 2));
+					// effet
+					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = PV_Cutoff(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);

@@ -214,6 +214,7 @@ MatrixBand {
 			'PV_SpectralEnhance',
 			'PV_MagStretch',
 			'PV_MagShift+Stretch',
+			'PV_Cutoff',
 			//////// FFT 2 buffer
 			'FFT 2 BUFFER (',
 			'PV_Max',
@@ -322,6 +323,7 @@ MatrixBand {
 			'PV_MagStretchFX',
 			'PV_MagShift+StretchFX',
 			'ConvolutionFX',
+			'PV_CutoffFX',
 			//////// SYNTH + FX Special
 			'SPECIAL SYNTH + FX (',
 			'SpecialFX',
@@ -6113,6 +6115,62 @@ y ... -					Musical keys.
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
+		SynthDef('PV_Cutoff',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
+				//// Set offset
+				//ctrl2 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2*4, 1, Rand(0, 1)));
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				// Synth
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_Cutoff(chain, ctrl1 * 2 - 1);
+				chain= IFFT(chain);
+				// chain = Limiter.ar(chain, 1.0, 0.01);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					if(Rand(-1, 1) <= 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 'Multispeaker',
+						if(Rand(-1, 1) <= 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
 		//SynthDef('PV_HPecartType',
 		//{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
 		//freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
@@ -11756,6 +11814,45 @@ y ... -					Musical keys.
 				//FX
 				chain = FFT(LocalBuf(2048, 1), in);
 				chain = PV_HPshiftDown(chain, ctrl1 * 64);
+				chain= IFFT(chain);
+				chain = chain * amp;
+				// Switch Audio Out
+				chain = if(switchAudioOut == 'Stereo',
+					// Pan
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					if(switchAudioOut == 'Multispeaker',
+						// PanAz
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
+						if(switchAudioOut == 'Rotate2',
+							// Rotate2
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							// Ambisonic
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('PV_CutoffFX',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, in, ambisonic;
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set inFX + Direct AudioIn (levelLocalIn)
+				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
+				//FX
+				chain = FFT(LocalBuf(2048, 1), in);
+				chain = PV_Cutoff(chain, ctrl1 * 2 - 1);
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out

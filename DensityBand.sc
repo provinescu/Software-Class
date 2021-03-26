@@ -433,6 +433,7 @@ DensityBand {
 				"PV_MagStretch",
 				"PV_MagShift+Stretch",
 				"PV_MagFreeze",
+				"PV_Cutoff",
 			],
 			// FX
 			[
@@ -1831,6 +1832,7 @@ DensityBand {
 										newAmp = newAmp.add(chordAmp.mediane);
 										newDuree= newDuree.add(duree);
 										chordFreq = [];
+
 									});
 								});
 							});
@@ -8054,6 +8056,26 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				chain = PlayBuf.ar(1, buffer, flux.log.abs.clip(0.25, 4), 1, loop: 1);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagFreeze(chain, SinOsc.kr(flatness.log10.abs.reciprocal));
+				chain= IFFT(chain) * envelope;
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		// PV_MagFreeze
+		SynthDef('PV_Cutoff',
+			{arg in=0, out=0, gate=0.5, xFade=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
+				var chain, buffer=LocalBuf(s.sampleRate, 1).clear, envelope;
+				in = In.ar(in);
+				// Envelope
+				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				// Normalize
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				RecordBuf.ar(in, buffer, loop: 1, preLevel: 0);
+				chain = PlayBuf.ar(1, buffer, flux.log.abs.clip(0.25, 4), 1, loop: 1);
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_Cutoff(chain, LFCub.kr(flux + 1, flatness * 2 - 1).lag);
 				chain= IFFT(chain) * envelope;
 				// Out
 				XOut.ar(out, xFade, chain);
