@@ -4627,14 +4627,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(1).enabled_(true);
 					windowGVerb.view.children.at(2).enabled_(true);
 					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(false);
+					windowGVerb.view.children.at(4).enabled_(true);
 					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(false);
+					windowGVerb.view.children.at(6).enabled_(true);
 					gVerb.run(false); freeVerb.run(false); allPass.run(false); jpVerb.run(true);
 					windowGVerb.view.children.at(1).children.at(1).valueAction_(16/300);
 					windowGVerb.view.children.at(2).children.at(1).valueAction_(1.24/150);
 					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.2);
 					windowGVerb.view.children.at(5).children.at(1).valueAction_(-12.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(0.5);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
 					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
@@ -8518,11 +8520,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Synth JPverb
 		SynthDef("JPverb Stereo",
 			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0,
-				roomsize=10, revtime=3, damping=0.5, inputbw=0.5, spread=15, drylevel=0, earlylevel=0.25118864315096, taillevel=0.12589254117942, bpm=1;
+				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.25118864315096, taillevel=0.12589254117942, bpm=1;
 				var signal, chain=0;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, 2));
-				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: roomsize / 100, earlyDiff: earlylevel));
+				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -8531,11 +8533,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Synth JPverb
 		SynthDef("JPverb Rotate2",
 			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0,
-				roomsize=10, revtime=3, damping=0.5, inputbw=0.5, spread=15, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
+				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
 				var signal, chain=0;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
-				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: roomsize / 100, earlyDiff: earlylevel));
+				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
 				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
 				// Out
@@ -8545,11 +8547,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Synth JPverb
 		SynthDef("JPverb MultiSpeaker",
 			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0,
-				roomsize=10, revtime=3, damping=0.5, inputbw=0.5, spread=15, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
+				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
 				var signal, chain=0;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
-				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: roomsize / 100, earlyDiff: earlylevel));
+				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -8558,11 +8560,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		//Synth  JPverb
 		SynthDef("JPverb Ambisonic",
 			{arg in=0, out=0, xFade=0.5, panLo=1.neg, panHi=1,
-				roomsize=10, revtime=3, damping=0.5, inputbw=0.5, spread=15, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
+				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
 				var signal, chain=0, ambisonic;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
-				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: roomsize / 100, earlyDiff: earlylevel));
+				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
 				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
@@ -8573,13 +8575,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Synth JPverb
 		SynthDef("JPverb Dolby5.1",
 			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0,
-				roomsize=10, revtime=3, damping=0.5, inputbw=0.5, spread=15, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
+				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
 				var signal, chain=0, front, center, lfe, rear, posX, posY;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				posX = TRand.kr(panLo, panHi, Impulse.kr(bpm));
 				posY = TRand.kr(panLo, panHi, Impulse.kr(bpm));
 				signal = Mix(In.ar(0, numberAudioOut));
-				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: roomsize / 100, earlyDiff: earlylevel));
+				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				front = Pan2.ar(chain, posX);
 				rear = Pan2.ar(chain, posY);
 				center = ((posX*posX) + (posY*posY))**0.5;
