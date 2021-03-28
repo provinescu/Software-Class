@@ -4567,9 +4567,9 @@ f						Switch File for Analyze.
 				inputFilter, harmonic, percussive;
 				input = In.ar(busIn);
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-				fft = FFT(LocalBuf(512, 1), input);
-				harmonic = FFT(LocalBuf(512, 1), input);
-				percussive = FFT(LocalBuf(512, 1), input);
+				fft = FFT(LocalBuf(512, 1), inputFilter);
+				harmonic = FFT(LocalBuf(512, 1), inputFilter);
+				percussive = FFT(LocalBuf(512, 1), inputFilter);
 				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
 				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), minFreq: 60

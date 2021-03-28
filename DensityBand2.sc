@@ -2108,7 +2108,7 @@ DensityBand2 {
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
 						// Normalize
-						if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
+						//if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
 					},
 					{
 						indexX = (indexSoundX + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
@@ -4747,9 +4747,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				input = In.ar(busIn);
 				ampInput = if(ampLoPass < 1, 1, if(ampHiPass < 0, 1, 0));
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-				fft = FFT(LocalBuf(512, 1), input);
-				harmonic = FFT(LocalBuf(512, 1), input);
-				percussive = FFT(LocalBuf(512, 1), input);
+				fft = FFT(LocalBuf(512, 1), inputFilter);
+				harmonic = FFT(LocalBuf(512, 1), inputFilter);
+				percussive = FFT(LocalBuf(512, 1), inputFilter);
 				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
 				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), minFreq: 60

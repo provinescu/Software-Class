@@ -7452,9 +7452,9 @@ G                           Init Genome Agent (solo).
 					inputFilter, harmonic, percussive;
 					input= SoundIn.ar(in);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), input);
-					harmonic = FFT(LocalBuf(512, 1), input);
-					percussive = FFT(LocalBuf(512, 1), input);
+					fft2 = FFT(LocalBuf(512, 1), inputFilter);
+					harmonic = FFT(LocalBuf(512, 1), inputFilter);
+					percussive = FFT(LocalBuf(512, 1), inputFilter);
 					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
@@ -7545,9 +7545,9 @@ G                           Init Genome Agent (solo).
 					inputFilter, harmonic, percussive;
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), input);
-					harmonic = FFT(LocalBuf(512, 1), input);
-					percussive = FFT(LocalBuf(512, 1), input);
+					fft2 = FFT(LocalBuf(512, 1), inputFilter);
+					harmonic = FFT(LocalBuf(512, 1), inputFilter);
+					percussive = FFT(LocalBuf(512, 1), inputFilter);
 					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);

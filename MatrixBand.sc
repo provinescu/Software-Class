@@ -4646,9 +4646,9 @@ y ... -					Musical keys.
 				var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, fft2, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, inputFilter, harmonic, percussive;
 				input = In.ar(busAnalyze);
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-				fft = FFT(LocalBuf(512, 1), input);
-				harmonic = FFT(LocalBuf(512, 1), input);
-				percussive = FFT(LocalBuf(512, 1), input);
+				fft = FFT(LocalBuf(512, 1), inputFilter);
+				harmonic = FFT(LocalBuf(512, 1), inputFilter);
+				percussive = FFT(LocalBuf(512, 1), inputFilter);
 				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), minFreq: 60
