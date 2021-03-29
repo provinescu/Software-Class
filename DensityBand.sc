@@ -2078,7 +2078,7 @@ DensityBand {
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
 						// Normalize
-						if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
+						//if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
 					},
 					{
 						indexX = (indexSoundX + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
@@ -2102,7 +2102,7 @@ DensityBand {
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
 						// Normalize
-						if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
+						//if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
 					},
 					{
 						indexX = (indexSoundX + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
