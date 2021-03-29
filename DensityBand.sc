@@ -4432,8 +4432,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		refreshDisplayFFT.states = [["Refresh Plotter"]];
 		refreshDisplayFFT.action = {|view| plotterFFTGUI.value = [[0], [0], [0], [0], [0]]; plotterFFT = [[0], [0], [0], [0], [0]];
 		};
-		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(0, 100, \lin, 1),
-			{|ez| groupeAnalyse.set(\speed, ez.value)}, 24, layout: \horz);
+		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(-100, 100, \lin, 1),
+			{|ez| if(ez.value < 0,
+				{groupeAnalyse.set(\speed, ez.value.abs.reciprocal)},
+				{groupeAnalyse.set(\speed, ez.value)});
+		}, 24, layout: \horz);
 		// Plotter
 		plotterFFTGUI = Plotter("Analyze FFT", Rect(0, 0, 500, 300), windowPlotterFFT).plotMode_(\steps);
 		plotterFFTGUI.value = [[0], [0], [0], [0], [0]];
