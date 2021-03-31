@@ -4453,7 +4453,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		refreshDisplayFFT.states = [["Refresh Plotter"]];
 		refreshDisplayFFT.action = {|view| plotterFFTGUI.value = [[0], [0], [0], [0], [0]]; plotterFFT = [[0], [0], [0], [0], [0]];
 		};
-		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(-100, 100, \lin, 1),
+		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(-100, 100, \lin, 0.01),
 			{|ez| if(ez.value < 0,
 				{groupeAnalyse.set(\speed, ez.value.abs.reciprocal)},
 				{groupeAnalyse.set(\speed, ez.value)});
