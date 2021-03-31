@@ -1542,7 +1542,6 @@ G                           Init Genome Agent (solo).
 					"Resonz",
 					"TwoPole",
 					"FOS",
-					"SOS",
 					"Median",
 					"LeakDC",
 					"Median+LeakDC",
