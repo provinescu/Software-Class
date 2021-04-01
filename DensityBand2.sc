@@ -8096,12 +8096,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
 				// Normalize
-				flux = flux.clip(0.01, 1.0).lag(durSynth);
-				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				flux = (flux * 2 - 1).clip(-0.99, 0.4);
+				flatness = flatness.clip(0.01, 1.0);
 				RecordBuf.ar(in, buffer, loop: 1, preLevel: 0);
-				chain = PlayBuf.ar(1, buffer, flux.log.abs.clip(0.25, 4), 1, loop: 1);
+				chain = PlayBuf.ar(1, buffer, 1, 1, loop: 1);
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_Cutoff(chain, LFCub.kr(flux + 1, flatness * 2 - 1).lag);
+				chain = PV_Cutoff(chain, flux);
 				chain= IFFT(chain) * envelope;
 				// Out
 				XOut.ar(out, xFade, chain);
