@@ -2187,6 +2187,7 @@ DensityBand2 {
 							\amp, Pseq(amp, 1),
 							\dur, Pseq(duree, 1),
 							\durSynth, dureeInstrument,
+							\durSample, dureeSample,
 							\legato, 0.5,
 							\ctrlHP1, Pfuncn({ctrlHP1}, inf),
 							\ctrlHP2, Pfuncn({ctrlHP2}, inf),
@@ -6955,7 +6956,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -6982,7 +6984,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7011,7 +7014,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7040,7 +7044,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7070,7 +7075,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7104,7 +7110,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7136,7 +7143,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7168,7 +7176,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7200,7 +7209,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7232,7 +7242,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7290,7 +7301,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				localBuf = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(localBuf), 0, BufFrames.kr(localBuf));
-				BufWr.ar(inputSig, localBuf, recHead, loop: 1);
+				//BufWr.ar(inputSig, localBuf, recHead, loop: 1);
+				RecordBuf.ar(inputSig, localBuf, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7315,7 +7327,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				localBuf = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(localBuf), 0, BufFrames.kr(localBuf));
-				BufWr.ar(inputSig, localBuf, recHead, loop: 1);
+				//BufWr.ar(inputSig, localBuf, recHead, loop: 1);
+				RecordBuf.ar(inputSig, localBuf, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
@@ -7345,7 +7358,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				localBuf = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
 				recHead = Phasor.ar(0, BufRateScale.kr(localBuf), 0, BufFrames.kr(localBuf));
-				BufWr.ar(inputSig, localBuf, recHead, loop: 1);
+				//BufWr.ar(inputSig, localBuf, recHead, loop: 1);
+				RecordBuf.ar(inputSig, localBuf, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
