@@ -6,7 +6,7 @@ TimeBand {
 
 	classvar  < s;
 
-	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth;
+	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel;
 
 	*new	{arg path="~/Documents/TimeBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -401,8 +401,8 @@ f						Switch File for Analyze.
 			// load Buffer Synth and Setup Sliders Sample
 			numberSynth.do({arg synth;
 				var item1, item2;
-				item1 = (synth * 88 + 14) + (numberSynth * numberMaxStepSequencer + 14);
-				item2 = (synth * 88 + 30) + (numberSynth * numberMaxStepSequencer + 14);
+				item1 = (synth * 93 + 19) + (numberSynth * numberMaxStepSequencer + 14);
+				item2 = (synth * 93 + 35) + (numberSynth * numberMaxStepSequencer + 14);
 				bufferAndSoundFile = fonctionLoadSample.value(data.at(item1).at(1), listeGroupSynth.at(synth), listeBuffer.at(synth), listeBufferAudioRec.at(synth));
 				listeBuffer.put(synth, bufferAndSoundFile.at(0));
 				listeSoundFile.put(synth, bufferAndSoundFile.at(1));
@@ -415,17 +415,16 @@ f						Switch File for Analyze.
 						listeGUIsoundFile.at(synth).soundfile_(listeSoundFile.at(synth)).read(0,
 							listeSoundFile.at(synth).numFrames).refresh;
 						if(listeActiveJitterWavePos.at(synth).value == 0, {listeGUIsoundFile.at(synth).setSelectionColor(0, Color.new(0.985, 0.841, 0))},{listeGUIsoundFile.at(synth).setSelectionColor(0, Color.red)});
-					}.defer
-
+					}.defer;
 				});
 			});
 			// SetUp Views
 			window.view.children.do({arg view, item;
-				if(item != ((0  * 88 + 9) + (numberSynth * numberMaxStepSequencer + 14)) and: {item != ((1  * 88 + 9) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((2  * 88 + 9) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((3  * 88 + 9) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((0  * 88 + 30) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((1  * 88 + 30) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((2  * 88 + 30) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((3  * 88 + 30) + (numberSynth * numberMaxStepSequencer + 14))},
+				if(item != ((0  * 93 + 9) + (numberSynth * numberMaxStepSequencer + 14)) and: {item != ((1  * 93 + 9) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((2  * 93 + 9) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((3  * 93 + 9) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((0  * 93 + 35) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((1  * 93 + 35) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((2  * 93 + 35) + (numberSynth * numberMaxStepSequencer + 14))} and: {item != ((3  * 93 + 35) + (numberSynth * numberMaxStepSequencer + 14))},
 					{
 						// QCompositeView
 						if(data.at(item).at(0) == "a View" or: {data.at(item).at(0) == "a CompositeView"} or: {data.at(item).at(0) == "a QCompositeView"} or: {data.at(item).at(0) == "a QView"} or: {data.at(item).at(0) == "a SCCompositeView"}, {
-							if(data.at(item).at(1) == "a QStaticText" or: {data.at(item).at(1) == "a SCStaticText"} or: {data.at(item).at(1) == "a StaticText"}, {view.children.at(1).valueAction_(data.at(item).at(2).at	(1))});
+							if(data.at(item).at(1) == "a QStaticText" or: {data.at(item).at(1) == "a SCStaticText"} or: {data.at(item).at(1) == "a StaticText"}, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
 							if(data.at(item).at(1) == "a QSlider" or: {data.at(item).at(1) == "a SCSlider"} or: {data.at(item).at(1) == "a Slider"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
 							if(data.at(item).at(1) == "a QRangeSlider" or: {data.at(item).at(1) == "a SCRangeSlider"} or: {data.at(item).at(1) == "a RangeSlider"}, {view.children.at(2).activeLo_(0); view.children.at(2).activeHi_(1); view.children.at(2).activeLo_(data.at(item).at	(2).at(2).at(0)); view.children.at(2).activeHi_(data.at(item).at(2).at(2).at(1))});
 							if(data.at(item).at(1) == "a QKnob" or: {data.at(item).at(1) == "a SCKnob"} or: {data.at(item).at(1) == "a Knob"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
@@ -444,6 +443,9 @@ f						Switch File for Analyze.
 						// QSlider2D (special case)
 						if(data.at(item).at(0)  == "a QSlider2D" or: {data.at(item).at(0)  == "a SCSlider2D"} or: {data.at(item).at(0)  == "a Slider2D"},
 							{view.setXYActive(data.at(item).at(1), data.at(item).at(2))});
+						// NumberBox
+						if(data.at(item).at(0)  == "a NumberBox" or: {data.at(item).at(0) == "a QNumberBox"} or: {data.at(item).at(0) == "a SCNumberBox"},
+							{view.valueAction_(data.at(item).at(1))});
 				});
 			});
 			//+ NumFhzBand
@@ -483,6 +485,9 @@ f						Switch File for Analyze.
 				// QSlider2D (Special Case)
 				if(view.asString == "a QSlider2D" or: {view.asString == "a SCSlider2D"} or: {view.asString == "a Slider2D"},
 					{data = data.add([view.asString, view.x, view.y])});
+				// NumberBox
+				if(view.asString  == "a NumberBox" or: {view.asString == "a QNumberBox"} or: {view.asString== "a SCNumberBox"},
+					{data = data.add([view.asString, view.value])});
 			});
 			//+ Array with [Sequencer, Sample, NumFhzBand, Scale, Root, Degress]
 			data = data.add(windowExternalControlGUI.view.children.at(22).children.at(2).value);
@@ -578,15 +583,15 @@ f						Switch File for Analyze.
 			for(0, numFhzBand,
 				{arg index;
 					numberSynth.do({arg synth;
-						windowControlGUI.view.children.at((synth * 88 + 16 + index) + (numberSynth * numberMaxStepSequencer + 14)).enabled_(true);
+						windowControlGUI.view.children.at((synth * 93 + 21 + index) + (numberSynth * numberMaxStepSequencer + 14)).enabled_(true);
 					});
 			});
 			if(numFhzBand < 12, {
 				for(numFhzBand + 1, 12,
 					{arg index;
 						numberSynth.do({arg synth;
-							windowControlGUI.view.children.at((synth * 88 + 16 + index) + (numberSynth * numberMaxStepSequencer + 14)).enabled_(false);
-							windowControlGUI.view.children.at((synth * 88 + 16 + index) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
+							windowControlGUI.view.children.at((synth * 93 + 21 + index) + (numberSynth * numberMaxStepSequencer + 14)).enabled_(false);
+							windowControlGUI.view.children.at((synth * 93 + 21 + index) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
 						});
 				});
 			});
@@ -723,8 +728,11 @@ f						Switch File for Analyze.
 				listeReverse = listeReverse.add(1);
 				listeEnvelopeSynth = listeEnvelopeSynth.add([[0.0, 1.0, 1.0, 0.75, 0.75, 0.5, 0.5, 0.0],[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125]]);
 				listeActiveAudioRec = listeActiveAudioRec.add(0);
+				listeLoop = listeLoop.add(1);
+				listeRecLevel = listeRecLevel.add(1);
+				listePreLevel = listePreLevel.add(0);
 				// Create Synth AudioRec
-				synthAudioRec = synthAudioRec.add(Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail));
+				synthAudioRec = synthAudioRec.add(Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum, \recLevel, listeRecLevel.at(synth), \preLevel, listePreLevel.at(synth), \loop, listeLoop.at(synth)], listeGroupAudioRec.at(synth), \addToTail));
 				// Synth ByPassFilter
 				Synth.new("ByPassFilter", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
 				// Synth ByPassFX
@@ -888,16 +896,16 @@ f						Switch File for Analyze.
 										if(listeDataBand.at(indexNumFhzBand) != [],
 											{
 												// Octave
-												windowControlGUI.view.children.at((synth * 88 + 36) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
+												windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
 												// DemiTon
-												windowControlGUI.view.children.at((synth * 88 + 39) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
+												windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
 												// Cent
-												windowControlGUI.view.children.at((synth * 88 + 42) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
+												windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
 										});
 									});
 									if(switchOSCamp.at(synth) == 1, {
 										// AMP
-										windowControlGUI.view.children.at((synth * 88 + 45) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
+										windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
 									});
 								});
 								// Duree BPM
@@ -1018,16 +1026,16 @@ f						Switch File for Analyze.
 									if(listeDataBand.at(indexNumFhzBand) != [],
 										{
 											// Octave
-											windowControlGUI.view.children.at((synth * 88 + 36) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
+											windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
 											// DemiTon
-											windowControlGUI.view.children.at((synth * 88 + 39) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
+											windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
 											// Cent
-											windowControlGUI.view.children.at((synth * 88 + 42) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
+											windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
 									});
 								});
 								if(switchOSCamp.at(synth) == 1, {
 									// AMP
-									windowControlGUI.view.children.at((synth * 88 + 45) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
+									windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
 								});
 							});
 							// Duree BPM
@@ -1127,16 +1135,16 @@ f						Switch File for Analyze.
 								if(listeDataBand.at(indexNumFhzBand) != [],
 									{
 										// Octave
-										windowControlGUI.view.children.at((synth * 88 + 36) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
+										windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
 										// DemiTon
-										windowControlGUI.view.children.at((synth * 88 + 39) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
+										windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
 										// Cent
-										windowControlGUI.view.children.at((synth * 88 + 42) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
+										windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
 								});
 							});
 							if(switchOSCamp.at(synth) == 1, {
 								// AMP
-								windowControlGUI.view.children.at((synth * 88 + 45) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
+								windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
 							});
 						});
 						// Duree BPM
@@ -1207,8 +1215,7 @@ f						Switch File for Analyze.
 									// New Band
 									indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
 									if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-									//if(listeDataBand.at(indexNumFhzBand) != [],
-									//{
+									//if(listeDataBand.at(indexNumFhzBand) != [], {
 									if(listeActiveAudioRec.at(synth) == 0, {buffer = listeBuffer.at(synth)}, {buffer = listeBufferAudioRec.at(synth)});
 									// Frame Grain
 									startPos =  listeStartPos.at(synth) / buffer.numFrames;
@@ -2256,15 +2263,18 @@ f						Switch File for Analyze.
 		startSystem = Button(windowExternalControlGUI,Rect(5, 5, 100, 20)).states_([["System Off", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["System On", Color.new(0.1, 0.8, 0.9, 1), Color.red]]).focus.action = {|view|
 			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
 			switch(view.value,
-				0, {if(flagRecording == 'on', {s.pauseRecording}); sequencer.stop;  if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport stop
+				0, {if(flagRecording == 'on', {s.pauseRecording}); sequencer.stop;
+					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport stop
 					synthFileIn.run(false);
 					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
 				},
-				1, {if(flagRecording == 'on', {s.record}); sequencer.play; if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
+				1, {if(flagRecording == 'on', {s.record}); sequencer.play;
+					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
 					typeAudio.valueAction_(typeAudio.value);
 			});
 			indexSequence = 0;
 		};
+
 
 		// User Operating System
 		userOperatingSystem = PopUpMenu(windowExternalControlGUI, Rect(0, 0, 200, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceControl;
@@ -2306,12 +2316,16 @@ f						Switch File for Analyze.
 			if(item.value == 0, {synthAudioIn.run(true); synthFileIn.run(false);
 				numberSynth.do({arg synth;
 					synthAudioRec.at(synth).free;
-					synthAudioRec.put(synth, (Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail)));
+					s.bind;
+					synthAudioRec.put(synth, (Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum, \recLevel, listeRecLevel.at(synth), \preLevel, listePreLevel.at(synth), \loop, listeLoop.at(synth)], listeGroupAudioRec.at(synth), \addToTail)));
+					s.bind;
 				});
 			}, {synthFileIn.run(true); synthAudioIn.run(false);  synthFileIn.set(\offset, 0); synthFileIn.set(\trigger, 1);
 				numberSynth.do({arg synth;
 					synthAudioRec.at(synth).free;
-					synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail)));
+					s.bind;
+					synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum, \recLevel, listeRecLevel.at(synth), \preLevel, listePreLevel.at(synth), \loop, listeLoop.at(synth)], listeGroupAudioRec.at(synth), \addToTail)));
+					s.bind;
 				});
 			});
 			lastTime = Main.elapsedTime;
@@ -2688,6 +2702,7 @@ f						Switch File for Analyze.
 		//
 
 		numberSynth.do({arg synth;
+
 			EZSlider(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 75, 130, 20), "Weight", ControlSpec(0, 1, \lin, 0),
 				{|ez| listeWeightSynth.put(synth, ez.value)}, 0.5,labelWidth: 38, numberWidth: 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8));
 
@@ -2701,10 +2716,10 @@ f						Switch File for Analyze.
 				listeBusSynth.put(synth, item.value);
 				synthAudioRec.at(synth).free;
 				if(typeAudio.value == 0, {
-					synthAudioRec.put(synth, Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail));
+					synthAudioRec.put(synth, Synth.new("AudioRec", [\busIn, listeBusSynth.at(synth), \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum, \recLevel, listeRecLevel.at(synth), \preLevel, listePreLevel.at(synth), \loop, listeLoop.at(synth)], listeGroupAudioRec.at(synth), \addToTail));
 				},
 				{
-					synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum], listeGroupAudioRec.at(synth), \addToTail)))
+					synthAudioRec.put(synth, (Synth.new("FileRec", [\busIn, busAudioIn, \bufferAudioRec, listeBufferAudioRec.at(synth).bufnum, \recLevel, listeRecLevel.at(synth), \preLevel, listePreLevel.at(synth), \loop, listeLoop.at(synth)], listeGroupAudioRec.at(synth), \addToTail)))
 				});
 			};
 
@@ -2744,7 +2759,7 @@ f						Switch File for Analyze.
 			action_({arg etat; if(etat.value == 0, {listeSoloSynth.put(synth, 0)}, {listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})})})});
 
 			// Buffer sampler
-			Button(windowControlGUI, Rect(synth * 315 + 55, numberSynth * 25 + 150, 100, 20)).
+			Button(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 150, 90, 20)).
 			states_([["Load Sample", Color.new(0.985, 0.701, 0), Color.grey(0.75, 0.25)]]).
 			background_(Color.grey).
 			action_({|view|
@@ -2765,15 +2780,47 @@ f						Switch File for Analyze.
 						}.defer;
 					});
 					// Refresh name soundFile
-					windowControlGUI.view.children.at((synth * 88 + 14) + (numberSynth * numberMaxStepSequencer + 14)).string_(paths.asString);
+					windowControlGUI.view.children.at((synth * 93 + 19) + (numberSynth * numberMaxStepSequencer + 14)).string_(paths.asString);
 				}, {"cancelled".postln});
 			});
 
 			// Reverse Sample
-			Button(windowControlGUI, Rect(synth * 315 + 165, numberSynth * 25 + 150, 100, 20))
+			Button(windowControlGUI, Rect(synth * 315 + 95, numberSynth * 25 + 150, 90, 20))
 			.background_(Color.grey).
 			states_([["Reverse Off", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["Reverse On", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
 			action_({arg etat; if(etat.value == 0, {listeReverse.put(synth, 1)}, {listeReverse.put(synth, 1.neg)})});
+
+			// Loop Rec
+			Button(windowControlGUI, Rect(synth * 315 + 190, numberSynth * 25 + 150, 10, 20)).
+			states_([ ["l", Color.white, Color.black], ["L", Color.black, Color.red]]).
+			action_({ arg butt;
+				listeLoop.put(synth, butt.value);
+				synthAudioRec.at(synth).set(\loop, butt.value);
+			});
+
+			// recLevel
+			StaticText(windowControlGUI, Rect(synth * 315 + 205, numberSynth * 25 + 150, 10, 20)).
+			string_("R").stringColor = Color.yellow;
+			NumberBox(windowControlGUI, Rect(synth * 315 + 220, numberSynth * 25 + 150, 35, 20)).
+			action = {arg val;
+				val = val.value;
+				if(val < 0, {val = 0});
+				if(val > 1, {val = 1});
+				listeRecLevel.put(synth, val);
+				synthAudioRec.at(synth).set(\recLevel, val);
+			};
+
+			// preLevel
+			StaticText(windowControlGUI, Rect(synth * 315 + 260, numberSynth * 25 + 150, 10, 20)).
+			string_("P").stringColor = Color.yellow;
+			NumberBox(windowControlGUI, Rect(synth * 315 + 275, numberSynth * 25 + 150, 35, 20)).
+			action = {arg val;
+				val = val.value;
+				if(val < 0, {val = 0});
+				if(val > 1, {val = 1});
+				listePreLevel.put(synth, val);
+				synthAudioRec.at(synth).set(\preLevel, val);
+			};
 
 			// Switch Freq OSC
 			Button(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 175, 15, 20))
@@ -2793,7 +2840,7 @@ f						Switch File for Analyze.
 			states_([["d", Color.white,  Color.grey(0.75, 0.25)],["D", Color.red(0.8, 0.8), Color.grey(0.75, 0.25)]]).
 			action_({arg etat;
 				numberSynth.do({arg i; switchOSCdur.put(i, etat.value);
-					windowControlGUI.view.children.at((i  * 88 + 13) + (numberSynth * numberMaxStepSequencer + 14)).value_(etat.value);
+					windowControlGUI.view.children.at((i  * 93 + 18) + (numberSynth * numberMaxStepSequencer + 14)).value_(etat.value);
 					if(etat.value == 1, {windowControlGUI.view.children.at(1).enabled_(false)}, {windowControlGUI.view.children.at(1).enabled_(true)});
 				});
 			});
@@ -2802,7 +2849,7 @@ f						Switch File for Analyze.
 			StaticText(windowControlGUI, Rect(synth * 315 + 50, numberSynth * 25 + 175, 260, 20)).string_(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 10)).align_(\right);
 
 			// SynthBand
-			StaticText(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 200, 40, 20)).string = "Band";// 16
+			StaticText(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 200, 40, 20)).string = "Band";// 20
 
 			// Band 0 to 12
 			Button.new(windowControlGUI, Rect(synth * 315 + 45 + (0 * 20), numberSynth * 25 + 200, 15, 20)).
@@ -2974,157 +3021,157 @@ f						Switch File for Analyze.
 				switch(item.value,
 					// ByPass
 					0, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("ByPassFilter", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// LPF
 					1, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("LPF", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// HPF
 					2, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("HPF", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// RLPF
 					3, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("RLPF", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// RHPF
 					4, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("RHPF", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// BPF
 					5, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("BPF", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// BRF
 					6, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("BRF", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// Ringz
 					7, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Ringz", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "Decay", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "Decay", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// Resonz
 					8, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Resonz", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "RQ", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// CombCFilter
 					9, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("CombCFilter", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Delay", "Jitter %", "X", "Decay", "Jitter %", "X", "OctLow", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Delay", "Jitter %", "X", "Decay", "Jitter %", "X", "OctLow", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// Formlet
 					10, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Formlet", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Freq", "Jitter %", "X", "Attack", "Jitter %", "X", "Decay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Freq", "Jitter %", "X", "Attack", "Jitter %", "X", "Decay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// FreqShift
 					11, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("FreqShift", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Shift", "Jitter %", "X", "Phase", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Shift", "Jitter %", "X", "Phase", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PitchShift
 					12, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PitchShift", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Pitch", "Jitter %", "X", "PitchDsp", "Jitter %", "X", "TimeDsp", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Pitch", "Jitter %", "X", "PitchDsp", "Jitter %", "X", "TimeDsp", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagFreeze
 					13, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagFreeze", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Pitch", "Jitter %", "X", "Freeze", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Pitch", "Jitter %", "X", "Freeze", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagNoise
 					14, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagNoise", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagClip
 					15, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagClip", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagSmooth
 					16, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagSmooth", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Factor", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Factor", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_Diffuser
 					17, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_Diffuser", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Trigger1", "Jitter %", "X", "Trigger2", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Trigger1", "Jitter %", "X", "Trigger2", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_BrickWall
 					18, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_BrickWall", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Wipe", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Wipe", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_LocalMax
 					19, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_LocalMax", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagSquared
 					20, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagSquared", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagBelow
 					21, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagBelow", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagAbove
 					22, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagAbove", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Thresh", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_RandComb
 					23, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_RandComb", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Wipe", "Jitter %", "X", "Trigger", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Wipe", "Jitter %", "X", "Trigger", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagShift
 					24, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagShift", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Stretch", "Jitter %", "X", "Shift", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Stretch", "Jitter %", "X", "Shift", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_BinScramble
 					25, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_BinScramble", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Wipe", "Jitter %", "X", "Width", "Jitter %", "X", "Trigger", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Wipe", "Jitter %", "X", "Width", "Jitter %", "X", "Trigger", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_BinShift
 					26, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_BinShift", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Stretch", "Jitter %", "X", "Shift", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Stretch", "Jitter %", "X", "Shift", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_RectComb
 					27, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_RectComb", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Teeth", "Jitter %", "X", "Phase", "Jitter %", "X", "Width", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Teeth", "Jitter %", "X", "Phase", "Jitter %", "X", "Width", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_ConformalMap
 					28, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_ConformalMap", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Real", "Jitter %", "X", "Imag", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Real", "Jitter %", "X", "Imag", "Jitter %", "X", "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_Compander
 					29, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_Compander", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Thresh", "Jitter %", "X", "SlopeA", "Jitter %", "X", "SlopeB", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Thresh", "Jitter %", "X", "SlopeA", "Jitter %", "X", "SlopeB", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_SpectralEnhance
 					30, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_SpectralEnhance", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Partials", "Jitter %", "X", "Ratio", "Jitter %", "X", "Strength", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Partials", "Jitter %", "X", "Ratio", "Jitter %", "X", "Strength", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagStretch
 					31, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagStretch", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Stretch", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Stretch", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// PV_MagShift+Stretch
 					32, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_MagShift+Stretch", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Stretch", "Jitter %", "X", "Shift", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Stretch", "Jitter %", "X", "Shift", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// DJ_FX
 					33, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("DJ_FX", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Rate", "Jitter %", "X", "Noise", "Jitter %", "X", "Delay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Rate", "Jitter %", "X", "Noise", "Jitter %", "X", "Delay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// WaveLoss
 					34, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("WaveLoss", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Lenght", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},// Median
 					35, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Median", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Lenght", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// LeakDC
 					36, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("LeakDC", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Coef", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Coef", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// Median+LeakDC
 					37, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Median+LeakDC", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Lenght", "Jitter %", "X", "Coef", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Lenght", "Jitter %", "X", "Coef", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},// PV_Cutoff
-					37, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_Cutoff", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 53, 54, 55, 56, 57, 58, 59, 60, 61 ], ["Cutoff", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					38, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_Cutoff", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Cutoff", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					}
 				);
 			};
@@ -3193,35 +3240,35 @@ f						Switch File for Analyze.
 				switch(item.value,
 					// ByPass
 					0, {listeGroupSynthFX.at(synth).freeAll; Synth.new("ByPassFX", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// AllPassC
 					1, {listeGroupSynthFX.at(synth).freeAll; Synth.new("AllpassC", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Delay", "Jitter %", "X", "Decay", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Delay", "Jitter %", "X", "Decay", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// FreeVerb
 					2, {listeGroupSynthFX.at(synth).freeAll; Synth.new("FreeVerb", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Room", "Jitter %", "X", "Damp", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Room", "Jitter %", "X", "Damp", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, true, true, true, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// GVerb
 					3, {listeGroupSynthFX.at(synth).freeAll; Synth.new("GVerb", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Room", "Jitter %", "X", "RevTime", "Jitter %", "X", "Damping", "Jitter %", "X", "TailLevel", "Jitter %", "X",  "RefLevel", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Room", "Jitter %", "X", "RevTime", "Jitter %", "X", "Damping", "Jitter %", "X", "TailLevel", "Jitter %", "X",  "RefLevel", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// JPverb
 					4, {listeGroupSynthFX.at(synth).freeAll; Synth.new("JPverb", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["RevTime", "Jitter %", "X", "Damping", "Jitter %", "X", "EarlyDiff", "Jitter %", "X", "ModDepth", "Jitter %", "X",  "ModFreq", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["RevTime", "Jitter %", "X", "Damping", "Jitter %", "X", "EarlyDiff", "Jitter %", "X", "ModDepth", "Jitter %", "X",  "ModFreq", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// CombCFX
 					5, {listeGroupSynthFX.at(synth).freeAll; Synth.new("CombCFX", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Delay", "Jitter %", "X", "Decay", "Jitter %", "X", "OctLow", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Delay", "Jitter %", "X", "Decay", "Jitter %", "X", "OctLow", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// DelayC
 					6, {listeGroupSynthFX.at(synth).freeAll; Synth.new("DelayC", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Delay", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Delay", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X", "Off", "Jitter %", "X",  "Off", "Jitter %", "X"], [true, true, true, false, false, false, false, false, false, false, false, false, false, false, false], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					},
 					// WarpDelay
 					7, {listeGroupSynthFX.at(synth).freeAll; Synth.new("WarpDelay", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth), \ctrl1, listeCtrl1FX.at(synth), \ctrl2, listeCtrl2FX.at(synth), \ctrl3, listeCtrl3FX.at(synth), \ctrl4, listeCtrl4FX.at(synth), \ctrl5, listeCtrl5FX.at(synth)], listeGroupSynthFX.at(synth), \addToTail);
-						fonctionSetupSliders.value(synth, [ 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 ], ["Trigger", "Jitter %", "X", "Pitch", "Jitter %", "X", "WinSize", "Jitter %", "X", "Overlap", "Jitter %", "X",  "Delay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+						fonctionSetupSliders.value(synth, [ 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], ["Trigger", "Jitter %", "X", "Pitch", "Jitter %", "X", "WinSize", "Jitter %", "X", "Overlap", "Jitter %", "X",  "Delay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
 					}
 				);
 			};
@@ -3354,32 +3401,33 @@ f						Switch File for Analyze.
 				midiOut.allNotesOff(synthCanalMidiOut.wrapAt(synth));
 				synthCanalMidiOut.wrapPut(synth, midi.value - 1);
 			});
-
 		});
 
 		// Blank line
 		StaticText(windowControlGUI, Rect(5, numberSynth * 25 + 1258, 1200, 20)).string_(" ").stringColor_(Color.white(1.0, 1.0)).font_(Font("Georgia", 14)).align_(\center);
 
-		// Init Switch OSC
+		// Init Switch OSC and others
 		numberSynth.do({arg synth;
-			windowControlGUI.view.children.at((synth * 88 + 11) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(1);
-			windowControlGUI.view.children.at((synth * 88 + 12) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
-			windowControlGUI.view.children.at((synth * 88 + 13) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
-			windowControlGUI.view.children.at((synth * 88 + 15) + (numberSynth * numberMaxStepSequencer + 14)).stringColor_(Color.red);
+			windowControlGUI.view.children.at((synth * 93 + 16) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(1);
+			windowControlGUI.view.children.at((synth * 93 + 17) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
+			windowControlGUI.view.children.at((synth * 93 + 18) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
+			windowControlGUI.view.children.at((synth * 93 + 20) + (numberSynth * numberMaxStepSequencer + 14)).stringColor_(Color.red);
+			windowControlGUI.view.children.at((synth * 93 + 11) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(1);
+			windowControlGUI.view.children.at((synth * 93 + 13) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(1);
+			windowControlGUI.view.children.at((synth * 93 + 15) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0);
 		});
-
 
 		//Init numFhzBand
 		fonctionInitBand.value;
 
 		// Pour Acceder a un control precis
-		// windowControlGUI.view.children.at((synth * 88 + numeroDuControl) + (numberSynth * numberMaxStepSequencer + 14)).children.at(numero de la view)_(valeur);
+		// windowControlGUI.view.children.at((synth * 93 + numeroDuControl) + (numberSynth * numberMaxStepSequencer + 14)).children.at(numero de la view)_(valeur);
 
 		// Setup Sliders
 		fonctionSetupSliders = {arg synth, numSlider, valueSlider, visible, type;
 			numSlider.size.do({arg index;
 				var slider;
-				slider = windowControlGUI.view.children.at((synth * 88 + numSlider.at(index)) + (numberSynth * numberMaxStepSequencer + 14));
+				slider = windowControlGUI.view.children.at((synth * 93 + numSlider.at(index)) + (numberSynth * numberMaxStepSequencer + 14));
 				//// Is Actif ?
 				//slider.enabled_(visible.at(index));
 				// Set Views
@@ -3395,8 +3443,8 @@ f						Switch File for Analyze.
 			var data=[], sliderStart, sliderEnd, view;
 			// Copy Source on Target
 			// Setup Source
-			sliderStart = (synthSource  * 88) + (numberSynth * numberMaxStepSequencer + 15);
-			sliderEnd = (synthSource  * 88 + 86) + (numberSynth * numberMaxStepSequencer + 15);
+			sliderStart = (synthSource  * 93) + (numberSynth * numberMaxStepSequencer + 15);
+			sliderEnd = (synthSource  * 93 + 91) + (numberSynth * numberMaxStepSequencer + 15);
 			// Copy Data Source
 			for(sliderStart, sliderEnd, {arg index;
 				var arrayData=[], subArrayData=[], subType=nil;
@@ -3425,6 +3473,9 @@ f						Switch File for Analyze.
 				// QSlider2D (Special Case)
 				if(view.asString == "a QSlider2D" or: {view.asString == "a SCSlider2D"} or: {view.asString == "a Slider2D"},
 					{data = data.add([view.asString, view.x, view.y])});
+				// NumberBox
+				if(view.asString   == "a NumberBox" or: {view.asString  == "a QNumberBox"} or: {view.asString == "a SCNumberBox"},
+					{data = data.add([view.asString, view.value])});
 			});
 			data.value;
 		};
@@ -3434,8 +3485,8 @@ f						Switch File for Analyze.
 		fonctionCopyTargetSynth = {arg data, synthTarget;
 			var sliderStart, sliderEnd, view, item1, item2;
 			// Setup Target Wave
-			item1 = 13;// String position in data
-			item2 = 29;// Wave position in data
+			item1 = 18;// String position in data
+			item2 = 34;// Wave position in data
 			bufferAndSoundFile = fonctionLoadSample.value(data.at(item1).at(1), listeGroupSynth.at(synthTarget), listeBuffer.at(synthTarget), listeBufferAudioRec.at(synthTarget));
 			listeBuffer.put(synthTarget, bufferAndSoundFile.at(0));
 			listeSoundFile.put(synthTarget, bufferAndSoundFile.at(1));
@@ -3452,12 +3503,12 @@ f						Switch File for Analyze.
 				}.defer
 			});
 			// Setup Target
-			sliderStart = (synthTarget  * 88) + (numberSynth * numberMaxStepSequencer + 15);
-			sliderEnd = (synthTarget  * 88 + 86) + (numberSynth * numberMaxStepSequencer + 15);
+			sliderStart = (synthTarget  * 93) + (numberSynth * numberMaxStepSequencer + 15);
+			sliderEnd = (synthTarget  * 93 + 91) + (numberSynth * numberMaxStepSequencer + 15);
 			// Copy Data Source
 			for(sliderStart, sliderEnd, {arg view, index;
 				view = windowControlGUI.view.children.at(view);
-				if(index.value != 8 and: {index.value != 29}, {
+				if(index.value != 8 and: {index.value != 34}, {
 					// QCompositeView
 					if(data.at(index).at(0) == "a View" or: {data.at(index).at(0) == "a CompositeView"} or: {data.at(index).at(0) == "a QCompositeView"} or: {data.at(index).at(0) == "a QView"} or: {data.at(index).at(0) == "a SCCompositeView"} or: {data.at(index).at(0) == "a SCView"}, {
 						if(data.at(index).at(1) == "a QStaticText" or: {data.at(index).at(1) == "a SCStaticText"} or: {data.at(index).at(1) == "a StaticText"}, {view.children.at(1).valueAction_(data.at(index).at(2).at(1))});
@@ -3478,6 +3529,9 @@ f						Switch File for Analyze.
 					// QSlider2D (special case)
 					if(data.at(index).at(0)  == "a QSlider2D" or: {data.at(index).at(0)  == "a SCSlider2D"} or: {data.at(index).at(0)  == "a Slider2D"},
 						{view.setXYActive(data.at(index).at(1), data.at(index).at(2))});
+					// NumberBox
+					if(data.at(index).at(0)    == "a NumberBox" or: {data.at(index).at(0)  == "a QNumberBox"} or: {data.at(index).at(0) == "a SCNumberBox"},
+						{view.valueAction_(data.at(index).at(1))});
 				});
 			});
 		};
@@ -4650,14 +4704,14 @@ f						Switch File for Analyze.
 
 		// Synth AudioRec
 		SynthDef("AudioRec",
-			{arg busIn, bufferAudioRec;
-				RecordBuf.ar(SoundIn.ar(busIn), bufferAudioRec);
+			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1;
+				RecordBuf.ar(SoundIn.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: 1, doneAction: 0);
 		}).add;
 
 		// Synth FileRec
 		SynthDef("FileRec",
-			{arg busIn, bufferAudioRec;
-				RecordBuf.ar(In.ar(busIn), bufferAudioRec);
+			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1;
+				RecordBuf.ar(In.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: 1, doneAction: 0);
 		}).add;
 
 		// Synth Post Production
