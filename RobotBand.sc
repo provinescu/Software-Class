@@ -1792,7 +1792,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 									{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, []);~freqtamponMidi.wrapPut(instr, nil);~amptamponMidi.wrapPut(instr,nil);~freqbeforeMidi.wrapPut(instr,0);~ampbeforeMidi.wrapPut(instr,0);~dureebeforeMidi.wrapPut(instr,0);~lastTimeMidi.wrapPut(canal,  time);~lastDureeInstrMidi.wrapPut(instr, time);
 										// Set MIDI Off
 										if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(instr).value >= 0}, {
-											~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)});
+											~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.notecommandOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)});
 										});
 										(~numFhzBand + 1).do({arg b;
 											synth = ~lastTimeBand.at(instr); synth.put(b, time);
@@ -2536,6 +2536,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
 			MIDIIn.disconnect;
 			MIDIdef.freeAll;
+			~listewindow.do({arg w; w.close});
 			// Kill instance of Class and quit
 			//hpRobotBand.kill;
 			//s.quit;
