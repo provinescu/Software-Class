@@ -1989,24 +1989,23 @@ DensityBand2 {
 				});
 				flux = flux.mediane;
 				flux = flux + rrand(jitterControls.neg, jitterControls);
-				flux = flux.abs.min(1);
+				flux = flux.mod(1);
 				// Flatness
 				flatness = flatness.mediane;
 				flatness = flatness + rrand(jitterControls.neg, jitterControls);
-				flatness = flatness.abs.min(1);
+				flatness = flatness.mod(1);
 				// Centroid
 				centroid = centroid.mediane;
 				centroid = centroid + rrand(jitterControls.neg * 12543, jitterControls * 12543);
-				centroid = centroid.abs.min(20000);
+				centroid = centroid.mod(20000);
 				// Energy
 				energy = energy.mediane;
 				energy = energy + rrand(jitterControls.neg * 12543, jitterControls * 12543);
-				energy = energy.abs.min(20000);
+				energy = energy.mod(20000);
 				// BPM
 				bpm = bpm.mediane;
 				/*bpm = bpm + rrand(jitterControls.neg, jitterControls);
-				if(bpm < 0, {bpm = bpm * 1.neg});
-				bpm = bpm.min(1);*/
+				bpm = bpm.mod(1);*/
 				dataMusicTransform = dataMusicTransform.add([flux, flatness, centroid, energy, bpm]);
 				// Freq
 				freq = freq.cpsmidi / 127;
@@ -2123,17 +2122,16 @@ DensityBand2 {
 				);
 				//Offset
 				offset = offsetSound + rrand(jitterControls.neg, jitterControls);
-				if(offset < 0, {offset = offset * 1.neg});
-				offset = offset.min(1);
+				offset = offset.mod(1);
 				// Reverse Proba
-				if(rrand(0.1, 1.0) >= jitterControls, {newRevSound = reverseSound},
-					{newRevSound = (reverseSound - 1).abs});
+				if(rrand(0.0, 1.0) >= jitterControls, {newRevSound = reverseSound},
+					{newRevSound = 1.neg});
 				// Setup New Root
 				if(flagRoot == 'on', {
 					root = rootEnergy.mediane; // FFT -> Energy
 					/*root = root + rrand(jitterControls.neg * tuning.size, jitterControls * tuning.size);
 					if(root < 0, {root = root * tuning.size.neg});
-					root = root.min(tuning.size);*/
+					root = root.mod(tuning.size);*/
 					root = root.cpsoct;
 					root = (root.frac * tuning.size + 0.5).floor;
 					// Setup GUI Value
@@ -4363,9 +4361,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
 			degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
 		// Display Data Analyze
-		displayAnalyzeMusic = StaticText(windowEar, Rect(0, 0, 700, 15));
+		displayAnalyzeMusic = StaticText(windowEar, Rect(0, 0, 700, 15)).stringColor = Color.new255(127, 255, 212);
 		// Display Data Analyze
-		displayAnalyzeFFT = StaticText(windowEar, Rect(0, 0, 700, 15));
+		displayAnalyzeFFT = StaticText(windowEar, Rect(0, 0, 700, 15)).stringColor = Color.new255(127, 255, 212);
 		windowEar.onClose_({
 			"No Action".postln;
 		});
