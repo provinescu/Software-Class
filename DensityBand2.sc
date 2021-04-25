@@ -7485,7 +7485,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
 				//FX
-				chain = Mix(DelayC.ar(in, 1, [Rand(0.01, 1), Rand(0.01, 1), Rand(0.01, 1)])) * envelope;
+				chain = Mix(DelayC.ar(in, 4, [Rand(0.01, 4), Rand(0.01, 4), Rand(0.01, 4)])) * envelope;
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
