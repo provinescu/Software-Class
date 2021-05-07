@@ -6,7 +6,7 @@ TimeBand {
 
 	classvar  < s;
 
-	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay;
+	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot;
 
 	*new	{arg path="~/Documents/TimeBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -168,6 +168,7 @@ f						Switch File for Analyze.
 		listeDataBand =[];
 		lastTimeBand = [];
 		listeBusSynth = [];
+		autoRoot = 'off';
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -765,7 +766,7 @@ f						Switch File for Analyze.
 
 			//  OSC Data FFT
 			OSCFunc.newMatching({arg msg, time, addr, recvPort, centroid=0, flatness=0, energy=0, flux=0, bpm=0;
-				var data;
+				var data, newRoot;
 				if(msg.at(2) == 5,
 					{
 						centroid = msg.at(3);
@@ -774,6 +775,13 @@ f						Switch File for Analyze.
 						flux = msg.at(6);
 						bpm = msg.at(7);
 						if(flagTempo == 1, {tempoOSC = bpm}, {tempoOSC = 1});
+						if(autoRoot == 'on', {
+							newRoot = energy;
+							newRoot = newRoot.cpsoct;
+							newRoot = (newRoot.frac * tuning.size + 0.5).floor;
+							// Setup GUI Value
+							{windowControlGUI.view.children.at(7).children.at(2).valueAction_(newRoot)}.defer;
+						});
 						//// Send Synchro Tempo
 						//slaveAppAddr.sendMsg('/HPtempo', tempo);
 						// Set Bus Flux
@@ -2564,7 +2572,10 @@ f						Switch File for Analyze.
 
 		StaticText(windowControlGUI, Rect(425, 5, 85, 20)).string_(" ");
 
-		StaticText(windowControlGUI, Rect(615, 5, 105, 20)).string_(" ");
+		Button(windowControlGUI, Rect(615, 5, 105, 20))
+		.background_(Color.white).
+		states_([["Auto On", Color.green, Color.black(0.75, 0.25)],["Auto Off", Color.red(1, 1), Color.black(0.75, 0.25)]]).
+		action_({arg etat; if(etat.value == 0, {autoRoot = 'off'; windowControlGUI.view.children.at(7).children.at(2).valueAction_(0)}, {autoRoot = 'on'})});
 
 		// Tuning
 		PopUpMenu(windowControlGUI, Rect(725, 5, 130, 20)).
@@ -2575,6 +2586,7 @@ f						Switch File for Analyze.
 			windowControlGUI.view.children.at(7).children.at(1).valueAction_(0);
 			windowControlGUI.view.children.at(7).enabled_(true);
 			windowControlGUI.view.children.at(8).enabled_(true);
+			windowControlGUI.view.children.at(5).enabled_(true);
 			switch(item.value,
 				// No Scale
 				0, {flagScaling = 'off';
@@ -2583,6 +2595,7 @@ f						Switch File for Analyze.
 					windowControlGUI.view.children.at(7).children.at(1).valueAction_(0);
 					windowControlGUI.view.children.at(7).enabled_(false);
 					windowControlGUI.view.children.at(8).enabled_(false);
+					windowControlGUI.view.children.at(5).enabled_(false);
 				},
 				// Tempered
 				1, {nil},
@@ -2687,6 +2700,7 @@ f						Switch File for Analyze.
 		windowControlGUI.view.children.at(7).children.at(1).valueAction_(0);
 		windowControlGUI.view.children.at(7).enabled_(false);
 		windowControlGUI.view.children.at(8).enabled_(false);
+		windowControlGUI.view.children.at(5).enabled_(false);
 
 		// Step Sequencer
 		StaticText(windowControlGUI, Rect(5, 25, 1260, 20)).string_("Step Sequencer").stringColor_(Color.new(0.985, 0.701, 0)).font_(Font("Georgia", 14)).align_(\center);
