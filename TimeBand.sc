@@ -110,8 +110,8 @@ f						Switch File for Analyze.
 		listeGroupFX = [];
 		listeGroupFilter = [];
 		listeGroupDolby = [];
-		typeSequencer = 'RAND';
-		changeChoiceTrigger = ['RAND', 'SEQ', 'WEIGHT'];
+		typeSequencer = 'Rand';
+		changeChoiceTrigger = ['Rand', 'Seq', 'WeightS', 'WeightP'];
 		densityBPM = [30, 120] / 60;
 		indexSequence = 0;
 		changeChoiceMIDI = ['Translate', 'Note'];
@@ -1190,7 +1190,7 @@ f						Switch File for Analyze.
 
 			// Sequencer
 			sequencer = Tdef("Sequencer", {
-				var octave, demiTon, cent, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, freq, freqRate, rate, reverse, amp, duree, dureeSynth, startPos, endPos, buffer, listeDeferBuffer=[], listeJitterStartPos=[], envLevel, envDuree, volumeFilter, ctrl1Filter, ctrl2Filter, ctrl3Filter, volumeFX, ctrl1FX, ctrl2FX, ctrl3FX, ctrl4FX, ctrl5FX, panX, panY, out, synth, flagSolo, listeSynthActif, midiOscFreq, varNumSynth, varWeightSynth, indexNumFhzBand, freqToMidi, freqSynth;
+				var octave, demiTon, cent, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, freq, freqRate, rate, reverse, amp, duree, dureeSynth, startPos, endPos, buffer, listeDeferBuffer=[], listeJitterStartPos=[], envLevel, envDuree, volumeFilter, ctrl1Filter, ctrl2Filter, ctrl3Filter, volumeFX, ctrl1FX, ctrl2FX, ctrl3FX, ctrl4FX, ctrl5FX, panX, panY, out, synth, flagSolo, listeSynthActif, midiOscFreq, varNumSynth, varWeightSynth, indexNumFhzBand, freqToMidi, freqSynth, weight;
 				// Setup Variable Liste StartPos Synth
 				numberSynth.do({arg synth; listeJitterStartPos = listeJitterStartPos.add(0); listeDeferBuffer = listeDeferBuffer.add(nil)});
 				// Loop Sequencer
@@ -1214,9 +1214,15 @@ f						Switch File for Analyze.
 					numberSynth.do({arg synth; if(listeMuteSynth.at(synth).value != 1 and: {flagSolo != 'on' or:{listeSoloSynth.at(synth).value == 1}}, {varNumSynth=varNumSynth.add(synth); varWeightSynth = varWeightSynth.add(listeWeightSynth.at(synth))},{varWeightSynth = varWeightSynth.add(0)})});
 					// Choice Sequencer Synth
 					switch(typeSequencer,
-						'RAND', {listeSynthActif = listeSynthActif.add(varNumSynth.wrapAt(rrand(0, numberSynth - 1)))},
-						'SEQ', {numberSynth.do({arg synth; if(listeSynthStepSequencer.at(synth).wrapAt(indexSequence) == 1, {listeSynthActif = listeSynthActif.add(synth)})}); indexSequence = indexSequence + 1;if(indexSequence >= numberStepSequencer, {indexSequence = 0})},
-						'WEIGHT', {listeSynthActif = listeSynthActif.add(varWeightSynth.normalizeSum.windex)});
+						'Rand', {listeSynthActif = listeSynthActif.add(varNumSynth.wrapAt(rrand(0, numberSynth - 1)))},
+						'Seq', {numberSynth.do({arg synth; if(listeSynthStepSequencer.at(synth).wrapAt(indexSequence) == 1, {listeSynthActif = listeSynthActif.add(synth)})}); indexSequence = indexSequence + 1;if(indexSequence >= numberStepSequencer, {indexSequence = 0})},
+						'WeightS', {
+							listeSynthActif = listeSynthActif.add(varWeightSynth.normalizeSum.windex);
+						},
+						'WeightP', {
+							weight = rrand(0.0, 1.0);
+							numberSynth.do({arg synth; if(listeWeightSynth.at(synth) >= weight, {listeSynthActif = listeSynthActif.add(synth)})});
+					});
 					// Check MIDI
 					if(listeSynthActif != [nil],
 						{
@@ -1763,12 +1769,14 @@ f						Switch File for Analyze.
 				if(modifiers==131072 and: {unicode==82} and: {keycode==15}, {
 					fonctionRecPause.value;
 				});
-				// Key q -> Switch Mode Sequencer
+				// Key t -> Switch Mode Sequencer
 				if(char == $t, {
 					switch(choiceTypeSequencer.value,
 						0, {choiceTypeSequencer.valueAction_(1)},
 						1, {choiceTypeSequencer.valueAction_(2)},
-						2, {choiceTypeSequencer.valueAction_(0)});
+						2, {choiceTypeSequencer.valueAction_(3)},
+						3, {choiceTypeSequencer.valueAction_(0)},
+					);
 				});
 				// Key i -> Init Preset
 				if(char == $i, {
@@ -1836,7 +1844,7 @@ f						Switch File for Analyze.
 					{windowExternalControlGUI.view.children.at(5).valueAction_(windowExternalControlGUI.view.children.at(5).value + 1)});
 				});
 				// Key q -> Switch algo.
-				if(char == $q,  {if(windowExternalControlGUI.view.children.at(7).value >= 4, {windowExternalControlGUI.view.children.at(7).valueAction_(0)},
+				if(char == $q,  {if(windowExternalControlGUI.view.children.at(7).value >= 6, {windowExternalControlGUI.view.children.at(7).valueAction_(0)},
 					{windowExternalControlGUI.view.children.at(7).valueAction_(windowExternalControlGUI.view.children.at(7).value + 1)});
 				});
 				// Key u -> Switch Automation
@@ -2550,9 +2558,10 @@ f						Switch File for Analyze.
 		// Choice
 		choiceTypeSequencer = PopUpMenu(windowControlGUI, Rect(5, 5, 70, 20)).background_(Color.grey).stringColor_(Color.black).items_(changeChoiceTrigger).action = {arg item;
 			switch(item.value,
-				0, {typeSequencer = 'RAND'},
-				1, {typeSequencer = 'SEQ'; indexSequence = 0},
-				2, {typeSequencer = 'WEIGHT'});
+				0, {typeSequencer = 'Rand'},
+				1, {typeSequencer = 'Seq'; indexSequence = 0},
+				2, {typeSequencer = 'WeightS'},
+				3, {typeSequencer = 'WeightP'});
 		};
 
 		// Frequence BPM
