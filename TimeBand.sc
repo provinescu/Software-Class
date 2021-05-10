@@ -111,13 +111,72 @@ f						Switch File for Analyze.
 		listeGroupFilter = [];
 		listeGroupDolby = [];
 		typeSequencer = 'Rand';
-		changeChoiceTrigger = ['Rand', 'Seq', 'WeightS', 'WeightP'];
+		changeChoiceTrigger = [
+			'Rand',
 		densityBPM = [30, 120] / 60;
 		indexSequence = 0;
 		changeChoiceMIDI = ['Translate', 'Note'];
 		choiceCanalMIDI = ['MIDI IN 1', 'MIDI IN 2', 'MIDI IN 3', 'MIDI IN 4', 'MIDI IN 5', 'MIDI IN 6', 'MIDI IN 7', 'MIDI IN 8', 'MIDI IN 9', 'MIDI IN 10', 'MIDI IN 11', 'MIDI IN 12', 'MIDI IN 13', 'MIDI IN 14', 'MIDI IN 15', 'MIDI IN 16'];
 		changeChoiceSynthDef = ['TGrains', 'TGrains2', 'Warp1', 'BufRd', 'LoopBuf', 'PlayBuf', 'HPplayBufMedianLeakDC', 'SinOsc', 'SawSynth', 'CombSynth', 'MdaPiano', 'Guitare', 'StringSynth', 'Gendy3', 'Blip', 'DynKlang', 'Formant', 'FM', 'Ring', 'AnalogKick', 'AnalogSnare', 'AnalogHiHat', 'SOSkick', 'SOSsnare', 'SOShats', 'SOStom'];
 		userOSchoiceControl = ['UserOperatingSystem', 'Load Preset', 'Save Preset', 'Load Synthesizer', 'Save Synthesizer', 'Set Synth Source', 'Copy on Synth Target'];
+		];
+		choiceCanalMIDI = [
+			'MIDI IN 1',
+			'MIDI IN 2',
+			'MIDI IN 3',
+			'MIDI IN 4',
+			'MIDI IN 5',
+			'MIDI IN 6',
+			'MIDI IN 7',
+			'MIDI IN 8',
+			'MIDI IN 9',
+			'MIDI IN 10',
+			'MIDI IN 11',
+			'MIDI IN 12',
+			'MIDI IN 13',
+			'MIDI IN 14',
+			'MIDI IN 15',
+			'MIDI IN 16',
+		];
+		changeChoiceSynthDef = [
+			'TGrains',
+			'TGrains2',
+			'Warp1',
+			'BufRd',
+			'LoopBuf',
+			'PlayBuf',
+			'HPplayBufMedianLeakDC',
+			'Waveloss',
+			'SinOsc',
+			'SawSynth',
+			'CombSynth',
+			'MdaPiano',
+			'Guitare',
+			'StringSynth',
+			'Gendy3',
+			'Blip',
+			'DynKlang',
+			'Klang',
+			'Formant',
+			'FM',
+			'Ring',
+			'AnalogKick',
+			'AnalogSnare',
+			'AnalogHiHat',
+			'SOSkick',
+			'SOSsnare',
+			'SOShats',
+			'SOStom',
+		];
+		userOSchoiceControl = [
+			'UserOperatingSystem',
+			'Load Preset',
+			'Save Preset',
+			'Load Synthesizer',
+			'Save Synthesizer',
+			'Set Synth Source',
+			'Copy on Synth Target',
+		];
 		modeMIDIOSC = [];
 		ampMIDIOSC = 0;
 		bendMIDI = 0;
@@ -2543,7 +2602,7 @@ f						Switch File for Analyze.
 			{|ez| groupePostProduction.set(\postAmp, ez.value.dbamp)}, 0, labelWidth: 40,numberWidth: 35).setColors(knobColor: Color.new(0.582, 0, 0), sliderBackground: Color.grey, stringColor:  Color.red(0.8, 0.8));
 
 		// Audio In Display (for testing)
-		audioDisplay = StaticText(windowExternalControlGUI, Rect(0, 0, 50, 20)).string_("Audio").background_(Color.blue(1, 1));
+		audioDisplay = StaticText(windowExternalControlGUI, Rect(0, 0, 50, 20)).string_("Audio").background_(Color.white).stringColor_(Color.red);
 
 		windowExternalControlGUI.onClose_({nil});
 
@@ -3634,7 +3693,7 @@ f						Switch File for Analyze.
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = Warp1.ar(1, buffer, startPos, rate, duree, -1, 8, Rand(0.0, 1.0)) * envelope;
+				chain = Warp1.ar(1, buffer, startPos, rate, duree, -1, 8, oscFlatness) * envelope;
 				Out.ar(out, chain);
 		}).add;
 
@@ -3697,6 +3756,22 @@ f						Switch File for Analyze.
 				Out.ar(out, chain);
 		}).add;
 
+		SynthDef('Waveloss',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = WaveLoss.ar(chain, oscFlux * 20 + 20, oscFlatness * 40 + 40);
+				Out.ar(out, chain);
+		}).add;
+
 		SynthDef('SinOsc',
 			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
@@ -3737,7 +3812,7 @@ f						Switch File for Analyze.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop);
-				chain = CombC.ar(chain, 0.2, oscCentroid.reciprocal.clip(0.001, 1), (oscFlux * 100).clip(1, 10));
+				chain = CombC.ar(chain, 0.2, oscCentroid.reciprocal.clip(0.001, 1), (oscFlux * 100).clip(1, 10), 0.25);
 				//chain = Decimator.ar(chain, oscFlatness * 48000, oscFlux * 24, mul: envelope);
 				//chain = Decimator.ar(chain, oscFlatness * 96000, oscFlatness * 24, mul: envelope);
 				chain = chain * envelope;
@@ -3819,15 +3894,34 @@ f						Switch File for Analyze.
 			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
-				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid = 440;
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy=440, oscCentroid = 440;
 				var envelope, chain, arrayF,arrayA,arrayD;
-				arrayF=[freq, freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66)];
+				arrayF=[freq, Rand(oscEnergy, oscCentroid), Rand(oscEnergy, oscCentroid), Rand(oscCentroid, oscEnergy), Rand(oscCentroid, oscEnergy)];
+				//arrayF=[freq, freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66)];
 				arrayA = Array.fill(5,{1/5});
 				arrayD = Array.fill(5,{0});
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				chain = DynKlang.ar(`[arrayF, arrayA, arrayD], 1, 0) * envelope;
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Klang',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid = 440;
+				var envelope, chain, arrayF, arrayA, arrayD;
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				arrayF=[freq, Rand(oscEnergy, oscCentroid), Rand(oscEnergy, oscCentroid), Rand(oscCentroid, oscEnergy), Rand(oscCentroid, oscEnergy)];
+				//arrayF=[freq, freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66), freq * Rand(0.33, 1.66)];
+				arrayA = Array.fill(5,{1/5});
+				arrayD = Array.fill(5,{0});
+				// Synth
+				chain = Klang.ar(`[arrayF, arrayA, arrayD]);
+				chain = chain * envelope;
 				Out.ar(out, chain);
 		}).add;
 
