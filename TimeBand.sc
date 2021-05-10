@@ -113,12 +113,15 @@ f						Switch File for Analyze.
 		typeSequencer = 'Rand';
 		changeChoiceTrigger = [
 			'Rand',
+			'Seq',
+			'WeightS',
+			'WeightP',
+		];
 		densityBPM = [30, 120] / 60;
 		indexSequence = 0;
-		changeChoiceMIDI = ['Translate', 'Note'];
-		choiceCanalMIDI = ['MIDI IN 1', 'MIDI IN 2', 'MIDI IN 3', 'MIDI IN 4', 'MIDI IN 5', 'MIDI IN 6', 'MIDI IN 7', 'MIDI IN 8', 'MIDI IN 9', 'MIDI IN 10', 'MIDI IN 11', 'MIDI IN 12', 'MIDI IN 13', 'MIDI IN 14', 'MIDI IN 15', 'MIDI IN 16'];
-		changeChoiceSynthDef = ['TGrains', 'TGrains2', 'Warp1', 'BufRd', 'LoopBuf', 'PlayBuf', 'HPplayBufMedianLeakDC', 'SinOsc', 'SawSynth', 'CombSynth', 'MdaPiano', 'Guitare', 'StringSynth', 'Gendy3', 'Blip', 'DynKlang', 'Formant', 'FM', 'Ring', 'AnalogKick', 'AnalogSnare', 'AnalogHiHat', 'SOSkick', 'SOSsnare', 'SOShats', 'SOStom'];
-		userOSchoiceControl = ['UserOperatingSystem', 'Load Preset', 'Save Preset', 'Load Synthesizer', 'Save Synthesizer', 'Set Synth Source', 'Copy on Synth Target'];
+		changeChoiceMIDI = [
+			'Translate',
+			'Note',
 		];
 		choiceCanalMIDI = [
 			'MIDI IN 1',
