@@ -2666,6 +2666,7 @@ f						Switch File for Analyze.
 					windowControlGUI.view.children.at(7).children.at(1).valueAction_(0);
 					windowControlGUI.view.children.at(7).enabled_(false);
 					windowControlGUI.view.children.at(8).enabled_(false);
+					windowControlGUI.view.children.at(5).valueAction_(0);
 					windowControlGUI.view.children.at(5).enabled_(false);
 				},
 				// Tempered
