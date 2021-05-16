@@ -5604,16 +5604,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Normalize
-				flux = flux.clip(0.01, 1).lag(durSynth);
-				flatness = flatness.clip(0.01, 1).lag(durSynth);
+				flux = flux.clip(0.01, 1).lag;
+				flatness = flatness.clip(0.01, 1).lag;
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Trigger
-				trigger = Dust.kr(flatness.reciprocal * 10);
-				offset = offset + (flux * Dust2.kr(flatness.reciprocal).sign);
-				offset = offset.clip(0, 1);
+				trigger = Dust.kr(flatness.reciprocal * 24);
+				offset = (offset + flatness);
+				offset = offset.mod(1);
 				// Play Buffer
-				chain = Mix(HPtGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, offset, flatness.sqrt, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
+				chain = Mix(HPtGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, offset, flux.mod(0.5), seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5626,6 +5626,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, rate, envelope;
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
@@ -5788,17 +5789,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Normalize
-				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.01, 1.0).lag;
+				flux = flux.clip(0.01, 1.0).lag;
 				// Envelope
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Trigger
-				trigger = Dust.kr(flatness.reciprocal * 10);
-				offset = offset + (flux * Dust2.kr(flatness.reciprocal).sign);
-				offset = offset.clip(0, 1);
+				trigger = Dust.kr(flux * 100);
+				offset = offset + flatness;
+				offset = offset.mod(1);
 				// Play Buffer
-				chain = Mix(TGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, TRand.kr(0, offset, trigger), flux.sqrt)) * envelope * amp;
+				chain = Mix(TGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, offset, flux.mod(0.5))) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5831,14 +5832,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, rate, envelope, trigger;
 				// Normalize
-				flatness = flatness.clip(0.01, 1).lag(durSynth);
+				flatness = flatness.clip(0.01, 1).lag;
+				flux = flux.clip(0.01, 1).lag;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				trigger = Dust.kr(flatness.reciprocal);
+				trigger = Dust2.kr(flux.reciprocal);
 				chain = BufRd.ar(1, buffer, Phasor.ar(trigger, BufRateScale.kr(buffer) * rate, TRand.kr(0.0, offset, trigger), BufFrames.kr(buffer),  BufFrames.kr(buffer) * TRand.kr(0, offset, trigger)), 1) * envelope * amp;
 				// Outl1
 				Out.ar(out, chain);
@@ -6224,7 +6226,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, inputSig, rate, envelope, recHead, trigger;
 				// Normalize
-				flatness = flatness.clip(0.001, 1).lag(durSynth);
+				flatness = flatness.clip(0.001, 1).lag;
 				// Buffer
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
@@ -6236,7 +6238,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Trigger
-				trigger = Impulse.kr(flatness.reciprocal);
+				trigger = Dust2.kr(flatness.reciprocal);
 				// Play Buffer
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(trigger, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * TRand.kr(0, offset, trigger), recHead, 0), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// Out
@@ -6480,7 +6482,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				trigger = Dust.kr(flatness.reciprocal);
+				trigger = Dust2.kr(flatness.reciprocal);
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(trigger, BufRateScale.kr(buffer) * rate * TRand.kr(-1.0, 1.0, trigger).sign, BufFrames.kr(buffer) * TRand.kr(0.0, offset, trigger), recHead, 0), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = chain * envelope * amp;
 				// Out
@@ -6763,7 +6765,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				trigger = Dust.kr(flatness.reciprocal);
+				trigger = Dust2.kr(flatness.reciprocal);
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(trigger, BufRateScale.kr(buffer) * rate * TRand.kr(-1.0, 1.0, trigger).sign, BufFrames.kr(buffer) * TRand.kr(0.0, offset, trigger), recHead, 0), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = chain * envelope * amp;
 				// Out
