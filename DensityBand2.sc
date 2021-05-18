@@ -2646,6 +2646,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				}),
 				MenuAction("Edit/Save", {arg window, text;
 					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret;
+						soundOrchestra.postcs;
 						s.bind{
 							fonctionLoadSoundOrchestra.value(soundOrchestra);
 							s.sync;
