@@ -5610,11 +5610,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Trigger
-				trigger = Dust.kr(flatness.reciprocal * 24);
-				offset = (offset + flatness);
+				trigger = Dust.kr(flatness * 100);
+				offset = offset + flux;
 				offset = offset.mod(1);
 				// Play Buffer
-				chain = Mix(HPtGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, offset, flux.mod(0.5), seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
+				chain = Mix(HPtGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer) * offset, flux.max(0.1), seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5800,7 +5800,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				offset = offset + flatness;
 				offset = offset.mod(1);
 				// Play Buffer
-				chain = Mix(TGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, offset, flux.mod(0.5))) * envelope * amp;
+				chain = Mix(TGrains.ar(2, trigger, buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer) * offset, dur)) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
