@@ -2196,7 +2196,7 @@ G                           Init Genome Agent (solo).
 
 		// init agents ou creation agents
 		~initagents={arg agent, genome, fitnessInne, fitnessAcquis, mode='init', listeF, listeA, listeD, x, y, z, papa=0, maman=0;
-			var dureeBuffer, sourceIn, envTime, listBand;
+			var dureeBuffer, sourceIn, envTime, listBand, trigger;
 			~vies=~vies.add(~dureeVieAgents);
 			~ages=~ages.add('enfant');
 			~enfants=~enfants.add(0);
@@ -2261,10 +2261,12 @@ G                           Init Genome Agent (solo).
 			dureeBuffer = (s.sampleRate * (~genomes.wrapAt(agent).wrapAt(13)*~tempsmaxsignal).max(0.001));
 			~bufferAudioAgents=~bufferAudioAgents.add(Buffer.alloc(s, dureeBuffer));
 			~bufferFileAgents=~bufferFileAgents.add(Buffer.alloc(s, dureeBuffer));
+			//Set dur Trigger
+			trigger = exprand(~tempsmaxsignal, ~dureeVieAgents).reciprocal;
 			// source Input
 			if(~flagGeneInput == 'off', {sourceIn = ~audioInputSons.wrapAt(~soundsPositions)},{sourceIn = ~genomes.wrapAt(agent).wrapAt(40)});
-			~synthRecAudioAgents=~synthRecAudioAgents.add(Synth.new("RecBufferAudioIn",[\in, sourceIn, 'buffer',~bufferAudioAgents.wrapAt(agent).bufnum,'run',exprand(0.015625, ~tempsmaxsignal),'loop',0, \reclevel1, ~levelsValues.wrapAt(0),  \reclevel2, ~levelsValues.wrapAt(1)],~groupeSynthRecAgents, \addToTail));
-			~synthRecFileAgents=~synthRecFileAgents.add(Synth.new("RecBufferFileIn",['buffer',~bufferFileAgents.wrapAt(agent).bufnum, 'in', ~busFileIn.index, 'run',exprand(0.015625, ~tempsmaxsignal),'loop',0, \reclevel1, ~levelsValues.wrapAt(0),  \reclevel2, ~levelsValues.wrapAt(1)],~groupeSynthRecAgents, \addToTail));
+			~synthRecAudioAgents=~synthRecAudioAgents.add(Synth.new("RecBufferAudioIn",[\in, sourceIn, 'buffer',~bufferAudioAgents.wrapAt(agent).bufnum,'run', 1,'loop', 0, \trigger, trigger, \reclevel1, ~levelsValues.wrapAt(0), \reclevel2, ~levelsValues.wrapAt(1)],~groupeSynthRecAgents, \addToTail));
+			~synthRecFileAgents=~synthRecFileAgents.add(Synth.new("RecBufferFileIn",['buffer',~bufferFileAgents.wrapAt(agent).bufnum, 'in', ~busFileIn.index, 'run', 1,'loop', 0, \trigger, trigger, \reclevel1, ~levelsValues.wrapAt(0), \reclevel2, ~levelsValues.wrapAt(1)],~groupeSynthRecAgents, \addToTail));
 			NodeWatcher.register(~synthRecAudioAgents.wrapAt(agent));
 			NodeWatcher.register(~synthRecFileAgents.wrapAt(agent));
 			// PROCESSUS MUSIQUE
@@ -7610,20 +7612,20 @@ G                           Init Genome Agent (solo).
 
 			// Synth pour records Buffer
 			SynthDef("RecBufferAudioIn",
-				{arg in=0, buffer, offset=0, run=1, loop=1, trigger=0, reclevel1=1, reclevel2=0;
+				{arg in=0, buffer, offset=0, run=1, loop=0, trigger=0, reclevel1=1, reclevel2=0;
 					var samplein;
-					trigger = Trig1.kr(Impulse.kr(run));
 					samplein=SoundIn.ar(in);
-					RecordBuf.ar(samplein, buffer, offset, reclevel1, reclevel2, run, loop, trigger);
+					trigger = Trig1.kr(Dust.kr(trigger), BufDur.kr(buffer));
+					RecordBuf.ar(samplein, buffer, offset, reclevel1, reclevel2, 1, 0, trigger);
 			}).send(s);
 
 			// Synth pour records Buffer file
 			SynthDef("RecBufferFileIn",
-				{arg in=0, buffer, offset=0, run=1, loop=1, trigger=0, reclevel1=1, reclevel2=0;
+				{arg in=0, buffer, offset=0, run=1, loop=0, trigger=0, reclevel1=1, reclevel2=0;
 					var fileIn;
 					fileIn=In.ar(in);
-					trigger = Trig1.kr(Impulse.kr(run));
-					RecordBuf.ar(fileIn, buffer, offset, reclevel1, reclevel2, run, loop, trigger);
+					trigger = Trig1.kr(Dust.kr(trigger), BufDur.kr(buffer));
+					RecordBuf.ar(fileIn, buffer, offset, reclevel1, reclevel2, 1, 0, trigger);
 			}).send(s);
 
 			// Synth lecture file pour analyse AudioIn
