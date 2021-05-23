@@ -3837,7 +3837,7 @@ f						Switch File for Analyze.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop);
-				chain = CombC.ar(chain, 0.2, oscCentroid.reciprocal.clip(0.001, 1), (oscFlux * 100).clip(1, 10), 0.25);
+				chain = CombC.ar(chain, 0.2, oscFlatness.clip(0.001, 1), (oscFlux * 100).clip(1, 10), 0.25);
 				//chain = Decimator.ar(chain, oscFlatness * 48000, oscFlux * 24, mul: envelope);
 				//chain = Decimator.ar(chain, oscFlatness * 96000, oscFlatness * 24, mul: envelope);
 				chain = chain * envelope;
