@@ -487,7 +487,7 @@ f						Switch File for Analyze.
 					{
 						// QCompositeView
 						if(data.at(item).at(0) == "a View" or: {data.at(item).at(0) == "a CompositeView"} or: {data.at(item).at(0) == "a QCompositeView"} or: {data.at(item).at(0) == "a QView"} or: {data.at(item).at(0) == "a SCCompositeView"}, {
-							if(data.at(item).at(1) == "a QStaticText" or: {data.at(item).at(1) == "a SCStaticText"} or: {data.at(item).at(1) == "a StaticText"}, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
+							if(data.at(item).at(1) == "a QStaticText" or: {data.at(item).at(1) == "a SCStaticText"} or: {data.at(item).at(1) == "a StaticText"} or: {data.at(item).at(1) == nil}, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
 							if(data.at(item).at(1) == "a QSlider" or: {data.at(item).at(1) == "a SCSlider"} or: {data.at(item).at(1) == "a Slider"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
 							if(data.at(item).at(1) == "a QRangeSlider" or: {data.at(item).at(1) == "a SCRangeSlider"} or: {data.at(item).at(1) == "a RangeSlider"}, {view.children.at(2).activeLo_(0); view.children.at(2).activeHi_(1); view.children.at(2).activeLo_(data.at(item).at	(2).at(2).at(0)); view.children.at(2).activeHi_(data.at(item).at(2).at(2).at(1))});
 							if(data.at(item).at(1) == "a QKnob" or: {data.at(item).at(1) == "a SCKnob"} or: {data.at(item).at(1) == "a Knob"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
@@ -520,13 +520,13 @@ f						Switch File for Analyze.
 		fonctionSavePreset = {arg window;
 			var data=[], synth=0;
 			// Save views values
-			window.view.children.do({arg view;
+			window.view.children.do({arg view, index;
 				var arrayData=[], subArrayData=[], subType=nil;
 				// QCompositeView
 				arrayData=[];
 				if(view.asString == "a View" or: {view.asString == "a CompositeView"} or: {view.asString == "a QCompositeView"} or: {view.asString == "a QView"} or: {view.asString == "a SCCompositeView"},
 					{view.children.do({arg subView;
-						if(subView.asString == "a StaticText" or: {subView.asString == "a SCStaticText"} or: {subView.asString == "a QStaticText"}, {arrayData = arrayData.add(subView.string)});
+						if(subView.asString == "a StaticText" or: {subView.asString == "a SCStaticText"} or: {subView.asString == "a QStaticText"} or: {subView.asString == "a TextField"} or: {subView.asString == "a SCTextField"} or: {subView.asString == "a QTextField"}, {arrayData = arrayData.add(subView.string)});
 						if(subView.asString == "a QSlider" or: {subView.asString == "a SCSlider"} or: {subView.asString == "a Slider"}, {arrayData=arrayData.add(subView.value); subType = subView.asString});
 						if(subView.asString == "a QRangeSlider" or: {subView.asString == "a SCRangeSlider"} or: {subView.asString == "a RangeSlider"}, {subArrayData=subArrayData.add		(subView.lo);subArrayData=subArrayData.add(subView.hi); arrayData=arrayData.add		(subArrayData); subType = subView.asString});
 						if(subView.asString == "a QNumberBox" or: {subView.asString == "a SCNumberBox"} or: {subView.asString == "a NumberBox"}, {arrayData=arrayData.add(subView.value)});
@@ -535,7 +535,7 @@ f						Switch File for Analyze.
 					data = data.add([view.asString, subType, arrayData]);
 				});
 				// StaticText
-				if(view.asString == "a QStaticText" or: {view.asString == "a SCStaticText"} or: {view.asString == "a StaticText"},
+				if(view.asString == "a QStaticText" or: {view.asString == "a SCStaticText"} or: {view.asString == "a StaticText"} or: {view.asString == "a SCTextField"} or: {view.asString == "a TextField"} or: {view.asString == "a QTextField"},
 					{data = data.add([view.asString, view.string])});
 				// QPopUpMenu + QButton
 				if(view.asString == "a QPopUpMenu" or: {view.asString == "a QEnvelopeView"} or: {view.asString == "a QButton"} or: {view.asString == "a SCPopUpMenu"} or: {view.asString == "a SCEnvelopeView"} or: {view.asString == "a SCButton"} or: {view.asString == "a PopUpMenu"} or: {view.asString == "an EnvelopeView"} or: {view.asString == "a Button"},
@@ -552,7 +552,7 @@ f						Switch File for Analyze.
 				if(view.asString  == "a NumberBox" or: {view.asString == "a QNumberBox"} or: {view.asString== "a SCNumberBox"},
 					{data = data.add([view.asString, view.value])});
 			});
-			//+ Array with [Sequencer, Sample, NumFhzBand, Scale, Root, Degress]
+			// + NumFhzBand
 			data = data.add(windowExternalControlGUI.view.children.at(22).children.at(2).value);
 			// Sortie Data
 			data.value;
@@ -1420,8 +1420,24 @@ f						Switch File for Analyze.
 												{amp = ampMIDIOSC},
 												{nil});
 									});
-									// Set Rate
+									// Setup Freq with Scaling and Tuning
 									freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
+									if(flagScaling != 'off', {
+										oct = freq.midicps.cpsoct.round(0.001);
+										ratio = oct.frac;
+										oct = oct.floor;
+										degre = (ratio * tuning.size + 0.5).floor;
+										(scale.degrees.size - 1).do({arg i;
+											difL=abs(degre - scale.degrees.at(i));
+											difH=abs(degre - scale.degrees.at(i+1));
+											if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+												{if(difL <= difH, {pos = i},{pos = i+1})});
+										});
+										freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+										freq = freq.cpsmidi;
+									});
+									// Set Rate
+									//freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
 									freqToMidi = (freq + 0.5).floor;
 									freqSynth = freq.midicps;
 									freqRate = (freq - 48).midicps;
