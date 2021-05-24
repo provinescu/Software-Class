@@ -1089,6 +1089,7 @@ G                           Init Genome Agent (solo).
 			~flagGenesMAutomation='off';
 			~flagSynthAgentsAutomation='off';
 			~flagSynthMusiqueAutomation='off';
+			~flagRootAutomation='off';
 			~flagAS='SoundIn';
 			~antiClick=[0.33, 0.5];
 			~geneSamplePopUpLow=0;
@@ -3415,10 +3416,12 @@ G                           Init Genome Agent (solo).
 				actifsAgents=0; signauxIn=0; numberFile=0; flagFile='off'; file; compteurEssai=0; q1Freq=0; medianeFreq=0; q3Freq=0; ecartqFreq=0; ecartsemiqFreq=0; varianceFreq=0; ecarttypeFreq=0; dissymetrieFreq=0; q1Amp=0; medianeAmp=0; q3Amp=0; ecartqAmp=0; ecartsemiqAmp=0; varianceAmp=0; ecarttypeAmp=0; dissymetrieAmp=0; q1Duree=0; medianeDuree=0; q3Duree=0; ecartqDuree=0; ecartsemiqDuree=0;varianceDuree=0; ecarttypeDuree=0; dissymetrieDuree=0; newQuantaDur = 100; valueTierAgents=0; meanDureeBuffer=[]; meanDureeAgents=0; fitness=0; voisinsAffichage=0; signauxAffichage=0;  meanSynthAgents=[];
 				listeFreq=[]; listeAmp=[]; listeDuree=[];
 				// New Root
-				{
-					if(~flagScaling == 'on', {~rootChoice.valueAction_((~freqCentroid.cpsoct.frac * 12).ceil.mod(12).floor)});
-				}.defer;
-				~scale = Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning);
+				if(~flagRootAutomation == 'on', {
+					{
+						if(~flagScaling == 'on', {~rootChoice.valueAction_((~freqCentroid.cpsoct.frac * 12).ceil.mod(12).floor)});
+					}.defer;
+					~scale = Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning);
+				});
 				// Analyse agents
 				~agents.do({arg agent;
 					actifsAgents = actifsAgents + ~musicOutAgents.wrapAt(agent);
@@ -5486,50 +5489,55 @@ G                           Init Genome Agent (solo).
 		~densite=EZRanger(~wad, 165@20, "Time", ControlSpec(3600.reciprocal, 60, \exp, 0), {|valeur|  if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~densite", valeur.value)})}, [0.25, 0.5], labelWidth: 30, numberWidth: 30);
 		~wad.view.decorator.nextLine;
 		// Init
-		~initAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["AgentI On", Color.black, Color.green(0.8, 0.25)],["AgentI Off", Color.black, Color.red(0.8, 0.25)]];
+		~initAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["AgentI On", Color.black, Color.green(0.8, 0.25)],["AgentI Off", Color.black, Color.red(0.8, 0.25)]];
 		~initAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~initAutomation", action.value)});
 			if(action.value == 1, {~flagInitAutomation='on'}, {~flagInitAutomation='off'})};
 		// Univers
-		~universAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["PresetL On", Color.black, Color.green(0.8, 0.25)],["PresetL Off", Color.black, Color.red(0.8, 0.25)]];
+		~universAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["PresetL On", Color.black, Color.green(0.8, 0.25)],["PresetL Off", Color.black, Color.red(0.8, 0.25)]];
 		~universAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~universAutomation", action.value)});
 			if(action.value == 1, {~flagUniversAutomation='on'}, {~flagUniversAutomation='off'})};
 		// % Change Synth
-		~changeSynth = NumberBox(~wad, Rect(0, 0, 25, 20));
+		~changeSynth = NumberBox(~wad, Rect(0, 0, 50, 20));
 		~changeSynth.action = {|view| if(~variableChange == "Flux", {~valueSynthChange.put(0,  view.value)}, {~valueSynthChange.put(1,  view.value)})};
 		~changeSynth.step_(0.01); ~changeSynth.clipLo_(0); ~changeSynth.clipHi_(10); ~changeSynth.scroll_step_(0.01); ~changeSynth.value_(~valueSynthChange.wrapAt(0));
 		// Monde Agents
-		~mondesAgentsAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["ControlA On", Color.black, Color.green(0.8, 0.25)],["ControlA Off", Color.black, Color.red(0.8, 0.25)]];
+		~mondesAgentsAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["ControlA On", Color.black, Color.green(0.8, 0.25)],["ControlA Off", Color.black, Color.red(0.8, 0.25)]];
 		~mondesAgentsAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~mondesAgentsAutomation", action.value)});
 			if(action.value == 1, {~flagMondesAgentsAutomation='on'}, {~flagMondesAgentsAutomation='off'})};
 		// Monde Musique
-		~mondesMusiqueAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["ControlM On", Color.black, Color.green(0.8, 0.25)],["ControlM Off", Color.black, Color.red(0.8, 0.25)]];
+		~mondesMusiqueAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["ControlM On", Color.black, Color.green(0.8, 0.25)],["ControlM Off", Color.black, Color.red(0.8, 0.25)]];
 		~mondesMusiqueAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~mondesMusiqueAutomation", action.value)});
 			if(action.value == 1, {~flagMondesMusiqueAutomation='on'}, {~flagMondesMusiqueAutomation='off'})};
 		~wad.view.decorator.nextLine;
 		// Genes Synth
-		~genesSAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["GenesA On", Color.black, Color.green(0.8, 0.25)],["GenesA Off", Color.black, Color.red(0.8, 0.25)]];
+		~genesSAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["GenesA On", Color.black, Color.green(0.8, 0.25)],["GenesA Off", Color.black, Color.red(0.8, 0.25)]];
 		~genesSAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~genesSAutomation", action.value)});
 			if(action.value == 1, {~flagGenesSAutomation='on'}, {~flagGenesSAutomation='off'})};
 		// Genes Musique
-		~genesMAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["GenesM On", Color.black, Color.green(0.8, 0.25)],["GenesM Off", Color.black, Color.red(0.8, 0.25)]];
+		~genesMAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["GenesM On", Color.black, Color.green(0.8, 0.25)],["GenesM Off", Color.black, Color.red(0.8, 0.25)]];
 		~genesMAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~genesMAutomation", action.value)});
 			if(action.value == 1, {~flagGenesMAutomation='on'}, {~flagGenesMAutomation='off'})};
 		// Synth agents
-		~synthAgentsAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["SynthA On", Color.black, Color.green(0.8, 0.25)],["SynthA Off", Color.black, Color.red(0.8, 0.25)]];
+		~synthAgentsAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["SynthA On", Color.black, Color.green(0.8, 0.25)],["SynthA Off", Color.black, Color.red(0.8, 0.25)]];
 		~synthAgentsAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~synthAgentsAutomation", action.value)});
 			if(action.value == 1, {~flagSynthAgentsAutomation='on'}, {~flagSynthAgentsAutomation='off'})};
 		// Synth musique
-		~synthMusiqueAutomation = Button(~wad, Rect(0, 0, 90, 20)).states=[["SynthM On", Color.black, Color.green(0.8, 0.25)],["SynthM Off", Color.black, Color.red(0.8, 0.25)]];
+		~synthMusiqueAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["SynthM On", Color.black, Color.green(0.8, 0.25)],["SynthM Off", Color.black, Color.red(0.8, 0.25)]];
 		~synthMusiqueAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~synthMusiqueAutomation", action.value)});
 			if(action.value == 1, {~flagSynthMusiqueAutomation='on'}, {~flagSynthMusiqueAutomation='off'})};
+		// Root Automation
+		~rootAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["Root On", Color.black, Color.green(0.8, 0.25)],["Root Off", Color.black, Color.red(0.8, 0.25)]];
+		~rootAutomation.action = {arg action;
+			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~rootAutomation", action.value)});
+			if(action.value == 1, {~flagRootAutomation='on'}, {~flagRootAutomation='off'; ~rootChoice.valueAction_(0)})};
 		~wad.front;
 	}
 
@@ -6369,6 +6377,9 @@ G                           Init Genome Agent (solo).
 				if(number == 8, {
 					if(~flagSynthMusiqueAutomation=='on', {~synthMusiqueAutomation.valueAction_(0)},{~synthMusiqueAutomation.valueAction_(1)});
 				});
+				if(number == 9, {
+					if(~flagRootAutomation=='on', {~flagRootAutomation.valueAction_(0)},{~flagRootAutomation.valueAction_(1)});
+				});
 			});
 			// Start record score
 			if(commande == 'start record score' and:{~flagRecordScore != 'on'}, {
@@ -6909,10 +6920,11 @@ G                           Init Genome Agent (solo).
 			datafile=datafile.add(~automationSpeedEffets);//206
 			datafile=datafile.add(~speedVerb.value);//207
 			datafile=datafile.add(~automationSpeedVerb);//208
+			datafile=datafile.add(~flagRootAutomation);//209
 			// + Genome
-			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//209
+			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//210
 			// + Sequence
-			if(flagSequence == 'on', {datafile=datafile.add([~listeagentfreq,~listeagentamp,~listeagentduree])});//210
+			if(flagSequence == 'on', {datafile=datafile.add([~listeagentfreq,~listeagentamp,~listeagentduree])});//211
 			datafile.value;
 		};
 
@@ -7287,13 +7299,14 @@ G                           Init Genome Agent (solo).
 			~randomControlsVerb.value_(~automationControlsVerb.wrapAt(datafile.wrapAt(195)));
 			~speedEffets.valueAction_(datafile.wrapAt(205));
 			~speedVerb.valueAction_(datafile.wrapAt(207));
-			// + Genome (209) + Sequence (210)
-			if(flagGenome == 'on' and: {datafile.wrapAt(209).size != 0}, {
-				~genomes=datafile.wrapAt(209);// Load Genomes
+			~flagRootAutomation=datafile.wrapAt(209);if(~flagRootAutomation=='on',{~rootAutomation.valueAction_(1)},{~rootAutomation.valueAction_(0)});
+			// + Genome (210) + Sequence (211)
+			if(flagGenome == 'on' and: {datafile.wrapAt(210).size != 0}, {
+				~genomes=datafile.wrapAt(210);// Load Genomes
 				~startpopulation = ~agents = ~genomes.size;
 				~foncInitAgents.value;
-				~genomes=datafile.wrapAt(209); // Load Genomes again for INIT
-				if(flagSequence == 'on' and: {datafile.wrapAt(210).wrapAt(0).size != 0}, {sequence=datafile.wrapAt(210);~listeagentfreq=sequence.wrapAt(0);~listeagentamp=sequence.wrapAt(1);~listeagentduree=sequence.wrapAt(2)}, {flagSequence='off'})},
+				~genomes=datafile.wrapAt(210); // Load Genomes again for INIT
+				if(flagSequence == 'on' and: {datafile.wrapAt(211).wrapAt(0).size != 0}, {sequence=datafile.wrapAt(211);~listeagentfreq=sequence.wrapAt(0);~listeagentamp=sequence.wrapAt(1);~listeagentduree=sequence.wrapAt(2)}, {flagSequence='off'})},
 			{~foncInitAgents.value});
 		};
 
