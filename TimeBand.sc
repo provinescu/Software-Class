@@ -349,6 +349,8 @@ f						Switch File for Analyze.
 			'LeakDC',
 			'Median+leakDC',
 			'PV_Cutoff',
+			'Delay',
+			'Warp+Delay'
 		];
 		listeFX = [
 			'ByPass',
@@ -3283,10 +3285,19 @@ f						Switch File for Analyze.
 					// Median+LeakDC
 					37, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Median+LeakDC", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
 						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Lenght", "Jitter %", "X", "Coef", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
-					},// PV_Cutoff
+					},
+					// PV_Cutoff
 					38, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("PV_Cutoff", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
 						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Cutoff", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
-					}
+					},
+					// Delay
+					39, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Delay", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Delay", "Jitter %", "X", "off", "Jitter %", "X", "off", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					},
+					// Warp+Delay
+					40, {listeGroupSynthFilter.at(synth).freeAll; Synth.new("Warp+Delay", [\out, listeBusInFX.at(synth), \in, listeBusInFilter.at(synth),\ctrl1, listeCtrl1Filter.at(synth), \ctrl2, listeCtrl2Filter.at(synth), \ctrl3, listeCtrl3Filter.at(synth)], listeGroupSynthFilter.at(synth), \addToTail);
+						fonctionSetupSliders.value(synth, [ 58, 59, 60, 61, 62, 63, 64, 65, 66 ], ["Trigger", "Jitter %", "X", "Pitch", "Jitter %", "X", "Delay", "Jitter %", "X"], [true, true, true, true, true, true, true, true, true], ['EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button', 'EZSlider', 'EZSlider', 'Button']);
+					},
 				);
 			};
 
@@ -4566,7 +4577,7 @@ f						Switch File for Analyze.
 		SynthDef('Median+LeakDC',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(LeakDC.ar(Median.ar(ctrl1 / 20000 * 30 + 1, signal, vol, signal * (1 - vol)), ctrl2 / 20000));
+				chain = Mix(LeakDC.ar(Median.ar(ctrl1 / 20000 * 30 + 1, signal, vol, signal * (1 - vol)), ctrl2));
 				Out.ar(out, chain);
 		}).add;
 
@@ -4578,6 +4589,27 @@ f						Switch File for Analyze.
 				chain = PV_Cutoff(chain, ctrl1 / 20000 * 2 - 1);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
+				Out.ar(out, chain);
+		}).add;
+
+		// Delay
+		SynthDef('Delay',
+			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
+				var chain, local, signal=In.ar(in, 1);
+				local = LocalIn.ar(1) + signal;
+				chain = Mix(DelayC.ar(local, 5.0, ctrl1 / 20000 * 5.0, vol, signal * (1 - vol)));
+				LocalOut.ar(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		// Warp+Delay
+		SynthDef('Warp+Delay',
+			{arg out, in, ctrl1, ctrl2, ctrl3, vol;
+				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
+				LocalIn.ar(1).clear;
+				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
+				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 / 20000 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), 0.2, -1, 8, 0, 1, vol, signal * (1 - vol)));
+				LocalOut.ar(DelayC.ar(chain, 4, ctrl3.clip(0.01, 4)));
 				Out.ar(out, chain);
 		}).add;
 
@@ -4648,8 +4680,8 @@ f						Switch File for Analyze.
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
 				LocalIn.ar(1).clear;
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
-				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), ctrl3.clip(0.01, 1), -1, (ctrl4 * 16).clip(1, 16), 0, 2, vol, signal * (1 - vol)));
-				LocalOut.ar(DelayC.ar(chain, 1, ctrl5.clip(0.01, 1)));
+				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), ctrl3.clip(0.01, 1), -1, (ctrl4 * 16).clip(1, 16), 0, 1, vol, signal * (1 - vol)));
+				LocalOut.ar(DelayC.ar(chain, 4, ctrl5.clip(0.01, 4)));
 				Out.ar(out, chain);
 		}).add;
 
