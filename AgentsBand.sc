@@ -2232,6 +2232,7 @@ G                           Init Genome Agent (solo).
 				47.do({arg gene; genome=genome.add(~createOrmutationGenesAgents.value(gene))});// fonction create genomes
 				envTime = genome.copyRange(26, 33).sort;
 				forBy(26, 33, 1 , {arg i; genome.wrapPut(i, envTime.wrapAt(i-26))});
+				envTime.size.do({arg i; genome.wrapPut(i + 26, abs(envTime.wrapAt(i + 26 + 1) - envTime.wrapAt(i + 26)))});
 				~genomes=~genomes.add(genome);
 				~fitnessInne=~fitnessInne.add(0);
 				~fitnessAcquis=~fitnessAcquis.add(0);
@@ -2359,6 +2360,7 @@ G                           Init Genome Agent (solo).
 			genome = ~genomes.wrapAt(agent);
 			envTime = genome.copyRange(26, 33).sort;envTime.wrapPut(0, 0.0);envTime.wrapPut(7, 1.0);
 			forBy(26, 33, 1 , {arg i; genome.wrapPut(i, envTime.wrapAt(i-26))});
+			envTime.size.do({arg i; genome.wrapPut(i + 26, abs(envTime.wrapAt(i + 26 + 1) - envTime.wrapAt(i + 26)))});
 			~genomes.wrapPut(agent, genome);
 		};
 
@@ -2626,6 +2628,7 @@ G                           Init Genome Agent (solo).
 			genome = ~genomes.wrapAt(agent);
 			envTime = genome.copyRange(26, 33).sort;envTime.wrapPut(0, 0.0);envTime.wrapPut(7, 1.0);
 			forBy(26, 33, 1 , {arg i; genome.wrapPut(i, envTime.wrapAt(i-26))});
+			envTime.size.do({arg i; genome.wrapPut(i + 26, abs(envTime.wrapAt(i + 26 + 1) - envTime.wrapAt(i + 26)))});
 			~genomes.wrapPut(agent, genome);
 			//Musique
 			if(~flagSharedMusic=='on', {if(~listeagentfreq.wrapAt(voisin).size >= 1
@@ -2669,6 +2672,7 @@ G                           Init Genome Agent (solo).
 				if(1.0.rand.coin, {genome=genome2},{genome=genome1});
 				envTime = genome.copyRange(26, 33).sort;envTime.wrapPut(0, 0.0);envTime.wrapPut(7, 1.0);
 				forBy(26, 33, 1 , {arg i; genome.wrapPut(i, envTime.wrapAt(i-26))});
+				envTime.size.do({arg i; genome.wrapPut(i + 26, abs(envTime.wrapAt(i + 26 + 1) - envTime.wrapAt(i + 26)))});
 				~enfants.wrapPut(agent, ~enfants.wrapAt(agent) + 1);~enfants.wrapPut(voisin, ~enfants.wrapAt(voisin) + 1);
 				fitnessInne=(~fitnessInne.wrapAt(agent) + ~fitnessInne.wrapAt(voisin)) / 2;
 				fitnessAcquis=(~fitnessAcquis.wrapAt(agent) + ~fitnessAcquis.wrapAt(voisin)) / 2;
@@ -2819,7 +2823,7 @@ G                           Init Genome Agent (solo).
 
 		// Playing musique agents
 		~agentsmusique={arg agent;
-			var freq=[], freqRate=[], amp=[], ampReal, duree=0, compteuraccord=0, reverse=[], bufferSon, bufferSon2, freqLow, freqRange, freqTrans, ampRange, ampLow, dureeRange, dureeLow, dureeTempo, envLevel=[], envDuree=[], timeEnv=[], pan, offset, synth, indexSynth=0, loopSample, reverseSample, audioOut, indexOut, controlF, controlA, controlD, testLoop, sourceInAgent, flagInput = 0, octave, ratio, degre, difL, difH, pos=~scale.degrees.size - 1, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie,  transOctave, transTranspose, transCompExpAdd, transCompExpMul, newDuree=[], newFreq=[], newAmp=[], distances, maxTraining, numAlgo, sourceAlgorithm;
+			var freq=[], freqRate=[], amp=[], ampReal, duree=0, compteuraccord=0, reverse=[], bufferSon, bufferSon2, freqLow, freqRange, freqTrans, ampRange, ampLow, dureeRange, dureeLow, dureeTempo, envLevel=[], envDuree=[], pan, offset, synth, indexSynth=0, loopSample, reverseSample, audioOut, indexOut, controlF, controlA, controlD, testLoop, sourceInAgent, flagInput = 0, octave, ratio, degre, difL, difH, pos=~scale.degrees.size - 1, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie,  transOctave, transTranspose, transCompExpAdd, transCompExpMul, newDuree=[], newFreq=[], newAmp=[], distances, maxTraining, numAlgo, sourceAlgorithm;
 			if(~flagGeneLoopMusic == 'on', {if(~genomes.wrapAt(agent).wrapAt(41) <= 0.5, {testLoop='off'},{testLoop='on'})},{if(~flagloop == 'on', {testLoop='on'},{testLoop='off'})});
 			if(~flagplayagent.wrapAt(agent) == 'new' and: {testLoop != 'on'}, {~flagplayagent.wrapPut(agent, 'on')});
 			if(~flagCompteurPlayingAgents.wrapAt(agent) >= ~listeagentfreq.wrapAt(agent).size, {
@@ -3160,13 +3164,12 @@ G                           Init Genome Agent (solo).
 			if(~flagEntreeMode == 'File', {sourceInAgent = ~busFileIn.index; flagInput = 1});
 			//envelope
 			if(~flagGeneEnvLevel == 'off',
-				{envLevel=~levelenvelope},
-				{envLevel=~genomes.wrapAt(agent).copyRange(18, 25)});
-			envDuree =~timeenvelope;
+				{envLevel= ~levelenvelope},
+				{envLevel= ~genomes.wrapAt(agent).copyRange(18, 25)});
+			//envDuree = ~timeenvelope;
 			if(~flagGeneEnvDuree == 'off',
-				{nil},
-				{timeEnv =~genomes.wrapAt(agent).copyRange(26, 33).sort;
-					~timeenvelope.size.do({arg i; envDuree.wrapPut(i, abs(timeEnv.wrapAt(i+1) - timeEnv.wrapAt(i)))})});
+				{envDuree = ~timeenvelope},
+				{envDuree = ~genomes.wrapAt(agent).copyRange(26, 33)});
 			//Freq
 			freq = freq / 127 * freqRange + freqLow + freqTrans;
 			if(~flagScaling != 'off', {
