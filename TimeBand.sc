@@ -2872,7 +2872,9 @@ f						Switch File for Analyze.
 			Button(windowControlGUI, Rect(synth * 315 + 135, numberSynth * 25 + 125, 50, 20))
 			.background_(Color.grey).
 			states_([["Solo", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["Solo", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
-			action_({arg etat; if(etat.value == 0, {listeSoloSynth.put(synth, 0)}, {listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})})})});
+			action_({arg etat; if(etat.value == 0, {listeSoloSynth.put(synth, 0)}, {numberSynth.do({arg i; listeSoloSynth.put(i, 0);
+				if(i != synth, {windowControlGUI.view.children.at((i * 93 + 8) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0)})});
+			listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})})})});
 
 			// Buffer sampler
 			Button(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 150, 90, 20)).
