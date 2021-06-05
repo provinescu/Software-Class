@@ -3515,7 +3515,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						memoryDataDuree = memoryDataDuree.add([]);
 						lastTime = lastTime.add(Main.elapsedTime);
 					});
-					numIndexSynthBand = 0
+					numIndexSynthBand = 0;
+					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport play
 				},
 				1, {
 					switchSourceIn.valueAction_(switchSourceIn.value);
@@ -3526,6 +3527,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					playInstruments.play;
 					watchSilence.play;
 					memoryMusic.play;
+					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
 				}
 			);
 		};
