@@ -460,7 +460,7 @@ f						Switch File for Analyze.
 
 		// Fonction Load Preset
 		fonctionLoadPreset = {arg data, window;
-			var a, b, c, d, e, f;
+			var a, b, c, d, e, f, control;
 			// Midi Off
 			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
 			// load Buffer Synth and Setup Sliders Sample
@@ -513,14 +513,24 @@ f						Switch File for Analyze.
 							{view.valueAction_(data.at(item).at(1))});
 				});
 			});
-			//+ NumFhzBand
-			// Init Band and others
-			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(data.last);
+			//Control + NumFhzBand
+			control = data.last;
+			windowExternalControlGUI.view.children.at(12).valueAction_(control.at(0));
+			windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(1));
+			windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(2));
+			windowExternalControlGUI.view.children.at(15).children.at(2).valueAction_(control.at(3));
+			windowExternalControlGUI.view.children.at(16).children.at(2).valueAction_(control.at(4));
+			windowExternalControlGUI.view.children.at(17).children.at(2).valueAction_(control.at(5));
+			windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(6));
+			windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(7));
+			windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(8));
+			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(9));
+			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(10));// Init Band and others
 		};
 
 		// Fonction Save Preset
 		fonctionSavePreset = {arg window;
-			var data=[], synth=0;
+			var data=[], synth=0, control=[];
 			// Save views values
 			window.view.children.do({arg view, index;
 				var arrayData=[], subArrayData=[], subType=nil;
@@ -554,8 +564,20 @@ f						Switch File for Analyze.
 				if(view.asString  == "a NumberBox" or: {view.asString == "a QNumberBox"} or: {view.asString== "a SCNumberBox"},
 					{data = data.add([view.asString, view.value])});
 			});
-			// + NumFhzBand
-			data = data.add(windowExternalControlGUI.view.children.at(22).children.at(2).value);
+			// Control + NumFhzBand
+			control = [];
+			control = control.add(windowExternalControlGUI.view.children.at(12).value);
+			control = control.add(windowExternalControlGUI.view.children.at(13).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(14).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(15).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(16).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(17).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(18).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(19).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(20).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(21).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(22).children.at(2).value);// Band
+			data = data.add(control);
 			// Sortie Data
 			data.value;
 		};
