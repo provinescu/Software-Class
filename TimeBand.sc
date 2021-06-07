@@ -515,17 +515,21 @@ f						Switch File for Analyze.
 			});
 			//Control + NumFhzBand
 			control = data.last;
-			windowExternalControlGUI.view.children.at(12).valueAction_(control.at(0));
-			windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(1));
-			windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(2));
-			windowExternalControlGUI.view.children.at(15).children.at(2).valueAction_(control.at(3));
-			windowExternalControlGUI.view.children.at(16).children.at(2).valueAction_(control.at(4));
-			windowExternalControlGUI.view.children.at(17).children.at(2).valueAction_(control.at(5));
-			windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(6));
-			windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(7));
-			windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(8));
-			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(9));
-			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(10));// Init Band and others
+			windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
+			windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
+			windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
+			windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
+			windowExternalControlGUI.view.children.at(12).valueAction_(control.at(4));
+			windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(5));
+			windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(6));
+			windowExternalControlGUI.view.children.at(15).children.at(2).valueAction_(control.at(7));
+			windowExternalControlGUI.view.children.at(16).children.at(2).valueAction_(control.at(8));
+			windowExternalControlGUI.view.children.at(17).children.at(2).valueAction_(control.at(9));
+			windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(10));
+			windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(11));
+			windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(12));
+			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));
+			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(14));// Init Band and others
 		};
 
 		// Fonction Save Preset
@@ -566,6 +570,10 @@ f						Switch File for Analyze.
 			});
 			// Control + NumFhzBand
 			control = [];
+			control = control.add(windowExternalControlGUI.view.children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(7).value);
+			control = control.add(windowExternalControlGUI.view.children.at(10).children.at(2).value);
+			control = control.add(windowExternalControlGUI.view.children.at(11).children.at(2).value);
 			control = control.add(windowExternalControlGUI.view.children.at(12).value);
 			control = control.add(windowExternalControlGUI.view.children.at(13).children.at(2).value);
 			control = control.add(windowExternalControlGUI.view.children.at(14).children.at(2).value);
