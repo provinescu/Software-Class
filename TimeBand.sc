@@ -515,7 +515,7 @@ f						Switch File for Analyze.
 			});
 			//Control + NumFhzBand
 			control = data.last;
-			windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
+			/*windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
 			windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
 			windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
 			windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
@@ -528,7 +528,7 @@ f						Switch File for Analyze.
 			windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(10));
 			windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(11));
 			windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(12));
-			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));
+			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));*/
 			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(14));// Init Band and others
 		};
 
