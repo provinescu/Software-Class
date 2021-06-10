@@ -92,6 +92,7 @@ q						Switch Algo Analyze.
 Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
 l			 			Load Preset.
+alt+l                   Load Preset + Control.
 s				 		Save Preset.
 L			 			Load Synthesizer.
 S				 		Save Synthesizer.
@@ -174,6 +175,7 @@ f						Switch File for Analyze.
 		userOSchoiceControl = [
 			'UserOperatingSystem',
 			'Load Preset',
+			'Load Preset+Control',
 			'Save Preset',
 			'Load Synthesizer',
 			'Save Synthesizer',
@@ -406,7 +408,19 @@ f						Switch File for Analyze.
 					Dialog.openPanel({ arg paths;
 						var f;
 						f=File(paths,"r");
-						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI);
+						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI, 'off');
+						f.close;
+						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  PathName.new(paths).fileName;
+						Document.listener.string="";
+						s.queryAllNodes;"".postln;
+					}, {"cancelled".postln});
+				},
+				// Load Preset+Control
+				2, {
+					Dialog.openPanel({ arg paths;
+						var f;
+						f=File(paths,"r");
+						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI,'on');
 						f.close;
 						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  PathName.new(paths).fileName;
 						Document.listener.string="";
@@ -414,7 +428,7 @@ f						Switch File for Analyze.
 					}, {"cancelled".postln});
 				},
 				// Save Preset
-				2, {
+				3, {
 					Dialog.savePanel({arg p;
 						var f;
 						f=File(p ++ ".scd", "w");
@@ -424,7 +438,7 @@ f						Switch File for Analyze.
 					{"cancelled".postln});
 				},
 				// Load Synthesizer
-				3, {
+				4, {
 					SCRequestString("1", "Synthesizer Target", {arg target;
 						// Verify if valid Synthesizer
 						if(target.asInteger >= 1 or: {target.asInteger <= numberSynth}, {synthTarget = target.asInteger - 1;
@@ -441,7 +455,7 @@ f						Switch File for Analyze.
 					});
 				},
 				// Save Synthesizer
-				4, {
+				5, {
 					SCRequestString("1", "Synthesizer Source", {arg source;
 						// Verify if valid Synthesizer
 						if(source.asInteger >= 1 or: {source.asInteger <= numberSynth}, {synthSource = source.asInteger - 1;
@@ -459,7 +473,7 @@ f						Switch File for Analyze.
 		};
 
 		// Fonction Load Preset
-		fonctionLoadPreset = {arg data, window;
+		fonctionLoadPreset = {arg data, window, flag;
 			var a, b, c, d, e, f, control;
 			// Midi Off
 			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
@@ -515,7 +529,8 @@ f						Switch File for Analyze.
 			});
 			//Control + NumFhzBand
 			control = data.last;
-			/*windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
+			if(flag == 'on', {
+			windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
 			windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
 			windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
 			windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
@@ -528,8 +543,10 @@ f						Switch File for Analyze.
 			windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(10));
 			windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(11));
 			windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(12));
-			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));*/
-			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(14));// Init Band and others
+			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));
+			});
+			// Init Band
+			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(14));
 		};
 
 		// Fonction Save Preset
@@ -719,7 +736,7 @@ f						Switch File for Analyze.
 								lastNumberChoiceConfig = number;
 								if(File.exists(pathTimeBand ++ foldersToScanPreset.at(number)),
 									{file=File(pathTimeBand ++ foldersToScanPreset.at(number),"r");
-										fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI); file.close;
+										fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'off'); file.close;
 										windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanPreset.at(number);
 								}, {"cancelled".postln});
 							});
@@ -1509,7 +1526,7 @@ f						Switch File for Analyze.
 			file.close;
 			//if(File.exists(pathTimeBand ++ "Init Preset" ++ ".scd"), {
 			//file=File(pathTimeBand ++ "Init Preset" ++ ".scd","r");
-			//fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI);
+			//fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on');
 			//file.close;
 			//windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Init Preset"},{"Canceled".postln});
 
@@ -1668,7 +1685,10 @@ f						Switch File for Analyze.
 
 		menuPreset = Menu(
 			MenuAction("Load Preset", {
-				fonctionUserOperatingSystem.value(1, windowControlGUI);
+				fonctionUserOperatingSystem.value(1, windowControlGUI, 'off');
+			}),
+			MenuAction("Load Preset+Control", {
+				fonctionUserOperatingSystem.value(1, windowControlGUI, 'on');
 			}),
 			MenuAction("Save Preset",{
 				fonctionUserOperatingSystem.value(2, windowControlGUI);
@@ -1860,6 +1880,10 @@ f						Switch File for Analyze.
 				// key l -> load Preset
 				if(char == $l, {commande = 'Load Preset';
 				});
+				// key alt+l -> load Preset+Control
+				if(modifiers==524288 and: {unicode==108} and: {keycode==37},
+					{commande = 'Load Preset+Control';
+				});
 				// key s -> save Preset
 				if(char == $s,
 					{commande='Save Preset';
@@ -1897,7 +1921,7 @@ f						Switch File for Analyze.
 					// Init Systeme
 					if(File.exists(pathTimeBand ++ "Init Preset" ++ ".scd"), {
 						file=File(pathTimeBand ++ "Init Preset" ++ ".scd","r");
-						fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI);
+						fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on');
 						file.close;
 						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Init Preset";
 					}, {"Canceled".postln});
@@ -1982,7 +2006,14 @@ f						Switch File for Analyze.
 			if(commandeExecute == 'Load Preset',{
 				if(File.exists(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd"), {
 					file=File(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd","r");
-					fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI); file.close;
+					fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'off'); file.close;
+					windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
+			});
+			//load Preset+Control
+			if(commandeExecute == 'Load Preset+Control',{
+				if(File.exists(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd"), {
+					file=File(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd","r");
+					fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
 					windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
 			});
 			// Save Synth
