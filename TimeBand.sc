@@ -6,7 +6,7 @@ TimeBand {
 
 	classvar  < s;
 
-	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay;
+	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq;
 
 	*new	{arg path="~/Documents/TimeBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -233,6 +233,7 @@ f						Switch File for Analyze.
 		lastTimeBand = [];
 		listeBusSynth = [];
 		autoRoot = 'off';
+		ambitusFreq = [0, 127];
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -530,20 +531,20 @@ f						Switch File for Analyze.
 			//Control + NumFhzBand
 			control = data.last;
 			if(flag == 'on', {
-			windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
-			windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
-			windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
-			windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
-			windowExternalControlGUI.view.children.at(12).valueAction_(control.at(4));
-			windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(5));
-			windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(6));
-			windowExternalControlGUI.view.children.at(15).children.at(2).valueAction_(control.at(7));
-			windowExternalControlGUI.view.children.at(16).children.at(2).valueAction_(control.at(8));
-			windowExternalControlGUI.view.children.at(17).children.at(2).valueAction_(control.at(9));
-			windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(10));
-			windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(11));
-			windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(12));
-			windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));
+				windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
+				windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
+				windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
+				windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
+				windowExternalControlGUI.view.children.at(12).valueAction_(control.at(4));
+				windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(5));
+				windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(6));
+				windowExternalControlGUI.view.children.at(15).children.at(2).valueAction_(control.at(7));
+				windowExternalControlGUI.view.children.at(16).children.at(2).valueAction_(control.at(8));
+				windowExternalControlGUI.view.children.at(17).children.at(2).valueAction_(control.at(9));
+				windowExternalControlGUI.view.children.at(18).children.at(2).valueAction_(control.at(10));
+				windowExternalControlGUI.view.children.at(19).children.at(2).valueAction_(control.at(11));
+				windowExternalControlGUI.view.children.at(20).children.at(2).valueAction_(control.at(12));
+				windowExternalControlGUI.view.children.at(21).children.at(2).valueAction_(control.at(13));
 			});
 			// Init Band
 			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(14));
@@ -921,31 +922,7 @@ f						Switch File for Analyze.
 						ampMIDIOSC = amp.ampdb;
 						duree = (time - lastTime).clip(0.01, maxDureeOSC);
 
-						// Setup Freq with Scaling and Tuning
-						if(flagScaling != 'off', {
-							oct = freq.cpsoct.round(0.001);
-							ratio = oct.frac;
-							oct = oct.floor;
-							degre = (ratio * tuning.size + 0.5).floor;
-							(scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - scale.degrees.at(i));
-								difH=abs(degre - scale.degrees.at(i+1));
-								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
-							});
-							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-						});
-
-						octave = (freq.cpsmidi / 12).floor;
-						demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-						cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
 						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTime) >= durFilter} and: {duree >= durFilter}, {
-
-							// Set Bus OSC
-							busOSCfreq.set(freq);
-							busOSCamp.set(amp);
-							busOSCduree.set(duree);
 
 							// Dispatch Band FHZ
 							for(1, numFhzBand, {arg i;
@@ -954,6 +931,34 @@ f						Switch File for Analyze.
 									// Add Data
 									if(numberSynth > listeDataBand.at(i).size,
 										{
+											// Set Ambitus Freq
+											freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+											freq = freq.midicps;
+
+											// Setup Freq with Scaling and Tuning
+											if(flagScaling != 'off', {
+												oct = freq.cpsoct.round(0.001);
+												ratio = oct.frac;
+												oct = oct.floor;
+												degre = (ratio * tuning.size + 0.5).floor;
+												(scale.degrees.size - 1).do({arg i;
+													difL=abs(degre - scale.degrees.at(i));
+													difH=abs(degre - scale.degrees.at(i+1));
+													if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+														{if(difL <= difH, {pos = i},{pos = i+1})});
+												});
+												freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+											});
+
+											octave = (freq.cpsmidi / 12).floor;
+											demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+											cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+											// Set Bus OSC
+											busOSCfreq.set(freq);
+											busOSCamp.set(amp);
+											busOSCduree.set(duree);
+
 											if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 												{
 													listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
@@ -1057,30 +1062,6 @@ f						Switch File for Analyze.
 						ampMIDIOSC = amp.ampdb;
 						duree = msg.at(5).clip(0.01, maxDureeOSC);
 
-						// Setup Freq with Scaling and Tuning
-						if(flagScaling != 'off', {
-							oct = freq.cpsoct.round(0.001);
-							ratio = oct.frac;
-							oct = oct.floor;
-							degre = (ratio * tuning.size + 0.5).floor;
-							(scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - scale.degrees.at(i));
-								difH=abs(degre - scale.degrees.at(i+1));
-								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
-							});
-							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-						});
-
-						octave = (freq.cpsmidi / 12).floor;
-						demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-						cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
-						// Set Bus OSC
-						busOSCfreq.set(freq);
-						busOSCamp.set(amp);
-						busOSCduree.set(duree);
-
 						// Dispatch Band FHZ
 						for(1, numFhzBand, {arg i;
 
@@ -1088,6 +1069,34 @@ f						Switch File for Analyze.
 								// Add Data
 								if(numberSynth > listeDataBand.at(i).size,
 									{
+										// Set Ambitus Freq
+										freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+										freq = freq.midicps;
+
+										// Setup Freq with Scaling and Tuning
+										if(flagScaling != 'off', {
+											oct = freq.cpsoct.round(0.001);
+											ratio = oct.frac;
+											oct = oct.floor;
+											degre = (ratio * tuning.size + 0.5).floor;
+											(scale.degrees.size - 1).do({arg i;
+												difL=abs(degre - scale.degrees.at(i));
+												difH=abs(degre - scale.degrees.at(i+1));
+												if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+													{if(difL <= difH, {pos = i},{pos = i+1})});
+											});
+											freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+										});
+
+										octave = (freq.cpsmidi / 12).floor;
+										demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+										cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+										// Set Bus OSC
+										busOSCfreq.set(freq);
+										busOSCamp.set(amp);
+										busOSCduree.set(duree);
+
 										if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 											{
 												listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
@@ -1178,17 +1187,9 @@ f						Switch File for Analyze.
 				var octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, duree, indexNumFhzBand, time = Main.elapsedTime;
 				if(canal == canalMIDI and: {flagMIDI == 1}, {
 
-					octave = (freq / 12).floor;
-					demiTon = ((freq / 12).frac * 12 + 0.5).floor;
-					cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
 					amp = amp / 127;
 					ampMIDIOSC = amp.ampdb;
 					duree = (time - lastDureeMIDI).clip(0.01, maxDureeOSC);
-
-					// Set Bus OSC
-					busOSCfreq.set(freq);
-					busOSCamp.set(amp);
-					busOSCduree.set(duree);
 
 					// Dispatch Band FHZ
 					for(1, numFhzBand, {arg i;
@@ -1197,6 +1198,17 @@ f						Switch File for Analyze.
 							// Add Data
 							if(numberSynth > listeDataBand.at(i).size,
 								{
+									// Set Ambitus Freq
+									freq = freq / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+									octave = (freq / 12).floor;
+									demiTon = ((freq / 12).frac * 12 + 0.5).floor;
+									cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+									// Set Bus OSC
+									busOSCfreq.set(freq);
+									busOSCamp.set(amp);
+									busOSCduree.set(duree);
+
 									if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 										{
 											listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
@@ -2716,16 +2728,18 @@ f						Switch File for Analyze.
 		}, [30, 120], false, 30, 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8));
 
 		// Step Trigger
-		EZSlider(windowControlGUI, Rect(305, 5, 115, 20), "Step", ControlSpec(1, numberMaxStepSequencer, \exp, 1),
+		EZSlider(windowControlGUI, Rect(305, 5, 90, 20), "Step", ControlSpec(1, numberMaxStepSequencer, \exp, 1),
 			{|ez| numberStepSequencer = ez.value;
 				//indexSequence = 0;
 				//if(indexSequence >= numberMaxStepSequencer, {indexSequence = 0});
-		}, numberMaxStepSequencer, false, 30, 25).setColors(knobColor: Color.new(0.582, 0, 0), sliderBackground: Color.grey, stringColor:  Color.red(0.8, 0.8));
+		}, numberMaxStepSequencer, false, 20, 25).setColors(knobColor: Color.new(0.582, 0, 0), sliderBackground: Color.grey, stringColor:  Color.red(0.8, 0.8));
 
-		StaticText(windowControlGUI, Rect(425, 5, 95, 20)).string_(" ");
+		// Ambitus Freq
+		EZRanger(windowControlGUI, Rect(395, 5, 180, 20), "Ambitus", ControlSpec(0, 127, \lin, 0),
+			{|ez| ambitusFreq = ez.value}, [0, 127], false, 40, 30).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8));
 
 		// BPM In Display
-		bpmDisplay = StaticText(windowControlGUI, Rect(515, 5, 30, 20)).string_("BPM").background_(Color.white).stringColor_(Color.red);
+		bpmDisplay = StaticText(windowControlGUI, Rect(580, 5, 30, 20)).string_("BPM").background_(Color.white).stringColor_(Color.red);
 
 		Button(windowControlGUI, Rect(615, 5, 105, 20))
 		.background_(Color.white).
