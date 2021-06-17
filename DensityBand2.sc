@@ -4071,7 +4071,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		states_([["Ploop On", Color.green], ["Ploop Off", Color.red]]).
 		action_({arg loop; if(loop.value == 0, {loopSound = 0;
 			// Setup GUI Value
-			if(windowEar.view.children.at(50).value == 1, {windowEar.view.children.at(50).valueAction = 0})}, {loopSound = 1})});
+			//if(windowEar.view.children.at(50).value == 1, {windowEar.view.children.at(50).valueAction = 0});
+		}, {loopSound = 1});
+		});
 		// Reverse Sound
 		Button(windowEar,Rect(0, 0, 100, 20)).
 		states_([["Reverse On", Color.green], ["Reverse Off", Color.red]]).
@@ -4091,7 +4093,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		states_([["Rloop On", Color.green], ["Rloop Off", Color.red]]).
 		action_({arg loop; if(loop.value == 0, {loopRec = 0}, {loopRec = 1;
 			// Setup GUI Value
-			if(windowEar.view.children.at(47).value == 0, {windowEar.view.children.at(47).valueAction = 1})})});
+			if(windowEar.view.children.at(47).value == 0, {windowEar.view.children.at(47).valueAction = 1});
+		})});
 		windowEar.view.decorator.nextLine;
 		// Display Instrument
 		displayInstrument = StaticText(windowEar, Rect(0, 0, 250, 40));
