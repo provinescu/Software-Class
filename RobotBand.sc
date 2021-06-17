@@ -2701,11 +2701,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~differencedureeinstrument = ~differencedureeinstrument.add(EZSlider(w, 200 @ 18, "Dist Dur",ControlSpec(0.01, 16, \exp, 0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~differencedureeinstrument",ez.value);~differenceduree.wrapPut(i,ez.value)},
 				0.0625,labelWidth: 65,numberWidth: 40));
-			~dureeanalysesilence = ~dureeanalysesilence.add(EZSlider(w, 200 @ 18, "Dur Off",ControlSpec(1, 3600, \exp),
+			~dureeanalysesilence = ~dureeanalysesilence.add(EZSlider(w, 200 @ 18, "Memory Time",ControlSpec(1, 3600, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysesilence",ez.value);~dureeanalysesil.wrapPut(i,ez.value)},
 				4,labelWidth: 65,numberWidth: 35));
 			w.view.decorator.nextLine;
-			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "MaxDur",ControlSpec(1, 60, \exp),
+			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "Max Dur",ControlSpec(1, 60, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysemaxinstrument",ez.value);~dureeanalysemax.wrapPut(i,ez.value);
 					if(ez.value > ~dureeanalysesil.wrapAt(i), {~dureeanalysesil.wrapPut(i, ez.value);~dureeanalysesilence.wrapAt(i).value_(ez.value)})},
 				4, false, 65, 35));

@@ -5144,7 +5144,7 @@ G                           Init Genome Agent (solo).
 
 		~dureeMaximumSlider=EZKnob(~wp, 80 @ 80, "Dur Max",ControlSpec(1, 60, \exp, 0),
 			{|ez| ~dureeanalysemax=ez.value;~distanceagents=~distanceAgentsSlider.value * sqrt(1+1+~dureeanalysemax.squared); ~distancesignaux=~distanceSignauxSlider.value * sqrt(1+1+~dureeanalysemax.squared); ~deviance=~devianceSlider.value * sqrt(1+1+~dureeanalysemax.squared); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~dureeMaximumSlider", ez.value)})},~dureeanalysemax, labelWidth: 55,unitWidth: 0, layout: 'vert');
-		~dureeSilenceSlider=EZKnob(~wp, 80 @ 80, "Dur Off",ControlSpec(1, 3600, \exp, 0),
+		~dureeSilenceSlider=EZKnob(~wp, 80 @ 80, "Memory Time",ControlSpec(1, 3600, \exp, 0),
 			{|ez| ~tempsmaxsignal=ez.value;
 				~geneBufferRanger.controlSpec_(ControlSpec(0.01, ez.value, \exp, 0));
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~dureeSilenceSlider", ez.value)})},~tempsmaxsignal, labelWidth: 45,unitWidth: 0, layout: 'vert');
