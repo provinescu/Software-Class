@@ -4093,7 +4093,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		states_([["Rloop On", Color.green], ["Rloop Off", Color.red]]).
 		action_({arg loop; if(loop.value == 0, {loopRec = 0}, {loopRec = 1;
 			// Setup GUI Value
-			if(windowEar.view.children.at(47).value == 0, {windowEar.view.children.at(47).valueAction = 1});
+			//if(windowEar.view.children.at(47).value == 0, {windowEar.view.children.at(47).valueAction = 1});
 		})});
 		windowEar.view.decorator.nextLine;
 		// Display Instrument
