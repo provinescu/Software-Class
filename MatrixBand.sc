@@ -563,7 +563,7 @@ y ... -					Musical keys.
 		MainMenu.register(menuHelp.title_("Help"), "MatrixBandTools");
 
 		fonctionUserOperatingSystem = {arg item, window;
-			var data;
+			var data, tampon;
 			item.value.switch(
 				0, {nil},
 				// Load Synthesizer and add
@@ -664,12 +664,14 @@ y ... -					Musical keys.
 				},
 				// Copy Synthesizer
 				7, {
+					tampon = listeDataOSC;
 					data = fonctionSaveSynthesizer.value(window);
 					fonctionLoadSynthesizer.value(data);
 					//Document.listener.string="";
 					s.queryAllNodes;
-					// Init Band for Synth
-					fonctionInitBand.value(numFhzBand);
+					listeDataOSC = tampon;
+					/*// Init Band for Synth
+					fonctionInitBand.value(numFhzBand);*/
 				},
 				// Copy Preset
 				8, {
