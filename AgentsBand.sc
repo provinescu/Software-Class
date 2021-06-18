@@ -4909,7 +4909,7 @@ G                           Init Genome Agent (solo).
 		// Affichage Metronome
 		~metronomeGUI = EZNumber(~wp, 105@20, "Metronome", ControlSpec(0, 64, \lin, 0), {arg view; nil}, 0, false, labelWidth:75, numberWidth:40);
 		~wp.view.decorator.nextLine;
-		StaticText(~wp, Rect(10,10,500,20)).string_("Analyse Input Signal").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
+		StaticText(~wp, Rect(10,10,500,20)).string_("Analyze Input Signal").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
 		~textFileAnalyze = StaticText(~wp, Rect(0, 0, 500, 20)).string_("a11wlk01-44_1.aiff").stringColor_(Color.white).font_(Font("Georgia", 10)).align_(\center);
 		~wp.view.decorator.nextLine;
 		~entree = PopUpMenu(~wp,Rect(10,10,75,20)).items=~listemodeentree;
@@ -4919,7 +4919,7 @@ G                           Init Genome Agent (solo).
 			switch(~entreemode,
 				'Audio', {~audioFile.value.run(false);~tempoFile.value.run(false);~synthPlayFile.value.run(false);~keyCodeSourceIn=0;
 					if(~startsysteme.value == 1, {~audioIn.value.run(true);~tempoIn.value.run(true)});
-					~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
+					//~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
 					~listesamplein=~recSamples;
 					~sounds.size.do({arg i;
 						~recSamples.wrapAt(i).run(true);~recFiles.wrapAt(i).run(false);
@@ -4935,7 +4935,7 @@ G                           Init Genome Agent (solo).
 					~volumeFileIn.enabled_(false)},
 				'File', {~audioIn.value.run(false);~tempoIn.value.run(false);~keyCodeSourceIn=1;
 					if(~startsysteme.value == 1, {~audioFile.value.run(true);~tempoFile.value.run(true);~synthPlayFile.value.run(true);~synthPlayFile.set(\volume, ~volumeFileIn.value.dbamp)});
-					~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
+					//~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
 					~listesamplein=~recFiles;
 					~sounds.size.do({arg i;
 						~recSamples.wrapAt(i).run(false);~recFiles.wrapAt(i).run(true);
@@ -4951,8 +4951,11 @@ G                           Init Genome Agent (solo).
 					~volumeFileIn.enabled_(true)},
 				'Midi', {MIDIIn.connect;~keyCodeSourceIn=2;
 					~canalMidiInSlider.enabled_(true);~tempoSlider.valueAction = 60;
-					~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[]},
-				'Off',{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~keyCodeSourceIn=3;
+					//~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
+				},
+				'Off',{
+					//~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
+					~keyCodeSourceIn=3;
 					MIDIIn.disconnect;
 					~canalMidiInSlider.enabled_(false)}
 			);
