@@ -61,7 +61,7 @@ RobotBand {
 		~midiOut.allNotesOff(0);
 
 		~helpRobotBand="
-Single Commandes�:
+Single Commandes:
 
 esc	or SpaveBar					System on/off
 alt + b							Write active buffer sound (Active Window Instrument)
@@ -69,23 +69,23 @@ alt + d							De-Synchro duration all Instr
 e								Switch Algo Analyse
 F				 				Loop sound file analyser on
 alt + f							Loop sound file analyse off
-ctrl + f		 					Load and Add sound file analyse
+ctrl + f		 				Load and Add sound file analyse
 g								Load new synth, sound, path for data environment
 G								Load new sound environment
 alt + g							Load new synth environment
 j								New Synchro (nextBar)
-alt + l / alt + L					Load instrument multi / single
-alt + q/ alt + Q					Load sequences / sequence
-alt + ctrl + q / alt + ctrl + Q		Save sequences / sequence
+alt + l / alt + L				Load instrument multi / single
+alt + q/ alt + Q				Load sequences / sequence
+alt + ctrl + q / alt + ctrl + Q	Save sequences / sequence
 alt + r							Start Recording
 alt + shift + r					Pause Recording on/off
 ctrl + alt + r					Stop Recording
-alt + s / alt + S					Save instrument multi / single
+alt + s / alt + S				Save instrument multi / single
 alt + v							Clear Control Panel
 alt + V							Reset FX (After Audio Change)
-alt + w / ctrl + alt + w			Windows next / previous
+alt + w / ctrl + alt + w		Windows next / previous
 W / alt + W						Display control panel / scores
-y / ctrl + y						InstrumentWork next / previous
+y / ctrl + y					InstrumentWork next / previous
 
 Commandes follow by a numerical key:
 
@@ -96,25 +96,25 @@ b								Write buffer sound
 alt + b							Write buffer sound (Active Window Instrument)
 d								De-Synchro duration instr
 f								Switch Sound File for Analyze
-h / ctrl + h						Score recording on / off
-i / ctrl + i						Fhz Amp Duration input next /previous
+h / ctrl + h					Score recording on / off
+i / ctrl + i					Fhz Amp Duration input next /previous
 alt + i							Fhz Amp Duration input off
-k / ctrl + k						Score play / stop
+k / ctrl + k					Score play / stop
 l / L							Load instrument multi / single
-ctrl + l / L						Load instrument multi / single (nextBar)
+ctrl + l / L					Load instrument multi / single (nextBar)
 m / alt + m						Freeze buffer on / off
 M / alt + M						Freeze buffers on / off
-o / ctrl + o						Fhz Amp Duration output next /previous
+o / ctrl + o					Fhz Amp Duration output next /previous
 alt + o							Fhz Amp Duration output off
-p / ctrl + p						Instrument play/ stop
+p / ctrl + p					Instrument play/ stop
 alt + p							Instrument play (nextBar)
-shift + p							Play sample synchro (Tempo)
+shift + p						Play sample synchro (Tempo)
 alt + shift + p					Play sample synchro (Pitch)
 q / Q							Load sequences / sequence
 ctrl + q / ctrl + Q				Save sequences / sequence
 s / S							Save multi / save single (instruments)
 t								Copy (Active Window Instrument)
-u / ctrl + u						Score load / save
+u / ctrl + u					Score load / save
 v / V							Clear multi / single (instruments)
 w								Display instrument
 z								Set sample (Tempo)

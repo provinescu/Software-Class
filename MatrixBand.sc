@@ -370,7 +370,7 @@ d				 		Temporal Synchronizing Synthesizer.
 f				 		Load sound file for analyser.
 F				 		Sound file analyser  Loop On.
 alt + f					Sound file analyse Loop Off.
-ctrl + f		 			Load and Add sound file for analyse.
+ctrl + f		 		Load and Add sound file for analyse.
 h						Switch Source In.
 i						Close all synthesizer.
 alt + i					Clear musical data (OSC data).
@@ -386,7 +386,7 @@ q						Switch Algo Analyze.
 ctrl + alt + r			Start Recording.
 R						Switch Pause Recording on/off.
 ctrl + alt + r			Stop Recording.
-w / ctrl + w				Windows navigation.
+w / ctrl + w			Windows navigation.
 alt + w					Window Control Panel.
 y						Display NodesTree.
 z						Load Random Preset.
@@ -395,9 +395,8 @@ Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shi
 
 l			 			Load Preset.
 L						Load Synthesizer.
-alt + l					Load preset without close others synthesizer.
-ctrl + L					Load Synthesizer without close others synthesizer.
-L			 			Load control panel.
+ctrl + l		     	Load preset without close others synthesizer.
+ctrl + L			    Load Synthesizer without close others synthesizer.
 J						Save OSCmusicData.
 j						Load OSCmusicData.
 s				 		Save preset.
@@ -906,17 +905,16 @@ y ... -					Musical keys.
 				});
 			});
 			orderListeWindow.do({arg window;
-			data = data.add(fonctionSaveSynthesizer.value(window))}); // Synth
+				data = data.add(fonctionSaveSynthesizer.value(window))}); // Synth
 			data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
 			data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
-			//Save OSCmusicData
-			data = data.add(listeDataOSC.value);
+			data = data.add(listeDataOSC.value);//Save OSCmusicData
 			// Sortie Fonction Save Preset
 			data.value;
 		};
 
-		fonctionLoadPreset = {arg preset, dataControlSynth;
-			listeDataOSC = preset.last;// Load OSCmusicData
+		fonctionLoadPreset = {arg preset, dataControlSynth, tampon;
+			tampon = preset.last;// Load OSCmusicData
 			preset.remove(preset.last);// Remove OSCmusicData
 			fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
 			preset.remove(preset.last);// Remove control panel
@@ -924,8 +922,9 @@ y ... -					Musical keys.
 			fonctionLoadControlSynth.value(windowControlSynth, preset.last);//Load ControlSynth Panel
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data; fonctionLoadSynthesizer.value(data)});// Load Synthesizer
-			// Init Band for Synth
-			fonctionInitBand.value(numFhzBand);
+			listeDataOSC = tampon;
+			/*// Init Band for Synth
+			fonctionInitBand.value(numFhzBand);*/
 		};
 
 		fonctionSaveControl = {arg window;
@@ -958,16 +957,16 @@ y ... -					Musical keys.
 					{nil});
 				// EZSlider
 				arrayData=[];
-				if(item == 21 or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 27} or: {item == 28}  or: {item == 35},
+				if(item == 21 or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 27} or: {item == 28}  or: {item == 35} or: {item == 7} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 34},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
 				});
 				// All others Sliders
-				if(item == 13,
+				if(item == 13 or: {item == 8} or: {item == 14} or: {item == 15},
 					{view.valueAction_(data.at(item).value)});
 				// No Action
-				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 7} or: {item == 8} or: {item == 11} or: {item == 12} or: {item == 14}  or: {item == 15} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33} or: {item == 34},
+				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33},
 					{nil});
 			});
 		};
@@ -1574,7 +1573,7 @@ y ... -					Musical keys.
 				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0;
 				newTime = Main.elapsedTime;
 				musicData = dataMusicFFT.flop;// Setup Array
-				if(musicData.size >= 1, {
+				if(musicData.size >= 1 and: {musicData != [ [  ] ]}, {
 					if(variableChange == "Flux", {variableTemps = flux; seuil = onOffSynthValue.at(0)}, {variableTemps = flatness; seuil = onOffSynthValue.at(1)});
 					meanProbaPresetFlux = flux.log2.abs; meanProbaPresetFlatness = flatness.log2.abs; valuesFlux = musicData.at(7).log2.abs; valuesFlatness = musicData.at(5).log2.abs;
 					# q1U, medianeU, q3U, ecartqU, ecartsemiqU = valuesFlux.quartiles;
@@ -1795,18 +1794,18 @@ y ... -					Musical keys.
 				// key l -> load Preset
 				if(modifiers==0 and: {unicode==108} and: {keycode==37}, {commande = 'Load Preset';
 				});
-				// key alt l -> load Preset without close others windows
-				if(modifiers==524288 and: {unicode==108} and: {keycode==37}, {commande = 'Load + Add Preset';
-				});
-				// key s -> save Preset
-				if(modifiers==0 and: {unicode==115} and: {keycode==1},
-					{commande='Save Preset';
+				// key ctrl l -> load Preset without close others windows
+				if(modifiers==262144 and: {unicode==12} and: {keycode==37}, {commande = 'Load + Add Preset';
 				});
 				// key L-> load Synthesizer
 				if(modifiers==131072 and: {unicode==76} and: {keycode==37}, {commande='Load Synthesizer';
 				});
-				// key alt L-> load Synthesizer without close others windows
-				if(modifiers==655360 and: {unicode==76} and: {keycode==37}, {commande='Load + Add Synthesizer';
+				// key ctrl L-> load Synthesizer without close others windows
+				if(modifiers==393216 and: {unicode==12} and: {keycode==37}, {commande='Load + Add Synthesizer';
+				});
+				// key s -> save Preset
+				if(modifiers==0 and: {unicode==115} and: {keycode==1},
+					{commande='Save Preset';
 				});
 				// key S -> save Synthesizer
 				if(modifiers==131072 and: {unicode==83} and: {keycode==1} and: {window.name.containsStringAt(0, "MatrixBand Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {commande='Save Synthesizer';
@@ -1824,6 +1823,10 @@ y ... -					Musical keys.
 					previousDureeTrans = 1;
 					controlQuantaSlider.valueAction_(0);
 					previousDureeQuanta = 0;
+					previousPan = [-1, 1];
+					controlPanSlider.valueAction_([-1, 1]);
+					previousAmp = [-inf, 0];
+					controlAmpSlider.valueAction_([-inf, 0]);
 				});
 				// key alt + i -> Clear musical data
 				if(modifiers==524288 and: {unicode==108} and: {keycode==37},{
@@ -1955,7 +1958,7 @@ y ... -					Musical keys.
 
 		// Fonction Commandes
 		fonctionCommandes = {arg window, commandeExecute, number;
-			var file;
+			var file, data, dataControlSynth, tampon;
 			// Save Preset
 			if(commandeExecute == 'Save Preset',{
 				windowControl.name="MatrixBand Control" + " | " + "Preset" + number.asString;
@@ -1984,8 +1987,12 @@ y ... -					Musical keys.
 			// Save Synthesizer
 			if(commandeExecute == 'Save Synthesizer', {
 				windowControl.name="MatrixBand Control" + " | " + "Synthesizer" + number.asString;
+				data = fonctionSaveSynthesizer.value(window);
+				data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
+				data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
+				data = data.add(listeDataOSC.value);//Save OSCmusicData
 				file=File(pathMatrixBand ++ "Synthesizer" + number.asString ++ ".scd", "w");
-				file.write(fonctionSaveSynthesizer.value(window).asCompileString);
+				file.write(data.asCompileString);
 				file.close;
 			});
 			//load Synthesizer
@@ -1994,10 +2001,19 @@ y ... -					Musical keys.
 					{fonctionUserOperatingSystem.value(9);
 						windowControl.name="MatrixBand Control" + " | " + "Synthesizer" + number.asString;
 						file=File(pathMatrixBand ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
-						fonctionLoadSynthesizer.value(file.readAllString.interpret);
+						data = file.readAllString.interpret;
 						file.close;
-						// Init Band for Synth
-						fonctionInitBand.value(numFhzBand);
+						tampon = data.last;// Load OSCmusicData
+						data.remove(data.last);// Remove OSCmusicData
+						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						data.remove(data.last);// Remove control panel
+						dataControlSynth = data.last; // ControlSynth Panel
+						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						data.remove(data.last);// Remove controlSynth panel
+						fonctionLoadSynthesizer.value(data);
+						listeDataOSC = tampon;
+						/*// Init Band for Synth
+						fonctionInitBand.value(numFhzBand);*/
 				}, {"cancelled".postln});
 			});
 			//load Synthesizer without close others windows
@@ -2005,10 +2021,19 @@ y ... -					Musical keys.
 				if(File.exists(pathMatrixBand ++ "Synthesizer" + number.value.asString ++ ".scd"),
 					{windowControl.name="MatrixBand Control" + " | " + "Synthesizer" + number.asString;
 						file=File(pathMatrixBand ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
-						fonctionLoadSynthesizer.value(file.readAllString.interpret);
+						data = file.readAllString.interpret;
 						file.close;
-						// Init Band for Synth
-						fonctionInitBand.value(numFhzBand);
+						tampon = data.last;// Load OSCmusicData
+						data.remove(data.last);// Remove OSCmusicData
+						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						data.remove(data.last);// Remove control panel
+						dataControlSynth = data.last; // ControlSynth Panel
+						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						data.remove(data.last);// Remove controlSynth panel
+						fonctionLoadSynthesizer.value(data);
+						listeDataOSC = tampon;
+						/*// Init Band for Synth
+						fonctionInitBand.value(numFhzBand);*/
 				}, {"cancelled".postln});
 			});
 			//Save OSCmusicData
@@ -2329,7 +2354,7 @@ y ... -					Musical keys.
 			{|ez| keyVolume = ez.value.dbamp}, -12,labelWidth: 75,numberWidth: 50);
 		// Setup ShortCut
 		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 200, 20));
-		setupKeyboardShortCut.states = [["Musical Keyboard Shortcut", Color.black,  Color.red(0.8, 0.25)],["System Shortcut", Color.white, Color.green(0.8, 0.25)]];
+		setupKeyboardShortCut.states = [["Musical Keyboard Shortcut", Color.black,  Color.red(0.8, 0.25)],["System Shortcut", Color.yellow, Color.green(0.8, 0.25)]];
 		setupKeyboardShortCut.action = {arg shortcut;
 			if(shortcut.value == 0, {keyboardShortCut.value(windowKeyboard);
 				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.setColor(note, Color.blue)})}, {fonctionShortCut.value(windowKeyboard);
@@ -2491,11 +2516,11 @@ y ... -					Musical keys.
 		windowControl.alpha=1.0;
 		windowControl.front;
 		windowControl.view.decorator = FlowLayout(windowControl.view.bounds);
-		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("MatrixBand a User Interface for Organizing Sounds by Provinescu Software Production").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("MatrixBand a User Interface for Organizing Sounds by Provinescu Software Production").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Systeme start stop playing
 		startSystem = Button(windowControl,Rect(0, 0, 125, 20));
-		startSystem.states = [["System Off", Color.black,  Color.green(0.8, 0.25)],["System On", Color.white, Color.red(0.8, 0.25)]];
+		startSystem.states = [["System Off", Color.black,  Color.green(0.8, 0.25)],["System On", Color.yellow, Color.red(0.8, 0.25)]];
 		startSystem.action = {|view|
 			if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
 			s.bind{
@@ -2647,9 +2672,9 @@ y ... -					Musical keys.
 		// User Operating System
 		userOperatingSystem=PopUpMenu(windowControl, Rect(0, 0, 200, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceControl;
 		userOperatingSystem.action = {arg item; fonctionUserOperatingSystem.value(item.value, windowControl); userOperatingSystem.value_(0)};
-		oscState = StaticText(windowControl, Rect(0, 0, 55, 20)).background_(Color.grey(0.5, 0.8)).string_("OSC Off").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		oscState = StaticText(windowControl, Rect(0, 0, 55, 20)).background_(Color.grey(0.5, 0.8)).string_("OSC Off").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
-		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Audio In / Send Audio Bus / BPM System").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Audio In / Send Audio Bus / BPM System").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Source In
 		sourceIn = PopUpMenu(windowControl,Rect(0, 0, 70, 20)).items = ["Az In 1", "Az In 2", "Az In 3", "Az In 4", "Az In 5", "Az In 6", "Az In 7", "Az In 8", "Az In 9", "Az In 10", "Az In 11", "Az In 12", "Az In 13", "Az In 14", "Az In 15", "Az In 16", "Az In 17", "Az In 18", "Az In 19", "Az In 20", "Az In 21", "Az In 22", "Az In 23", "Az In 24", "Az In 25", "Az In 26", "Az In 27", "Az In 28", "Az In 29", "Az In 30", "Az In 31", "Az In 32", "Off"];
@@ -2661,7 +2686,7 @@ y ... -					Musical keys.
 		/*sendBusIn.action = {arg in;
 		};*/
 		sendBusIn.enabled_(false);
-		sendBusIn.stringColor = Color.white;
+		sendBusIn.stringColor = Color.yellow;
 		// BPM System
 		bpmSlider=EZSlider(windowControl, Rect(0, 0, 155, 20), "BPM", ControlSpec(1, 960, \exp, 0),
 			{|ez| if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
@@ -2677,9 +2702,9 @@ y ... -					Musical keys.
 		};
 		windowControl.view.decorator.nextLine;
 		// Algorithme
-		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Algorithm").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Algorithm").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
-		textFileAnalyze = StaticText(windowControl, Rect(0, 0, 390, 12)).string_("a11wlk01-44_1.aiff").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		textFileAnalyze = StaticText(windowControl, Rect(0, 0, 390, 12)).string_("a11wlk01-44_1.aiff").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Calculation Audio start stop playing
 		switchAudioIn = PopUpMenu(windowControl,Rect(0, 0, 125, 20)).background_(Color.grey(0.8, 0.25)).stringColor_(Color.red(0.8, 0.75)).items=["AudioIn On","FileIn On","Keyboard","MIDI IN"];
@@ -2738,7 +2763,7 @@ y ... -					Musical keys.
 			});
 		};
 		// Switch Canal MIDI
-		switchCanalMIDI = PopUpMenu(windowControl,Rect(0, 0, 100, 20)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=["MIDI in 1", "MIDI in 2", "MIDI in 3", "MIDI in 4", "MIDI in 5", "MIDI in 6", "MIDI in 7", "MIDI in 8", "MIDI in 9", "MIDI in 10", "MIDI in 11", "MIDI in 12", "MIDI in 13", "MIDI in 14", "MIDI in 15", "MIDI in 16"];
+		switchCanalMIDI = PopUpMenu(windowControl,Rect(0, 0, 100, 20)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.black).items=["MIDI in 1", "MIDI in 2", "MIDI in 3", "MIDI in 4", "MIDI in 5", "MIDI in 6", "MIDI in 7", "MIDI in 8", "MIDI in 9", "MIDI in 10", "MIDI in 11", "MIDI in 12", "MIDI in 13", "MIDI in 14", "MIDI in 15", "MIDI in 16"];
 		switchCanalMIDI.action = {|view|
 			canalMIDI = view.value;
 		};
@@ -2853,7 +2878,7 @@ y ... -					Musical keys.
 		chordSizeSlider=EZSlider(windowControl, 190 @ 20, "Chord Size", ControlSpec(0, 12, \lin, 1),
 			{|ez| chordSize = ez.value}, 3, labelWidth: 75, numberWidth: 40);
 		windowControl.view.decorator.nextLine;
-		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Synthesizer + FX").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Synthesizer + FX").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		//Add a New Synth or FX
 		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = choiceSynth;
@@ -2869,7 +2894,7 @@ y ... -					Musical keys.
 		};
 		windowControl.view.decorator.nextLine;
 		// Display OSC
-		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Display OSC Message").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Display OSC Message").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		displayOSC = TextView(windowControl, Rect(0, 0, 390, 95));
 		windowControl.view.decorator.nextLine;
@@ -3011,7 +3036,7 @@ y ... -					Musical keys.
 			userOperatingSystemSynth=PopUpMenu(windowSynth, Rect(0, 0, 125, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceInstrument;
 			userOperatingSystemSynth.action = {arg item; fonctionUserOperatingSystem.value(item.value, windowSynth); userOperatingSystemSynth.value_(0)};
 			windowSynth.view.decorator.nextLine;
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Audio Out / Bus Audio In / Send Bus Audio Out / Bus FX In / Send Bus FX Out").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Audio Out / Bus Audio In / Send Bus Audio Out / Bus FX In / Send Bus FX Out").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// Source Out
 			sourceOut = PopUpMenu(windowSynth,Rect(0, 0, 60, 20)).items = ["Out 1", "Out 2", "Out 3", "Out 4", "Out 5", "Out 6", "Out 7", "Out 8", "Out 9", "Out 10", "Out 11", "Out 12", "Out 13", "Out 14", "Out 15", "Out 16", "Out 17", "Out 18", "Out 19", "Out 20", "Out 21", "Out 22", "Out 23", "Out 24", "Out 25", "Out 26", "Out 27", "Out 28", "Out 29", "Out 30", "Out 31", "Out 32", "Off"];
@@ -3057,7 +3082,7 @@ y ... -					Musical keys.
 				groupe.set(\busFXout, listeBusFX.at(out.value)); busFXout = out.value;
 			};
 			windowSynth.view.decorator.nextLine;
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Synthesizer Connection").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Synthesizer Connection").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Node Move After
 			moveNodeAfter = EZNumber(windowSynth, 120 @ 20, "MoveAfter", ControlSpec(masterFX.nodeID+1, 999999, \lin, 1), {|node| var indexMoi, indexLui, moi;
 				if(node.value.asInteger != groupe.nodeID and: {listeGroupeSynthID.includes(node.value.asInteger)}, {
@@ -3124,7 +3149,7 @@ y ... -					Musical keys.
 				};
 			};
 			windowSynth.view.decorator.nextLine;
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Bus Audio + FX Send Level").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Bus Audio + FX Send Level").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// send Bus Out
 			sendBusOut = EZSlider(windowSynth, 390 @ 20, "Send Bus", \db,
 				{|ez| groupe.set(\levelBusOut, ez.value.dbamp); levelOut = ez.value.dbamp}, -inf, false, 100, 50);
@@ -3137,7 +3162,7 @@ y ... -					Musical keys.
 			sendLocalBuf = EZSlider(windowSynth, 390 @ 20, "Local In", \db,
 				{|ez| groupe.set(\levelLocalIn, ez.value.dbamp); levelLocal = ez.value.dbamp}, -inf, false, 100, 50);
 			windowSynth.view.decorator.nextLine;
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Buffer Audio for SynthDef").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Buffer Audio for SynthDef").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// Button BufferOne Action
 			switchBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["O", Color.black, Color.green(0.8, 0.25)],["X", Color.black, Color.red(0.8, 0.25)]];
@@ -3179,7 +3204,7 @@ y ... -					Musical keys.
 			reverseBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
 			reverseBufferOneAction.action = {|view| if(view.value == 0 , {groupe.set(\reverse1, 1); ctrlBuffer.put(4, 1)}, {groupe.set(\reverse1, 1.neg); ctrlBuffer.put(4, 1.neg)})};
 			// Text Buffer One
-			textBufferOne = StaticText(windowSynth, Rect(0, 0, 155, 20)).string_("Nil").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 8)).align_(\center);
+			textBufferOne = StaticText(windowSynth, Rect(0, 0, 155, 20)).string_("Nil").stringColor_(Color.yellow).font_(Font("Georgia", 8)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer one
 			knobOffset1 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset1, ez.value); ctrlBuffer.put(3, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
@@ -3228,7 +3253,7 @@ y ... -					Musical keys.
 			reverseBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
 			reverseBufferTwoAction.action = {|view| if(view.value == 0 , {groupe.set(\reverse2, 1); ctrlBuffer.put(9, 1)}, {groupe.set(\reverse2, 1.neg); ctrlBuffer.put(9, 1.neg)})};
 			// Text Buffer Two
-			textBufferTwo = StaticText(windowSynth, Rect(0, 0, 155, 20)).string_("Nil").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 8)).align_(\right);
+			textBufferTwo = StaticText(windowSynth, Rect(0, 0, 155, 20)).string_("Nil").stringColor_(Color.yellow).font_(Font("Georgia", 8)).align_(\right);
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer two
 			knobOffset2 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset2, ez.value); ctrlBuffer.put(8, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
@@ -3258,7 +3283,7 @@ y ... -					Musical keys.
 				s.sync;
 			};
 
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Musical Data").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Musical Data").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Pan
 			panSlider=EZRanger(windowSynth, 390 @ 20, "Pan", \bipolar,
 				{|ez| groupe.set(\panLo, ez.lo);groupe.set(\panHi, ez.hi); panLo = ez.lo; panHi = ez.hi}, [-0.1, 0.1], false, 100, 50);
@@ -3285,7 +3310,7 @@ y ... -					Musical keys.
 			quantaSlider=EZSlider(windowSynth, 390 @ 20, "Quant", ControlSpec(1, 100, \lin, 1),
 				{|ez| systemBPM.schedAbs(systemBPM.beats, {groupe.set(\quanta, ez.value)}); quanta = ez.value}, 100, labelWidth: 100, numberWidth: 50);
 			windowSynth.view.decorator.nextLine;
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Envelope Synthesizer").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Envelope Synthesizer").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Envelope
 			envelopeSynth = EnvelopeView(windowSynth, Rect(0, 0, 390, 75));
 			envelopeSynth.drawLines_(true);
@@ -3307,7 +3332,7 @@ y ... -					Musical keys.
 				envLevel = env.value.at(1);
 				groupe.set('envLevel', envLevel.at(0), 'envLevel2', envLevel.at(1), 'envLevel3', envLevel.at(2), 'envLevel4', envLevel.at(3), 'envLevel5', envLevel.at(4),  'envLevel6', envLevel.at(5),  'envLevel7', envLevel.at(6),  'envLevel8', envLevel.at(7), 'envTime1', envDuree.at(0), 'envTime2', envDuree.at(1), 'envTime3', envDuree.at(2), 'envTime4', envDuree.at(3), 'envTime5', envDuree.at(4), 'envTime6', envDuree.at(5), 'envTime7', envDuree.at(6));
 			};
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("AntiClicks (HPplugins)        /        Synthesizeur Controls").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("AntiClicks (HPplugins)        /        Synthesizeur Controls").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Controls antiClick Synth (plugins hp)
 			controlsAntiClick=MultiSliderView(windowSynth, Rect(5, 0, 50, 85)).value_([0.33, 0.5])
 			.fillColor_(Color.blue)
@@ -3326,11 +3351,11 @@ y ... -					Musical keys.
 			controlsNode.action={|controls| groupe.set(\ctrl1, controls.value.at(0), \ctrl2, controls.value.at(1), \ctrl3, controls.value.at(2), \ctrl4, controls.value.at(3), \ctrl5, controls.value.at(4), \ctrl6, controls.value.at(5), \ctrl7, controls.value.at(6), \ctrl8, controls.value.at(7), \ctrl9, controls.value.at(8), \ctrl10, controls.value.at(9), \ctrl11, controls.value.at(10), \ctrl12, controls.value.at(11)); ctrlSynth = controls.value};
 			windowSynth.view.decorator.nextLine;
 
-			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Automation Synthesizer").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 10)).align_(\center);
+			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Automation Synthesizer").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// AutomationControls start stop playing
 			startAutomationSynthControls = Button(windowSynth,Rect(0, 0, 100, 20));
-			startAutomationSynthControls.states = [["Controls Off", Color.black,  Color.green(0.8, 0.25)],["Controls On", Color.white, Color.red(0.8, 0.25)]];
+			startAutomationSynthControls.states = [["Controls Off", Color.black,  Color.green(0.8, 0.25)],["Controls On", Color.yellow, Color.red(0.8, 0.25)]];
 			startAutomationSynthControls.action = {|view| if(view.value == 0, {tdefControls.stop; ctrlSynth=controlsNode.value; jitterAutomationSynthControls.enabled_(false); tempoAutomationSynthControls.enabled_(false)}, {ctrlSynth=controlsNode.value; tdefControls.play; jitterAutomationSynthControls.enabled_(true); tempoAutomationSynthControls.enabled_(true)});
 			};
 			// Tempo AutomationControls Synth
@@ -3340,7 +3365,7 @@ y ... -					Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// AutomationSynthMusicData start stop playing
 			startAutomationSynthMusicData = Button(windowSynth,Rect(0, 0, 100, 20));
-			startAutomationSynthMusicData.states = [["MusicData Off", Color.black,  Color.green(0.8, 0.25)],["MusicData On", Color.white, Color.red(0.8, 0.25)]];
+			startAutomationSynthMusicData.states = [["MusicData Off", Color.black,  Color.green(0.8, 0.25)],["MusicData On", Color.black, Color.red(0.8, 0.25)]];
 			startAutomationSynthMusicData.action = {|view| if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false); windowSynth.view.children.at(80).children.at(2).valueAction_(0)}, {tdefMusicData.play; tempoAutomationSynthMusicData.enabled_(true);jitterAutomationMusicData.enabled_(true)}); fonctionEnabledSlider.value(view.value);
 			};
 			// Tempo AutomationSynthMusicData Synth

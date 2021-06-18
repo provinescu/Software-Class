@@ -86,13 +86,13 @@ a						Display datas on/off.
 b						Switch loopMusic on/off.
 d				 		Reset start sequences agents.
 alt + d					Synchro agents on Temporal Grid (nextBar).
-ctrl + e / alt + e			Reset FX_Group / Reset Verb_Group.
+ctrl + e / alt + e		Reset FX_Group / Reset Verb_Group.
 E						nil.
 e				 		Elitist mode on/off.
-ctrl + f				 	Load and Add sound file for analyser.
+ctrl + f				Load and Add sound file for analyser.
 F				 		Loop sound file analyser on.
 alt + f					Loop sound file analyse Off.
-ctrl + f		 			Restart sound file analyse on Temporal Grid (nextBar).
+ctrl + f		 		Restart sound file analyse on Temporal Grid (nextBar).
 h				 		Switch source in (audio - file - midi).
 i				 		Init agents.
 alt + i			 		Init preset.
@@ -103,26 +103,26 @@ alt + J					Shared music on/off.
 k						New synth, sounds, FX, path for data environment.
 alt + k					New synth environment.
 K						New sound environment.
-ctrl + k					New FX environment.
+ctrl + k				New FX environment.
 m			 			Music on/off.
 alt + m					Tempo analyze on/off.
-ctrl + n					Add a new agent.
+ctrl + n				Add a new agent.
 o			 			Automation on/off.
 q				 		Switch algo analyze.
 alt + r					Start recording.
 shift + alt + r			Switch pause recording on/off.
 ctrl + alt + r			Stop recording.
-ctrl + s			 		Save buffer sound (playing in panel synthesizer).
-ctrl + t					Save preset with genome+sequence and date+time.
-ctrl + u					Stop recording score.
+ctrl + s			 	Save buffer sound (playing in panel synthesizer).
+ctrl + t				Save preset with genome+sequence and date+time.
+ctrl + u				Stop recording score.
 v				 		View virtual space on/off.
 alt + v			 		Init virtual space.
-w / ctrl + w				Display windows.
+w / ctrl + w			Display windows.
 y						Mean state system on/off.
 z				 		Random load preset.
 alt + z					Random load preset with genome.
 alt + Z					Random load preset with genome and sequence.
-ctrl + z					Stop all score.
+ctrl + z				Stop all score.
 
 Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
@@ -131,12 +131,12 @@ l			 			Load preset.
 f						Switch file for analyze.
 alt + l					Load preset with genome.
 alt + L					Load preset with genome+sequence.
-ctrl + l					Load preset synchro on Temporal Grid (nextBar).
+ctrl + l				Load preset synchro on Temporal Grid (nextBar).
 ctrl + alt + l			Load preset with genome on Temporal Grid (nextBar).
 ctrl + alt + L			Load preset with genome+sequence on Temporal Grid (nextBar).
 L			 			Load control panel.
 N						Add a copy of an agent.
-p / ctrl + p				Play (loop off) / Stop score.
+p / ctrl + p			Play (loop off) / Stop score.
 P						Play score (loop on).
 alt + p					Switch synthDef.
 s				 		Save preset.
