@@ -80,8 +80,8 @@ R						Pause Recording.
 t						Switch Type Sequencer.
 m						Switch MIDI Mode.
 i						Init Preset.
-ctrl + f					Load and Add File for AudioIn.
-w / ctrl + w				Switch Windows.
+ctrl + f				Load and Add File for AudioIn.
+w / ctrl + w			Switch Windows.
 k						New Environment.
 z						Load Random Preset.
 Z						Load Random Synthesizer.
@@ -2437,7 +2437,7 @@ f						Switch File for Analyze.
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Systeme start stop playing
-		startSystem = Button(windowExternalControlGUI,Rect(5, 5, 100, 20)).states_([["System Off", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["System On", Color.new(0.1, 0.8, 0.9, 1), Color.red]]).focus.action = {|view|
+		startSystem = Button(windowExternalControlGUI,Rect(5, 5, 100, 20)).states_([["System On", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["System Off", Color.new(0.1, 0.8, 0.9, 1), Color.black]]).focus.action = {|view|
 			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
 			switch(view.value,
 				0, {if(flagRecording == 'on', {s.pauseRecording}); sequencer.stop;
