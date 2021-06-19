@@ -563,46 +563,67 @@ y ... -					Musical keys.
 		MainMenu.register(menuHelp.title_("Help"), "MatrixBandTools");
 
 		fonctionUserOperatingSystem = {arg item, window;
-			var data, tampon;
+			var data, tampon, dataControlSynth;
 			item.value.switch(
 				0, {nil},
 				// Load Synthesizer and add
 				1, {
 					Dialog.openPanel({ arg paths;
-						var f;
+						var f, tampon;
+						tampon = listeDataOSC;
 						f=File(paths,"r");
-						fonctionLoadSynthesizer.value(f.readAllString.interpret);
+						data = f.readAllString.interpret;
 						f.close;
 						//Document.listener.string="";
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
-						// Init Band for Synth
-						fonctionInitBand.value(numFhzBand);
+						tampon = data.last;// Load OSCmusicData
+						data.remove(data.last);// Remove OSCmusicData
+						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						data.remove(data.last);// Remove control panel
+						dataControlSynth = data.last; // ControlSynth Panel
+						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						data.remove(data.last);// Remove controlSynth panel
+						fonctionLoadSynthesizer.value(data);
+						listeDataOSC = tampon;
+						/*// Init Band for Synth
+						fonctionInitBand.value(numFhzBand);*/
 					},
 					{"cancelled".postln});
 				},
 				// Load Synthesizer and Close Others
 				2, {
 					Dialog.openPanel({ arg paths;
-						var f;
+						var f, tampon, data, dataControlSynth;
+						tampon = listeDataOSC;
 						fonctionUserOperatingSystem.value(9);
 						f=File(paths,"r");
-						fonctionLoadSynthesizer.value(f.readAllString.interpret);
+						data = f.readAllString.interpret;
 						f.close;
 						//Document.listener.string="";
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
-						// Init Band for Synth
-						fonctionInitBand.value(numFhzBand);
+						tampon = data.last;// Load OSCmusicData
+						data.remove(data.last);// Remove OSCmusicData
+						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						data.remove(data.last);// Remove control panel
+						dataControlSynth = data.last; // ControlSynth Panel
+						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						data.remove(data.last);// Remove controlSynth panel
+						fonctionLoadSynthesizer.value(data);
+						listeDataOSC = tampon;
+						/*// Init Band for Synth
+						fonctionInitBand.value(numFhzBand);*/
 					},
 					{"cancelled".postln});
 				},
 				// Load Preset and add
 				3, {
 					Dialog.openPanel({ arg paths;
-						var f;
+						var f, tampon;
+						tampon = listeDataOSC;
 						f=File(paths,"r");
 						fonctionLoadPreset.value(f.readAllString.interpret);
 						f.close;
@@ -611,12 +632,14 @@ y ... -					Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
+						listeDataOSC = tampon;
 					}, {"cancelled".postln});
 				},
 				// Load Preset and Close Others
 				4, {
 					Dialog.openPanel({ arg paths;
-						var f;
+						var f, tampon;
+						tampon = listeDataOSC;
 						fonctionUserOperatingSystem.value(9);
 						f=File(paths,"r");
 						fonctionLoadPreset.value(f.readAllString.interpret);
@@ -626,6 +649,7 @@ y ... -					Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).
 						front;indexWindows=3;
+						listeDataOSC = tampon;
 					},
 					{"cancelled".postln});
 				},
@@ -1663,7 +1687,7 @@ y ... -					Musical keys.
 		// Fonction ShortCut
 		fonctionShortCut = {arg window;
 			window.view.keyDownAction = {arg view,char,modifiers,unicode, keycode;
-				var file, number;
+				var file, number, tampon;
 				// [char,modifiers,unicode,keycode].postln;
 				// Touches pave numerique
 				if(modifiers==2097152 and: {unicode==49} and: {keycode==83},{fonctionCommandes.value(window, commande, 1)});
@@ -1916,7 +1940,9 @@ y ... -					Musical keys.
 				});
 				// key N -> Add a new synth or fx
 				if(char == $N, {
+					tampon = listeDataOSC;
 					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0);// Fonction Add SinOsc by default
+					listeDataOSC = tampon;
 				});
 				// Key b -> switch recording buffer data OSC on/off
 				if(char == $b,  {
@@ -2522,7 +2548,7 @@ y ... -					Musical keys.
 		windowControl.view.decorator.nextLine;
 		// Systeme start stop playing
 		startSystem = Button(windowControl,Rect(0, 0, 125, 20));
-		startSystem.states = [["System Off", Color.black,  Color.green(0.8, 0.25)],["System On", Color.yellow, Color.red(0.8, 0.25)]];
+		startSystem.states = [["System Off", Color.black,  Color.green(0.8, 0.25)],["System On", Color.black, Color.red(0.8, 0.25)]];
 		startSystem.action = {|view|
 			if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
 			s.bind{
@@ -2679,16 +2705,16 @@ y ... -					Musical keys.
 		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Audio In / Send Audio Bus / BPM System").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Source In
-		sourceIn = PopUpMenu(windowControl,Rect(0, 0, 70, 20)).items = ["Az In 1", "Az In 2", "Az In 3", "Az In 4", "Az In 5", "Az In 6", "Az In 7", "Az In 8", "Az In 9", "Az In 10", "Az In 11", "Az In 12", "Az In 13", "Az In 14", "Az In 15", "Az In 16", "Az In 17", "Az In 18", "Az In 19", "Az In 20", "Az In 21", "Az In 22", "Az In 23", "Az In 24", "Az In 25", "Az In 26", "Az In 27", "Az In 28", "Az In 29", "Az In 30", "Az In 31", "Az In 32", "Off"];
+		sourceIn = PopUpMenu(windowControl,Rect(0, 0, 70, 20)).items = ["Az In 1", "Az In 2", "Az In 3", "Az In 4", "Az In 5", "Az In 6", "Az In 7", "Az In 8", "Az In 9", "Az In 10", "Az In 11", "Az In 12", "Az In 13", "Az In 14", "Az In 15", "Az In 16", "Az In 17", "Az In 18", "Az In 19", "Az In 20", "Az In 21", "Az In 22", "Az In 23", "Az In 24", "Az In 25", "Az In 26", "Az In 27", "Az In 28", "Az In 29", "Az In 30", "Az In 31", "Az In 32"];
 		sourceIn.action = {arg in;
 			synthAnalyzeIn.set(\in, in.value, \busAnalyze, busAnalyze.index);
 		};
 		// Audio In
-		sendBusIn = PopUpMenu(windowControl,Rect(0, 0, 80, 20)).items = ["Not Operate"];
-		/*sendBusIn.action = {arg in;
-		};*/
-		sendBusIn.enabled_(false);
-		sendBusIn.stringColor = Color.yellow;
+		sendBusIn = PopUpMenu(windowControl,Rect(0, 0, 80, 20)).items = ["File->Bus1", "File->Bus2", "File->Bus3", "File->Bus4", "File->Bus5", "File->Bus6", "File->Bus7", "File->Bus8", "File->Bus9", "File->Bus10", "File->Bus11", "File->Bus12", "File->Bus13", "File->Bus14", "File->Bus15", "File->Bus16", "File->Bus17", "File->Bus18", "File->Bus19", "File->Bus20", "File->Bus21", "File->Bus22", "File->Bus23", "File->Bus24", "File->Bus25", "File->Bus26", "File->Bus27", "File->Bus28", "File->Bus29", "File->Bus30", "File->Bus31", "File->Bus32"];
+		sendBusIn.action = {arg in;
+			synthFileIn.set(\busIn, listeBusInOut.at(in.value));
+		};
+		sendBusIn.stringColor = Color.white;
 		// BPM System
 		bpmSlider=EZSlider(windowControl, Rect(0, 0, 155, 20), "BPM", ControlSpec(1, 960, \exp, 0),
 			{|ez| if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
@@ -2884,7 +2910,8 @@ y ... -					Musical keys.
 		windowControl.view.decorator.nextLine;
 		//Add a New Synth or FX
 		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = choiceSynth;
-		addNewSynth.action = {arg item;
+		addNewSynth.action = {arg item, tampon;
+			tampon = listeDataOSC;
 			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0)});// Fonction Add Synth or FX
 			s.bind{
 				listeWindowSynth.last.view.children.at(0).valueAction_(1);// Synth Play On
@@ -2892,6 +2919,7 @@ y ... -					Musical keys.
 				listeWindowSynth.last.view.children.at(0).valueAction_(0);// Synth Play Off
 				s.sync;
 			};
+			listeDataOSC = tampon;
 			addNewSynth.value=0;
 		};
 		windowControl.view.decorator.nextLine;
@@ -3357,7 +3385,7 @@ y ... -					Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// AutomationControls start stop playing
 			startAutomationSynthControls = Button(windowSynth,Rect(0, 0, 100, 20));
-			startAutomationSynthControls.states = [["Controls Off", Color.black,  Color.green(0.8, 0.25)],["Controls On", Color.yellow, Color.red(0.8, 0.25)]];
+			startAutomationSynthControls.states = [["Controls Off", Color.black,  Color.green(0.8, 0.25)],["Controls On", Color.black, Color.red(0.8, 0.25)]];
 			startAutomationSynthControls.action = {|view| if(view.value == 0, {tdefControls.stop; ctrlSynth=controlsNode.value; jitterAutomationSynthControls.enabled_(false); tempoAutomationSynthControls.enabled_(false)}, {ctrlSynth=controlsNode.value; tdefControls.play; jitterAutomationSynthControls.enabled_(true); tempoAutomationSynthControls.enabled_(true)});
 			};
 			// Tempo AutomationControls Synth
