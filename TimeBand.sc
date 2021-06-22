@@ -1,5 +1,3 @@
-
-
 // A Software by Herve Provini TimeBand
 
 TimeBand {
@@ -2437,7 +2435,7 @@ f						Switch File for Analyze.
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Systeme start stop playing
-		startSystem = Button(windowExternalControlGUI,Rect(5, 5, 100, 20)).states_([["System On", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["System Off", Color.new(0.1, 0.8, 0.9, 1), Color.black]]).focus.action = {|view|
+		startSystem = Button(windowExternalControlGUI,Rect(5, 5, 100, 20)).states_([["System On", Color.black,  Color.green],["System Off", Color.white, Color.red]]).focus.action = {|view|
 			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
 			switch(view.value,
 				0, {if(flagRecording == 'on', {s.pauseRecording}); sequencer.stop;

@@ -1647,8 +1647,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~lastTimeAudio=Main.elapsedTime;// Init time analyse
 		~flagEntreeMode='Audio IN';
 		~freqbefore=[];~ampbefore=[];~dureebefore=[];~freqtampon=[];~amptampon=[];~listeaudiofreq=[];~listeaudioamp=[];~listeaudioduree=[];~lastDureeInstrAudio=[];
-		~nombreinstrument.do({arg instr;
-			~freqbefore=~freqbefore.add(0);~ampbefore=~ampbefore.add(0);~dureebefore=~dureebefore.add(0);~freqtampon=~freqtampon.add(nil);~amptampon=~amptampon.add(nil);~listeaudiofreq=~listeaudiofreq.add([]);~listeaudioamp=~listeaudioamp.add([]);~listeaudioduree=~listeaudioduree.add([]);~lastDureeInstrAudio=~lastDureeInstrAudio.add(~lastTimeAudio)});
+		~nombreinstrument.do({arg instr;	~freqbefore=~freqbefore.add(0);~ampbefore=~ampbefore.add(0);~dureebefore=~dureebefore.add(0);~freqtampon=~freqtampon.add(nil);~amptampon=~amptampon.add(nil);~listeaudiofreq=~listeaudiofreq.add([]);~listeaudioamp=~listeaudioamp.add([]);~listeaudioduree=~listeaudioduree.add([]);~lastDureeInstrAudio=~lastDureeInstrAudio.add(~lastTimeAudio)});
 
 		// Analyse AudioIn
 		~oscAudioIn = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -1661,7 +1660,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					amp=msg.wrapAt(4).clip(0.001, 1.0);
 					~nombreinstrument.do({arg instr;
 						flagBand = 0;
-						if(~dureeanalysesil.wrapAt(instr) <= duree , // ici duree silence
+						if(~dureeanalysesil.wrapAt(instr) <= duree  or: {duree >= ~dureeanalysemax.wrapAt(instr)}, // ici duree silence
 							{~listeaudiofreq.wrapPut(instr,[]);~listeaudioamp.wrapPut(instr,[]);~listeaudioduree.wrapPut(instr,[]);~freqtampon.wrapPut(instr,nil);~amptampon.wrapPut(instr,nil);~freqbefore.wrapPut(instr,0);~ampbefore.wrapPut(instr,0);~dureebefore.wrapPut(instr,0);~lastTimeAudio = time;~lastDureeInstrAudio.wrapPut(instr, time);
 								(~numFhzBand + 1).do({arg b;
 									synth = ~lastTimeBand.at(instr); synth.put(b, time);

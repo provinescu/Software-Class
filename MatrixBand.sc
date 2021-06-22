@@ -4,8 +4,7 @@ MatrixBand {
 
 	classvar  < s;
 
-	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrixBand, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrixBand, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrixBand, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, groupeBuffer, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, switchAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm;
-	var flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand;
+	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrixBand, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrixBand, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrixBand, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, groupeBuffer, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, switchAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon;
 
 	*new	{arg path="~/Documents/MatrixBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -1241,8 +1240,7 @@ y ... -					Musical keys.
 
 			ardourOSC = NetAddr("127.0.0.1", 3819);// define NetAddr on local machine with Ardour's port number
 
-			freqBefore=0; ampBefore=0; dureeBefore=0; freqMIDI; ampMIDI; dureeMIDI; lastTimeMIDI = 0; tempoMIDI=0; freqCentroidMIDI=0; flatnessMIDI=0; energyMIDI=0; fluxMIDI=0;
-			lastTimeAnalyse=Main.elapsedTime;// Init time analyse
+			freqBefore=0; ampBefore=0; dureeBefore=0; freqMIDI; ampMIDI; dureeMIDI; lastTimeMIDI = 0; tempoMIDI=0; freqCentroidMIDI=0; flatnessMIDI=0; energyMIDI=0; fluxMIDI=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime;
 
 			// OSC pour Audio et File
 			oscMusicData = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -1269,69 +1267,74 @@ y ... -					Musical keys.
 						// Set Bus OSC
 						if(flagDataOSC == 'on', {busOSC.at(0).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux)});
 						//Analyze Data
-						if(duree > timeMemory and: {flagDataOSC == 'on'}, {
-							lastTimeAnalyse = time;
+						if(duree > timeMemory or: {duree > timeMaximum} and: {flagDataOSC == 'on'}, {
 							(numFhzBand + 1).do({arg i; indexDataMusic.put(i, 0);listeDataOSC.put(i, []); lastTimeBand.put(i, time)});
+							freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = time;
 						});
-						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTimeAnalyse) >= durFilter} and: {duree >= durFilter}, {
-							// Send Music to Instruments
-							if(duree > timeMaximum, {duree=timeMaximum});
-							musicAppAddr.sendMsg('/NewMusic', [freq, amp, duree, tempo, freqCentroid, flatness, energy, flux].asSymbol);
-							if(flagDataOSC == 'on', {
-								musicData=musicData.add(freqBefore);musicData=musicData.add(ampBefore);musicData=musicData.add(duree);
-								musicData=musicData.add(tempo);musicData=musicData.add(freqCentroid);musicData=musicData.add(flatness);
-								musicData=musicData.add(energy);musicData=musicData.add(flux);
-								// Set All Data
-								if(signalBuffer > listeDataOSC.at(0).size,
-									{
-										listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
-										lastTimeBand.put(0, time);
-									},
-									{
-										if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
-										listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
-										indexDataMusic.put(0, indexDataMusic.at(0) + 1);
-										lastTimeBand.put(0, time);
-								});
-								//
-								// Dispatch Band FHZ
-								//
-								for(1, numFhzBand, {arg i;
-									if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
-										// Buses
-										busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
-										// Add Data
-										if(signalBuffer > listeDataOSC.at(i).size,
-											{
-												listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
-												lastTimeBand.put(i, time);
-											},
-											{
-												if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
-												listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
-												indexDataMusic.put(i, indexDataMusic.at(i) + 1);
-												lastTimeBand.put(i, time);
-										});
-									},
-									{
-										if(i <= numFhzBand, {
-											if((time - lastTimeBand.at(i)) > timeMemory, {
-												indexDataMusic.put(i, 0);
-												listeDataOSC.put(i, []);
-												lastTimeBand.put(i, time);
-											});
-										});
-									});
-								});
-								freqBefore=freq;ampBefore=amp;dureeBefore=duree;
-								lastTimeAnalyse = time;
-							});
+						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTimeAnalyse) >= durFilter} and: {duree >= durFilter},
 							{
-								// Setup Automation Preset
-								fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroid, flatness, energy, flux);
-								// Display Data on Control Panel
-								displayOSC.setString("Fhz:" + freq.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
-							}.defer;
+								if(freqTampon !=nil and: {ampTampon != nil},
+									{
+										// Send Music to Instruments
+										musicAppAddr.sendMsg('/NewMusic', [freq, amp, duree, tempo, freqCentroid, flatness, energy, flux].asSymbol);
+										if(flagDataOSC == 'on', {
+											musicData=musicData.add(freqTampon);musicData=musicData.add(ampTampon);musicData=musicData.add(duree);
+											musicData=musicData.add(tempo);musicData=musicData.add(freqCentroid);musicData=musicData.add(flatness);
+											musicData=musicData.add(energy);musicData=musicData.add(flux);
+											freqBefore = freqTampon; ampBefore = ampTampon; dureeBefore = duree;
+											// Set All Data
+											if(signalBuffer > listeDataOSC.at(0).size,
+												{
+													listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
+													lastTimeBand.put(0, time);
+												},
+												{
+													if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
+													listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
+													indexDataMusic.put(0, indexDataMusic.at(0) + 1);
+													lastTimeBand.put(0, time);
+											});
+											//
+											// Dispatch Band FHZ
+											//
+											for(1, numFhzBand, {arg i;
+												if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+													// Buses
+													busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
+													// Add Data
+													if(signalBuffer > listeDataOSC.at(i).size,
+														{
+															listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
+															lastTimeBand.put(i, time);
+														},
+														{
+															if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
+															listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
+															indexDataMusic.put(i, indexDataMusic.at(i) + 1);
+															lastTimeBand.put(i, time);
+													});
+												},
+												{
+													if(i <= numFhzBand, {
+														if((time - lastTimeBand.at(i)) > timeMemory, {
+															indexDataMusic.put(i, 0);
+															listeDataOSC.put(i, []);
+															lastTimeBand.put(i, time);
+														});
+													});
+												});
+											});
+											freqBefore = freq; ampBefore = amp; dureeBefore = duree;
+											lastTimeAnalyse = time;
+										});
+								});
+								freqTampon = freq; ampTampon = amp; lastTimeAnalyse = time;
+								{
+									// Setup Automation Preset
+									fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroid, flatness, energy, flux);
+									// Display Data on Control Panel
+									displayOSC.setString("Fhz:" + freq.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
+								}.defer;
 						});
 						dureeOSCdata = Main.elapsedTime;
 					},
@@ -1363,70 +1366,72 @@ y ... -					Musical keys.
 						// Set Bus OSC
 						if(flagDataOSC == 'on', {busOSC.at(0).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux)});
 						//Analyze Data
-						if(duree > timeMemory and: {flagDataOSC == 'on'}, {
-							lastTimeAnalyse = time;
+						if(duree > timeMemory or: {duree > timeMaximum} and: {flagDataOSC == 'on'}, {
 							(numFhzBand + 1).do({arg i; indexDataMusic.put(i, 0);listeDataOSC.put(i, []); lastTimeBand.put(i, time)});
+							freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = time;
 						});
-						//if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTimeAnalyse) >= durFilter} and: {duree >= durFilter}, {
-						// Send Music to Instruments
-						if(duree > timeMaximum, {duree=timeMaximum});
-						musicAppAddr.sendMsg('/NewMusic', [freq, amp, duree, tempo, freqCentroid, flatness, energy, flux].asSymbol);
-						if(flagDataOSC == 'on', {
-							musicData=musicData.add(freqBefore);musicData=musicData.add(ampBefore);musicData=musicData.add(duree);
-							musicData=musicData.add(tempo);musicData=musicData.add(freqCentroid);musicData=musicData.add(flatness);
-							musicData=musicData.add(energy);musicData=musicData.add(flux);
-							// Set All Data
-							if(signalBuffer > listeDataOSC.at(0).size,
-								{
-									listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
-									lastTimeBand.put(0, time);
-								},
-								{
-									if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
-									listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
-									indexDataMusic.put(0, indexDataMusic.at(0) + 1);
-									lastTimeBand.put(0, time);
-							});
-							//
-							// Dispatch Band FHZ
-							//
-							for(1, numFhzBand, {arg i;
-								if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
-									// Buses
-									busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
-									// Add Data
-									if(signalBuffer > listeDataOSC.at(i).size,
+						if(freqTampon !=nil and: {ampTampon != nil},
+							{
+								// Send Music to Instruments
+								musicAppAddr.sendMsg('/NewMusic', [freq, amp, duree, tempo, freqCentroid, flatness, energy, flux].asSymbol);
+								if(flagDataOSC == 'on', {
+									musicData=musicData.add(freqTampon);musicData=musicData.add(ampTampon);musicData=musicData.add(duree);
+									musicData=musicData.add(tempo);musicData=musicData.add(freqCentroid);musicData=musicData.add(flatness);
+									musicData=musicData.add(energy);musicData=musicData.add(flux);
+									freqBefore = freqTampon; ampBefore = ampTampon; dureeBefore = duree;
+									// Set All Data
+									if(signalBuffer > listeDataOSC.at(0).size,
 										{
-											listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
-											lastTimeBand.put(i, time);
+											listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
+											lastTimeBand.put(0, time);
 										},
 										{
-											if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
-											listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
-											indexDataMusic.put(i, indexDataMusic.at(i) + 1);
-											lastTimeBand.put(i, time);
+											if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
+											listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
+											indexDataMusic.put(0, indexDataMusic.at(0) + 1);
+											lastTimeBand.put(0, time);
 									});
-								},
-								{
-									if(i <= numFhzBand, {
-										if((time - lastTimeBand.at(i)) > timeMemory, {
-											indexDataMusic.put(i, 0);
-											listeDataOSC.put(i, []);
-											lastTimeBand.put(i, time);
+									//
+									// Dispatch Band FHZ
+									//
+									for(1, numFhzBand, {arg i;
+										if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+											// Buses
+											busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
+											// Add Data
+											if(signalBuffer > listeDataOSC.at(i).size,
+												{
+													listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
+													lastTimeBand.put(i, time);
+												},
+												{
+													if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
+													listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
+													indexDataMusic.put(i, indexDataMusic.at(i) + 1);
+													lastTimeBand.put(i, time);
+											});
+										},
+										{
+											if(i <= numFhzBand, {
+												if((time - lastTimeBand.at(i)) > timeMemory, {
+													indexDataMusic.put(i, 0);
+													listeDataOSC.put(i, []);
+													lastTimeBand.put(i, time);
+												});
+											});
 										});
 									});
+									freqBefore = freq; ampBefore = amp; dureeBefore = duree;
+									lastTimeAnalyse = time;
 								});
-							});
-							freqBefore=freq;ampBefore=amp;dureeBefore=duree;
-							lastTimeAnalyse = time;
 						});
+						freqTampon = freq; ampTampon = amp; lastTimeAnalyse = time;
 						{
 							// Setup Automation Preset
 							fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroid, flatness, energy, flux);
 							// Display Data on Control Panel
 							displayOSC.setString("Fhz:" + freq.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
 						}.defer;
-						//});
 						dureeOSCdata = Main.elapsedTime;
 					},
 					{nil});
@@ -1477,63 +1482,65 @@ y ... -					Musical keys.
 					// Set Bus OSC
 					if(flagDataOSC == 'on', {busOSC.at(0).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI)});
 					//Analyze Data
-					if(dureeMIDI > timeMemory and: {flagDataOSC == 'on'}, {
-						lastTimeMIDI = Main.elapsedTime;
+					if(dureeMIDI > timeMemory or: {dureeMIDI > timeMaximum} and: {flagDataOSC == 'on'}, {
 						(numFhzBand + 1).do({arg i; indexDataMusic.put(i, 0);listeDataOSC.put(i, []); lastTimeBand.put(i, time)});
+						freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeMIDI = Main.elapsedTime;
 					});
-					//if(abs(freqMIDI.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(ampMIDI.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(dureeMIDI - dureeBefore) >= durFilter}, {
-					// Send Music to Instruments
-					if(dureeMIDI > timeMaximum, {dureeMIDI=timeMaximum});
-					musicAppAddr.sendMsg('/NewMusic', [freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI].asSymbol);
-					if(flagDataOSC == 'on', {
-						musicData=musicData.add(freqBefore);musicData=musicData.add(ampBefore);musicData=musicData.add(dureeMIDI);
-						musicData=musicData.add(tempoMIDI);musicData=musicData.add(freqCentroidMIDI);musicData=musicData.add(flatnessMIDI);
-						musicData=musicData.add(energyMIDI);musicData=musicData.add(fluxMIDI);
-						// Set All Data
-						if(signalBuffer > listeDataOSC.at(0).size,
-							{
-								listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
-								lastTimeBand.put(0, time);
-							},
-							{
-								if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
-								listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
-								indexDataMusic.put(0, indexDataMusic.at(0) + 1);
-								lastTimeBand.put(0, time);
-						});
-						//
-						// Dispatch Band FHZ
-						//
-						for(1, numFhzBand, {arg i;
-							if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
-								// Buses
-								busOSC.at(i).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
-								// Add Data
-								if(signalBuffer > listeDataOSC.at(i).size,
+					if(freqTampon !=nil and: {ampTampon != nil},
+						{
+							// Send Music to Instruments
+							musicAppAddr.sendMsg('/NewMusic', [freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI].asSymbol);
+							if(flagDataOSC == 'on', {
+								musicData=musicData.add(freqTampon);musicData=musicData.add(ampTampon);musicData=musicData.add(dureeMIDI);
+								musicData=musicData.add(tempoMIDI);musicData=musicData.add(freqCentroidMIDI);musicData=musicData.add(flatnessMIDI);
+								musicData=musicData.add(energyMIDI);musicData=musicData.add(fluxMIDI);
+								freqBefore = freqTampon; ampBefore = ampTampon; dureeBefore = dureeMIDI;
+								// Set All Data
+								if(signalBuffer > listeDataOSC.at(0).size,
 									{
-										listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
-										lastTimeBand.put(i, time);
+										listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
+										lastTimeBand.put(0, time);
 									},
 									{
-										if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
-										listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
-										indexDataMusic.put(i, indexDataMusic.at(i) + 1);
-										lastTimeBand.put(i, time);
+										if(listeDataOSC.at(0).size <= indexDataMusic.at(0), {indexDataMusic.put(0, 0)});
+										listeDataOSC.put(0, listeDataOSC.at(0).wrapPut(indexDataMusic.at(0), musicData));
+										indexDataMusic.put(0, indexDataMusic.at(0) + 1);
+										lastTimeBand.put(0, time);
 								});
-							},
-							{
-								if(i <= numFhzBand, {
-									if((time - lastTimeBand.at(i)) > timeMemory, {
-										indexDataMusic.put(i, 0);
-										listeDataOSC.put(i, []);
-										lastTimeBand.put(i, time);
+								//
+								// Dispatch Band FHZ
+								//
+								for(1, numFhzBand, {arg i;
+									if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+										// Buses
+										busOSC.at(i).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
+										// Add Data
+										if(signalBuffer > listeDataOSC.at(i).size,
+											{
+												listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
+												lastTimeBand.put(i, time);
+											},
+											{
+												if(listeDataOSC.at(i).size <= indexDataMusic.at(i), {indexDataMusic.put(i, 0)});
+												listeDataOSC.put(i, listeDataOSC.at(i).wrapPut(indexDataMusic.at(i), musicData));
+												indexDataMusic.put(i, indexDataMusic.at(i) + 1);
+												lastTimeBand.put(i, time);
+										});
+									},
+									{
+										if(i <= numFhzBand, {
+											if((time - lastTimeBand.at(i)) > timeMemory, {
+												indexDataMusic.put(i, 0);
+												listeDataOSC.put(i, []);
+												lastTimeBand.put(i, time);
+											});
+										});
 									});
 								});
+								freqBefore=freqMIDI;ampBefore=ampMIDI;dureeBefore=dureeMIDI;lastTimeMIDI = time;
 							});
-						});
-						freqBefore=freqMIDI;ampBefore=ampMIDI;dureeBefore=dureeMIDI;
 					});
-					//});
+					freqTampon = freqMIDI; ampTampon = ampMIDI; lastTimeMIDI = time;
 					// Setup Automation Preset
 					fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
 				});
@@ -2553,6 +2560,7 @@ y ... -					Musical keys.
 			if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
 			s.bind{
 				if(view.value == 1, {
+					freqBefore=0; ampBefore=0; dureeBefore=0; freqMIDI; ampMIDI; dureeMIDI; tempoMIDI=0; freqCentroidMIDI=0; flatnessMIDI=0; energyMIDI=0; fluxMIDI=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime; lastTimeMIDI = Main.elapsedTime;
 					tdefOSCdata.play;
 					s.sync;
 					flagCollectFolders = 'on';
@@ -3074,7 +3082,7 @@ y ... -					Musical keys.
 				if(view.value == 16, {groupe.set(\flagAmpOnOff, 0); flagAmp = 0},{groupe.set(\out, view.value); groupe.set(\flagAmpOnOff, 1); flagAmp = 1; out = view.value});
 			};
 			// Source Bus In
-			sourceBusIn = PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).items = ["Bus 1", "Bus 2", "Bus 3", "Bus 4", "Bus 5", "Bus 6", "Bus 7", "Bus 8", "Bus 9", "Bus 10", "Bus 11", "Bus 12", "Bus 13", "Bus 14", "Bus 15", "Bus 16", "Bus 17", "Bus 18", "Bus 19", "Bus 20", "Bus 21", "Bus 22", "Bus 23", "Bus 24", "Bus 25", "Bus 26", "Bus 27", "Bus 28", "Bus 29", "Bus 30", "Bus 31", "Bus 32"];
+			sourceBusIn = PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).items = ["Bus In 1", "Bus In 2", "Bus In 3", "Bus In 4", "Bus In 5", "Bus In 6", "Bus In 7", "Bus In 8", "Bus In 9", "Bus In 10", "Bus In 11", "Bus In 12", "Bus In 13", "Bus In 14", "Bus In 15", "Bus In 16", "Bus In 17", "Bus In 18", "Bus In 19", "Bus In 20", "Bus In 21", "Bus In 22", "Bus In 23", "Bus In 24", "Bus In 25", "Bus In 26", "Bus In 27", "Bus In 28", "Bus In 29", "Bus In 30", "Bus In 31", "Bus In 32"];
 			sourceBusIn.action = {arg in;
 				s.bind{
 					synthRec.free;
@@ -3102,7 +3110,7 @@ y ... -					Musical keys.
 				groupe.set(\busOut, listeBusInOut.at(out.value)); busOut = out.value;
 			};
 			// Source FX IN
-			sourceFXin= PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).items = ["FX 1", "FX 2", "FX 3", "FX 4", "FX 5", "FX 6", "FX 7", "FX 8", "FX 9", "FX 10", "FX 11", "FX 12", "FX 13", "FX 14", "FX 15", "FX 16", "FX 17", "FX 18", "FX 19", "FX 20", "FX 21", "FX 22", "FX 23", "FX 24", "FX 25", "FX 26", "FX 27", "FX 28", "FX 29", "FX 30", "FX 31", "FX 32"];
+			sourceFXin= PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).items = ["FX In 1", "FX In 2", "FX In 3", "FX In 4", "FX In 5", "FX In 6", "FX In 7", "FX In 8", "FX In 9", "FX In 10", "FX In 11", "FX In 12", "FX In 13", "FX In 14", "FX In 15", "FX In 16", "FX In 17", "FX In 18", "FX In 19", "FX In 20", "FX In 21", "FX In 22", "FX In 23", "FX In 24", "FX In 25", "FX In 26", "FX In 27", "FX In 28", "FX In 29", "FX In 30", "FX In 31", "FX In 32"];
 			sourceFXin.action = {arg in;
 				groupe.set(\busFXin, listeBusFX.at(in.value)); busFXin = in.value;
 			};

@@ -1942,7 +1942,7 @@ G                           Init Genome Agent (solo).
 		~initOSCresponder.value;// Init OSC Responder
 
 		~lastTimeAnalyse=Main.elapsedTime;// Init time analyse
-		~freqBefore=0; ~ampBefore=0; ~dureeBefore=0; ~freqTampon=nil; ~amptampon=0;~freqCentroid=0;~flatness=0;~energy=0; ~flux=0;
+		~freqBefore=0; ~ampBefore=0; ~dureeBefore=0; ~freqTampon=nil; ~amptampon=nil;~freqCentroid=0;~flatness=0;~energy=0; ~flux=0;
 
 		// Analyse AudioIn
 		~oscAudioIn = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -1962,8 +1962,14 @@ G                           Init Genome Agent (solo).
 					~dataFFTanalyze.put(0, ~dataFFTanalyze.wrapAt(0).add(~flux));
 					~dataFFTanalyze.put(1, ~dataFFTanalyze.wrapAt(1).add(~flatness));
 					if(duree > ~dureeanalysemax,
-						{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~compteurAnalyse=0;
-							~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})}); ~lastTimeAnalyse = time});
+						{
+							~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~compteurAnalyse=0;
+							~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,
+								{
+									~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset});
+							});
+							~lastTimeAnalyse = time; ~freqBefore=0; ~ampBefore=0; ~dureeBefore=0; ~freqTampon=nil; ~amptampon=nil;
+					});
 					if(~flagAlgoAnalyze.value != 4, {
 						if(abs(freq*127 - (~freqBefore*127)) >= ~differencefreq and: {abs(amp.ampdb - ~ampBefore.ampdb) >= ~differenceamp} and: {abs(duree - ~lastTimeAnalyse) >= ~differenceduree} and: {duree >= ~differenceduree},
 							{if(~freqTampon !=nil and: {~ampTampon != nil},
@@ -2030,7 +2036,9 @@ G                           Init Genome Agent (solo).
 				amp=amp.clip(0.001, 1.0);
 				if(duree > ~dureeanalysemax,
 					{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~compteurAnalyse=0;
-						~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})}); ~lastTimeAnalyse=time});
+						~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})});
+						~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;
+				});
 				//if(abs(freq*127 - (~freqBefore*127)) >= ~differencefreq and: {abs(amp.ampdb - ~ampBefore.ampdb) >= ~differenceamp} and: {abs(duree - ~lastTimeAnalyse) >= ~differenceduree} and: {duree >= ~differenceduree},
 				//{
 				if(~freqTampon !=nil and: {~ampTampon != nil},
