@@ -89,8 +89,8 @@ q						Switch Algo Analyze.
 
 Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
-l			 			Load Preset.
-alt+l                   Load Preset + Control.
+l			 			Load Preset + Control.
+alt+l                   Load Preset.
 s				 		Save Preset.
 L			 			Load Synthesizer.
 S				 		Save Synthesizer.
@@ -172,8 +172,8 @@ f						Switch File for Analyze.
 		];
 		userOSchoiceControl = [
 			'UserOperatingSystem',
-			'Load Preset',
 			'Load Preset+Control',
+			'Load Preset',
 			'Save Preset',
 			'Load Synthesizer',
 			'Save Synthesizer',
@@ -402,24 +402,24 @@ f						Switch File for Analyze.
 			var data;
 			item.value.switch(
 				0, {nil},
-				// Load Preset
+				// Load Preset + control
 				1, {
 					Dialog.openPanel({ arg paths;
 						var f;
 						f=File(paths,"r");
-						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI, 'off');
+						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI, 'on');
 						f.close;
 						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  PathName.new(paths).fileName;
 						Document.listener.string="";
 						s.queryAllNodes;"".postln;
 					}, {"cancelled".postln});
 				},
-				// Load Preset+Control
+				// Load Preset
 				2, {
 					Dialog.openPanel({ arg paths;
 						var f;
 						f=File(paths,"r");
-						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI,'on');
+						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI,'off');
 						f.close;
 						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  PathName.new(paths).fileName;
 						Document.listener.string="";
@@ -735,7 +735,7 @@ f						Switch File for Analyze.
 								lastNumberChoiceConfig = number;
 								if(File.exists(pathTimeBand ++ foldersToScanPreset.at(number)),
 									{file=File(pathTimeBand ++ foldersToScanPreset.at(number),"r");
-										fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'off'); file.close;
+										fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
 										windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanPreset.at(number);
 								}, {"cancelled".postln});
 							});
@@ -1694,11 +1694,11 @@ f						Switch File for Analyze.
 		MainMenu.register(menuRecording.title_("Recording"), "TimeBandTools");
 
 		menuPreset = Menu(
-			MenuAction("Load Preset", {
-				fonctionUserOperatingSystem.value(1, windowControlGUI, 'off');
-			}),
 			MenuAction("Load Preset+Control", {
 				fonctionUserOperatingSystem.value(1, windowControlGUI, 'on');
+			}),
+			MenuAction("Load Preset", {
+				fonctionUserOperatingSystem.value(1, windowControlGUI, 'off');
 			}),
 			MenuAction("Save Preset",{
 				fonctionUserOperatingSystem.value(2, windowControlGUI);
@@ -1888,11 +1888,11 @@ f						Switch File for Analyze.
 				if(unicode==27 and: {keycode==53} or: {unicode == 32 and: {keycode == 49}},{if(windowExternalControlGUI.view.children.at(0).value == 1,{windowExternalControlGUI.view.children.at(0).valueAction_(0)},{windowExternalControlGUI.view.children.at(0).valueAction_(1)});
 				});
 				// key l -> load Preset
-				if(char == $l, {commande = 'Load Preset';
+				if(char == $l, {commande = 'Load Preset+Control';
 				});
 				// key alt+l -> load Preset+Control
 				if(modifiers==524288 and: {unicode==108} and: {keycode==37},
-					{commande = 'Load Preset+Control';
+					{commande = 'Load Preset';
 				});
 				// key s -> save Preset
 				if(char == $s,
@@ -1977,7 +1977,7 @@ f						Switch File for Analyze.
 					if(File.exists(pathTimeBand ++ foldersToScanPreset.at(number)),
 						{file=File(pathTimeBand ++ foldersToScanPreset.at(number),"r");
 							windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanPreset.at(number);
-							fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI); file.close}, {"cancelled".postln});
+							fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close}, {"cancelled".postln});
 				});
 				// Key Z -> load Synthesizer aleatoire
 				if(char == $Z, {
