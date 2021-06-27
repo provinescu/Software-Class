@@ -4,7 +4,7 @@ DensityBand {
 
 	classvar <> s;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensityBand, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST;
+	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensityBand, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST;
 
 	*new {arg path = "~/Documents/DensityBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -892,8 +892,8 @@ DensityBand {
 			groupeSynth = ParGroup.new(s, \addToTail);
 			groupeFX = ParGroup.new(s, \addToTail);
 			groupeMasterOut = ParGroup.new(s, \addToTail);
-			groupeVST = ParGroup.new(s, \addToTail);
 			groupeVerb = ParGroup.new(s, \addToTail);
+			groupeVST = ParGroup.new(s, \addToTail);
 			groupeLimiter = ParGroup.new(s, \addToTail);
 
 			// Bus OSC Data
@@ -972,24 +972,24 @@ DensityBand {
 
 			//Init EndProcessing
 
-			gVerb = Synth.new("GVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
+			gVerb = Synth.new("GVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
-			freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
+			freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
-			allPass = Synth.newPaused("Allpass" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
+			allPass = Synth.newPaused("Allpass" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
-			jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead);
+			jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
 			Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
 			s.sync;
 
-			// VST Plugin
-			synthVST = Synth.new("VSTPlugin", [\xFade, 0.5], groupeVST, \addToTail);
+			synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
 			fxVST = VSTPluginController(synthVST);
+			s.sync;
 
 			// Init GUI
 			this.createGUI;
@@ -1030,6 +1030,7 @@ DensityBand {
 			windowEar.view.children.at(31).enabled_(false);// No Instruments*/
 			windowEar.name = "DensityBand" + typeMasterOut;
 			windowGVerb.name = "Reverb" + typeMasterOut;
+			windowVST.name = "VST" + typeMasterOut;
 
 			// Flux spectral = flux (0 - de changement | 1 + de changement)
 			// Entropie du son  = flatness (0 sinus | 1 whiteNoise)
@@ -2562,6 +2563,7 @@ DensityBand {
 				data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 			});
 			listeWindows.do({arg w; w.close});
+			windowVST.close;
 			//s.quit;
 		};
 
@@ -2737,17 +2739,20 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				startSystem.valueAction_(0);
 				groupeVerb.freeAll;
 				groupeLimiter.freeAll;
+				groupeVST.freeAll;
 				this.initSynthDef;
-				gVerb = Synth.new("GVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				freeVerb = Synth.newPaused("FreeVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				allPass = Synth.newPaused("Allpass Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				jpVerb = Synth.newPaused("jpVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
+				gVerb = Synth.new("GVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("jpVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
 				// Setup GUI Value
 				windowGVerb.view.children.at(0).valueAction_(0);
 				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
 				// Setup GUI Value
 				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo";
+				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo"; windowVST.name = "VST Stereo";
 			}),
 			MenuAction("Rotate2", {recChannels = 2; numberAudioOut = 2;
 				s.recChannels_(recChannels);
@@ -2757,17 +2762,20 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				startSystem.valueAction_(0);
 				groupeVerb.freeAll;
 				groupeLimiter.freeAll;
+				groupeVST.freeAll;
 				this.initSynthDef;
-				Synth.new("GVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				allPass = Synth.newPaused("Allpass Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				jpVerb = Synth.newPaused("jpVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
+				Synth.new("GVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("jpVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
 				// Setup GUI Value
 				windowGVerb.view.children.at(0).valueAction_(0);
 				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
 				// Setup GUI Value
 				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Rotate2"; windowEar.name = "Reverb Rotate2";
+				windowGVerb.name = "Reverb Rotate2"; windowEar.name = "Reverb Rotate2"; windowVST.name = "VST Rotate2";
 			}),
 			MenuAction("MultiSpeaker", {
 				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
@@ -2778,17 +2786,20 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					startSystem.valueAction_(0);
 					groupeVerb.freeAll;
 					groupeLimiter.freeAll;
+					groupeVST.freeAll;
 					this.initSynthDef;
-					Synth.new("GVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-					allPass = Synth.newPaused("Allpass MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-					jpVerb = Synth.newPaused("jpVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
+					Synth.new("GVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("jpVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST MultiSpeaker", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					fxVST = VSTPluginController(synthVST);
 					// Setup GUI Value
 					windowGVerb.view.children.at(0).valueAction_(0);
 					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
 					// Setup GUI Value
 					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-					windowGVerb.name = "Reverb MultiSpeaker"; windowEar.name = "Reverb MultiSpeaker";
+					windowGVerb.name = "Reverb MultiSpeaker"; windowEar.name = "Reverb MultiSpeaker"; windowVST.name = "VST MultiSpeaker";
 				});
 			}),
 			MenuAction("Ambisonic", {
@@ -2800,17 +2811,20 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					startSystem.valueAction_(0);
 					groupeVerb.freeAll;
 					groupeLimiter.freeAll;
+					groupeVST.freeAll;
 					this.initSynthDef;
-					Synth.new("GVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-					allPass = Synth.newPaused("Allpass Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-					jpVerb = Synth.newPaused("jpVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
+					Synth.new("GVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("jpVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					fxVST = VSTPluginController(synthVST);
 					// Setup GUI Value
 					windowGVerb.view.children.at(0).valueAction_(0);
 					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
 					// Setup GUI Value
 					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-					windowGVerb.name = "Reverb Ambisonic"; windowEar.name = "Reverb Ambisonic";
+					windowGVerb.name = "Reverb Ambisonic"; windowEar.name = "Reverb Ambisonic"; windowVST.name = "VST Ambisonic";
 				});
 			}),
 			MenuAction("Dolby5.1", {recChannels = 6; numberAudioOut = 6;
@@ -2821,38 +2835,50 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				startSystem.valueAction_(0);
 				groupeVerb.freeAll;
 				groupeLimiter.freeAll;
+				groupeVST.freeAll;
 				this.initSynthDef;
-				Synth.new("GVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				allPass = Synth.newPaused("Allpass Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
-				jpVerb = Synth.newPaused("jpVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm);
+				Synth.new("GVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("jpVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
 				// Setup GUI Value
 				windowGVerb.view.children.at(0).valueAction_(0);
 				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
 				// Setup GUI Value
 				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1";
+				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
 			});
 		);
 		MainMenu.register(menuAudio.title_("Audio"), "DensityBandTools");
 
-		menuVST= Menu(
-			/*MenuAction("Init VST Plugin", {
-				synthVST = Synth.new("VSTPlugin", [\out, 0, \in, 0, \volumeIn, 0.8], groupePostProduction, \addToHead);
-				fxVST = VSTPluginController(synthVST);
-				fxVST.open("REQ 2 Stereo");
-			}),*/
-			MenuAction("Browse", {
-				fxVST.browse;
-			}),
-			MenuAction("GUI", {
-				fxVST.gui;
-			}),
-			MenuAction("Editor", {
-				fxVST.editor;
-			});
+		/*menuVST= Menu(
+		MenuAction("Browse", {
+		fxVST.browse;
+		}),
+		MenuAction("GUI", {
+		fxVST.gui;
+		}),
+		MenuAction("Editor", {
+		fxVST.editor;
+		}),
+		MenuAction("xFade", {
+		SCRequestString("0.5", "xFade Value (0..1)", {arg strg;
+		groupeVST.set(\xFade, strg.asFloat);
+		});
+		}),
+		MenuAction("Gain In", {
+		SCRequestString("0.5", "Gain Value (0..1)", {arg strg;
+		groupeVST.set(\gainIn, strg.asFloat);
+		});
+		}),
+		Menu(
+		MenuAction("On", {synthVST.run(true)}),
+		MenuAction("Off", {synthVST.run(false)});
+		).title_("VST Run");
 		);
-		MainMenu.register(menuVST.title_("VST Plugin"), "DensityBandTools");
+		MainMenu.register(menuVST.title_("VST Plugin"), "DensityBandTools");*/
 
 		menuMIDI = Menu(
 			MenuAction("Init", {
@@ -4770,16 +4796,52 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowGVerb.view.children.at(0).focus;
 		windowGVerb.onClose_({groupeVerb.free});
 		windowGVerb.front;
-		windowEar.front;
-		startSystem.focus;
+
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {synthVST.run(false)},
+				1, {synthVST.run(true)};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			fxVST.gui;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| groupeVST.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| groupeVST.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| groupeVST.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.onClose_({groupeVST.free});
+		windowVST.front;
 
 		// Init shortCuts
 		windowEar.front;
+		startSystem.focus;
 		listeWindows=listeWindows.add(windowEar);
 		listeWindows=listeWindows.add(windowGVerb);
 		listeWindows=listeWindows.add(windowPlotterData);
 		listeWindows=listeWindows.add(windowPlotterFFT);
 		listeWindows=listeWindows.add(windowKeyboard);
+		//listeWindows=listeWindows.add(windowVST);
 		listeWindows.do({arg window; fonctionShortCut.value(window)});
 
 		// Init Preset
@@ -8724,14 +8786,89 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				ReplaceOut.ar(out, Limiter.ar(LeakDC.ar(In.ar(0, numberAudioOut)), limit));// Limiter on variable numberAudioOut = (2 a x)
 		}).add;
 
-		// Synth VST Plugin
-		SynthDef("VSTPlugin",
-			{arg in=0, out=0, xFade=0.5;
-				var input, chain;
-				input = In.ar(In.ar(in, numberAudioOut));
-				chain = VSTPlugin.ar(input, numberAudioOut);
+		//////////////// VST Plugin //////////////////////
+
+		// Synth VST
+		SynthDef("VST Stereo",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
+
+		// Synth VST
+		SynthDef("VST Rotate2",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		// Synth VST
+		SynthDef("VST MultiSpeaker",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		//Synth  VST
+		SynthDef("VST Ambisonic",
+			{arg in=0, out=0, xFade=0.5, panLo=1.neg, panHi=1, bpm=1, gainIn=0.5;
+				var signal, chain, ambisonic;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		// Synth VST
+		SynthDef("VST Dolby5.1",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain, front, center, lfe, rear, posX, posY;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				posX = TRand.kr(panLo, panHi, Impulse.kr(bpm));
+				posY = TRand.kr(panLo, panHi, Impulse.kr(bpm));
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				front = Pan2.ar(chain, posX);
+				rear = Pan2.ar(chain, posY);
+				center = ((posX*posX) + (posY*posY))**0.5;
+				center = 1 - center.clip(0, 1);
+				center = signal * center;
+				lfe = LPF.ar(signal, 80);
+				// Out
+				XOut.ar(out, xFade, front);
+				XOut.ar(out+2, xFade, center);
+				XOut.ar(out+3, xFade, lfe);
+				XOut.ar(out+4, xFade, rear);
+		}).add;
+
+		/*// Synth VST Plugin
+		SynthDef("VSTPlugin",
+		{arg in=0, out=0, xFade=0.5, gainIn=0.5;
+		var input, chain;
+		input = In.ar(In.ar(in, numberAudioOut)) * gainIn;
+		chain = VSTPlugin.ar(input, numberAudioOut);
+		XOut.ar(out, xFade, chain);
+		}).add;*/
 	}
 
 }
