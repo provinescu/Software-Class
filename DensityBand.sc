@@ -2003,7 +2003,7 @@ DensityBand {
 
 			/////////////////// Build New dataInstruments //////////////////////
 			buildSynth = {arg indexBandFhz;
-				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, offset, rootEnergy, newRevSound;
+				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST;
 				// Probability
 				// Flux
 				/*flux = (13.287712379549 - fft.at(0).mediane.log2.abs / 13.287712379549).clip(0, 1);
@@ -2274,11 +2274,26 @@ DensityBand {
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
-						}, {synthMidi = nil});
+							// VST Instrument
+							patternVST  = Pbind(
+								\type, \vst_midi,
+								\vst, fxVST,
+								\midicmd, \noteOn,
+								\midiout, midiOut,
+								\chan, canalMidi,
+								\freq, Pseq(freq, inf),
+								\amp, Pseq(amp, inf),
+								\dur, Pseq(duree, inf),
+								\stretch, Pfuncn({stretchDuree}, inf),
+								//\s, s,
+								\group, groupeSynth,
+								\addAction, 1);
+						}, {synthMidi = nil; synthMidiVST = nil});
 						//Play Synth next Beat on BPM
 						synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
 						//Play SynthMidi next Beat on BPM
-						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal))});
+						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal));
+							synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
 					},
 					{
 						// SYNTH STREAM
@@ -2324,12 +2339,12 @@ DensityBand {
 						// For testing if playing or not
 						NodeWatcher.register(synth, true);
 						// MIDI
-						synthMidi = nil;
+						synthMidi = nil; synthMidiVST = nil;
 				});
 				// Time Start Synth
 				time = Main.elapsedTime;
 				// Set List Data Instruments
-				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, indexBandFhz]);
+				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, indexBandFhz, synthMidiVST]);
 				// Display for GUI
 				{
 					// Synth
@@ -2348,7 +2363,7 @@ DensityBand {
 				loop({arg time, indexBandFhz;
 					// Time
 					time = Main.elapsedTime;
-					// Check Instruments (data = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeStretchBPM])
+					// Check Instruments (data = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, indexBandFhz, synthMidiVST])
 					listeDataInstruments.do({arg data, index, tempo;
 						var bpm;
 						if(flagBPM == 'on', {
@@ -2370,7 +2385,7 @@ DensityBand {
 								{if(data.at(5).defName.asString.containsi("Env"), {data.at(5).free});
 							});
 							// Kill Synth Midi
-							if(data.at(6) != nil, {data.at(6).stop});
+							if(data.at(6) != nil, {data.at(6).stop; data.at(22).stop});
 							// Free RecBuffer
 							if(data.at(4).isPlaying == true, {data.at(4).free});
 							// Free Buffer
