@@ -1381,10 +1381,12 @@ DensityBand {
 																if(flagMidiOut == 'on', {
 																	// Set MIDI Off
 																	midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
+																	fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
 																	// Reset MIDI OUT
 																	listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
 																	// Send MIDI On
 																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
+																	fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
 																});
 														});
 												});
@@ -2396,7 +2398,7 @@ DensityBand {
 							if(data.at(9).isPlaying == true, {data.at(9).release});
 							// Set MIDI Off (Stream Synth)
 							if(data.at(6) == nil, {
-								if(flagMidiOut == 'on', {midiOut.noteOff(data.at(7), data.at(10), 0)});
+								if(flagMidiOut == 'on', {midiOut.noteOff(data.at(7), data.at(10), 0); fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
 							});
 							listeDataInstruments.removeAt(index);
 							listeBusOff = listeBusOff.add(data.at(0));
@@ -2574,7 +2576,7 @@ DensityBand {
 
 		cmdperiodfunc = {
 			listeDataInstruments.do({arg data, index;
-				if(flagMidiOut == 'on' and: {data.at(6) == nil}, {midiOut.noteOff(data.at(7), data.at(10), 0)});
+				if(flagMidiOut == 'on' and: {data.at(6) == nil}, {midiOut.noteOff(data.at(7), data.at(10), 0); fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
 				data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 			});
 			listeWindows.do({arg w; w.close});
