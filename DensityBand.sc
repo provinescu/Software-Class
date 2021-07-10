@@ -4,7 +4,7 @@ DensityBand {
 
 	classvar <> s;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensityBand, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST;
+	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensityBand, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST;
 
 	*new {arg path = "~/Documents/DensityBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -205,6 +205,7 @@ DensityBand {
 		rangeSynthBand = [0, 1, 2, 3]; // Band active
 		numIndexSynthBand = 0;
 		flagBand = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		flagVST = 'off';
 
 
 		// Audio Out
@@ -1381,12 +1382,12 @@ DensityBand {
 																if(flagMidiOut == 'on', {
 																	// Set MIDI Off
 																	midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
-																	fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
+																	if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
 																	// Reset MIDI OUT
 																	listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
 																	// Send MIDI On
 																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
-																	fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
+																	if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
 																});
 														});
 												});
@@ -2277,7 +2278,7 @@ DensityBand {
 								\group, groupeSynth,
 								\addAction, 1);
 							// VST Instrument
-							patternVST  = Pbind(
+							if(flagVST == 'on', {patternVST  = Pbind(
 								\type, \vst_midi,
 								\vst, fxVST,
 								\midicmd, \noteOn,
@@ -2289,13 +2290,13 @@ DensityBand {
 								\stretch, Pfuncn({stretchDuree}, inf),
 								//\s, s,
 								\group, groupeSynth,
-								\addAction, 1);
+								\addAction, 1)});
 						}, {synthMidi = nil; synthMidiVST = nil});
 						//Play Synth next Beat on BPM
 						synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
 						//Play SynthMidi next Beat on BPM
-						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal));
-							synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
+						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal))});
+						if(patternVST != nil, {synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
 					},
 					{
 						// SYNTH STREAM
@@ -2398,7 +2399,8 @@ DensityBand {
 							if(data.at(9).isPlaying == true, {data.at(9).release});
 							// Set MIDI Off (Stream Synth)
 							if(data.at(6) == nil, {
-								if(flagMidiOut == 'on', {midiOut.noteOff(data.at(7), data.at(10), 0); fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
+								if(flagMidiOut == 'on', {midiOut.noteOff(data.at(7), data.at(10), 0)});
+								if(flagVST == 'on', {fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
 							});
 							listeDataInstruments.removeAt(index);
 							listeBusOff = listeBusOff.add(data.at(0));
@@ -2575,10 +2577,10 @@ DensityBand {
 		};
 
 		cmdperiodfunc = {
-			listeDataInstruments.do({arg data, index;
+			/*listeDataInstruments.do({arg data, index;
 				if(flagMidiOut == 'on' and: {data.at(6) == nil}, {midiOut.noteOff(data.at(7), data.at(10), 0); fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
-				data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
-			});
+			});*/
+			16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
 			//s.quit;
@@ -3541,9 +3543,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		startSystem.action = {arg start, varTampon;
 			switch (start.value,
 				0, {
-					listeDataInstruments.do({arg data, index;
-						data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
-					});
+					16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 					groupeRecBuffer.freeAll;
 					groupeSynth.freeAll;
 					groupeFX.freeAll;
@@ -4821,8 +4821,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		states_([["Run On", Color.green], ["Run Off", Color.red]]).
 		action = {arg shortcut;
 			switch (shortcut.value,
-				0, {synthVST.run(false)},
-				1, {synthVST.run(true)};
+				0, {synthVST.run(false); flagVST = 'off'},
+				1, {synthVST.run(true); flagVST = 'on'};
 			);
 		};
 		Button(windowVST, Rect(0, 0, 75, 20)).
