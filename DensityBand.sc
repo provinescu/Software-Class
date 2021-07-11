@@ -854,7 +854,7 @@ DensityBand {
 			midiOut = MIDIOut(0);
 			//midiOut.connect(0);
 			s.sync;
-			16.do({arg canal; midiOut.allNotesOff(canal)});
+			16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 			s.sync;*/
 
 			// Init SynthDef
@@ -2907,7 +2907,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					MIDIIn.connect(0, 0);
 					midiOut = MIDIOut(0);
 					//midiOut.connect(0);
-					16.do({arg canal; midiOut.allNotesOff(canal)});
+					16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
 			Menu(
@@ -2922,7 +2922,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						port = index.asInteger;
 						midiOut = MIDIOut(port);
 						//midiOut.connect(port);
-						16.do({arg canal; midiOut.allNotesOff(canal)});
+						16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 					});
 				});
 			).title_("Setting");
