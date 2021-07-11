@@ -4,7 +4,7 @@ TimeBand {
 
 	classvar  < s;
 
-	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, groupeRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq;
+	var <> pathTimeBand, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupSynthFilter, listeGroupSynthFX, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTimeBand, menuTimeBand, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeGroupDolby, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST;
 
 	*new	{arg path="~/Documents/TimeBand/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -18,10 +18,10 @@ TimeBand {
 		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
 
-		pathTimeBand = PathName.new(path).pathOnly;
+		~pathTimeBand = PathName.new(path).pathOnly;
 
 		// Verify Folder
-		if(File.exists(pathTimeBand).not) {systemCmd("mkdir" + pathTimeBand)};
+		if(File.exists(~pathTimeBand).not) {systemCmd("mkdir" + ~pathTimeBand)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
 		// Setup Server Options
@@ -49,7 +49,7 @@ TimeBand {
 
 		fonctionCollectFolders = {
 			// Collect all Preset
-			foldersToScanAll = PathName.new(pathTimeBand).files.collect{ |path| var file;
+			foldersToScanAll = PathName.new(~pathTimeBand).files.collect{ |path| var file;
 				file = path.fileName;
 				if(file.find("Preset") == 0 or: {file.find("preset") == 0} or: {file.find("Synthesizer") == 0} or: {file.find("synthesizer") == 0}, {file});
 			};
@@ -232,6 +232,7 @@ f						Switch File for Analyze.
 		listeBusSynth = [];
 		autoRoot = 'off';
 		ambitusFreq = [0, 127];
+		flagVST = 'off';
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -475,7 +476,7 @@ f						Switch File for Analyze.
 		fonctionLoadPreset = {arg data, window, flag;
 			var a, b, c, d, e, f, control;
 			// Midi Off
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
+			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			// load Buffer Synth and Setup Sliders Sample
 			numberSynth.do({arg synth;
 				var item1, item2;
@@ -733,8 +734,8 @@ f						Switch File for Analyze.
 							while({number == lastNumberChoiceConfig and: {compteur <= 40}}, {number = rrand(0, foldersToScanPreset.size - 1); compteur = compteur + 1});
 							if(number != nil, {
 								lastNumberChoiceConfig = number;
-								if(File.exists(pathTimeBand ++ foldersToScanPreset.at(number)),
-									{file=File(pathTimeBand ++ foldersToScanPreset.at(number),"r");
+								if(File.exists(~pathTimeBand ++ foldersToScanPreset.at(number)),
+									{file=File(~pathTimeBand ++ foldersToScanPreset.at(number),"r");
 										fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
 										windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanPreset.at(number);
 								}, {"cancelled".postln});
@@ -795,10 +796,10 @@ f						Switch File for Analyze.
 			this.initSynthDef;
 
 			// Group
-			groupeAudioRec=Group.new(s, \addToTail);
-			groupeSynth=Group.new(s, \addToTail);
-			groupePostProduction=Group.new(s, \addToTail);
-			groupeRecording = Group.new(s, \addToTail);
+			groupeAudioRec=ParGroup.new(s, \addToTail);
+			groupeSynth=ParGroup.new(s, \addToTail);
+			groupePostProduction=ParGroup.new(s, \addToTail);
+			//groupeVST = ParGroup.new(s, \addToTail);
 
 			// Bus Audio In pour FileIn et FileRec
 			busAudioIn = Bus.audio(s, 1);
@@ -816,11 +817,9 @@ f						Switch File for Analyze.
 			// Synthesizer
 			numberSynth.do({arg synth;
 				// Group
-				listeGroupAudioRec=listeGroupAudioRec.add(Group.new(groupeAudioRec, \addToTail));
-				listeGroupSynth=listeGroupSynth.add(Group.new(groupeSynth, \addToTail));
-				listeGroupDolby=listeGroupDolby.add(Group.new(listeGroupSynth.at(synth)), \addToTail);
-				listeGroupSynthFX=listeGroupSynthFX.add(Group.new(listeGroupSynth.at(synth)), \addToTail);
-				listeGroupSynthFilter=listeGroupSynthFilter.add(Group.new(listeGroupSynth.at(synth)), \addToTail);
+				listeGroupAudioRec=listeGroupAudioRec.add(ParGroup.new(groupeAudioRec, \addToTail));
+				listeGroupSynth=listeGroupSynth.add(ParGroup.new(groupeSynth, \addToTail));
+				listeGroupDolby=listeGroupDolby.add(ParGroup.new(listeGroupSynth.at(synth)), \addToTail);	listeGroupSynthFX=listeGroupSynthFX.add(ParGroup.new(listeGroupSynth.at(synth)), \addToTail);	listeGroupSynthFilter=listeGroupSynthFilter.add(ParGroup.new(listeGroupSynth.at(synth)), \addToTail);
 				// Bus
 				listeBusInFilter=listeBusInFilter.add(Bus.audio(s, 1));
 				listeBusInFX=listeBusInFX.add(Bus.audio(s, 1));
@@ -868,6 +867,10 @@ f						Switch File for Analyze.
 
 			// Create Synth AudioIn
 			synthAudioIn = Synth.new("AudioIn", [\in, 0, \busIn, busAudioIn], groupeAudioRec, \addToHead);
+
+			// VST
+			~synthVST = Synth.new("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+			~fxVST = VSTPluginController(~synthVST);
 
 			// Creation Compander + Limiter
 			synthLimiter = Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
@@ -1504,10 +1507,12 @@ f						Switch File for Analyze.
 									// Set MIDI Off
 									if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {
 										midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
+										if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
 										// Reset MIDI OUT
 										freqMidi.wrapPut(synth, freqToMidi);
 										// Send MIDI On
 										midiOut.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127);
+										if(flagVST == 'on', {~fxVST.midi.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127)});
 									});
 									// Duree Synth
 									switch(listeFlagDureeSynth.at(synth),
@@ -1521,7 +1526,9 @@ f						Switch File for Analyze.
 										\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
 										\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \loop, loopSample.at(synth)], listeGroupSynth.at(synth), \addToHead).map(\oscFreq, busOSCfreq, \oscAmp, busOSCamp, \oscDuree, busOSCduree, \oscTempo, busOSCtempo, \oscFlux, busOSCflux, \oscFlatness, busOSCflatness, \oscEnergy, busOSCenergy, \oscCentroid, busOSCcentroid);
 									//});
-								}, {if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)})});
+								}, {if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
+								})});
 							});
 					});
 					(duree * tempoOSC.reciprocal).wait});
@@ -1531,14 +1538,9 @@ f						Switch File for Analyze.
 			this.createGUI;
 
 			// Init Preset System
-			file=File(pathTimeBand ++ "Init Preset" ++ ".scd", "w");
+			file=File(~pathTimeBand ++ "Init Preset" ++ ".scd", "w");
 			file.write(fonctionSavePreset.value(windowControlGUI).asCompileString);
 			file.close;
-			//if(File.exists(pathTimeBand ++ "Init Preset" ++ ".scd"), {
-			//file=File(pathTimeBand ++ "Init Preset" ++ ".scd","r");
-			//fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on');
-			//file.close;
-			//windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Init Preset"},{"Canceled".postln});
 
 			cmdperiodfunc = {
 				menuTimeBand.remove;
@@ -1551,8 +1553,9 @@ f						Switch File for Analyze.
 					windowExternalControlGUI.close;
 					windowControlGUI.close;
 					windowKeyboard.close;
+					windowVST.close;
 					Tdef.removeAll;
-					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
+					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 					MIDIIn.disconnect;
 					MIDIdef.freeAll;
 					//s.freeAll;
@@ -1597,6 +1600,9 @@ f						Switch File for Analyze.
 					s.options.numOutputBusChannels_(2);
 					this.initSynthDef;
 					groupePostProduction.freeAll;
+					//groupeVST.freeAll;
+					~synthVST = Synth.new("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+					~fxVST = VSTPluginController(~synthVST);
 					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
 					numberSynth.do({arg synth;
 						listeGroupDolby.at(synth).freeAll;
@@ -1604,6 +1610,7 @@ f						Switch File for Analyze.
 							Synth.new("Stereo", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 						)
 					});
+					windowVST.name = "VST Stereo";
 			}),
 			MenuAction("Dolby5.1",
 				{recChannels = 6;
@@ -1613,6 +1620,9 @@ f						Switch File for Analyze.
 					s.options.numOutputBusChannels_(6);
 					this.initSynthDef;
 					groupePostProduction.freeAll;
+					//groupeVST.freeAll;
+					~synthVST = Synth.new("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+					~fxVST = VSTPluginController(~synthVST);
 					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
 					numberSynth.do({arg synth;
 						listeGroupDolby.at(synth).freeAll;
@@ -1620,6 +1630,7 @@ f						Switch File for Analyze.
 							Synth.new("Dolby5.1", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 						)
 					});
+					windowVST.name = "Dolby5.1";
 			}),
 			Menu(
 				MenuAction("Channels",
@@ -1631,6 +1642,9 @@ f						Switch File for Analyze.
 							s.options.numOutputBusChannels_(recChannels.asInteger);
 							this.initSynthDef;
 							groupePostProduction.freeAll;
+							//groupeVST.freeAll;
+							~synthVST = Synth.new("VST MultiSpeaker", [\xFade, 0.5, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+							~fxVST = VSTPluginController(~synthVST);
 							synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
 							numberSynth.do({arg synth;
 								listeGroupDolby.at(synth).freeAll;
@@ -1638,6 +1652,7 @@ f						Switch File for Analyze.
 									Synth.new("MultiSpeaker", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 								)
 							});
+							windowVST.name = "MultiSpeaker";
 						});
 				});
 			).title_("MultiSpeaker"),
@@ -1649,6 +1664,9 @@ f						Switch File for Analyze.
 					s.options.numOutputBusChannels_(2);
 					this.initSynthDef;
 					groupePostProduction.freeAll;
+					//groupeVST.freeAll;
+					~synthVST = Synth.new("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+					~fxVST = VSTPluginController(~synthVST);
 					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
 					numberSynth.do({arg synth;
 						listeGroupDolby.at(synth).freeAll;
@@ -1656,6 +1674,7 @@ f						Switch File for Analyze.
 							Synth.new("Rotate2", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 						)
 					});
+					windowVST.name = "Rotate2";
 			}),
 			Menu(
 				MenuAction("Channels",
@@ -1667,6 +1686,9 @@ f						Switch File for Analyze.
 							s.options.numOutputBusChannels_(recChannels.asInteger);
 							this.initSynthDef;
 							groupePostProduction.freeAll;
+							//groupeVST.freeAll;
+							~synthVST = Synth.new("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+							~fxVST = VSTPluginController(~synthVST);
 							synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
 							numberSynth.do({arg synth;
 								listeGroupDolby.at(synth).freeAll;
@@ -1674,11 +1696,39 @@ f						Switch File for Analyze.
 									Synth.new("Ambisonic", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
 								)
 							});
+							windowVST.name = "Ambisonic";
 						});
 				});
 			).title_("Ambisonic"),
 		);
 		MainMenu.register(formatRecordingMenu.title_("Audio"), "TimeBandTools");
+
+		/*menuVST= Menu(
+		MenuAction("Browse", {
+		~fxVST.browse;
+		}),
+		MenuAction("GUI", {
+		~fxVST.gui;
+		}),
+		MenuAction("Editor", {
+		~fxVST.editor;
+		}),
+		MenuAction("xFade", {
+		SCRequestString("0.5", "xFade Value (0..1)", {arg strg;
+		groupeVST.set(\xFade, strg.asFloat);
+		});
+		}),
+		MenuAction("Gain In", {
+		SCRequestString("0.5", "Gain Value (0..1)", {arg strg;
+		groupeVST.set(\gainIn, strg.asFloat);
+		});
+		}),
+		Menu(
+		MenuAction("On", {~synthVST.run(true)}),
+		MenuAction("Off", {~synthVST.run(false)});
+		).title_("VST Run");
+		);
+		MainMenu.register(menuVST.title_("VST Plugin"), "TimeBandTools");*/
 
 		menuRecording = Menu(
 			MenuAction("Start Recording", {
@@ -1738,7 +1788,7 @@ f						Switch File for Analyze.
 					MIDIIn.connect(0, 0);
 					midiOut = MIDIOut(0);
 					//midiOut.connect(0);
-					16.do({arg canal; midiOut.allNotesOff(canal)});
+					16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
 			Menu(
@@ -1753,7 +1803,7 @@ f						Switch File for Analyze.
 						port = index.asInteger;
 						midiOut = MIDIOut(port);
 						//midiOut.connect(port);
-						16.do({arg canal; midiOut.allNotesOff(canal)});
+						16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 					});
 				});
 			).title_("Setting");
@@ -1929,8 +1979,8 @@ f						Switch File for Analyze.
 				// Key i -> Init Preset
 				if(char == $i, {
 					// Init Systeme
-					if(File.exists(pathTimeBand ++ "Init Preset" ++ ".scd"), {
-						file=File(pathTimeBand ++ "Init Preset" ++ ".scd","r");
+					if(File.exists(~pathTimeBand ++ "Init Preset" ++ ".scd"), {
+						file=File(~pathTimeBand ++ "Init Preset" ++ ".scd","r");
 						fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on');
 						file.close;
 						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Init Preset";
@@ -1965,25 +2015,25 @@ f						Switch File for Analyze.
 				//key k New Environment
 				if(char == $k, {
 					Dialog.openPanel({arg paths;
-						pathTimeBand= PathName.new(paths);
-						pathTimeBand = pathTimeBand.pathOnly;
-						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  pathTimeBand.asString;
+						~pathTimeBand = PathName.new(paths);
+						~pathTimeBand = ~pathTimeBand.pathOnly;
+						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  ~pathTimeBand.asString;
 						fonctionCollectFolders.value;
 					});
 				});
 				// Key z -> load Preset aleatoire
 				if(char == $z, {
 					number = rrand(0, foldersToScanPreset.size - 1);
-					if(File.exists(pathTimeBand ++ foldersToScanPreset.at(number)),
-						{file=File(pathTimeBand ++ foldersToScanPreset.at(number),"r");
+					if(File.exists(~pathTimeBand ++ foldersToScanPreset.at(number)),
+						{file=File(~pathTimeBand ++ foldersToScanPreset.at(number),"r");
 							windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close}, {"cancelled".postln});
 				});
 				// Key Z -> load Synthesizer aleatoire
 				if(char == $Z, {
 					number = rrand(0, foldersToScanSynthesizer.size - 1);
-					if(File.exists(pathTimeBand ++ foldersToScanSynthesizer.at(number)),
-						{file=File(pathTimeBand ++ foldersToScanSynthesizer.at(number),"r");
+					if(File.exists(~pathTimeBand ++ foldersToScanSynthesizer.at(number)),
+						{file=File(~pathTimeBand ++ foldersToScanSynthesizer.at(number),"r");
 							windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanSynthesizer.at(number);
 							fonctionCopyTargetSynth.value(file.readAllString.interpret, synthTarget); file.close}, {"cancelled".postln});
 				});
@@ -2008,21 +2058,21 @@ f						Switch File for Analyze.
 			// Save Preset
 			if(commandeExecute == 'Save Preset',{
 				windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString;
-				file=File(pathTimeBand ++ "Preset" + number.asString ++ ".scd", "w");
+				file=File(~pathTimeBand ++ "Preset" + number.asString ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(windowControlGUI).asCompileString);
 				file.close;
 			});
 			//load Preset
 			if(commandeExecute == 'Load Preset',{
-				if(File.exists(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd"), {
-					file=File(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd","r");
+				if(File.exists(~pathTimeBand ++ "Preset" + number.value.asString ++ ".scd"), {
+					file=File(~pathTimeBand ++ "Preset" + number.value.asString ++ ".scd","r");
 					fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'off'); file.close;
 					windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
 			});
 			//load Preset+Control
 			if(commandeExecute == 'Load Preset+Control',{
-				if(File.exists(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd"), {
-					file=File(pathTimeBand ++ "Preset" + number.value.asString ++ ".scd","r");
+				if(File.exists(~pathTimeBand ++ "Preset" + number.value.asString ++ ".scd"), {
+					file=File(~pathTimeBand ++ "Preset" + number.value.asString ++ ".scd","r");
 					fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
 					windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
 			});
@@ -2032,7 +2082,7 @@ f						Switch File for Analyze.
 					// Verify if valid Synthesizer
 					if(source.asInteger >= 1 or: {source.asInteger <= numberSynth}, {synthSource = source.asInteger - 1;
 						windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Synthesizer" + number.asString;
-						file=File(pathTimeBand ++ "Synthesizer" + number.asString ++ ".scd", "w");
+						file=File(~pathTimeBand ++ "Synthesizer" + number.asString ++ ".scd", "w");
 						file.write(fonctionCopySourceSynth.value(synthSource).asCompileString);
 						file.close}, {synthSource = nil; "cancelled".postln});
 				});
@@ -2042,8 +2092,8 @@ f						Switch File for Analyze.
 				SCRequestString("1", "Synthesizer Target", {arg target;
 					// Verify if valid Synthesizer
 					if(target.asInteger >= 1 or: {target.asInteger <= numberSynth}, {synthSource = target.asInteger - 1;
-						if(File.exists(pathTimeBand ++ "Synthesizer" + number.value.asString ++ ".scd"), {
-							file=File(pathTimeBand ++ "Synthesizer" + number.value.asString ++ ".scd","r");
+						if(File.exists(~pathTimeBand ++ "Synthesizer" + number.value.asString ++ ".scd"), {
+							file=File(~pathTimeBand ++ "Synthesizer" + number.value.asString ++ ".scd","r");
 							fonctionCopyTargetSynth.value(file.readAllString.interpret, synthTarget); file.close;
 							windowControlGUI.name="TimeBand a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Synthesizer" + number.asString}, {"cancelled".postln});
 					}, {synthTarget = nil; "cancelled".postln});
@@ -2441,7 +2491,7 @@ f						Switch File for Analyze.
 				0, {if(flagRecording == 'on', {s.pauseRecording}); sequencer.stop;
 					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport stop
 					synthFileIn.run(false);
-					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
+					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 				},
 				1, {if(flagRecording == 'on', {s.record}); sequencer.play;
 					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
@@ -2487,7 +2537,7 @@ f						Switch File for Analyze.
 
 		// Setup AudioIn/FileIn
 		typeAudio = PopUpMenu(windowExternalControlGUI, Rect(0, 0, 65, 20)).background_(Color.grey(0.75, 0.25)).stringColor_(Color.black).items_(['AudioIn', 'FileIn']).action = {arg item;
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
+			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			if(item.value == 0, {synthAudioIn.run(true); synthFileIn.run(false);
 				numberSynth.do({arg synth;
 					synthAudioRec.at(synth).free;
@@ -2514,7 +2564,7 @@ f						Switch File for Analyze.
 
 		// Setup Algo Audio
 		PopUpMenu(windowExternalControlGUI, Rect(0, 0, 70, 20)).background_(Color.grey(0.75, 0.25)).stringColor_(Color.black).items_(['Algo Off', 'Onset', 'Pitch', 'Pitch2', 'KeyTrack', 'Keyboard', 'MIDI']).action = {arg item;
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})});
+			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			switch(item.value,
 				0, {synthOSConset.run(false); synthOSCpitch.run(false); synthOSCkeytrack.run(false); synthOSCkeyboard.run(false); synthOSCFFT.run(true); flagKeyboard='off'; flagOSC = 0; flagMIDI = 0; densityBPM = [windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60];
 					// Init Array
@@ -2680,9 +2730,9 @@ f						Switch File for Analyze.
 		// MIDI OOU on / off
 		Button(windowExternalControlGUI,Rect(0, 0, 75, 20)).states_([["MIDI Out Off", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["MIDI Out On", Color.new(0.1, 0.8, 0.9, 1), Color.red]]).action = {|view|
 			switch(view.value,
-				0, {flagMidiOut = 'off'; 16.do({arg canal; midiOut.allNotesOff(canal)});
+				0, {flagMidiOut = 'off'; 16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 				},
-				1, {flagMidiOut = 'on'; 16.do({arg canal; midiOut.allNotesOff(canal)});
+				1, {flagMidiOut = 'on'; 16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 				}
 			)
 		};
@@ -2939,7 +2989,7 @@ f						Switch File for Analyze.
 			Button(windowControlGUI, Rect(synth * 315 + 75, numberSynth * 25 + 125, 50, 20))
 			.background_(Color.grey).
 			states_([["Mute", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["Mute", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
-			action_({arg etat; if(etat.value == 0, {listeMuteSynth.put(synth, 0)}, {listeMuteSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})})})});
+			action_({arg etat; if(etat.value == 0, {listeMuteSynth.put(synth, 0)}, {listeMuteSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})})})});
 
 			// Solo Synth
 			Button(windowControlGUI, Rect(synth * 315 + 135, numberSynth * 25 + 125, 50, 20))
@@ -2947,7 +2997,7 @@ f						Switch File for Analyze.
 			states_([["Solo", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["Solo", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
 			action_({arg etat; if(etat.value == 0, {listeSoloSynth.put(synth, 0)}, {numberSynth.do({arg i; listeSoloSynth.put(i, 0);
 				if(i != synth, {windowControlGUI.view.children.at((i * 93 + 8) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0)})});
-			listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal)})})})});
+			listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})})})});
 
 			// Buffer sampler
 			Button(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 150, 90, 20)).
@@ -3619,6 +3669,45 @@ f						Switch File for Analyze.
 
 		//Init numFhzBand
 		fonctionInitBand.value;
+
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(1000, 540, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {~synthVST.run(false); flagVST = 'off'},
+				1, {~synthVST.run(true); flagVST ='on'};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.gui;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| groupePostProduction.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| groupePostProduction.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| groupePostProduction.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.name = "VST" + typeMasterOut;
+		windowVST.view.children.at(0).focus;
+		windowVST.onClose_({groupeVST.free});
+		windowVST.front;
+
+		//listeWindows=listeWindows.add(windowVST);
 
 		// Pour Acceder a un control precis
 		// windowControlGUI.view.children.at((synth * 93 + numeroDuControl) + (numberSynth * numberMaxStepSequencer + 14)).children.at(numero de la view)_(valeur);
@@ -4827,6 +4916,84 @@ f						Switch File for Analyze.
 		chain = BFDecode1.ar( ambisonic[0], ambisonic[1], ambisonic[2], ambisonic[3], azimuth, elevation);
 		Out.ar(out, chain);
 		}).add;*/
+
+		//////////////// VST Plugin //////////////////////
+
+		//////////////// VST Plugin //////////////////////
+
+		// Synth VST
+		SynthDef("VST Stereo",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		// Synth VST
+		SynthDef("VST Rotate2",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		// Synth VST
+		SynthDef("VST MultiSpeaker",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		//Synth  VST
+		SynthDef("VST Ambisonic",
+			{arg in=0, out=0, xFade=0.5, panLo=1.neg, panHi=1, bpm=1, gainIn=0.5;
+				var signal, chain, ambisonic;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
+				// Out
+				XOut.ar(out, xFade, chain);
+		}).add;
+
+		// Synth VST
+		SynthDef("VST Dolby5.1",
+			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
+				var signal, chain, front, center, lfe, rear, posX, posY;
+				bpm = if(bpm > 1, bpm.reciprocal, bpm);
+				posX = TRand.kr(panLo, panHi, Impulse.kr(bpm));
+				posY = TRand.kr(panLo, panHi, Impulse.kr(bpm));
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				front = Pan2.ar(chain, posX);
+				rear = Pan2.ar(chain, posY);
+				center = ((posX*posX) + (posY*posY))**0.5;
+				center = 1 - center.clip(0, 1);
+				center = signal * center;
+				lfe = LPF.ar(signal, 80);
+				// Out
+				XOut.ar(out, xFade, front);
+				XOut.ar(out+2, xFade, center);
+				XOut.ar(out+3, xFade, lfe);
+				XOut.ar(out+4, xFade, rear);
+		}).add;
+
 
 		////////////////////////////// Pre + Post Production //////////////////////
 
