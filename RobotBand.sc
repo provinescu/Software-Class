@@ -4,7 +4,7 @@ RobotBand {
 
 	classvar < s, < hpRobotBand;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST;
 
 	*new {arg path="~/Documents/RobotBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -196,7 +196,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							~routineinstrument.wrapAt(i).stop;
 							// Set MIDI Off
 							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+								});
 							});
 							~flagfreq.wrapPut(i,0);~flagamp.wrapPut(i,0);~flagduree.wrapPut(i,0);~flagneuronefreq.wrapPut(i,0);~flagneuroneamp.wrapPut(i,0);~flagneuroneduree.wrapPut(i,0);~flagoutneuronefreq.wrapPut(i,0);~flagoutneuroneamp.wrapPut(i,0);~flagoutneuroneduree.wrapPut(i,0);~flaggenetiquefreq.wrapPut(i,0);~flaggenetiqueamp.wrapPut(i,0);~flaggenetiqueduree.wrapPut(i,0);~duree.wrapPut(i, 0);
 							~routineinstrument.wrapAt(i).play(quant: Quant.new(1));
@@ -256,7 +258,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					MIDIIn.connect(0, 0);
 					~midiOut = MIDIOut(0);
 					//midiOut.connect(0);
-					16.do({arg canal; ~midiOut.allNotesOff(canal)});
+					16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
 			Menu(
@@ -271,7 +273,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						port = index.asInteger;
 						~midiOut = MIDIOut(port);
 						//midiOut.connect(port);
-						16.do({arg canal; ~midiOut.allNotesOff(canal)});
+						16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
 					});
 				});
 			).title_("Setting"),
@@ -754,6 +756,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~flagMidiOut = 'off';
 			~canalAudioInInstr = [];
 			~setAudioInstr = [];
+			flagVST = 'off';
 
 			// Keyboard
 			keyboardTranslateBefore = 0;
@@ -1273,6 +1276,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~tempoIn=Synth.newPaused("OSC RobotBand Tempo AudioIn",
 				['in', ~canalAudioIn, \lock, 0], ~groupeAnalyse, \addToTail);
 			s.sync;
+			// VST
+			~synthVST = Synth.newPaused("VST Plugin", [\xFade, 0.5, \gainIn, 0.5], ~groupeMasterFX, \addToHead);
+			~fxVST = VSTPluginController(~synthVST);
+			s.sync;
 			// Creation MasterFX
 			~masterFX = Synth.new("MasterFX", [\limit, 0.8], ~groupeMasterFX, \addToTail);
 			s.sync;
@@ -1668,7 +1675,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								});
 								// Set MIDI Off
 								if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(instr).value >= 0}, {
-									~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)})});
+									~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0);
+										if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)});
+								})});
 						});
 						if(~listeaudiofreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr) or: {~listeaudioamp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~listeaudioduree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~dureeanalysemax.wrapAt(instr) <= duree},
 							{~listeaudiofreq.wrapPut(instr,[]);~listeaudioamp.wrapPut(instr,[]);~listeaudioduree.wrapPut(instr,[])});
@@ -2120,13 +2129,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						{flagInstrPlay='off';
 							// Set MIDI Off
 							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+								});
 							});
 						}, {if((time - ~lastDureeInstrMidi.wrapAt(i)) >= ~dureeanalysesil.wrapAt(i) and: {~indatasfreqinstrument.wrapAt(i).value == "Fhz In Midi" or: {~indatasampinstrument.wrapAt(i).value == "Amp In Midi"} or: {~indatasdureeinstrument.wrapAt(i).value == "Dur In Midi"}},
 							{flagInstrPlay='off';
 								// Set MIDI Off
 								if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-									~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+									~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+										if(flagVST =='on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+									});
 								});
 					})});
 					// set les datas calculees par les algorithmes pour playing
@@ -2165,7 +2178,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						});
 						// Set MIDI Off
 						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-							~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});// MIDI OFF
+							~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+								if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+							});// MIDI OFF
 							// Reset MIDI OUT
 							~freqMidi.wrapPut(i, []);
 							// MidiOut
@@ -2185,6 +2200,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							// Send MIDI On
 							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								~midiOut.noteOn(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(ii), ~amp.wrapAt(i) * 127);// Send note MIDI ON
+								if(flagVST == 'on', {~fxVST.midi.noteOn(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(ii), ~amp.wrapAt(i) * 127)});
 							});
 							~busfreqsynth.wrapAt(i).wrapAt(ii).set(~freq.wrapAt(i).wrapAt(ii));
 							freqRate=(~freq.wrapAt(i).wrapAt(ii).cpsmidi - 48).midicps;
@@ -2392,7 +2408,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						file = p.fileName;
 						p = p.pathOnly;
 						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
 							~initAllSynth.value(p, file);
 							s.sync;
 							~nombreinstrument.do({arg w; ~synthcontrol.wrapAt(w).items_(~listSynth)});
@@ -2415,7 +2431,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						file = p.fileName;
 						p = p.pathOnly;
 						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
 							~nombrebuffer.do({arg i;
 								~listebuffer.wrapAt(i).free;
 								~busreclevel.wrapAt(i).free;
@@ -2477,7 +2493,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						p = PathName.new(paths);
 						p = p.pathOnly;
 						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
 							~nombrebuffer.do({arg i;
 								~listebuffer.wrapAt(i).free;
 								~busreclevel.wrapAt(i).free;
@@ -2532,10 +2548,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		this.shortCuts;//raccourcis clavier
 
 		~cmdperiodfunc = {
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
 			MIDIIn.disconnect;
 			MIDIdef.freeAll;
 			~listewindow.do({arg w; w.close});
+			windowVST.close;
 			// Kill instance of Class and quit
 			//hpRobotBand.kill;
 			//s.quit;
@@ -2619,7 +2636,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~menuRobotBand.remove;
 		~nombreinstrument.do({arg i; ~listewindow.wrapAt(i).close});
 		~wg.close;~wp.close;~windowMasterFX.close;windowKeyboard.close;
-		if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+		if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
 		MIDIIn.disconnect;
 		~serverAdresse.disconnect;
 		if(~masterAppAddr != nil, {~masterAppAddr.disconnect});
@@ -2661,7 +2678,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{~routineinstrument.wrapAt(i).stop;~duree.wrapPut(i, 0);
 					// Set MIDI Off
 					if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-						~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+						~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+							if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+						});
 					});
 				});
 			};
@@ -3629,7 +3648,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Switch Canal MIDi OUT
 			~midibutton=~midibutton.add(PopUpMenu(w,Rect(0, 0, 125, 18)).background_(Color.grey(0.5, 0.8)).items = ["MIDI out off", "MIDI out 1", "MIDI out 2", "MIDI out 3", "MIDI out 4", "MIDI out 5", "MIDI out 6", "MIDI out 7", "MIDI out 8", "MIDI out 9", "MIDI out 10", "MIDI out 11", "MIDI out 12", "MIDI out 13", "MIDI out 14", "MIDI out 15", "MIDI out 16"]);
 			~midibutton.wrapAt(i).action={arg canal;~writepartitions.value(i,'normal','off',"~midibutton",canal.value);~foncpart.value(i, canal.value);
-				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal.value - 1)})});
+				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal.value - 1); ~fxVST.midi.allNotesOff(canal.value - 1)})});
 				~canalMidiOutInstr.wrapPut(i, canal.value - 1);
 			};
 
@@ -3765,7 +3784,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//~tempoprocessgenetique.enabled_(false);
 				//~tempoprocessalgorithmes.enabled_(false);
 				//~tempoprocessautomation.enabled_(false);
-				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
 		})};
 		~startsysteme.focus;
 		// Calculation Audio start stop playing
@@ -4130,7 +4149,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~routineinstrument.wrapAt(~instrumentactuel).stop;
 						// Set MIDI Off
 						if(~flagMidiOut == 'on', {
-							~freqMidi.wrapAt(~instrumentactuel).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0)});
+							~freqMidi.wrapAt(~instrumentactuel).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0);
+								if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0)});
+							});
 						});
 						~flagfreq.wrapPut(~instrumentactuel, 0);~flagamp.wrapPut(~instrumentactuel, 0);~flagduree.wrapPut(~instrumentactuel, 0);~flagneuronefreq.wrapPut(~instrumentactuel, 0);~flagneuroneamp.wrapPut(~instrumentactuel, 0);~flagneuroneduree.wrapPut(~instrumentactuel, 0);~flagoutneuronefreq.wrapPut(~instrumentactuel, 0);~flagoutneuroneamp.wrapPut(~instrumentactuel, 0);~flagoutneuroneduree.wrapPut(~instrumentactuel, 0);~flaggenetiquefreq.wrapPut(~instrumentactuel, 0);~flaggenetiqueamp.wrapPut(~instrumentactuel, 0);~flaggenetiqueduree.wrapPut(~instrumentactuel, 0);
 						{~fonctionloaddatasinstrument.value(~instrumentactuel, datas.wrapAt(0),'on')}.defer;
@@ -4155,7 +4176,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							~routineinstrument.wrapAt(ii).stop;
 							// Set MIDI Off
 							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(ii).value >= 0}, {
-								~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+								~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+								});
 							});
 							~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
 							{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
@@ -4251,7 +4274,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~routineinstrument.wrapAt(~instrumentactuel).stop;
 					// Set MIDI Off
 					if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(~instrumentactuel).value >= 0}, {
-						~freqMidi.wrapAt(~instrumentactuel).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0)});
+						~freqMidi.wrapAt(~instrumentactuel).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0);
+							if(flagVST == 'on', {~fxVST.noteOff(~canalMidiOutInstr.wrapAt(~instrumentactuel), ~freqMidi.wrapAt(~instrumentactuel).wrapAt(index), 0)});
+						});
 					});
 					~flagfreq.wrapPut(~instrumentactuel, 0);~flagamp.wrapPut(~instrumentactuel, 0);~flagduree.wrapPut(~instrumentactuel, 0);~flagneuronefreq.wrapPut(~instrumentactuel, 0);~flagneuroneamp.wrapPut(~instrumentactuel, 0);~flagneuroneduree.wrapPut(~instrumentactuel, 0);~flagoutneuronefreq.wrapPut(~instrumentactuel, 0);~flagoutneuroneamp.wrapPut(~instrumentactuel, 0);~flagoutneuroneduree.wrapPut(~instrumentactuel, 0);~flaggenetiquefreq.wrapPut(~instrumentactuel, 0);~flaggenetiqueamp.wrapPut(~instrumentactuel, 0);~flaggenetiqueduree.wrapPut(~instrumentactuel, 0);
 					{~fonctionloaddatasinstrument.value(~instrumentactuel, datas.wrapAt(0),'on')}.defer;
@@ -4276,7 +4301,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~routineinstrument.wrapAt(ii).stop;
 						// Set MIDI Off
 						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(ii).value >= 0}, {
-							~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+							~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0);
+								if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+							});
 						});
 						~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
 						{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
@@ -4339,6 +4366,42 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowKeyboard.front;
 		setupKeyboardShortCut.focus;
 		~listewindow=~listewindow.add(windowKeyboard);
+
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {~synthVST.run(false); flagVST = 'off'},
+				1, {~synthVST.run(true); flagVST ='on'};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.gui;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| ~groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| ~groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| ~groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.front;
+
 	}
 
 	shortCuts {
@@ -4486,7 +4549,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 								~routineinstrument.wrapAt(i).stop;
 								// Set MIDI Off
 								if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-									~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+									~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+										if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+									});
 								});
 								~flagfreq.wrapPut(i,0);~flagamp.wrapPut(i,0);~flagduree.wrapPut(i,0);~flagneuronefreq.wrapPut(i,0);~flagneuroneamp.wrapPut(i,0);~flagneuroneduree.wrapPut(i,0);~flagoutneuronefreq.wrapPut(i,0);~flagoutneuroneamp.wrapPut(i,0);~flagoutneuroneduree.wrapPut(i,0);~flaggenetiquefreq.wrapPut(i,0);~flaggenetiqueamp.wrapPut(i,0);~flaggenetiqueduree.wrapPut(i,0);~duree.wrapPut(i, 0);
 								~routineinstrument.wrapAt(i).play(quant: Quant.new(1));
@@ -4729,7 +4794,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 									~routineinstrument.wrapAt(i).stop;
 									// Set MIDI Off
 									if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-										~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+										~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+											if(flagVST == 'on', {~fxVST.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+										});
 									});
 									~flagfreq.wrapPut(i,0);~flagamp.wrapPut(i,0);~flagduree.wrapPut(i,0);~flagneuronefreq.wrapPut(i,0);~flagneuroneamp.wrapPut(i,0);~flagneuroneduree.wrapPut(i,0);~flagoutneuronefreq.wrapPut(i,0);~flagoutneuroneamp.wrapPut(i,0);~flagoutneuroneduree.wrapPut(i,0);~flaggenetiquefreq.wrapPut(i,0);~flaggenetiqueamp.wrapPut(i,0);~flaggenetiqueduree.wrapPut(i,0);~duree.wrapPut(i, 0);
 									~routineinstrument.wrapAt(i).play(quant: Quant.new(1));
@@ -4837,7 +4904,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 							~routineinstrument.wrapAt(i).stop;
 							// Set MIDI Off
 							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+								});
 							});
 							~flagfreq.wrapPut(i,0);~flagamp.wrapPut(i,0);~flagduree.wrapPut(i,0);~flagneuronefreq.wrapPut(i,0);~flagneuroneamp.wrapPut(i,0);~flagneuroneduree.wrapPut(i,0);~flagoutneuronefreq.wrapPut(i,0);~flagoutneuroneamp.wrapPut(i,0);~flagoutneuroneduree.wrapPut(i,0);~flaggenetiquefreq.wrapPut(i,0);~flaggenetiqueamp.wrapPut(i,0);~flaggenetiqueduree.wrapPut(i,0);~duree.wrapPut(i, 0);
 							~routineinstrument.wrapAt(i).play(quant: Quant.new(1))},
@@ -5597,7 +5666,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			},{~routineinstrument.wrapAt(i).stop;~duree.wrapPut(i, 0);
 				// Set MIDI Off
 				if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-					~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+					~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+						if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+					});
 				});
 			});
 		};
@@ -5982,6 +6053,32 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source), lock);
 					SendReply.kr(trackb, '/RobotBand_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
+
+			// Synth VST
+			SynthDef("VST Plugin",
+				{arg out=0, xFade=0.5, panLo=0, panHi=0, gainIn=0.5, bpm=1;
+					var signal, chain, ambisonic;
+					bpm = if(bpm > 1, bpm.reciprocal, bpm);
+					signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
+					chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
+					//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+					chain = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);,
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
+								// Ambisonic
+								(
+									ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
+					))));
+					// Out
+					XOut.ar(out, xFade, chain);
+			}).add;
 
 			// Mod�le de definition de synth !!!!!
 
