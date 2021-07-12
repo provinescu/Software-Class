@@ -5,7 +5,7 @@ AgentsBand {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST;
 
 	*new	{arg path="~/Documents/AgentsBand/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -947,6 +947,7 @@ G                           Init Genome Agent (solo).
 			~scale = Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning);
 			~flagScaling = 'off';
 			~flagAlgoAnalyze == 0;
+			flagVST = 'off';
 
 			//////////////////////////////////////////////////////////
 
@@ -1791,6 +1792,10 @@ G                           Init Genome Agent (solo).
 		// Creation MasterFX
 		~masterFX = Synth.new("MasterFX", [\limit, 0.8], ~groupeMasterFX, \addToTail);
 		s.sync;
+		// VST
+		~synthVST = Synth.newPaused("VST Plugin", [\xFade, 0.5, \gainIn, 0.5], ~groupeMasterFX, \addToHead);
+		~fxVST = VSTPluginController(~synthVST);
+		s.sync;
 		//};
 
 		// Creation synthDef analyse
@@ -2298,7 +2303,9 @@ G                           Init Genome Agent (solo).
 			agent = agent.clip(0, ~agents - 1);// security size
 			// Set MIDI Off
 			if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
-				~freqMidi.wrapAt(agent).size.do({arg index; ~midiOut.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0)});// MIDI OFF
+				~freqMidi.wrapAt(agent).size.do({arg index; ~midiOut.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0);
+					if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0)});
+				});// MIDI OFF
 			});
 			~vies.removeAt(agent);
 			~ages.removeAt(agent);
@@ -3201,7 +3208,9 @@ G                           Init Genome Agent (solo).
 				{~canalMidiOutAgent.wrapPut(agent, ~genomes.wrapAt(agent).wrapAt(39)* 16 - 1)});
 			// Set MIDI Off
 			if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
-				~freqMidi.wrapAt(agent).size.do({arg index; ~midiOut.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0)});// MIDI OFF
+				~freqMidi.wrapAt(agent).size.do({arg index; ~midiOut.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0);
+					if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0)});
+				});// MIDI OFF
 				// Reset MIDI OUT
 				~freqMidi.wrapPut(agent, []);
 				~freqMidi.wrapPut(agent, (freq + 0.5).floor);// Liste freqMidi agents
@@ -3231,6 +3240,7 @@ G                           Init Genome Agent (solo).
 				// Send MIDI On
 				if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
 					~midiOut.noteOn(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), ar*127);// Send note MIDI ON
+					if(flagVST == 'on', {~fxVST.midi.noteOn(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), ar*127)});
 				});
 				// Synth
 				Synth.new(synth, ['out', audioOut + ~startChannelAudioOut, 'buseffets', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index,'freq', freq.wrapAt(index), 'rate', freqRate.wrapAt(index), 'amp', a, 'ampreal', ar, 'duree', duree, 'panLo', pan.wrapAt(0), 'panHi', pan.wrapAt(1), 'offset', offset, 'loop', loopSample, 'reverse', reverseSample,  'buffer', bufferSon.bufnum,  'buffer2', bufferSon2.bufnum, 'controlF', controlF, 'controlA', controlA, 'controlD', controlD, 'antiClick1', ~antiClick.wrapAt(0), 'antiClick2', ~antiClick.wrapAt(1),'controlenvlevel1', envLevel.wrapAt(0), 'controlenvlevel2', envLevel.wrapAt(1), 'controlenvlevel3', envLevel.wrapAt(2), 'controlenvlevel4', envLevel.wrapAt(3), 'controlenvlevel5', envLevel.wrapAt(4),  'controlenvlevel6', envLevel.wrapAt(5),  'controlenvlevel7', envLevel.wrapAt(6),  'controlenvlevel8', envLevel.wrapAt(7), 'controlenvtime1', envDuree.wrapAt(0), 'controlenvtime2', envDuree.wrapAt(1), 'controlenvtime3', envDuree.wrapAt(2), 'controlenvtime4', envDuree.wrapAt(3), 'controlenvtime5', envDuree.wrapAt(4), 'controlenvtime6', envDuree.wrapAt(5), 'controlenvtime7', envDuree.wrapAt(6), 'in', sourceInAgent, 'flag', flagInput], ~groupeSynthAgents, \addToTail);//play
@@ -3627,7 +3637,7 @@ G                           Init Genome Agent (solo).
 			if(~flagHPsequenceEditor == 'on', {~wSequence.close;~routineSequence.remove});
 			if(~flagHPscoreEditor == 'on', {~wScore.close;~routineScore.clear});
 			if(~flagHPliveCoding == 'on', {~wCoding.close});
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 			MIDIIn.disconnect;
 			~serverAdresse.disconnect;
 			if(~masterAppAddr != nil, {~masterAppAddr.disconnect});
@@ -3642,6 +3652,7 @@ G                           Init Genome Agent (solo).
 			Tdef.removeAll;
 			MIDIdef.freeAll;
 			~menuAgentsBand.remove;// remove custom menu
+			windowVST.close;
 			//s.quit;
 		};
 
@@ -4870,7 +4881,7 @@ G                           Init Genome Agent (solo).
 				~routineAutomationEffets.stop;
 				~routineAutomationVerb.stop;
 			});
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 		};
 		~startsysteme.focus;
 		~musique = Button(~wp,Rect(10,10,75,20)).states=[["Music On", Color.black, Color.green(0.8, 0.25)],["Music Off", Color.black, Color.red(0.8, 0.25)]];
@@ -4881,7 +4892,7 @@ G                           Init Genome Agent (solo).
 					~tempoMusicPlay.schedAbs(~tempoMusicPlay.beats, {~routineMusic.wrapAt(agent).play(quant: Quant.new(1));nil});
 			})})},
 			{~agents.do({arg agent; ~routineMusic.wrapAt(agent).stop;~musicOutAgents.wrapPut(agent , 0)})});
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 		};
 		~viewworld = Button(~wp,Rect(10,10,100,20)).states=[["View Virtual On", Color.black, Color.green(0.8, 0.25)],["View Virtual Off", Color.black, Color.red(0.8, 0.25)]];
 		~viewworld.action = {arg view;
@@ -4967,7 +4978,7 @@ G                           Init Genome Agent (solo).
 					MIDIIn.disconnect;
 					~canalMidiInSlider.enabled_(false)}
 			);
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 		};
 		~canalMidiInSlider=PopUpMenu(~wp, 70 @ 20).items=["MIin 1", "MIin 2", "MIin 3", "MIin 4", "MIin 5", "MIin 6", "MIin 7", "MIin 8", "MIin 9", "MIin 10", "MIin 11", "MIin 12", "MIin 13", "MIin 14", "MIin 15", "MIin 16"];
 		~canalMidiInSlider.action={arg canal;
@@ -4978,7 +4989,7 @@ G                           Init Genome Agent (solo).
 		~canalMidiOutSlider=PopUpMenu(~wp, 70 @ 20).items=["MIout Off", "MIout 1", "MIout 2", "MIout 3", "MIout 4", "MIout 5", "MIout 6", "MIout 7", "MIout 8", "MIout 9", "MIout 10", "MIout 11", "MIout 12", "MIout 13", "MIout 14", "MIout 15", "MIout 16"];
 		~canalMidiOutSlider.action={arg canal;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~canalMidiOutSlider", canal.value)});
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 			~canalMidiOut=canal.value - 1; ~canauxMidiInOut.wrapPut(1, canal.value - 1);
 			~agents.do({arg agent; ~canalMidiOutAgent.wrapPut(agent, canal.value - 1)});
 		};
@@ -5187,7 +5198,7 @@ G                           Init Genome Agent (solo).
 		~initsysteme = Button(~wp,Rect(10,10,75,20)).states=[["Init Crew", Color.red, Color.grey]];
 		~initsysteme.action = {arg view;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~initsysteme", 1)});
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 			~foncInitAgents.value;
 		};
 		~foncInitAgents={
@@ -5242,7 +5253,7 @@ G                           Init Genome Agent (solo).
 			~agentsBand = [];
 			~agents=~startpopulation;
 			// initialisation pour debut processus
-			16.do({arg canal; ~midiOut.allNotesOff(canal)});
+			16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 			~agents.do({arg agent; ~initagents.value(agent, nil, nil, nil, 'init', [], [], [], 0, 0, 0)});
 		};
 		~populationInitialeSlider=EZKnob(~wp, 150 @ 20, "Starting Crew",ControlSpec(1, ~maximumabsoluagents, \lin, 1),
@@ -5280,7 +5291,7 @@ G                           Init Genome Agent (solo).
 			{|ez| ~dureeaccord=ez.value;~agents.do({arg agent;~chordDurAgents.wrapPut(agent, ~dureeaccord)}); if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~dureeAccordsSlider", ez.value)})},~dureeaccord, labelWidth: 60,unitWidth: 0, layout: 'horz');
 		~tempoSlider=EZKnob(~wp, 100 @ 20, "BPM",ControlSpec(1, 960, \exp, 0),
 			{|ez| if(~oscStateFlag == 'master', {~slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
-				~tempoMusic=ez.value;~tempoMusicPlay.tempo_(ez.value / 60);
+				~tempoMusic=ez.value;~tempoMusicPlay.tempo_(ez.value / 60); ~groupeMasterFX.set(\bpm, ez.value / 60);
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~tempoSlider", ez.value)});
 		},~tempoMusic,  labelWidth: 30,unitWidth: 0, layout: 'horz');
 		~nombreBeats=EZKnob(~wp, 100 @ 20, "Bar",ControlSpec(1, 64, \exp, 0),
@@ -5607,6 +5618,41 @@ G                           Init Genome Agent (solo).
 		});
 		windowKeyboard.front;
 		setupKeyboardShortCut.focus;
+
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(700, 50, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {~synthVST.run(false); flagVST = 'off'},
+				1, {~synthVST.run(true); flagVST ='on'};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.gui;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| ~groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| ~groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| ~groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.front;
 
 	}
 
@@ -6977,7 +7023,7 @@ G                           Init Genome Agent (solo).
 			~vitesseAgentsSlider.value=~vitesseagents=datafile.wrapAt(24);
 			~devianceSlider.value=~deviance=datafile.wrapAt(25);~dvt=datafile.wrapAt(25);
 			~canalMidiInSlider.valueAction=~canalMidiIn=datafile.wrapAt(26).wrapAt(0);
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 			~canalMidiOutSlider.valueAction=~canalMidiOut=datafile.wrapAt(26).wrapAt(1) + 1;
 			~canauxMidiInOut=datafile.wrapAt(26);
 			~choiceFilter.valueAction=datafile.wrapAt(27);
@@ -7034,7 +7080,7 @@ G                           Init Genome Agent (solo).
 			~vitesseAgentsSlider.value=~vitesseagents=datafile.wrapAt(24);
 			~devianceSlider.value=~deviance=datafile.wrapAt(25);~dvt=datafile.wrapAt(25);
 			~canalMidiInSlider.valueAction=~canalMidiIn=datafile.wrapAt(26).wrapAt(0);
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 			~canalMidiOutSlider.valueAction=~canalMidiOut=datafile.wrapAt(26).wrapAt(1) + 1;
 			~canauxMidiInOut=datafile.wrapAt(26);
 			~choiceFilter.valueAction=datafile.wrapAt(27);
@@ -7692,6 +7738,32 @@ G                           Init Genome Agent (solo).
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source, 0.5, 1), lock);
 					SendReply.kr(trackb, '/AgentsBand_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
+
+			// Synth VST
+			SynthDef("VST Plugin",
+				{arg out=0, xFade=0.5, panLo=0, panHi=0, gainIn=0.5, bpm=1;
+					var signal, chain, ambisonic;
+					bpm = if(bpm > 1, bpm.reciprocal, bpm);
+					signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
+					chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
+					//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+					chain = if(~switchAudioOut == 'Stereo',
+						// Pan
+						Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
+						if(~switchAudioOut == 'Multispeaker',
+							// PanAz
+							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);,
+							if(~switchAudioOut == 'Rotate2',
+								// Rotate2
+								Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
+								// Ambisonic
+								(
+									ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
+					))));
+					// Out
+					XOut.ar(out, xFade, chain);
+			}).add;
 
 			///////////////// SYNTHDEF With PlayBuf//////
 

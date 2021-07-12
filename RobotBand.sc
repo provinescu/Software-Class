@@ -258,7 +258,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					MIDIIn.connect(0, 0);
 					~midiOut = MIDIOut(0);
 					//midiOut.connect(0);
-					16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
+					16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
 			Menu(
@@ -273,7 +273,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						port = index.asInteger;
 						~midiOut = MIDIOut(port);
 						//midiOut.connect(port);
-						16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
+						16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 					});
 				});
 			).title_("Setting"),
@@ -2408,7 +2408,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						file = p.fileName;
 						p = p.pathOnly;
 						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
+							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 							~initAllSynth.value(p, file);
 							s.sync;
 							~nombreinstrument.do({arg w; ~synthcontrol.wrapAt(w).items_(~listSynth)});
@@ -2431,7 +2431,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						file = p.fileName;
 						p = p.pathOnly;
 						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
+							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 							~nombrebuffer.do({arg i;
 								~listebuffer.wrapAt(i).free;
 								~busreclevel.wrapAt(i).free;
@@ -2493,7 +2493,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						p = PathName.new(paths);
 						p = p.pathOnly;
 						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
+							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 							~nombrebuffer.do({arg i;
 								~listebuffer.wrapAt(i).free;
 								~busreclevel.wrapAt(i).free;
@@ -2548,7 +2548,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		this.shortCuts;//raccourcis clavier
 
 		~cmdperiodfunc = {
-			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
+			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 			MIDIIn.disconnect;
 			MIDIdef.freeAll;
 			~listewindow.do({arg w; w.close});
@@ -2636,7 +2636,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~menuRobotBand.remove;
 		~nombreinstrument.do({arg i; ~listewindow.wrapAt(i).close});
 		~wg.close;~wp.close;~windowMasterFX.close;windowKeyboard.close;
-		if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
+		if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 		MIDIIn.disconnect;
 		~serverAdresse.disconnect;
 		if(~masterAppAddr != nil, {~masterAppAddr.disconnect});
@@ -3648,7 +3648,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Switch Canal MIDi OUT
 			~midibutton=~midibutton.add(PopUpMenu(w,Rect(0, 0, 125, 18)).background_(Color.grey(0.5, 0.8)).items = ["MIDI out off", "MIDI out 1", "MIDI out 2", "MIDI out 3", "MIDI out 4", "MIDI out 5", "MIDI out 6", "MIDI out 7", "MIDI out 8", "MIDI out 9", "MIDI out 10", "MIDI out 11", "MIDI out 12", "MIDI out 13", "MIDI out 14", "MIDI out 15", "MIDI out 16"]);
 			~midibutton.wrapAt(i).action={arg canal;~writepartitions.value(i,'normal','off',"~midibutton",canal.value);~foncpart.value(i, canal.value);
-				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal.value - 1); ~fxVST.midi.allNotesOff(canal.value - 1)})});
+				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal.value - 1); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal).value -1})})});
 				~canalMidiOutInstr.wrapPut(i, canal.value - 1);
 			};
 
@@ -3784,7 +3784,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//~tempoprocessgenetique.enabled_(false);
 				//~tempoprocessalgorithmes.enabled_(false);
 				//~tempoprocessautomation.enabled_(false);
-				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});//MIDI setup off
+				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 		})};
 		~startsysteme.focus;
 		// Calculation Audio start stop playing
