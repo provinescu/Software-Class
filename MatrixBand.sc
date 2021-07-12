@@ -4905,7 +4905,6 @@ y ... -					Musical keys.
 				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
-				Poll.kr(Impulse.kr(10), panLo, "Pan");
 				chain = if(switchAudioOut == 'Stereo',
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),

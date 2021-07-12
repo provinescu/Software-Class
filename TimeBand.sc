@@ -475,7 +475,7 @@ f						Switch File for Analyze.
 		fonctionLoadPreset = {arg data, window, flag;
 			var a, b, c, d, e, f, control;
 			// Midi Off
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});
+			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 			// load Buffer Synth and Setup Sliders Sample
 			numberSynth.do({arg synth;
 				var item1, item2;
@@ -1555,7 +1555,7 @@ f						Switch File for Analyze.
 					windowKeyboard.close;
 					windowVST.close;
 					Tdef.removeAll;
-					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});
+					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 					MIDIIn.disconnect;
 					MIDIdef.freeAll;
 					//s.freeAll;
@@ -1760,7 +1760,7 @@ f						Switch File for Analyze.
 					MIDIIn.connect(0, 0);
 					midiOut = MIDIOut(0);
 					//midiOut.connect(0);
-					16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
+					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
 			Menu(
@@ -1775,7 +1775,7 @@ f						Switch File for Analyze.
 						port = index.asInteger;
 						midiOut = MIDIOut(port);
 						//midiOut.connect(port);
-						16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
+						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 					});
 				});
 			).title_("Setting");
@@ -2463,7 +2463,7 @@ f						Switch File for Analyze.
 				0, {if(flagRecording == 'on', {s.pauseRecording}); sequencer.stop;
 					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport stop
 					synthFileIn.run(false);
-					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});
+					if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 				},
 				1, {if(flagRecording == 'on', {s.record}); sequencer.play;
 					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
@@ -2509,7 +2509,7 @@ f						Switch File for Analyze.
 
 		// Setup AudioIn/FileIn
 		typeAudio = PopUpMenu(windowExternalControlGUI, Rect(0, 0, 65, 20)).background_(Color.grey(0.75, 0.25)).stringColor_(Color.black).items_(['AudioIn', 'FileIn']).action = {arg item;
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});
+			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 			if(item.value == 0, {synthAudioIn.run(true); synthFileIn.run(false);
 				numberSynth.do({arg synth;
 					synthAudioRec.at(synth).free;
@@ -2536,7 +2536,7 @@ f						Switch File for Analyze.
 
 		// Setup Algo Audio
 		PopUpMenu(windowExternalControlGUI, Rect(0, 0, 70, 20)).background_(Color.grey(0.75, 0.25)).stringColor_(Color.black).items_(['Algo Off', 'Onset', 'Pitch', 'Pitch2', 'KeyTrack', 'Keyboard', 'MIDI']).action = {arg item;
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})});
+			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 			switch(item.value,
 				0, {synthOSConset.run(false); synthOSCpitch.run(false); synthOSCkeytrack.run(false); synthOSCkeyboard.run(false); synthOSCFFT.run(true); flagKeyboard='off'; flagOSC = 0; flagMIDI = 0; densityBPM = [windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60];
 					// Init Array
@@ -2702,9 +2702,9 @@ f						Switch File for Analyze.
 		// MIDI OOU on / off
 		Button(windowExternalControlGUI,Rect(0, 0, 75, 20)).states_([["MIDI Out Off", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["MIDI Out On", Color.new(0.1, 0.8, 0.9, 1), Color.red]]).action = {|view|
 			switch(view.value,
-				0, {flagMidiOut = 'off'; 16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
+				0, {flagMidiOut = 'off'; 16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 				},
-				1, {flagMidiOut = 'on'; 16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)});
+				1, {flagMidiOut = 'on'; 16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 				}
 			)
 		};
@@ -2961,7 +2961,7 @@ f						Switch File for Analyze.
 			Button(windowControlGUI, Rect(synth * 315 + 75, numberSynth * 25 + 125, 50, 20))
 			.background_(Color.grey).
 			states_([["Mute", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["Mute", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
-			action_({arg etat; if(etat.value == 0, {listeMuteSynth.put(synth, 0)}, {listeMuteSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})})})});
+			action_({arg etat; if(etat.value == 0, {listeMuteSynth.put(synth, 0)}, {listeMuteSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})})})});
 
 			// Solo Synth
 			Button(windowControlGUI, Rect(synth * 315 + 135, numberSynth * 25 + 125, 50, 20))
@@ -2969,7 +2969,7 @@ f						Switch File for Analyze.
 			states_([["Solo", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["Solo", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
 			action_({arg etat; if(etat.value == 0, {listeSoloSynth.put(synth, 0)}, {numberSynth.do({arg i; listeSoloSynth.put(i, 0);
 				if(i != synth, {windowControlGUI.view.children.at((i * 93 + 8) + (numberSynth * numberMaxStepSequencer + 14)).valueAction_(0)})});
-			listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); ~fxVST.midi.allNotesOff(canal)})})})});
+			listeSoloSynth.put(synth, 1); if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})})})});
 
 			// Buffer sampler
 			Button(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 150, 90, 20)).

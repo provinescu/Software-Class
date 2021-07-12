@@ -845,18 +845,6 @@ DensityBand {
 		// Run Soft
 		s.waitForBoot({
 
-			/*			// MIDI INIT
-			MIDIClient.init;
-			s.sync;
-			// Connect first device by default
-			MIDIIn.connect(0, 0);
-			s.sync;
-			midiOut = MIDIOut(0);
-			//midiOut.connect(0);
-			s.sync;
-			16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
-			s.sync;*/
-
 			// Init SynthDef
 			this.initSynthDef;
 			s.sync;
@@ -2577,9 +2565,6 @@ DensityBand {
 		};
 
 		cmdperiodfunc = {
-			/*listeDataInstruments.do({arg data, index;
-				if(flagMidiOut == 'on' and: {data.at(6) == nil}, {midiOut.noteOff(data.at(7), data.at(10), 0); fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
-			});*/
 			16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
@@ -2872,33 +2857,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		);
 		MainMenu.register(menuAudio.title_("Audio"), "DensityBandTools");
 
-		/*menuVST= Menu(
-		MenuAction("Browse", {
-		fxVST.browse;
-		}),
-		MenuAction("GUI", {
-		fxVST.gui;
-		}),
-		MenuAction("Editor", {
-		fxVST.editor;
-		}),
-		MenuAction("xFade", {
-		SCRequestString("0.5", "xFade Value (0..1)", {arg strg;
-		groupeVST.set(\xFade, strg.asFloat);
-		});
-		}),
-		MenuAction("Gain In", {
-		SCRequestString("0.5", "Gain Value (0..1)", {arg strg;
-		groupeVST.set(\gainIn, strg.asFloat);
-		});
-		}),
-		Menu(
-		MenuAction("On", {synthVST.run(true)}),
-		MenuAction("Off", {synthVST.run(false)});
-		).title_("VST Run");
-		);
-		MainMenu.register(menuVST.title_("VST Plugin"), "DensityBandTools");*/
-
 		menuMIDI = Menu(
 			MenuAction("Init", {
 				MIDIClient.init;
@@ -2907,7 +2865,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					MIDIIn.connect(0, 0);
 					midiOut = MIDIOut(0);
 					//midiOut.connect(0);
-					16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
+					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
 			Menu(
@@ -2922,7 +2880,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						port = index.asInteger;
 						midiOut = MIDIOut(port);
 						//midiOut.connect(port);
-						16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
+						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
 					});
 				});
 			).title_("Setting");
@@ -3543,7 +3501,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		startSystem.action = {arg start, varTampon;
 			switch (start.value,
 				0, {
-					16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
+					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
 					groupeRecBuffer.freeAll;
 					groupeSynth.freeAll;
 					groupeFX.freeAll;
