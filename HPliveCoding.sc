@@ -11,7 +11,7 @@ HPliveCoding {
 	init	{arg textOnFly;
 
 		// Init GUI + edit Coding
-		// utilise les variables de AgentsBand !!!!
+		// utilise les variables de Agents !!!!
 
 		~flagHPliveCoding = 'on';
 
@@ -25,9 +25,9 @@ HPliveCoding {
 	edit {arg textOnFly;
 
 		//Coding
-		~wCoding = Window("Live Coding for AgentsBand by HP", Rect(150, 150, 625, 500));
+		~wCoding = Window("Live Coding for Agents by HP", Rect(150, 150, 625, 500));
 		~wCoding.view.decorator = FlowLayout(~wCoding.view.bounds);
-		StaticText(~wCoding, Rect(0, 0, 500, 24)).string_("Live Coding Editor for AgentsBand").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(~wCoding, Rect(0, 0, 500, 24)).string_("Live Coding Editor for Agents").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
 		~wCoding.view.decorator.nextLine;
 		// Load Coding
 		~menuCoding = PopUpMenu(~wCoding,Rect(0, 0, 175, 20)).background_(Color.grey(0.5, 0.8)).items = ["LiveCoding Menu", "Load CondingOnFly", "Save CondingOnFly"];
@@ -38,7 +38,7 @@ HPliveCoding {
 				// Load Coding
 				1, {Dialog.getPaths({ arg paths;
 					paths.do({ arg p; var file, coding;
-						~wCoding.name="Live Coding Editor for AgentsBand by HP"+p;
+						~wCoding.name="Live Coding Editor for Agents by HP"+p;
 						~wEditCoding.open(p);
 				})},{"cancelled".postln})},
 				// Save Coding

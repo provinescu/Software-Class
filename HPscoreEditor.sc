@@ -11,7 +11,7 @@ HPscoreEditor {
 	init	{arg score;
 
 		// Init GUI + edit score
-		// utilise les variables de AgentsBand !!!!
+		// utilise les variables de Agents !!!!
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -26,9 +26,9 @@ HPscoreEditor {
 	edit {arg score;
 
 		//Score
-		~wScore = Window("Score Editor for AgentsBand by HP", Rect(250, 250, 625, 500));
+		~wScore = Window("Score Editor for Agents by HP", Rect(250, 250, 625, 500));
 		~wScore.view.decorator = FlowLayout(~wScore.view.bounds);
-		StaticText(~wScore, Rect(0, 0, 500, 24)).string_("A Score Editor for AgentsBand").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(~wScore, Rect(0, 0, 500, 24)).string_("A Score Editor for Agents").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
 		~wScore.view.decorator.nextLine;
 		// Load Score
 		~menuScore = PopUpMenu(~wScore,Rect(0, 0, 175, 20)).background_(Color.grey(0.5, 0.8)).items = ["Score menu", "Load Score", "Save Score"];
@@ -42,7 +42,7 @@ HPscoreEditor {
 						~routineScore.value(~scorePlaying).stop;~routineScore.value(~scorePlaying).remove;
 						file=File(p,"r");
 						score = file.readAllString;
-						~wScore.name="Score Editor for AgentsBand by HP"+p;
+						~wScore.name="Score Editor for Agents by HP"+p;
 						~scorePlaying = score.interpret;
 						~wEditScore.string_(score);
 						file.close})},{"cancelled".postln})},

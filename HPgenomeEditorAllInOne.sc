@@ -11,7 +11,7 @@ HPgenomeEditorAllInOne {
 	init	{arg agent;
 
 		// Init GUI + edit genomes
-		// utilise les variables ~genomes et ~agents de AgentsBand !!!!
+		// utilise les variables ~genomes et ~agents de Agents !!!!
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -25,10 +25,10 @@ HPgenomeEditorAllInOne {
 	edit {arg agent, listeView=[];
 
 		//Activation genomes
-		~wEditor = Window("Genome Editor for AgentsBand by HP", Rect(0, 0, 800, 800), scroll: true);
+		~wEditor = Window("Genome Editor for Agents by HP", Rect(0, 0, 800, 800), scroll: true);
 		~wEditor.view.decorator = FlowLayout(~wEditor.view.bounds);
 		//~wEditor.acceptsMouseOver_(true);
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("A Genome Editor for AgentsBand").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("A Genome Editor for Agents").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 14));
 		~wEditor.view.decorator.nextLine;
 		// menu Genome
 		~menuGenomeAll = PopUpMenu(~wEditor,Rect(0, 0, 125, 18)).background_(Color.grey(0.5, 0.8)).items = ["Genome Menu", "Load Genomes", "Save Genomes"];

@@ -1111,7 +1111,7 @@ G                           Init Genome Agent (solo).
 			~geneticA = [];
 			~geneticD = [];
 			~neuralFAD = [];
-			~agents = [];
+			~agentsBand = [];
 			//FHZ Band System
 			~numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
 			// ~bandFHZ pour test dans OSC analyze 108-24 = 84 -->> range piano
@@ -2295,7 +2295,7 @@ G                           Init Genome Agent (solo).
 						if(0.5.coin, {listBand.put(band, 1)});
 				});
 			});
-			~agents = ~agents.add(listBand);
+			~agentsBand = ~agentsBand.add(listBand);
 		};
 
 		// Mort agents
@@ -2347,7 +2347,7 @@ G                           Init Genome Agent (solo).
 			~geneticA.removeAt(agent);
 			~geneticD.removeAt(agent);
 			~neuralFAD.removeAt(agent);
-			~agents.removeAt(agent);
+			~agentsBand.removeAt(agent);
 			// Free buffers
 			~bufferAudioAgents.wrapAt(agent).free;
 			~bufferFileAgents.wrapAt(agent).free;
@@ -2496,9 +2496,9 @@ G                           Init Genome Agent (solo).
 				diff2=x.neg%~dureeanalysemax + y.neg%1.0 + z.neg%1.0;
 				if(diff1 <= diff2, {difference = diff1}, {difference = diff2});
 				if(sqrt(difference) <= distance, {signaux=signaux.add(signal);
-					if(~flagSynthBand == 'on' and: {~agents.wrapAt(agent).wrapAt(0) == 0} or: {{~flagGeneBand == 'on' and: {~genomes.wrapAt(agent).wrapAt(46).wrapAt(0) == 0}}}.value,
+					if(~flagSynthBand == 'on' and: {~agentsBand.wrapAt(agent).wrapAt(0) == 0} or: {{~flagGeneBand == 'on' and: {~genomes.wrapAt(agent).wrapAt(46).wrapAt(0) == 0}}}.value,
 						{
-							if(~flagGeneBand == 'on', {geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agents.wrapAt(agent)});
+							if(~flagGeneBand == 'on', {geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 							//
 							for(1, ~numFhzBand, {arg i;
 								if(fhz > ~bandFHZ.wrapAt(i-1) and: {fhz < ~bandFHZ.wrapAt(i)} and: {geneFHZ.wrapAt(i) == 1}, {
@@ -2551,12 +2551,12 @@ G                           Init Genome Agent (solo).
 			~listefreq.size.do({arg signal;
 				var regle='true';
 				fhz = ~listefreq.wrapAt(signal) * 127;
-				if({~flagSynthBand == 'on' and: {~agents.wrapAt(agent).wrapAt(0) == 0}}.value or: {{~flagGeneBand == 'on' and: {~genomes.wrapAt(agent).wrapAt(46).wrapAt(0) == 0}}}.value,
+				if({~flagSynthBand == 'on' and: {~agentsBand.wrapAt(agent).wrapAt(0) == 0}}.value or: {{~flagGeneBand == 'on' and: {~genomes.wrapAt(agent).wrapAt(46).wrapAt(0) == 0}}}.value,
 					{
 						if(sqrt(sqrdif(ax , ~listeduree.wrapAt(signal)) + sqrdif(ay , ~listefreq.wrapAt(signal)) + sqrdif(az , ~listeamp.wrapAt(signal))) <= distance,
 							{
 								if(~flagGeneBand == 'on',
-									{geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agents.wrapAt(agent)});
+									{geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 								for(1, ~numFhzBand, {arg i;
 									if(fhz > ~bandFHZ.wrapAt(i-1) and: {fhz < ~bandFHZ.wrapAt(i)} and: {geneFHZ.wrapAt(i) == 1}, {
 										signaux=signaux.add(signal);
@@ -5250,7 +5250,7 @@ G                           Init Genome Agent (solo).
 			~kohonenF = [];
 			~kohonenA = [];
 			~kohonenD = [];
-			~agents = [];
+			~agentsBand = [];
 			~agents=~startpopulation;
 			// initialisation pour debut processus
 			16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});

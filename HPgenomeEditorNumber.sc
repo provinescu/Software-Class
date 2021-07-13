@@ -11,7 +11,7 @@ HPgenomeEditorNumber {
 	init	{arg agent;
 
 		// Init GUI + edit sequences
-		// utilise ~genomes et ~agents de AgentsBand !!!!
+		// utilise ~genomes et ~agents de Agents !!!!
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -28,9 +28,9 @@ HPgenomeEditorNumber {
 		~agentEditor=1;
 
 		//Activation genomes Agents-Synth
-		~wEditor = Window("Genomes Editor for AgentsBand by HP", Rect(10, 10, 625, 550), scroll: true);
+		~wEditor = Window("Genomes Editor for Agents by HP", Rect(10, 10, 625, 550), scroll: true);
 		~wEditor.view.decorator = FlowLayout(~wEditor.view.bounds);
-		StaticText(~wEditor, Rect(0, 0, 500, 24)).string_("A Genomes Editor for AgentsBand").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(~wEditor, Rect(0, 0, 500, 24)).string_("A Genomes Editor for Agents").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 14));
 		~wEditor.view.decorator.nextLine;
 		// Menu Genome
 		~menuGenome = PopUpMenu(~wEditor,Rect(0, 0, 150, 20)).background_(Color.grey(0.5, 0.8)).items = ["Genomes Menu", "Load Genome",  "Load Genomes", "Save Genome", "Save Genomes"];

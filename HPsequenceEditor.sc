@@ -11,7 +11,7 @@ HPsequenceEditor {
 	init	{arg agent;
 
 		// Init GUI + edit sequences
-		// utilise les variables ~listeagentfreq ~listeagentamp ~listeagentduree et ~agents de AgentsBand !!!!
+		// utilise les variables ~listeagentfreq ~listeagentamp ~listeagentduree et ~agents de Agents !!!!
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -28,9 +28,9 @@ HPsequenceEditor {
 		~agentSequence=1;
 
 		//Activation sequence Agents-Synth
-		~wSequence = Window("Sequences Editor for AgentsBand by HP", Rect(500, 100, 625, 500));
+		~wSequence = Window("Sequences Editor for Agents by HP", Rect(500, 100, 625, 500));
 		~wSequence.view.decorator = FlowLayout(~wSequence.view.bounds);
-		StaticText(~wSequence, Rect(0, 0, 500, 24)).string_("A Sequences Editor for AgentsBand").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(~wSequence, Rect(0, 0, 500, 24)).string_("A Sequences Editor for Agents").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
 		~wSequence.view.decorator.nextLine;
 		// menu Sequence
 		~menuSequence = PopUpMenu(~wSequence,Rect(0, 0, 125, 20)).background_(Color.grey(0.5, 0.8)).items = ["Sequences Menu", "Load Sequence", "Load Sequences", "Save Sequence", "Save Sequences"];
