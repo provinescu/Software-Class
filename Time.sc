@@ -3653,20 +3653,25 @@ f						Switch File for Analyze.
 				1, {~synthVST.run(true); flagVST ='on'};
 			);
 		};
-		Button(windowVST, Rect(0, 0, 75, 20)).
+		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Browse", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.browse;
 		};
-		Button(windowVST, Rect(0, 0, 75, 20)).
+		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Editor", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.editor;
 		};
-		Button(windowVST, Rect(0, 0, 75, 20)).
+		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["GUI", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.gui;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Close", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.close;
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| groupeLimiter.set(\xFade, ez.value)}, 0.5, layout: \horz);
