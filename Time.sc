@@ -475,7 +475,7 @@ f						Switch File for Analyze.
 		fonctionLoadPreset = {arg data, window, flag;
 			var a, b, c, d, e, f, control;
 			// Midi Off
-			if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
+			//if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 			// load Buffer Synth and Setup Sliders Sample
 			numberSynth.do({arg synth;
 				var item1, item2;
