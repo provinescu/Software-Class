@@ -3486,6 +3486,345 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		//////////////////////////////// GUI //////////////////////////////////
 
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {synthVST.run(false); flagVST = 'off'},
+				1, {synthVST.run(true); flagVST = 'on'};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			fxVST.gui;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Close", Color.white]]).
+		action = {arg shortcut;
+			fxVST.close;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| groupeVST.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| groupeVST.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| groupeVST.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.onClose_({groupeVST.free});
+		windowVST.front;
+
+		////////////////////////// Window Keyboard ///////////////////////////////
+		windowKeyboard = Window.new("Keyboard", Rect(600, 25, 625, 130), scroll: true);
+		windowKeyboard.view.decorator = FlowLayout(windowKeyboard.view.bounds);
+		windowKeyboard.front;
+		// Setup ShortCut
+		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 105, 20));
+		setupKeyboardShortCut.states = [["System Shortcut", Color.green], ["Keyboard Shortcut", Color.red]];
+		setupKeyboardShortCut.action = {arg shortcut;
+			if(shortcut.value == 1, {keyboardShortCut.value(windowKeyboard);
+				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.setColor(note, Color.blue)})}, {fonctionShortCut.value(windowKeyboard);
+				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.removeColor(note)});
+			});
+		};
+		// Keyboard Translate
+		keyboardTranslate = EZKnob(windowKeyboard, 130 @ 20, "Translate", ControlSpec(-36, 31, \lin, 1),
+			{|ez| forBy(60 + keyboardTranslateBefore, 76 + keyboardTranslateBefore, 1, {arg note; keyboard.removeColor(note)});
+				forBy(60 + ez.value, 76 + ez.value, 1, {arg note; keyboard.setColor(note, Color.blue)});
+				keyboardTranslateBefore = ez.value;
+		}, 0, layout: \horz);
+		// Keyboard volume
+		keyboardVolume = EZKnob(windowKeyboard, 130 @ 20, "Volume", \db,
+			{|ez| keyVolume = ez.value.dbamp}, -9, layout: \horz);
+		windowKeyboard.view.decorator.nextLine;
+		// Keyboard Keys
+		keyboard = MIDIKeyboard.new(windowKeyboard, Rect(5, 5, 600, 100), 7, 24);
+		//forBy(60, 76, 1, {arg note; keyboard.setColor(note, Color.blue)});
+		// Action Down
+		keyboard.keyDownAction_({arg note;
+			note = note.value + keyboardTranslate.value;
+			note = note.midicps;
+			synthKeyboard.set(\note, note, \amp, keyVolume, \trigger, 1);
+		});
+		// Action Up
+		keyboard.keyUpAction_({arg note;
+			note = note.value + keyboardTranslate.value;
+			note = note.midicps;
+			synthKeyboard.set(\note, note, \amp, 0, \trigger, 0);
+		});
+		// Action Track
+		keyboard.keyTrackAction_({arg note;
+			note = note.value + keyboardTranslate.value;
+			note = note.midicps;
+			s.bind{
+				synthKeyboard.set(\note, note, \amp, keyVolume, \trigger, 1);
+				s.sync;
+				synthKeyboard.set(\note, note, \amp, 0, \trigger, 0);
+				s.sync;
+			};
+		});
+		setupKeyboardShortCut.focus;
+		windowKeyboard.onClose_({nil});
+
+		////// Window Plotter Data /////
+		windowPlotterData = Window("Analyze [Freq | Amp | Duree]", Rect(710, 800, 515, 220), scroll: true);
+		windowPlotterData.alpha=1.0;
+		windowPlotterData.front;
+		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
+		// Display ON / OFF
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
+		// Refresh Display
+		refreshDisplayDataMusic = Button(windowPlotterData,Rect(0, 0, 100, 20));
+		refreshDisplayDataMusic.states = [["Refresh Plotter"]];
+		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0]]; plotterData = [[0], [0], [0]];
+		};
+		// Plotter
+		plotterDataGUI = Plotter("Analyze Music", Rect(0, 0, 500, 180), windowPlotterData).plotMode_(\steps);
+		plotterDataGUI.value = [[0], [0], [0]];
+		windowPlotterData.onClose_({
+		});
+		refreshDisplayDataMusic.focus;
+
+		////// Window Plotter FFT /////
+		windowPlotterFFT = Window("Analyze [Flux | Flatness | Centroid | Energy | BPM]", Rect(710, 275, 515, 340), scroll: true);
+		windowPlotterFFT.alpha=1.0;
+		windowPlotterFFT.front;
+		windowPlotterFFT.view.decorator = FlowLayout(windowPlotterFFT.view.bounds);
+		// Display ON / OFF
+		Button(windowPlotterFFT, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
+		// Refresh Display
+		refreshDisplayFFT = Button(windowPlotterFFT,Rect(0, 0, 100, 20));
+		refreshDisplayFFT.states = [["Refresh Plotter"]];
+		refreshDisplayFFT.action = {|view| plotterFFTGUI.value = [[0], [0], [0], [0], [0]]; plotterFFT = [[0], [0], [0], [0], [0]];
+		};
+		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(-100, 100, \lin, 0.01),
+			{|ez| if(ez.value < 0,
+				{groupeAnalyse.set(\speed, ez.value.abs.reciprocal)},
+				{groupeAnalyse.set(\speed, ez.value)});
+		}, 24, layout: \horz);
+		// Plotter
+		plotterFFTGUI = Plotter("Analyze FFT", Rect(0, 0, 500, 300), windowPlotterFFT).plotMode_(\steps);
+		plotterFFTGUI.value = [[0], [0], [0], [0], [0]];
+		windowPlotterFFT.onClose_({
+		});
+		refreshDisplayFFT.focus;
+
+		////////////////////////// Window GVerb ///////////////////////////////
+		windowGVerb = Window.new("Reverb Stereo", Rect(620, 110, 600, 160), scroll: true);
+		windowGVerb.view.decorator = FlowLayout(windowGVerb.view.bounds);
+		PopUpMenu(windowGVerb, Rect(0, 0, 100, 20)).
+		items_(["Reverb Off", "BathRoom", "Living Room", "Church", "Cathedral", "Canyon", "FreeVerb", "Allpass", "JPverb"]).
+		action_({arg verb;
+			switch(verb.value,
+				//No Reverb
+				0, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(0.01);
+					windowGVerb.view.children.at(2).children.at(1).valueAction_(0.01);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.5);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.5);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-inf.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-inf.dbamp);
+					windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					windowGVerb.view.children.at(8).children.at(1).valueAction_
+					(0);
+					windowGVerb.view.children.at(8).children.at(3).valueAction_(0);
+					groupeVerb.set(\panLo, 0, \panHi, 0);
+				},
+				//BathRoom
+				1, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(5/300);		windowGVerb.view.children.at(2).children.at(1).valueAction_(0.6/150);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.62);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.48);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-5.5.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-6.5.dbamp);
+					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				//Living Room
+				2, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(16/300);
+					windowGVerb.view.children.at(2).children.at(1).valueAction_(1.24/150);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.95);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-7.5.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-8.5.dbamp);
+					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				//Church
+				3, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(80/300);
+					windowGVerb.view.children.at(2).children.at(1).valueAction_(4.85/150);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.41);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.19);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-4.5.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-5.5.dbamp);
+					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				//Cathedral
+				4, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(243/300);
+					windowGVerb.view.children.at(2).children.at(1).valueAction_(1/150);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.34);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-5.5.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-4.5.dbamp);
+					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				//Canyon
+				5, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(300/300);
+					windowGVerb.view.children.at(2).children.at(1).valueAction_(103/150);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.43);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.51);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-13.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-10.dbamp);
+					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				// FreeVerb
+				6, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(false);
+					windowGVerb.view.children.at(2).enabled_(false);
+					windowGVerb.view.children.at(3).enabled_(false);
+					windowGVerb.view.children.at(4).enabled_(false);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(false); freeVerb.run(true); allPass.run(false); jpVerb.run(false);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(0.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-1.dbamp);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				// Allpass
+				7, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(false);
+					windowGVerb.view.children.at(2).enabled_(false);
+					windowGVerb.view.children.at(3).enabled_(false);
+					windowGVerb.view.children.at(4).enabled_(false);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(false); freeVerb.run(false); allPass.run(true); jpVerb.run(false);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-3.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(-12.dbamp);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+				// jpVerb
+				8, {
+					// Setup GUI Value
+					windowGVerb.view.children.at(1).enabled_(true);
+					windowGVerb.view.children.at(2).enabled_(true);
+					windowGVerb.view.children.at(3).enabled_(true);
+					windowGVerb.view.children.at(4).enabled_(true);
+					windowGVerb.view.children.at(5).enabled_(true);
+					windowGVerb.view.children.at(6).enabled_(true);
+					gVerb.run(false); freeVerb.run(false); allPass.run(false); jpVerb.run(true);
+					windowGVerb.view.children.at(1).children.at(1).valueAction_(16/300);
+					windowGVerb.view.children.at(2).children.at(1).valueAction_(1.24/150);
+					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
+					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.2);
+					windowGVerb.view.children.at(5).children.at(1).valueAction_(-12.dbamp);
+					windowGVerb.view.children.at(6).children.at(1).valueAction_(0.5);
+					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+				},
+
+			)
+		});
+		windowGVerb.view.decorator.nextLine;
+		EZKnob(windowGVerb, 80 @ 80, "RoomSize", ControlSpec(0, 300, \lin),
+			{|ez| groupeVerb.set(\roomsize, ez.value)}, 1, layout: \vert2);
+		EZKnob(windowGVerb, 80 @ 80, "RevTime", ControlSpec(0, 150, \lin),
+			{|ez| groupeVerb.set(\revtime, ez.value)}, 1, layout: \vert2);
+		EZKnob(windowGVerb, 80 @ 80, "Damping", \unipolar,
+			{|ez| groupeVerb.set(\inputbw, ez.value)}, 0.5, layout: \vert2);
+		EZKnob(windowGVerb, 80 @ 80, "InputBW", \unipolar,
+			{|ez| groupeVerb.set(\inputbw, ez.value)}, 0.5, layout: \vert2);
+		EZKnob(windowGVerb, 80 @ 80, "EarlyLevel", \db,
+			{|ez| groupeVerb.set(\earlylevel, ez.value.dbamp)}, -inf, layout: \vert2);
+		EZKnob(windowGVerb, 80 @ 80, "TailLevel", \db,
+			{|ez| groupeVerb.set(\taillevel, ez.value.dbamp)}, -inf, layout: \vert2);
+		EZKnob(windowGVerb, 80 @ 80, "Dry/Wet", \unipolar,
+			{|ez| groupeVerb.set(\xFade, ez.value)}, 0, layout: \vert2);
+		EZRanger(windowGVerb , 550 @ 20, "Pan", \bipolar,
+			{|ez| groupeVerb.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		// Setup GUI Value
+		windowGVerb.view.children.at(0).focus;
+		windowGVerb.onClose_({groupeVerb.free});
+		windowGVerb.front;
+
 		/////// Density Ear Panel
 		windowEar = Window("Density" + typeMasterOut, Rect(0, 800, 715, 825), scroll: true);
 		windowEar.alpha=1.0;
@@ -4473,345 +4812,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			"No Action".postln;
 		});
 		startSystem.focus;
-
-		////////////////////////// Window Keyboard ///////////////////////////////
-		windowKeyboard = Window.new("Keyboard", Rect(600, 25, 625, 130), scroll: true);
-		windowKeyboard.view.decorator = FlowLayout(windowKeyboard.view.bounds);
-		windowKeyboard.front;
-		// Setup ShortCut
-		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 105, 20));
-		setupKeyboardShortCut.states = [["System Shortcut", Color.green], ["Keyboard Shortcut", Color.red]];
-		setupKeyboardShortCut.action = {arg shortcut;
-			if(shortcut.value == 1, {keyboardShortCut.value(windowKeyboard);
-				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.setColor(note, Color.blue)})}, {fonctionShortCut.value(windowKeyboard);
-				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.removeColor(note)});
-			});
-		};
-		// Keyboard Translate
-		keyboardTranslate = EZKnob(windowKeyboard, 130 @ 20, "Translate", ControlSpec(-36, 31, \lin, 1),
-			{|ez| forBy(60 + keyboardTranslateBefore, 76 + keyboardTranslateBefore, 1, {arg note; keyboard.removeColor(note)});
-				forBy(60 + ez.value, 76 + ez.value, 1, {arg note; keyboard.setColor(note, Color.blue)});
-				keyboardTranslateBefore = ez.value;
-		}, 0, layout: \horz);
-		// Keyboard volume
-		keyboardVolume = EZKnob(windowKeyboard, 130 @ 20, "Volume", \db,
-			{|ez| keyVolume = ez.value.dbamp}, -9, layout: \horz);
-		windowKeyboard.view.decorator.nextLine;
-		// Keyboard Keys
-		keyboard = MIDIKeyboard.new(windowKeyboard, Rect(5, 5, 600, 100), 7, 24);
-		//forBy(60, 76, 1, {arg note; keyboard.setColor(note, Color.blue)});
-		// Action Down
-		keyboard.keyDownAction_({arg note;
-			note = note.value + keyboardTranslate.value;
-			note = note.midicps;
-			synthKeyboard.set(\note, note, \amp, keyVolume, \trigger, 1);
-		});
-		// Action Up
-		keyboard.keyUpAction_({arg note;
-			note = note.value + keyboardTranslate.value;
-			note = note.midicps;
-			synthKeyboard.set(\note, note, \amp, 0, \trigger, 0);
-		});
-		// Action Track
-		keyboard.keyTrackAction_({arg note;
-			note = note.value + keyboardTranslate.value;
-			note = note.midicps;
-			s.bind{
-				synthKeyboard.set(\note, note, \amp, keyVolume, \trigger, 1);
-				s.sync;
-				synthKeyboard.set(\note, note, \amp, 0, \trigger, 0);
-				s.sync;
-			};
-		});
-		setupKeyboardShortCut.focus;
-		windowKeyboard.onClose_({nil});
-
-		////// Window Plotter Data /////
-		windowPlotterData = Window("Analyze [Freq | Amp | Duree]", Rect(710, 800, 515, 220), scroll: true);
-		windowPlotterData.alpha=1.0;
-		windowPlotterData.front;
-		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
-		// Display ON / OFF
-		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
-		// Refresh Display
-		refreshDisplayDataMusic = Button(windowPlotterData,Rect(0, 0, 100, 20));
-		refreshDisplayDataMusic.states = [["Refresh Plotter"]];
-		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0]]; plotterData = [[0], [0], [0]];
-		};
-		// Plotter
-		plotterDataGUI = Plotter("Analyze Music", Rect(0, 0, 500, 180), windowPlotterData).plotMode_(\steps);
-		plotterDataGUI.value = [[0], [0], [0]];
-		windowPlotterData.onClose_({
-		});
-		refreshDisplayDataMusic.focus;
-
-		////// Window Plotter FFT /////
-		windowPlotterFFT = Window("Analyze [Flux | Flatness | Centroid | Energy | BPM]", Rect(710, 275, 515, 340), scroll: true);
-		windowPlotterFFT.alpha=1.0;
-		windowPlotterFFT.front;
-		windowPlotterFFT.view.decorator = FlowLayout(windowPlotterFFT.view.bounds);
-		// Display ON / OFF
-		Button(windowPlotterFFT, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
-		// Refresh Display
-		refreshDisplayFFT = Button(windowPlotterFFT,Rect(0, 0, 100, 20));
-		refreshDisplayFFT.states = [["Refresh Plotter"]];
-		refreshDisplayFFT.action = {|view| plotterFFTGUI.value = [[0], [0], [0], [0], [0]]; plotterFFT = [[0], [0], [0], [0], [0]];
-		};
-		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(-100, 100, \lin, 0.01),
-			{|ez| if(ez.value < 0,
-				{groupeAnalyse.set(\speed, ez.value.abs.reciprocal)},
-				{groupeAnalyse.set(\speed, ez.value)});
-		}, 24, layout: \horz);
-		// Plotter
-		plotterFFTGUI = Plotter("Analyze FFT", Rect(0, 0, 500, 300), windowPlotterFFT).plotMode_(\steps);
-		plotterFFTGUI.value = [[0], [0], [0], [0], [0]];
-		windowPlotterFFT.onClose_({
-		});
-		refreshDisplayFFT.focus;
-
-		////////////////////////// Window GVerb ///////////////////////////////
-		windowGVerb = Window.new("Reverb Stereo", Rect(620, 110, 600, 160), scroll: true);
-		windowGVerb.view.decorator = FlowLayout(windowGVerb.view.bounds);
-		PopUpMenu(windowGVerb, Rect(0, 0, 100, 20)).
-		items_(["Reverb Off", "BathRoom", "Living Room", "Church", "Cathedral", "Canyon", "FreeVerb", "Allpass", "JPverb"]).
-		action_({arg verb;
-			switch(verb.value,
-				//No Reverb
-				0, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(0.01);
-					windowGVerb.view.children.at(2).children.at(1).valueAction_(0.01);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.5);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.5);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-inf.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-inf.dbamp);
-					windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					windowGVerb.view.children.at(8).children.at(1).valueAction_
-					(0);
-					windowGVerb.view.children.at(8).children.at(3).valueAction_(0);
-					groupeVerb.set(\panLo, 0, \panHi, 0);
-				},
-				//BathRoom
-				1, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(5/300);		windowGVerb.view.children.at(2).children.at(1).valueAction_(0.6/150);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.62);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.48);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-5.5.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-6.5.dbamp);
-					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				//Living Room
-				2, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(16/300);
-					windowGVerb.view.children.at(2).children.at(1).valueAction_(1.24/150);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.95);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-7.5.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-8.5.dbamp);
-					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				//Church
-				3, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(80/300);
-					windowGVerb.view.children.at(2).children.at(1).valueAction_(4.85/150);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.41);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.19);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-4.5.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-5.5.dbamp);
-					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				//Cathedral
-				4, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(243/300);
-					windowGVerb.view.children.at(2).children.at(1).valueAction_(1/150);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.34);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-5.5.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-4.5.dbamp);
-					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				//Canyon
-				5, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(true); freeVerb.run(false); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(300/300);
-					windowGVerb.view.children.at(2).children.at(1).valueAction_(103/150);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.43);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.51);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-13.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-10.dbamp);
-					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				// FreeVerb
-				6, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(false);
-					windowGVerb.view.children.at(2).enabled_(false);
-					windowGVerb.view.children.at(3).enabled_(false);
-					windowGVerb.view.children.at(4).enabled_(false);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(false); freeVerb.run(true); allPass.run(false); jpVerb.run(false);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(0.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-1.dbamp);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				// Allpass
-				7, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(false);
-					windowGVerb.view.children.at(2).enabled_(false);
-					windowGVerb.view.children.at(3).enabled_(false);
-					windowGVerb.view.children.at(4).enabled_(false);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(false); freeVerb.run(false); allPass.run(true); jpVerb.run(false);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-3.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(-12.dbamp);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-				// jpVerb
-				8, {
-					// Setup GUI Value
-					windowGVerb.view.children.at(1).enabled_(true);
-					windowGVerb.view.children.at(2).enabled_(true);
-					windowGVerb.view.children.at(3).enabled_(true);
-					windowGVerb.view.children.at(4).enabled_(true);
-					windowGVerb.view.children.at(5).enabled_(true);
-					windowGVerb.view.children.at(6).enabled_(true);
-					gVerb.run(false); freeVerb.run(false); allPass.run(false); jpVerb.run(true);
-					windowGVerb.view.children.at(1).children.at(1).valueAction_(16/300);
-					windowGVerb.view.children.at(2).children.at(1).valueAction_(1.24/150);
-					windowGVerb.view.children.at(3).children.at(1).valueAction_(0.1);
-					windowGVerb.view.children.at(4).children.at(1).valueAction_(0.2);
-					windowGVerb.view.children.at(5).children.at(1).valueAction_(-12.dbamp);
-					windowGVerb.view.children.at(6).children.at(1).valueAction_(0.5);
-					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
-				},
-
-			)
-		});
-		windowGVerb.view.decorator.nextLine;
-		EZKnob(windowGVerb, 80 @ 80, "RoomSize", ControlSpec(0, 300, \lin),
-			{|ez| groupeVerb.set(\roomsize, ez.value)}, 1, layout: \vert2);
-		EZKnob(windowGVerb, 80 @ 80, "RevTime", ControlSpec(0, 150, \lin),
-			{|ez| groupeVerb.set(\revtime, ez.value)}, 1, layout: \vert2);
-		EZKnob(windowGVerb, 80 @ 80, "Damping", \unipolar,
-			{|ez| groupeVerb.set(\inputbw, ez.value)}, 0.5, layout: \vert2);
-		EZKnob(windowGVerb, 80 @ 80, "InputBW", \unipolar,
-			{|ez| groupeVerb.set(\inputbw, ez.value)}, 0.5, layout: \vert2);
-		EZKnob(windowGVerb, 80 @ 80, "EarlyLevel", \db,
-			{|ez| groupeVerb.set(\earlylevel, ez.value.dbamp)}, -inf, layout: \vert2);
-		EZKnob(windowGVerb, 80 @ 80, "TailLevel", \db,
-			{|ez| groupeVerb.set(\taillevel, ez.value.dbamp)}, -inf, layout: \vert2);
-		EZKnob(windowGVerb, 80 @ 80, "Dry/Wet", \unipolar,
-			{|ez| groupeVerb.set(\xFade, ez.value)}, 0, layout: \vert2);
-		EZRanger(windowGVerb , 550 @ 20, "Pan", \bipolar,
-			{|ez| groupeVerb.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
-		// Setup GUI Value
-		windowGVerb.view.children.at(0).focus;
-		windowGVerb.onClose_({groupeVerb.free});
-		windowGVerb.front;
-
-		////////////////////////// Window VST ///////////////////////////////
-		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
-		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
-		Button(windowVST, Rect(0, 0, 75, 20)).
-		states_([["Run On", Color.green], ["Run Off", Color.red]]).
-		action = {arg shortcut;
-			switch (shortcut.value,
-				0, {synthVST.run(false); flagVST = 'off'},
-				1, {synthVST.run(true); flagVST = 'on'};
-			);
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Browse", Color.white]]).
-		action = {arg shortcut;
-			fxVST.browse;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Editor", Color.white]]).
-		action = {arg shortcut;
-			fxVST.editor;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["GUI", Color.white]]).
-		action = {arg shortcut;
-			fxVST.gui;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Close", Color.white]]).
-		action = {arg shortcut;
-			fxVST.close;
-		};
-		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
-			{|ez| groupeVST.set(\xFade, ez.value)}, 0.5, layout: \horz);
-		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
-			{|ez| groupeVST.set(\gainIn, ez.value)}, 0.5, layout: \horz);
-		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
-			{|ez| groupeVST.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
-		windowVST.view.children.at(0).focus;
-		windowVST.onClose_({groupeVST.free});
-		windowVST.front;
 
 		// Init shortCuts
 		windowEar.front;

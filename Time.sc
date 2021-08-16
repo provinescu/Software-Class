@@ -3688,6 +3688,7 @@ f						Switch File for Analyze.
 		windowVST.name = "VST" + typeMasterOut;
 		windowVST.view.children.at(0).focus;
 		windowVST.front;
+		windowControlGUI.front;
 
 		//listeWindows=listeWindows.add(windowVST);
 

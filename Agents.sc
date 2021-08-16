@@ -60,21 +60,23 @@ Agents {
 			if(file.find("preset") == 0 or: {file.find("Preset") == 0}, {file});
 		};
 		~foldersToScanAll = ~foldersToScanAll.reject({arg item; item == nil});
+
 		// Collect preset
 		~foldersToScanPreset = ~foldersToScanAll.collect{ |file|
 			if(file.find("preset ") == 0 or: {file.find("Preset ") == 0}, {file});
 		};
 		~foldersToScanPreset = ~foldersToScanPreset.reject({arg item; item == nil});
-		// Collect preset+genome
+
+		/*// Collect preset+genome
 		~foldersToScanPresetGenome = ~foldersToScanAll.collect{ |file|
-			if(file.find("preset+genome ") == 0 or: {file.find("Preset+Genome ") == 0}, {file});
+		if(file.find("preset+genome ") == 0 or: {file.find("Preset+Genome ") == 0}, {file});
 		};
 		~foldersToScanPresetGenome = ~foldersToScanPresetGenome.reject({arg item; item == nil});
 		// Collect preset+genome+sequence
 		~foldersToScanPresetGenomeSequence = ~foldersToScanAll.collect{ |file|
-			if(file.find("preset+genome+sequence ") == 0 or: {file.find("Preset+Genome+Sequence ") == 0}, {file});
+		if(file.find("preset+genome+sequence ") == 0 or: {file.find("Preset+Genome+Sequence ") == 0}, {file});
 		};
-		~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});
+		~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
 
 		~nomFenetre = "Control Panel"+~nompathdata.asString;
 
@@ -120,8 +122,8 @@ alt + v			 		Init virtual space.
 w / ctrl + w			Display windows.
 y						Mean state system on/off.
 z				 		Random load preset.
-alt + z					Random load preset with genome.
-alt + Z					Random load preset with genome and sequence.
+/*alt + z					Random load preset with genome.
+alt + Z					Random load preset with genome and sequence.*/
 ctrl + z				Stop all score.
 
 Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
@@ -132,16 +134,16 @@ f						Switch file for analyze.
 alt + l					Load preset with genome.
 alt + L					Load preset with genome+sequence.
 ctrl + l				Load preset synchro on Temporal Grid (nextBar).
-ctrl + alt + l			Load preset with genome on Temporal Grid (nextBar).
-ctrl + alt + L			Load preset with genome+sequence on Temporal Grid (nextBar).
+/*ctrl + alt + l			Load preset with genome on Temporal Grid (nextBar).
+ctrl + alt + L			Load preset with genome+sequence on Temporal Grid (nextBar).*/
 L			 			Load control panel.
 N						Add a copy of an agent.
 p / ctrl + p			Play (loop off) / Stop score.
 P						Play score (loop on).
 alt + p					Switch synthDef.
 s				 		Save preset.
-alt + s					Save preset with genome.
-alt + S					Save preset with genome+sequence.
+/*alt + s					Save preset with genome.
+alt + S					Save preset with genome+sequence.*/
 S				 		Save control panel.
 t			 			Automation: 1. Init agents.
 2. Random load preset.
@@ -169,7 +171,7 @@ alt + x / X				Agent next/previous.
 alt + c / C				Agent-Copy next/previous.
 alt + y					Copy genome.
 Y						Copy sequence Fhz-Amp-Time.
-G                           Init Genome Agent (solo).
+G                       Init Genome Agent (solo).
 ";
 
 		// Custom menu for Agents
@@ -392,9 +394,9 @@ G                           Init Genome Agent (solo).
 				});
 			).title_("Setting"),
 			Menu(
-				MenuAction("On", {~userOperatingSystem.valueAction_(22)};
+				MenuAction("On", {~userOperatingSystem.valueAction_(20)};
 				),
-				MenuAction("Off", {~userOperatingSystem.valueAction_(23)};
+				MenuAction("Off", {~userOperatingSystem.valueAction_(21)};
 				),
 			).title_("MIDI Out"),
 			Menu(
@@ -528,40 +530,26 @@ G                           Init Genome Agent (solo).
 					var file;
 					file=File(paths,"r");
 					~wp.name=~nomFenetre+paths;
-					~loadUnivers.value(file);
-					file.close},{"cancelled".postln})},
-				// Load Preset+Genome
-				4, {Dialog.openPanel({ arg paths;
-					var file;
-					file=File(paths,"r");
-					~wp.name=~nomFenetre+paths;
-					~loadUnivers.value(file, 'on');
-					file.close},{"cancelled".postln})},
-				// Load Preset+Genome+Sequence
-				5, {Dialog.openPanel({ arg paths;
-					var file;
-					file=File(paths,"r");
-					~wp.name=~nomFenetre+paths;
 					~loadUnivers.value(file, 'on', 'on');
 					file.close},{"cancelled".postln})},
 				// Load Genome
-				6, {Dialog.openPanel({ arg paths;
+				4, {Dialog.openPanel({ arg paths;
 					var file;
 					file=File(paths,"r");
 					~genomes = file.readAllString.interpret;
 					file.close},{"cancelled".postln})},
 				// Load Sequences
-				7, {Dialog.openPanel({ arg paths;
+				5, {Dialog.openPanel({ arg paths;
 					var file, seq;
 					file=File(paths,"r");
 					seq = file.readAllString.interpret;file.close;
 					~listeagentfreq=seq.wrapAt(0);~listeagentamp=seq.wrapAt(1);~listeagentduree=seq.wrapAt(2)},{"cancelled".postln})},
 				// Commande Save Control Panel
-				8, {Dialog.savePanel({arg path; var file;
+				6, {Dialog.savePanel({arg path; var file;
 					~wp.name=~nomFenetre+path;
 					file=File(path++".scd","w");file.write(~foncSaveMonde.value.asCompileString);file.close},{"cancelled".postln})},
 				// Commande Save Preset
-				9, {Dialog.savePanel({arg path;
+				7, {Dialog.savePanel({arg path;
 					var name, pathonly, fileName;
 					path = PathName.new(path);
 					pathonly = path.pathOnly;
@@ -571,39 +559,19 @@ G                           Init Genome Agent (solo).
 					fileName = PathName.new(path).fileName;
 					path = PathName.new(path).fullPath;
 					~wp.name=~nomFenetre + fileName;
-					file=File(path++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value).value.asCompileString);file.close},{"cancelled".postln})},
-				// Commande Save Preset+Genome
-				10, {Dialog.savePanel({arg path;
-					var name, pathonly, fileName;
-					path = PathName.new(path);
-					pathonly = path.pathOnly;
-					name = path.fileName;
-					name = "preset+genome"+name;
-					path = pathonly++name;
-					fileName = PathName.new(path).fileName;
-					path = PathName.new(path).fullPath;
-					~wp.name=~nomFenetre + fileName;
-					file=File(path++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on').value.asCompileString);file.close},{"cancelled".postln})},
-				// Commande Save Preset+Genome+Sequence
-				11, {Dialog.savePanel({arg path;
-					var name, pathonly, fileName;
-					path = PathName.new(path);
-					pathonly = path.pathOnly;
-					name = path.fileName;
-					name = "preset+genome+sequence"+name;
-					path = pathonly++name;
-					fileName = PathName.new(path).fileName;
-					path = PathName.new(path).fullPath;
-					~wp.name=~nomFenetre + fileName;
 					file=File(path++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close},{"cancelled".postln})},
+				// Commande Save Preset+Genome
+				8, {nil},
+				// Commande Save Preset+Genome+Sequence
+				9, {nil},
 				// Save Genome
-				12, {Dialog.savePanel({arg path; var file;
+				10, {Dialog.savePanel({arg path; var file;
 					file=File(path++".scd","w");file.write(~genomes.asCompileString);file.close},{"cancelled".postln})},
 				// Save Sequences
-				13, {Dialog.savePanel({arg path; var file;
+				11, {Dialog.savePanel({arg path; var file;
 					file=File(path++".scd","w");file.write([~listeagentfreq,~listeagentamp,~listeagentduree].asCompileString);file.close},{"cancelled".postln})},
 				// New synth environment
-				14, {
+				12, {
 					//Init Path
 					Dialog.openPanel({ arg paths;
 						var file="List Synth.scd", p;
@@ -631,7 +599,7 @@ G                           Init Genome Agent (solo).
 							s.sync};
 				})},
 				// New sound environment
-				15, {
+				13, {
 					//Init Path
 					Dialog.openPanel({ arg paths;
 						var p, file="List Sounds.scd";
@@ -670,7 +638,7 @@ G                           Init Genome Agent (solo).
 							s.sync};
 				})},
 				// New FX environment
-				16, {
+				14, {
 					//Init Path
 					Dialog.openPanel({ arg paths;
 						var p, file="List FX.scd";
@@ -705,7 +673,7 @@ G                           Init Genome Agent (solo).
 							s.sync};
 				})},
 				// New all environment
-				17, {
+				15, {
 					//// Create Last Work
 					//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 					//Post << "Writing File Last Work" << Char.nl;
@@ -814,25 +782,25 @@ G                           Init Genome Agent (solo).
 							if(file.find("preset ") == 0, {file});
 						};
 						~foldersToScanPreset = ~foldersToScanPreset.reject({arg item; item == nil});
-						// Collect preset+genome
+						/*// Collect preset+genome
 						~foldersToScanPresetGenome = ~foldersToScanAll.collect{ |file|
-							if(file.find("preset+genome ") == 0, {file});
+						if(file.find("preset+genome ") == 0, {file});
 						};
 						~foldersToScanPresetGenome = ~foldersToScanPresetGenome.reject({arg item; item == nil});
 						// Collect preset+genome+sequence
 						~foldersToScanPresetGenomeSequence = ~foldersToScanAll.collect{ |file|
-							if(file.find("preset+genome+sequence ") == 0, {file});
+						if(file.find("preset+genome+sequence ") == 0, {file});
 						};
-						~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});
+						~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
 				})},
 				// OSC Off
-				18, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
+				16, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
 				// OSC Master
-				19, {~oscStateFlag='master';~stateOSC.string = "OSC Master"},
+				17, {~oscStateFlag='master';~stateOSC.string = "OSC Master"},
 				// OSC Slave
-				20, {~oscStateFlag='slave';~stateOSC.string = "OSC Slave"},
+				18, {~oscStateFlag='slave';~stateOSC.string = "OSC Slave"},
 				// OSC Setting
-				21, {
+				19, {
 					// Set OSC Addresse et Port Master
 					addrM=NetAddr.localAddr;
 					addrS=NetAddr.localAddr;
@@ -851,11 +819,11 @@ G                           Init Genome Agent (solo).
 						});
 					});
 				},
-				22, {~flagMidiOut = 'on';if(~geneMidiOutButton.value == 0, {~canalMidiOutSlider.enabled_(true)},{~canalMidiOutSlider.enabled_(false)});~geneMidiOutButton.enabled_(true)},
-				23, {~flagMidiOut = 'off';~canalMidiOutSlider.enabled_(false);~geneMidiOutButton.enabled_(false);
+				20, {~flagMidiOut = 'on';if(~geneMidiOutButton.value == 0, {~canalMidiOutSlider.enabled_(true)},{~canalMidiOutSlider.enabled_(false)});~geneMidiOutButton.enabled_(true)},
+				21, {~flagMidiOut = 'off';~canalMidiOutSlider.enabled_(false);~geneMidiOutButton.enabled_(false);
 					16.do({arg canal; ~midiOut.allNotesOff(canal)});
 				},
-				24, {
+				22, {
 					if(~agents < ~maximumagents, {~initagents.value(~agents, nil, nil, nil, 'init', [], [], [], 0, 0, 0);~agents=~agents + 1});
 				}
 			);
@@ -988,14 +956,14 @@ G                           Init Genome Agent (solo).
 				"Load File for Analyse",
 				"Load Control	",
 				"Load Preset",
-				"Load Preset+Genome",
-				"Load Preset+Genome+Sequence",
+				/*"Load Preset+Genome",
+				"Load Preset+Genome+Sequence",*/
 				"Load Genome",
 				"Load Sequence",
 				"Save Control	",
 				"Save Preset",
-				"Save Preset+Genome",
-				"Save Preset+Genome+Sequence",
+				/*"Save Preset+Genome",
+				"Save Preset+Genome+Sequence",*/
 				"Save Genome",
 				"Save Sequence",
 				"New Synth Environment	",
@@ -2114,8 +2082,8 @@ G                           Init Genome Agent (solo).
 						~limitTemps = variableTemps.log2.abs * 6 + 6;
 						// Choice type Preset
 						flagPreset = flagPreset.add(~foldersToScanPreset.size);
-						flagPreset = flagPreset.add(~foldersToScanPresetGenome.size);
-						flagPreset = flagPreset.add(~foldersToScanPresetGenomeSequence.size);
+						/*flagPreset = flagPreset.add(~foldersToScanPresetGenome.size);
+						flagPreset = flagPreset.add(~foldersToScanPresetGenomeSequence.size);*/
 						flagPreset = flagPreset.normalizeSum;
 						flag = flagPreset.windex;
 						// Load Preset
@@ -2123,12 +2091,12 @@ G                           Init Genome Agent (solo).
 							if(flag == 0, {if(File.exists(~nompathdata++~foldersToScanPreset.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPreset.wrapAt(number),"r");
 								~wp.name=~nomFenetre + ~foldersToScanPreset.wrapAt(number);
 								~loadUnivers.value(file);file.close}, {"cancelled".postln})});
-							if(flag == 1, {if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(number),"r");
-								~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(number);
-								~loadUnivers.value(file, 'on');file.close}, {"cancelled".postln})});
+							/*if(flag == 1, {if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(number),"r");
+							~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(number);
+							~loadUnivers.value(file, 'on');file.close}, {"cancelled".postln})});
 							if(flag == 2, {if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number),"r");
-								~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(number);
-								~loadUnivers.value(file, 'on', 'on');file.close}, {"cancelled".postln})});
+							~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(number);
+							~loadUnivers.value(file, 'on', 'on');file.close}, {"cancelled".postln})});*/
 						});
 				});
 			},
@@ -2143,8 +2111,8 @@ G                           Init Genome Agent (solo).
 						~limitTemps = variableTemps.log2.abs * 6 + 6;
 						// Choice type Preset
 						flagPreset = flagPreset.add(~foldersToScanPreset.size);
-						flagPreset = flagPreset.add(~foldersToScanPresetGenome.size);
-						flagPreset = flagPreset.add(~foldersToScanPresetGenomeSequence.size);
+						/*flagPreset = flagPreset.add(~foldersToScanPresetGenome.size);
+						flagPreset = flagPreset.add(~foldersToScanPresetGenomeSequence.size);*/
 						flagPreset = flagPreset.normalizeSum;
 						flag = flagPreset.windex;
 						// Load Preset
@@ -2152,12 +2120,12 @@ G                           Init Genome Agent (solo).
 							if(flag == 0, {if(File.exists(~nompathdata++~foldersToScanPreset.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPreset.wrapAt(number),"r");
 								~wp.name=~nomFenetre + ~foldersToScanPreset.wrapAt(number);
 								~loadUnivers.value(file);file.close}, {"cancelled".postln})});
-							if(flag == 1, {if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(number),"r");
-								~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(number);
-								~loadUnivers.value(file, 'on');file.close}, {"cancelled".postln})});
+							/*if(flag == 1, {if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(number),"r");
+							~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(number);
+							~loadUnivers.value(file, 'on');file.close}, {"cancelled".postln})});
 							if(flag == 2, {if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number),"r");
-								~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(number);
-								~loadUnivers.value(file, 'on', 'on');file.close}, {"cancelled".postln})});
+							~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(number);
+							~loadUnivers.value(file, 'on', 'on');file.close}, {"cancelled".postln})});*/
 						});
 				});
 			});
@@ -2166,17 +2134,20 @@ G                           Init Genome Agent (solo).
 		};
 
 		// Create all GUI Panel
+		this.keyboardPanel;
 		this.fxPanel;
 		this.spacePanel;
 		this.synthPanel;
-		this.controlPanel;
 		this.genesPanel;
 		this.automationPanel;
 		this.effetsPanel;
 		this.verbPanel;
-		this.keyboardPanel;
+		this.controlPanel;
 		this.shortCuts;// Raccourcis clavier
 		this.windowsPanel;// init shortcut font etc...
+
+		~wp.view.children.at(0).focus;
+		~wp.front;
 
 		// Init
 		~synthBand0.valueAction=1;
@@ -3653,6 +3624,7 @@ G                           Init Genome Agent (solo).
 			MIDIdef.freeAll;
 			~menuAgents.remove;// remove custom menu
 			windowVST.close;
+			ProxySpace.clearAll;
 			//s.quit;
 		};
 
@@ -3675,7 +3647,7 @@ G                           Init Genome Agent (solo).
 			Post << "Init Preset" <<  Char.nl;
 			// Create Init Preset Agents
 			file=File(~nompathdata++"init preset.scd","w");
-			file.write(~foncSaveUnivers.value(~foncSaveMonde.value).value.asCompileString);file.close;
+			file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 			s.sync;
 			~initsysteme.valueAction_(1);
 			//if(File.exists(~nompathdata++"init preset.scd"),
@@ -4784,7 +4756,8 @@ G                           Init Genome Agent (solo).
 		// Control Panel Agents
 		~wp = Window(~nomFenetre, Rect(0, 800, 1030, 525), scroll: true);
 		~wp.view.decorator = FlowLayout(~wp.view.bounds);
-		~wp.alpha=1.0;~wp.front;
+		~wp.alpha=1.0;
+		~wp.front;
 		// OS USER OPERATING SYSTEM
 		~userOperatingSystem = PopUpMenu(~wp,Rect(0, 0, 300, 20)).background_(Color.grey(0.5, 0.8)).items = ~userOSchoice;
 		~userOperatingSystem.action={arg item, file, addrM, addrS;
@@ -5792,7 +5765,7 @@ G                           Init Genome Agent (solo).
 				if(modifiers==524288 and: {unicode==105} and: {keycode==34},{
 					if(File.exists(~nompathdata++"init preset.scd"),{file=File(~nompathdata++"init preset.scd","r");
 						~wp.name=~nomFenetre+"init preset.scd";
-						~loadUnivers.value(file);file.close;
+						~loadUnivers.value(file, 'on', 'on');file.close;
 						~tempoSlider.valueAction_(60);
 					});
 				});
@@ -5814,27 +5787,27 @@ G                           Init Genome Agent (solo).
 				// key s -> save Preset
 				if(modifiers==0 and: {unicode==115} and: {keycode==1},
 					{~commandeExecute='save Preset'});
-				// Key alt l  -> load Preset + genomes
+				/*// Key alt l  -> load Preset + genomes
 				if(modifiers==524288 and: {unicode==108} and: {keycode==37},
-					{~commandeExecute='load Preset+Genome'});
+				{~commandeExecute='load Preset+Genome'});
 				// Key alt L  -> load Preset + genomes + sequences
 				if(modifiers==655360 and: {unicode==76} and: {keycode==37},
-					{~commandeExecute='load Preset+Genome+Sequence'});
+				{~commandeExecute='load Preset+Genome+Sequence'});*/
 				// Key ctrl L  -> load Preset synchro on grid
 				if(modifiers==393216 and: {unicode==12} and: {keycode==37},
 					{~commandeExecute='load Preset synchro'});
-				// Key ctrl alt l  -> load Preset + genomes synchro on grid
+				/*// Key ctrl alt l  -> load Preset + genomes synchro on grid
 				if(modifiers==786432 and: {unicode==12} and: {keycode==37},
-					{~commandeExecute='load Preset+Genome synchro'});
+				{~commandeExecute='load Preset+Genome synchro'});
 				// Key ctrl alt L  -> load Preset + genomes synchro on grid
 				if(modifiers==917504 and: {unicode==12} and: {keycode==37},
-					{~commandeExecute='load Preset+Genome+Sequence synchro'});
-				// Key alt s  -> save Preset + genomes
+				{~commandeExecute='load Preset+Genome+Sequence synchro'});*/
+				/*// Key alt s  -> save Preset + genomes
 				if(modifiers==524288 and: {unicode==115} and: {keycode==1},
-					{~commandeExecute='save Preset+Genome'});
+				{~commandeExecute='save Preset+Genome'});
 				// Key alt S  -> save Preset + genomes + sequences
 				if(modifiers==655360 and: {unicode==83} and: {keycode==1},
-					{~commandeExecute='save Preset+Genome+Sequence'});
+				{~commandeExecute='save Preset+Genome+Sequence'});*/
 				// key b -> switch loopmusic on/off
 				if(modifiers==0 and: {unicode==98} and: {keycode==11}, {if(~loopseq.value == 1,{~loopseq.valueAction_(0)},{~loopseq.valueAction_(1)})});
 				// key f -> load audio file pour fileIn analyse
@@ -6117,37 +6090,37 @@ G                           Init Genome Agent (solo).
 				// key N -> Add a copy of an agent
 				if(modifiers==131072 and: {unicode==78} and: {keycode==45}, {~commandeExecute='Add copy agent'});
 				//key alt + k
-				if(modifiers==524288 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(14)});
+				if(modifiers==524288 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(12)});
 				//key K
-				if(modifiers==131072 and: {unicode==75} and: {keycode==40}, {~userOperatingSystem.valueAction_(15)});
+				if(modifiers==131072 and: {unicode==75} and: {keycode==40}, {~userOperatingSystem.valueAction_(13)});
 				//key k
-				if(modifiers==0 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(17)});
+				if(modifiers==0 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(15)});
 				//key ctrl + k
-				if(modifiers==262144 and: {unicode==11} and: {keycode==40},{~userOperatingSystem.valueAction_(16)});
+				if(modifiers==262144 and: {unicode==11} and: {keycode==40},{~userOperatingSystem.valueAction_(14)});
 				// Key z -> load Preset aleatoire
 				if(modifiers==0 and: {unicode==122} and: {keycode==16}, {
 					while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
 						numberFile=rrand(0, ~foldersToScanPreset.size - 1);compteurEssai=compteurEssai+1;
 						if(File.exists(~nompathdata++~foldersToScanPreset.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPreset.wrapAt(numberFile),"r");
 							~wp.name=~nomFenetre + ~foldersToScanPreset.wrapAt(numberFile);
-							~loadUnivers.value(file);file.close;flagFile='on'})});
+							~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
 				});
-				// Key alt + z -> load Preset+Genome aleatoire
+				/*// Key alt + z -> load Preset+Genome aleatoire
 				if(modifiers==524288 and: {unicode==122} and: {keycode==16}, {
-					while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
-						numberFile=rrand(0, ~foldersToScanPresetGenome.size - 1);compteurEssai=compteurEssai+1;
-						if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(numberFile),"r");
-							~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(numberFile);
-							~loadUnivers.value(file, 'on');file.close;flagFile='on'})});
+				while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
+				numberFile=rrand(0, ~foldersToScanPresetGenome.size - 1);compteurEssai=compteurEssai+1;
+				if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(numberFile),"r");
+				~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(numberFile);
+				~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
 				});
 				// Key alt + Z -> load Preset+Genome+sequence aleatoire
 				if(modifiers==655360 and: {unicode==90} and: {keycode==16}, {
-					while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
-						numberFile=rrand(0, ~foldersToScanPresetGenomeSequence.size - 1);compteurEssai=compteurEssai+1;
-						if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(numberFile),"r");
-							~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(numberFile);
-							~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
-				});
+				while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
+				numberFile=rrand(0, ~foldersToScanPresetGenomeSequence.size - 1);compteurEssai=compteurEssai+1;
+				if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(numberFile),"r");
+				~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(numberFile);
+				~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
+				});*/
 				// key q -> Switch Algo Analyse
 				if(modifiers==0 and: {unicode==113} and: {keycode==12}, {
 					if(~algoAnalyse.value == 0, {~algoAnalyse.valueAction_(1)}, {
@@ -6274,7 +6247,7 @@ G                           Init Genome Agent (solo).
 			//load Preset
 			if(commande=='load Preset',{
 				if(File.exists(~nompathdata++"preset"+number.value.asString++".scd"),{file=File(~nompathdata++"preset"+number.value.asString++".scd","r");
-					~loadUnivers.value(file);
+					~loadUnivers.value(file, 'on', 'on');
 					~wp.name=~nomFenetre+~algoMusic+"preset"+number.value.asString++".scd";
 					file.close});
 			});
@@ -6282,7 +6255,7 @@ G                           Init Genome Agent (solo).
 			if(commande=='load Preset synchro',{
 				if(File.exists(~nompathdata++"preset"+number.value.asString++".scd"),{file=File(~nompathdata++"preset"+number.value.asString++".scd","r");
 					~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';
-						~loadUnivers.value(file);
+						~loadUnivers.value(file, 'on', 'on');
 						~wp.name=~nomFenetre+~algoMusic+"preset"+number.value.asString++".scd";
 						file.close; ~flagScoreRecordGUI = 'on'}.defer;nil})});
 			});
@@ -6291,51 +6264,51 @@ G                           Init Genome Agent (solo).
 				~wp.name=~nomFenetre+"control panel"+~algoMusic+number.value.asString++".scd";
 				file=File(~nompathdata++"control panel"+number.value.asString++".scd","w");file.write(~foncSaveMonde.value.asCompileString);file.close;
 			});
-			//load Preset + Genome
+			/*//load Preset + Genome
 			if(commande=='load Preset+Genome',{
-				if(File.exists(~nompathdata++"preset+genome"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","r");
-					~loadUnivers.value(file, 'on');
-					~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd";
-					file.close});
+			if(File.exists(~nompathdata++"preset+genome"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","r");
+			~loadUnivers.value(file, 'on', 'on');
+			~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd";
+			file.close});
 			});
 			//load Preset + Genome synchro
 			if(commande=='load Preset+Genome synchro',{
-				if(File.exists(~nompathdata++"preset+genome"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","r");
-					~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd";
-					~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';~loadUnivers.value(file, 'on'); ~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd"; file.close;~flagScoreRecordGUI = 'on'}.defer;nil})});
+			if(File.exists(~nompathdata++"preset+genome"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","r");
+			~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd";
+			~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';~loadUnivers.value(file, 'on', 'on'); ~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd"; file.close;~flagScoreRecordGUI = 'on'}.defer;nil})});
 			});
 			//load Preset + Genome + Sequence
 			if(commande=='load Preset+Genome+Sequence',{
-				if(File.exists(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","r");
-					~loadUnivers.value(file, 'on', 'on');
-					~wp.name=~nomFenetre+~algoMusic+"preset+genome+sequence"+number.value.asString++".scd";
-					file.close});
+			if(File.exists(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","r");
+			~loadUnivers.value(file, 'on', 'on');
+			~wp.name=~nomFenetre+~algoMusic+"preset+genome+sequence"+number.value.asString++".scd";
+			file.close});
 			});
 			//load Preset + Genome + Sequence synchro
 			if(commande=='load Preset+Genome+Sequence synchro',{
-				if(File.exists(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","r");
-					~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';~loadUnivers.value(file, 'on', 'on'); ~wp.name=~nomFenetre+~algoMusic+"preset+genome+sequence"+number.value.asString++".scd"; file.close;~flagScoreRecordGUI = 'on'}.defer;nil})});
-			});
+			if(File.exists(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","r");
+			~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';~loadUnivers.value(file, 'on', 'on'); ~wp.name=~nomFenetre+~algoMusic+"preset+genome+sequence"+number.value.asString++".scd"; file.close;~flagScoreRecordGUI = 'on'}.defer;nil})});
+			});*/
 			////load Preset en cascade
 			//if(commande=='load Preset en cascade',{
 			//if(File.exists(~nompathdata++"preset"+number.value.asString++".scd"),{file=File(~nompathdata++"preset"+number.value.asString++".scd","r");
 			//~wp.name=~nomFenetre+"preset"+number.value.asString++".scd";
-			//~loadUnivers.value(file);file.close});
+			//~loadUnivers.value(file, 'on', 'on');file.close});
 			//});
-			//save preset + genomes
+			/*//save preset + genomes
 			if(commande=='save Preset+Genome',{
-				~wp.name=~nomFenetre+"preset+genome"+number.value.asString++".scd";
-				file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on').value.asCompileString);file.close;
+			~wp.name=~nomFenetre+"preset+genome"+number.value.asString++".scd";
+			file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 			});
 			//save preset + genomes + sequences
 			if(commande=='save Preset+Genome+Sequence',{
-				~wp.name=~nomFenetre+"preset+genome+sequence"+number.value.asString++".scd";
-				file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
-			});
+			~wp.name=~nomFenetre+"preset+genome+sequence"+number.value.asString++".scd";
+			file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
+			});*/
 			//save Preset
 			if(commande=='save Preset',{
 				~wp.name=~nomFenetre+"preset"+number.value.asString++".scd";
-				file=File(~nompathdata++"preset"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value).value.asCompileString);file.close;
+				file=File(~nompathdata++"preset"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 			});
 			// Switch Genes
 			if(commande=='switch genes', {
@@ -6809,7 +6782,7 @@ G                           Init Genome Agent (solo).
 		};
 
 		// Save Preset
-		~foncSaveUnivers={arg datafile, flagGenome='off', flagSequence='off';//herite de foncSave monde
+		~foncSaveUnivers={arg datafile, flagGenome='on', flagSequence='on';//herite de foncSave monde
 			datafile=datafile.add(~matrix);//41
 			datafile=datafile.add(~angleX);//42
 			datafile=datafile.add(~angleY);//43
@@ -7050,7 +7023,7 @@ G                           Init Genome Agent (solo).
 		};
 
 		// Load Preset
-		~loadUnivers={arg file, flagGenome='off', flagSequence='off';
+		~loadUnivers={arg file, flagGenome='on', flagSequence='on';
 			var datafile=nil, sequence, loVal, hiVal, allVal;
 			datafile=file.readAllString.interpret;file.close;
 			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0);
@@ -7445,6 +7418,7 @@ G                           Init Genome Agent (solo).
 	}
 
 	windowsPanel {
+
 		~listeWindows=~listeWindows.add(~wp);
 		~listeWindows=~listeWindows.add(~wi);
 		~listeWindows=~listeWindows.add(~we);
@@ -7455,6 +7429,7 @@ G                           Init Genome Agent (solo).
 		~listeWindows=~listeWindows.add(~wv);
 		~listeWindows=~listeWindows.add(~windowMasterFX);
 		~listeWindows=~listeWindows.add(windowKeyboard);
+		~listeWindows=~listeWindows.add(windowVST);
 		~listeWindows.do({arg window; ~fonctionShortCuts.value(window)});
 
 		// Setup Font View

@@ -2385,6 +2385,46 @@ y ... -					Musical keys.
 			};
 		};
 
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(40, 500, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {~synthVST.run(false); flagVST = 'off'},
+				1, {~synthVST.run(true); flagVST ='on'};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.gui;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Close", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.close;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.front;
+
 		////////////////////////// Window Keyboard ///////////////////////////////
 		windowKeyboard = Window.new("Keyboard", Rect(0, 800, 1024, 175), scroll: true);
 		windowKeyboard.view.decorator = FlowLayout(windowKeyboard.view.bounds);
@@ -4705,45 +4745,8 @@ y ... -					Musical keys.
 			windowSynth;
 		};
 
-		////////////////////////// Window VST ///////////////////////////////
-		windowVST = Window.new("VST Stereo", Rect(40, 500, 320, 80), scroll: true);
-		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
-		Button(windowVST, Rect(0, 0, 75, 20)).
-		states_([["Run On", Color.green], ["Run Off", Color.red]]).
-		action = {arg shortcut;
-			switch (shortcut.value,
-				0, {~synthVST.run(false); flagVST = 'off'},
-				1, {~synthVST.run(true); flagVST ='on'};
-			);
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Browse", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.browse;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Editor", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.editor;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["GUI", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.gui;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Close", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.close;
-		};
-		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
-			{|ez| groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
-		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
-			{|ez| groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
-		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
-			{|ez| groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
-		windowVST.view.children.at(0).focus;
-		windowVST.front;
+		windowControl.front;
+		windowControl.view.children.at(0).focus;
 
 	}
 

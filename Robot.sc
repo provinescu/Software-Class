@@ -2553,6 +2553,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			MIDIdef.freeAll;
 			~listewindow.do({arg w; w.close});
 			windowVST.close;
+			ProxySpace.clearAll;
 			// Kill instance of Class and quit
 			//hpRobot.kill;
 			//s.quit;
@@ -2654,6 +2655,141 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 	}
 
 	creationGUI {
+
+		////////////////////////// Window VST ///////////////////////////////
+		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
+		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
+		Button(windowVST, Rect(0, 0, 75, 20)).
+		states_([["Run On", Color.green], ["Run Off", Color.red]]).
+		action = {arg shortcut;
+			switch (shortcut.value,
+				0, {~synthVST.run(false); flagVST = 'off'},
+				1, {~synthVST.run(true); flagVST ='on'};
+			);
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Browse", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.browse;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Editor", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.editor;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["GUI", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.gui;
+		};
+		Button(windowVST, Rect(0, 0, 50, 20)).
+		states_([["Close", Color.white]]).
+		action = {arg shortcut;
+			~fxVST.close;
+		};
+		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
+			{|ez| ~groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
+		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
+			{|ez| ~groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
+		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+			{|ez| ~groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.front;
+
+		////////////////////////// Window Keyboard ///////////////////////////////
+		windowKeyboard = Window.new("Keyboard", Rect(10, 25, 625, 130), scroll: true);
+		windowKeyboard.view.decorator = FlowLayout(windowKeyboard.view.bounds);
+		windowKeyboard.front;
+		// Setup ShortCut
+		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 105, 20));
+		setupKeyboardShortCut.states = [["Keyboard Shortcut", Color.green], ["System Shortcut", Color.red]];
+		setupKeyboardShortCut.action = {arg shortcut;
+			if(shortcut.value == 1, {keyboardShortCut.value(windowKeyboard);
+				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.setColor(note, Color.blue)})},
+			{
+				~fonctionShortCuts.value(windowKeyboard);
+				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.removeColor(note)});
+			});
+		};
+		// Keyboard Translate
+		keyboardTranslate = EZKnob(windowKeyboard, 130 @ 20, "Translate", ControlSpec(-36, 31, \lin, 1),
+			{|ez| forBy(60 + keyboardTranslateBefore, 76 + keyboardTranslateBefore, 1, {arg note; keyboard.removeColor(note)});
+				forBy(60 + ez.value, 76 + ez.value, 1, {arg note; keyboard.setColor(note, Color.blue)});
+				keyboardTranslateBefore = ez.value;
+		}, 0, layout: \horz);
+		// Keyboard volume
+		keyboardVolume = EZKnob(windowKeyboard, 130 @ 20, "Volume", \db,
+			{|ez| keyVolume = ez.value.dbamp}, -9, layout: \horz);
+		windowKeyboard.view.decorator.nextLine;
+		// Keyboard Keys
+		keyboard = MIDIKeyboard.new(windowKeyboard, Rect(5, 5, 600, 100), 7, 24);
+		//forBy(60, 76, 1, {arg note; keyboard.setColor(note, Color.blue)});
+		// Action Down
+		keyboard.keyDownAction_({arg note;
+			note = note.value + keyboardTranslate.value;
+			note = note.midicps;
+			~groupeAnalyse.set(\note, note, \amp, keyVolume, \trigger, 1);
+		});
+		// Action Up
+		keyboard.keyUpAction_({arg note;
+			note = note.value + keyboardTranslate.value;
+			note = note.midicps;
+			~groupeAnalyse.set(\note, note, \amp, 0, \trigger, 0);
+		});
+		// Action Track
+		keyboard.keyTrackAction_({arg note;
+			note = note.value + keyboardTranslate.value;
+			note = note.midicps;
+			s.bind{
+				~groupeAnalyse.set(\note, note, \amp, keyVolume, \trigger, 1);
+				s.sync;
+				~groupeAnalyse.set(\note, note, \amp, 0, \trigger, 0);
+				s.sync;
+			};
+		});
+		windowKeyboard.front;
+		setupKeyboardShortCut.focus;
+		~listewindow=~listewindow.add(windowKeyboard);
+
+		// PARTITIONS PANEL
+		~wp =Window("Robot by HP Scores", Rect(475, 275, 555, 465), scroll: true);
+		~wp.alpha=1.0;
+		~wp.front;
+		~wp.view.decorator = FlowLayout(~wp.view.bounds);
+		40.do({arg i;
+			~recpartbutton = ~recpartbutton.add(Button(~wp,Rect(0,0,85,18)));
+			~recpartbutton.wrapAt(i).states = [["Rec"+(i+1).asString+"Off", Color.black,  Color.green(0.8, 0.25)],["Rec"+(i+1).asString+"On", Color.white, Color.red(0.8, 0.25)]];
+			~recpartbutton.wrapAt(i).action = {|view| var p;
+				if(view.value == 1, {~tempoSystem.schedAbs(~tempoSystem.beats, {
+					{~dureerecpart.wrapPut(i, 0);~listerecpart.wrapPut(i,[]);~flagrecpart.wrapPut(i,view.value)}.defer;nil})},
+				{p=~listerecpart.wrapAt(i);p=p.add(~dureerecpart.wrapAt(i));p=p.add(""++$\r);p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');~listeplaypart.wrapPut(i,p)});
+			};
+			~playpartbutton = ~playpartbutton.add(Button(~wp,Rect(0,0,85,18)));
+			~playpartbutton.wrapAt(i).states = [["Play"+(i+1).asString+"Off", Color.black, Color.grey],["Play"+(i+1).asString+"On", Color.white, Color.red(0.8, 0.25)]];
+			~playpartbutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~playpartbutton",view.value);
+				if(view.value == 0, {~flagplaypart.wrapPut(i,view.value);~dureeplaypart.wrapPut(i,0);~pointeurplaypart.wrapPut(i,0)},
+					{~tempoSystem.schedAbs(~tempoSystem.beats, {
+						{~flagplaypart.wrapPut(i,view.value);~dureeplaypart.wrapPut(i,0);~pointeurplaypart.wrapPut(i,0)}.defer;nil});
+				});
+			};
+			~looppartbutton = ~looppartbutton.add(Button(~wp,Rect(0,0,85,18)));
+			~looppartbutton.wrapAt(i).states = [["Loop"+(i+1).asString+"Off", Color.black, Color.white],["Loop"+(i+1).asString+"On", Color.white, Color.red(0.8, 0.25)]];
+			~looppartbutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~looppartbutton",view.value);~flaglooppart.wrapPut(i,view.value)};
+		});
+		~playpartbutton.wrapAt(0).focus;
+		~listewindow=~listewindow.add(~wp);
+
+		// MasterFX
+		~windowMasterFX = Window.new("MasterFX", Rect(0, 50, 260, 60), scroll: true);
+		~windowMasterFX.view.decorator = FlowLayout(~windowMasterFX.view.bounds);
+		~windowMasterFXLimit =EZSlider(~windowMasterFX, 245 @ 18, "LimitOut",\db,
+			{|ez| ~masterFX.set(\limit, ez.value.dbamp);~writepartitions.value(nil,'masterFX','off',"~windowMasterFXLimit",ez.value)},-3,labelWidth: 60,numberWidth: 40);
+		~windowMasterFX.view.decorator.nextLine;
+		~windowMasterFXPostAmp = EZSlider(~windowMasterFX, 245 @ 18, "PostAmp", \db,
+			{|ez| ~masterFX.set(\postAmp, ez.value.dbamp);~writepartitions.value(nil,'masterFX','off',"~windowMasterFXPostAmp",ez.value)}, 0,labelWidth: 60,numberWidth: 40);
+		~windowMasterFX.view.decorator.nextLine;
+		~windowMasterFX.front;
+		~listewindow=~listewindow.add(~windowMasterFX);
 
 		// Windows instruments
 		~nombreinstrument.do({arg i;
@@ -4213,46 +4349,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Audio In Display (for testing)
 		~audioDisplay = StaticText(~wg, Rect(0, 0, 40, 18)).string_("Audio").background_(Color.white(1, 1));
 
-		// PARTITIONS PANEL
-		~wp =Window("Robot by HP Scores", Rect(475, 275, 555, 465), scroll: true);
-		~wp.alpha=1.0;
-		~wp.front;
-		~wp.view.decorator = FlowLayout(~wp.view.bounds);
-		40.do({arg i;
-			~recpartbutton = ~recpartbutton.add(Button(~wp,Rect(0,0,85,18)));
-			~recpartbutton.wrapAt(i).states = [["Rec"+(i+1).asString+"Off", Color.black,  Color.green(0.8, 0.25)],["Rec"+(i+1).asString+"On", Color.white, Color.red(0.8, 0.25)]];
-			~recpartbutton.wrapAt(i).action = {|view| var p;
-				if(view.value == 1, {~tempoSystem.schedAbs(~tempoSystem.beats, {
-					{~dureerecpart.wrapPut(i, 0);~listerecpart.wrapPut(i,[]);~flagrecpart.wrapPut(i,view.value)}.defer;nil})},
-				{p=~listerecpart.wrapAt(i);p=p.add(~dureerecpart.wrapAt(i));p=p.add(""++$\r);p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');~listeplaypart.wrapPut(i,p)});
-			};
-			~playpartbutton = ~playpartbutton.add(Button(~wp,Rect(0,0,85,18)));
-			~playpartbutton.wrapAt(i).states = [["Play"+(i+1).asString+"Off", Color.black, Color.grey],["Play"+(i+1).asString+"On", Color.white, Color.red(0.8, 0.25)]];
-			~playpartbutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~playpartbutton",view.value);
-				if(view.value == 0, {~flagplaypart.wrapPut(i,view.value);~dureeplaypart.wrapPut(i,0);~pointeurplaypart.wrapPut(i,0)},
-					{~tempoSystem.schedAbs(~tempoSystem.beats, {
-						{~flagplaypart.wrapPut(i,view.value);~dureeplaypart.wrapPut(i,0);~pointeurplaypart.wrapPut(i,0)}.defer;nil});
-				});
-			};
-			~looppartbutton = ~looppartbutton.add(Button(~wp,Rect(0,0,85,18)));
-			~looppartbutton.wrapAt(i).states = [["Loop"+(i+1).asString+"Off", Color.black, Color.white],["Loop"+(i+1).asString+"On", Color.white, Color.red(0.8, 0.25)]];
-			~looppartbutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~looppartbutton",view.value);~flaglooppart.wrapPut(i,view.value)};
-		});
-		~playpartbutton.wrapAt(0).focus;
-		~listewindow=~listewindow.add(~wp);
-
-		// MasterFX
-		~windowMasterFX = Window.new("MasterFX", Rect(0, 50, 260, 60), scroll: true);
-		~windowMasterFX.view.decorator = FlowLayout(~windowMasterFX.view.bounds);
-		~windowMasterFXLimit =EZSlider(~windowMasterFX, 245 @ 18, "LimitOut",\db,
-			{|ez| ~masterFX.set(\limit, ez.value.dbamp);~writepartitions.value(nil,'masterFX','off',"~windowMasterFXLimit",ez.value)},-3,labelWidth: 60,numberWidth: 40);
-		~windowMasterFX.view.decorator.nextLine;
-		~windowMasterFXPostAmp = EZSlider(~windowMasterFX, 245 @ 18, "PostAmp", \db,
-			{|ez| ~masterFX.set(\postAmp, ez.value.dbamp);~writepartitions.value(nil,'masterFX','off',"~windowMasterFXPostAmp",ez.value)}, 0,labelWidth: 60,numberWidth: 40);
-		~windowMasterFX.view.decorator.nextLine;
-		~windowMasterFX.front;
-		~listewindow=~listewindow.add(~windowMasterFX);
-
 		// Setup Font View
 		~listewindow.do({arg window;
 			window.view.do({arg view;
@@ -4312,100 +4408,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			})});
 		};
 
-		////////////////////////// Window Keyboard ///////////////////////////////
-		windowKeyboard = Window.new("Keyboard", Rect(10, 25, 625, 130), scroll: true);
-		windowKeyboard.view.decorator = FlowLayout(windowKeyboard.view.bounds);
-		windowKeyboard.front;
-		// Setup ShortCut
-		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 105, 20));
-		setupKeyboardShortCut.states = [["Keyboard Shortcut", Color.green], ["System Shortcut", Color.red]];
-		setupKeyboardShortCut.action = {arg shortcut;
-			if(shortcut.value == 1, {keyboardShortCut.value(windowKeyboard);
-				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.setColor(note, Color.blue)})},
-			{
-				~fonctionShortCuts.value(windowKeyboard);
-				forBy(60 + keyboardTranslate.value, 76 + keyboardTranslate.value, 1, {arg note; keyboard.removeColor(note)});
-			});
-		};
-		// Keyboard Translate
-		keyboardTranslate = EZKnob(windowKeyboard, 130 @ 20, "Translate", ControlSpec(-36, 31, \lin, 1),
-			{|ez| forBy(60 + keyboardTranslateBefore, 76 + keyboardTranslateBefore, 1, {arg note; keyboard.removeColor(note)});
-				forBy(60 + ez.value, 76 + ez.value, 1, {arg note; keyboard.setColor(note, Color.blue)});
-				keyboardTranslateBefore = ez.value;
-		}, 0, layout: \horz);
-		// Keyboard volume
-		keyboardVolume = EZKnob(windowKeyboard, 130 @ 20, "Volume", \db,
-			{|ez| keyVolume = ez.value.dbamp}, -9, layout: \horz);
-		windowKeyboard.view.decorator.nextLine;
-		// Keyboard Keys
-		keyboard = MIDIKeyboard.new(windowKeyboard, Rect(5, 5, 600, 100), 7, 24);
-		//forBy(60, 76, 1, {arg note; keyboard.setColor(note, Color.blue)});
-		// Action Down
-		keyboard.keyDownAction_({arg note;
-			note = note.value + keyboardTranslate.value;
-			note = note.midicps;
-			~groupeAnalyse.set(\note, note, \amp, keyVolume, \trigger, 1);
-		});
-		// Action Up
-		keyboard.keyUpAction_({arg note;
-			note = note.value + keyboardTranslate.value;
-			note = note.midicps;
-			~groupeAnalyse.set(\note, note, \amp, 0, \trigger, 0);
-		});
-		// Action Track
-		keyboard.keyTrackAction_({arg note;
-			note = note.value + keyboardTranslate.value;
-			note = note.midicps;
-			s.bind{
-				~groupeAnalyse.set(\note, note, \amp, keyVolume, \trigger, 1);
-				s.sync;
-				~groupeAnalyse.set(\note, note, \amp, 0, \trigger, 0);
-				s.sync;
-			};
-		});
-		windowKeyboard.front;
-		setupKeyboardShortCut.focus;
-		~listewindow=~listewindow.add(windowKeyboard);
-
-		////////////////////////// Window VST ///////////////////////////////
-		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
-		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
-		Button(windowVST, Rect(0, 0, 75, 20)).
-		states_([["Run On", Color.green], ["Run Off", Color.red]]).
-		action = {arg shortcut;
-			switch (shortcut.value,
-				0, {~synthVST.run(false); flagVST = 'off'},
-				1, {~synthVST.run(true); flagVST ='on'};
-			);
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Browse", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.browse;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Editor", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.editor;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["GUI", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.gui;
-		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
-		states_([["Close", Color.white]]).
-		action = {arg shortcut;
-			~fxVST.close;
-		};
-		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
-			{|ez| ~groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
-		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
-			{|ez| ~groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
-		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
-			{|ez| ~groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
-		windowVST.view.children.at(0).focus;
-		windowVST.front;
+		~wg.front;
 
 	}
 
