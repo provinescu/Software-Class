@@ -298,6 +298,7 @@ Density {
 				"PlayBufKlankStreamPreBufEnv",
 				"PlayBufLiquidStreamPreBufEnv",
 				"PlayBufElasticStreamPreBufEnv",
+				"Warp1StreamPreBufEnv",
 			],
 			// Postbuf
 			[
@@ -4574,7 +4575,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			displaySound.string = (indexSoundX.asStringPrec(2) +  indexSoundY.asStringPrec(2) + PathName.new(soundName).fileName);
 		});
 		// Jitter Y FX
-		EZSlider(windowEar, Rect(0, 0, 35, 100), "JitY", ControlSpec(0, 100, \lin, 0),
+		EZSlider(windowEar, Rect(0, 0, 25, 100), "JitY", ControlSpec(0, 100, \lin, 0),
 			{|ez| jitterIndexFXY = ez.value / 100}, jitterIndexFXY * 100, false, 40, 35, layout:\vert);
 		// Choice FX
 		Slider2D(windowEar, Rect(0, 0, 200, 100)).
@@ -6162,6 +6163,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("Warp1StreamPreBufEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, envelope, line;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
+				// Play Buffer
+				chain = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, flatness.log10.abs, -1, energy.log2.abs, flux);
 				chain = chain * envelope * amp;
 				// Out
 				Out.ar(out, chain);
