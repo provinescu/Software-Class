@@ -2532,8 +2532,8 @@ f						Switch File for Analyze.
 
 		// Setup Bus synthAnalyzeAudioIn
 		PopUpMenu(windowExternalControlGUI, Rect(0, 0, 60, 20)).items_(['Bus 1', 'Bus 2', 'Bus 3', 'Bus 4', 'Bus 5', 'Bus 6', 'Bus 7', 'Bus 8', 'Bus 9', 'Bus 10', 'Bus 11', 'Bus 12', 'Bus 13', 'Bus 14', 'Bus 15', 'Bus 16', 'Bus 17', 'Bus 18', 'Bus 19', 'Bus 20', 'Bus 21', 'Bus 22', 'Bus 23', 'Bus 24', 'Bus 25', 'Bus 26', 'Bus 27', 'Bus 28', 'Bus 29', 'Bus 30', 'Bus 31', 'Bus 32']).action = {arg item;
-			//if(typeAudio.value == 0, {groupeAudioRec.set(\in, item.value, \busIn, busAudioIn.index)}, {groupeAudioRec.set(\in, 0, \busIn, busAudioIn.index)});
 			groupeAudioRec.set(\in, item.value, \busIn, busAudioIn.index);
+			synthFileIn.set(\busIn, busAudioIn.index);
 		};
 
 		// Setup Algo Audio
