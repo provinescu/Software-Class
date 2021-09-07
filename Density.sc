@@ -2566,7 +2566,7 @@ Density {
 		};
 
 		cmdperiodfunc = {
-			16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)});
+			if(flagVST == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
 			//s.quit;
