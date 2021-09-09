@@ -956,14 +956,14 @@ G                       Init Genome Agent (solo).
 				"Load File for Analyse",
 				"Load Control	",
 				"Load Preset",
-				/*"Load Preset+Genome",
-				"Load Preset+Genome+Sequence",*/
+				"Load Preset+Genome (Not Operate)",
+				"Load Preset+Genome+Sequence (Not Operate)",
 				"Load Genome",
 				"Load Sequence",
 				"Save Control	",
 				"Save Preset",
-				/*"Save Preset+Genome",
-				"Save Preset+Genome+Sequence",*/
+				"Save Preset+Genome (Not Operate)",
+				"Save Preset+Genome+Sequence (Not Operate)",
 				"Save Genome",
 				"Save Sequence",
 				"New Synth Environment	",
