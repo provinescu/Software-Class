@@ -4,7 +4,7 @@ Density {
 
 	classvar <> s;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST;
+	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound;
 
 	*new {arg path = "~/Documents/Density/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
 
@@ -206,6 +206,7 @@ Density {
 		numIndexSynthBand = 0;
 		flagBand = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		flagVST = 'off';
+		flagRecSound == 'off';
 
 
 		// Audio Out
@@ -579,7 +580,7 @@ Density {
 					// Check BPM
 					// Setup GUI Value
 					if(item == 34, {bpm = data.at(item).at(2).at(2)});
-					if(item == 64, {autoRoot = data.at(item).at(1)});
+					if(item == 65, {autoRoot = data.at(item).at(1)});
 					// Check Sliders don't touch
 					// Setup GUI Value
 					if(index == 0 and: {item == 0 or: {item == 1} or: {item == 2} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7}} or: {item == 8} or: {item == 9}, {nil},
@@ -630,7 +631,7 @@ Density {
 			// Setup GUI Value
 			windowEar.view.children.at(34).children.at(2).valueAction_(bpm);
 			// Setup AutoRoot
-			windowEar.view.children.at(64).valueAction_(autoRoot);
+			windowEar.view.children.at(65).valueAction_(autoRoot);
 			// synthOrchestra
 			synthOrchestra = allData.at(index);
 			index = index + 1;
@@ -992,15 +993,14 @@ Density {
 			windowEar.view.children.at(12).enabled_(false);
 			windowEar.view.children.at(16).enabled_(false);
 			windowEar.view.children.at(17).enabled_(false);
-			windowEar.view.children.at(64).enabled_(false);
-			windowEar.view.children.at(83).valueAction_(0);// No Tuning
-			windowEar.view.children.at(84).enabled_(false);
+			windowEar.view.children.at(65).enabled_(false);
+			windowEar.view.children.at(84).valueAction_(0);// No Tuning
 			windowEar.view.children.at(85).enabled_(false);
-			windowEar.view.children.at(69).valueAction_(1);
+			windowEar.view.children.at(86).enabled_(false);
 			windowEar.view.children.at(70).valueAction_(1);
 			windowEar.view.children.at(71).valueAction_(1);
 			windowEar.view.children.at(72).valueAction_(1);
-			windowEar.view.children.at(69).enabled_(false);
+			windowEar.view.children.at(73).valueAction_(1);
 			windowEar.view.children.at(70).enabled_(false);
 			windowEar.view.children.at(71).enabled_(false);
 			windowEar.view.children.at(72).enabled_(false);
@@ -1013,11 +1013,8 @@ Density {
 			windowEar.view.children.at(79).enabled_(false);
 			windowEar.view.children.at(80).enabled_(false);
 			windowEar.view.children.at(81).enabled_(false);
+			windowEar.view.children.at(82).enabled_(false);
 
-			/*windowEar.view.children.at(13).enabled_(false);// No filter
-			windowEar.view.children.at(26).enabled_(false);// No Stretch Duree
-			windowEar.view.children.at(28).enabled_(false);// No BPM
-			windowEar.view.children.at(31).enabled_(false);// No Instruments*/
 			windowEar.name = "Density" + typeMasterOut;
 			windowGVerb.name = "Reverb" + typeMasterOut;
 			windowVST.name = "VST" + typeMasterOut;
@@ -2125,10 +2122,22 @@ Density {
 						indexX = (indexSoundX + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
 						indexY = (indexSoundY + (0.5 * rrand(jitterIndexSoundY.neg, jitterIndexSoundY))).clip(0, 1);
 						buffer = listeBuffer.at((indexX * (listeBuffer.size - 1) + 0.5).floor);
-						buffer = buffer.at((indexY * (buffer.size - 1) + 0.5).floor);
+						//buffer = buffer.at((indexY * (buffer.size - 1) + 0.5).floor);
 						soundName = soundOrchestra.at((indexX * (soundOrchestra.size - 1) + 0.5).floor);
-						soundName = soundName.at((indexY * (soundName.size - 1) + 0.5).floor); recBuffer = nil;
-						soundName = PathName.new(soundName).fileName};
+						soundName = soundName.at((indexY * (soundName.size - 1) + 0.5).floor);
+						soundName = PathName.new(soundName).fileName;
+						if(flagRecSound == 'off', {
+							buffer = buffer.at((indexY * (buffer.size - 1) + 0.5).floor);
+							recBuffer = nil;
+						},
+						{
+							buffer = buffer.at((indexY * (buffer.size - 1) + 0.5).floor).copy.path = "Buffer for Sampler";
+							s.sync;
+							recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
+							s.sync;
+							NodeWatcher.register(recBuffer, true);
+						});
+					};
 					);
 				},
 				{
@@ -2151,8 +2160,19 @@ Density {
 						buffer = listeBuffer.at((indexX * (listeBuffer.size - 1) + 0.5).floor);
 						buffer = buffer.at((indexY * (buffer.size - 1) + 0.5).floor);
 						soundName = soundOrchestra.at((indexX * (soundOrchestra.size - 1) + 0.5).floor);
-						soundName = soundName.at((indexY * (soundName.size - 1) + 0.5).floor); recBuffer = nil;
-						soundName = PathName.new(soundName).fileName};
+						soundName = soundName.at((indexY * (soundName.size - 1) + 0.5).floor);
+						soundName = PathName.new(soundName).fileName;
+						if(flagRecSound == 'off', {
+							recBuffer = nil;
+						},
+						{
+							buffer = Buffer.alloc(s, buffer.numFrames, 1).path = "Buffer for Sampler";
+							s.sync;
+							recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
+							s.sync;
+							NodeWatcher.register(recBuffer, true);
+						});
+					};
 					);
 				};
 				);
@@ -2171,7 +2191,7 @@ Density {
 					root = root.cpsoct;
 					root = (root.frac * tuning.size + 0.5).floor;
 					// Setup GUI Value
-					{windowEar.view.children.at(84).children.at(2).valueAction_(root);}.defer;
+					{windowEar.view.children.at(85).children.at(2).valueAction_(root);}.defer;
 				});
 				// MASTEROUT
 				masterOut = Synth.new(typeMasterOut, [
@@ -4170,13 +4190,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				for(0, numFhzBand,
 					{arg index;
-						windowEar.view.children.at(69 + index).enabled_(true);
+						windowEar.view.children.at(70 + index).enabled_(true);
 				});
 				if(numFhzBand < 12, {
 					for(numFhzBand + 1, 12,
 						{arg index;
-							windowEar.view.children.at(69 + index).enabled_(false);
-							windowEar.view.children.at(69 + index).valueAction_(0);
+							windowEar.view.children.at(70 + index).enabled_(false);
+							windowEar.view.children.at(70 + index).valueAction_(0);
 					});
 				});
 				freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -4189,7 +4209,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(flag.value == 0,
 				{flagFhzBand = 'off';
 					windowEar.view.children.at(17).enabled_(false);
-					windowEar.view.children.at(69).enabled_(false);
 					windowEar.view.children.at(70).enabled_(false);
 					windowEar.view.children.at(71).enabled_(false);
 					windowEar.view.children.at(72).enabled_(false);
@@ -4202,18 +4221,19 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowEar.view.children.at(79).enabled_(false);
 					windowEar.view.children.at(80).enabled_(false);
 					windowEar.view.children.at(81).enabled_(false);
+					windowEar.view.children.at(82).enabled_(false);
 					numIndexSynthBand = 0;
 				},
 				{flagFhzBand = 'on';
 					windowEar.view.children.at(17).enabled_(true);
 					for(0, numFhzBand,
 						{arg index;
-							windowEar.view.children.at(69 + index).enabled_(true);
+							windowEar.view.children.at(70 + index).enabled_(true);
 					});
 					if(numFhzBand < 12, {
 						for(numFhzBand + 1, 12,
 							{arg index;
-								windowEar.view.children.at(69 + index).enabled_(false);
+								windowEar.view.children.at(70 + index).enabled_(false);
 						});
 					});
 					numIndexSynthBand = 0;
@@ -4270,19 +4290,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| dureeFilter = ez.value}, dureeFilter, layout: \vert2);
 		// Time Maximum Music
 		EZKnob(windowEar, 80 @ 80, "Max Duree", ControlSpec(0.01666, 3600, \exp, 0),
-			{|ez| dureeMaximumAnalyze = ez.value;
-				/*// Setup GUI Value
-				if(windowEar.view.children.at(26).children.at(2).value < dureeMaximumAnalyze, {windowEar.view.children.at(26).children.at(2).valueAction_(dureeMaximumAnalyze);
-				});*/
-		}, dureeMaximumAnalyze,layout: \vert2);
+			{|ez| dureeMaximumAnalyze = ez.value}, dureeMaximumAnalyze,layout: \vert2);
 		// Memory Time
 		EZKnob(windowEar, 80 @ 80, "MemoryTime", ControlSpec(0.01666, 3600, \exp, 0),
 			{|ez| memoryTime = ez.value;
 				memoryMusic.stop;
-				/*// Setup GUI Value
-				if(windowEar.view.children.at(25).children.at(2).value > memoryTime,
-				{windowEar.view.children.at(25).children.at(2).valueAction_(memoryTime);
-				});*/
 				memoryMusic.play;
 		}, 6, layout: \vert2);
 		// Data Maximum
@@ -4362,23 +4374,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowEar.view.decorator.nextLine;
 		// Stretch Duree
 		EZKnob(windowEar, 80 @ 80, "Stretch", ControlSpec(0.0167, 60, \exp, 0),
-			{|ez| stretchDuree = ez.value;
-				//listeDataInstruments.do({arg data, index, duree;
-				//duree = data.at(2) * stretchDuree * userBPM;
-				//data = data.put(11, duree); listeDataInstruments.put(index, data);
-				//});
-		}, 1, layout: \vert2);
+			{|ez| stretchDuree = ez.value}, 1, layout: \vert2);
 		// Quantization
 		EZKnob(windowEar, 80 @ 80, "Quantization", ControlSpec(1, 100, \lin, 1),
 			{|ez| quantizationDuree = ez.value}, 100, layout: \vert2);
 		// BPM
 		EZKnob(windowEar, 80 @ 80, "BPM System", ControlSpec(7.5, 480, \exp, 1),
-			{|ez| userBPM = ez.value / 60; TempoClock.default.tempo = userBPM; userBPM = userBPM.reciprocal;
-				//listeDataInstruments.do({arg data, index, duree;
-				//duree = data.at(2) * stretchDuree * userBPM;
-				//data = data.put(11, duree); listeDataInstruments.put(index, data);
-				//});
-		}, 60, layout: \vert2);
+			{|ez| userBPM = ez.value / 60; TempoClock.default.tempo = userBPM; userBPM = userBPM.reciprocal}, 60, layout: \vert2);
 		// FX
 		EZKnob(windowEar, 80 @ 80, "FX",\unipolar,
 			{|ez| fadeFX = ez.value; groupeFX.set(\xFade, ez.value)}, 0.5, layout: \vert2);
@@ -4500,15 +4502,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		EZRanger(windowEar , 250 @ 20, "Pan", \bipolar,
 			{|ez| panSynthLo = ez.value.at(0); panSynthHi = ez.value.at(1)}, [0, 0], labelWidth: 25,numberWidth: 40);
 		// Loop PlaySound
-		Button(windowEar,Rect(0, 0, 100, 20)).
+		Button(windowEar,Rect(0, 0, 70, 20)).
 		states_([["Ploop On", Color.green], ["Ploop Off", Color.red]]).
-		action_({arg loop; if(loop.value == 0, {loopSound = 0;
-			// Setup GUI Value
-			//if(windowEar.view.children.at(50).value == 1, {windowEar.view.children.at(50).valueAction = 0});
-		}, {loopSound = 1});
+		action_({arg loop; if(loop.value == 0, {loopSound = 0}, {loopSound = 1});
 		});
+		// Loop RecSound
+		Button(windowEar,Rect(0, 0, 70, 20)).
+		states_([["Rloop On", Color.green], ["Rloop Off", Color.red]]).
+		action_({arg loop; if(loop.value == 0, {loopRec = 0}, {loopRec = 1})});
 		// Reverse Sound
-		Button(windowEar,Rect(0, 0, 100, 20)).
+		Button(windowEar,Rect(0, 0, 80, 20)).
 		states_([["Reverse On", Color.green], ["Reverse Off", Color.red]]).
 		action_({arg rev; if (rev.value == 0, {reverseSound = 1},{reverseSound = 1.neg});
 		});
@@ -4521,13 +4524,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				2, {flagSampler = "Sound"}
 			);
 		};
-		// Loop RecSound
-		Button(windowEar,Rect(0, 0, 100, 20)).
-		states_([["Rloop On", Color.green], ["Rloop Off", Color.red]]).
-		action_({arg loop; if(loop.value == 0, {loopRec = 0}, {loopRec = 1;
-			// Setup GUI Value
-			//if(windowEar.view.children.at(47).value == 0, {windowEar.view.children.at(47).valueAction = 1});
-		})});
+		// RecSound on off
+		Button(windowEar,Rect(0, 0, 75, 20)).
+		states_([["RecSnd On", Color.green], ["RecSnd Off", Color.red]]).
+		action_({arg loop; if(loop.value == 0, {flagRecSound = 'off'}, {flagRecSound = 'on'})});
 		windowEar.view.decorator.nextLine;
 		// Display Instrument
 		displayInstrument = StaticText(windowEar, Rect(0, 0, 250, 40));
@@ -4540,8 +4540,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| jitterIndexInstrumentY = ez.value / 100}, jitterIndexInstrumentY * 100, false, 40, 35, layout:\vert);
 		// Choice Instrument
 		Slider2D(windowEar, Rect(0, 0, 200, 100)).
-		//background_(Color.grey).
-		//knobColor_(Color.new(0.582, 0, 0)).
 		x_(0.5).
 		y_(0.5).
 		action_({arg slider, indexX, indexY, instrumentName;
@@ -4559,8 +4557,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| jitterIndexSoundY = ez.value / 100}, jitterIndexSoundY * 100, false, 40, 35, layout:\vert);
 		// Choice Sounds
 		Slider2D(windowEar, Rect(0, 0, 200, 100)).
-		//background_(Color.grey).
-		//knobColor_(Color.new(0.582, 0, 0)).
 		x_(0.5).
 		y_(0.5).
 		action_({arg slider, indexX, indexY, buffer, soundName;
@@ -4579,8 +4575,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| jitterIndexFXY = ez.value / 100}, jitterIndexFXY * 100, false, 40, 35, layout:\vert);
 		// Choice FX
 		Slider2D(windowEar, Rect(0, 0, 200, 100)).
-		//background_(Color.grey).
-		//knobColor_(Color.new(0.582, 0, 0)).
 		x_(0.5).
 		y_(0.5).
 		action_({arg slider, indexX, indexY, fxName;
@@ -4609,12 +4603,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Automation Root
 		Button(windowEar, Rect(0, 0, 90, 20)).states_([["AutoRoot On", Color.green], ["AutoRoot Off", Color.red]]).action_({|view|
 			if(view.value == 1, {flagRoot = 'on';
-				windowEar.view.children.at(84).enabled_(false);
+				windowEar.view.children.at(85).enabled_(false);
 			}, {flagRoot = 'off';
 				// Setup GUI Value
-				windowEar.view.children.at(84).enabled_(true);
-				windowEar.view.children.at(84).children.at(1).valueAction_(12);
-				windowEar.view.children.at(84).children.at(1).valueAction_(0);
+				windowEar.view.children.at(85).enabled_(true);
+				windowEar.view.children.at(85).children.at(1).valueAction_(12);
+				windowEar.view.children.at(85).children.at(1).valueAction_(0);
 			};
 			);
 		});
@@ -4641,11 +4635,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowEar.view.decorator.nextLine;
 
 		// SynthBand
-		StaticText(windowEar, 60 @ 20).string = "FhzBand"; // 66
+		StaticText(windowEar, 60 @ 20).string = "FhzBand"; // 67
 		// Band 0 to 12
 		Button.new(windowEar, 40 @ 20).
 		states_([["0", Color.green], ["0", Color.red]]).
-		action_({arg band; flagBand.put(0, band.value); fonctionBand.value(0)}); // 67 all data
+		action_({arg band; flagBand.put(0, band.value); fonctionBand.value(0)}); // 68 all data
 		Button.new(windowEar, 40 @ 20).
 		states_([["1", Color.green], ["1", Color.red]]).
 		action_({arg band; flagBand.put(1, band.value); fonctionBand.value(1)});
@@ -4692,21 +4686,21 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		action = {arg item;
 			// Setup GUI Value
 			//windowEar.view.children.at(64).valueAction_(0);
-			windowEar.view.children.at(84).children.at(1).valueAction_(12);
-			windowEar.view.children.at(84).children.at(1).valueAction_(0);
-			windowEar.view.children.at(64).enabled_(true);
-			windowEar.view.children.at(84).enabled_(true);
+			windowEar.view.children.at(85).children.at(1).valueAction_(12);
+			windowEar.view.children.at(85).children.at(1).valueAction_(0);
+			windowEar.view.children.at(65).enabled_(true);
 			windowEar.view.children.at(85).enabled_(true);
+			windowEar.view.children.at(86).enabled_(true);
 			switch(item.value,
 				// No Scale
 				0, {flagScaling = 'off';
 					// Setup GUI Value
-					windowEar.view.children.at(64).valueAction_(0);
-					windowEar.view.children.at(64).enabled_(false);
-					windowEar.view.children.at(84).children.at(1).valueAction_(12);
-					windowEar.view.children.at(84).children.at(1).valueAction_(0);
-					windowEar.view.children.at(84).enabled_(false);
+					windowEar.view.children.at(65).valueAction_(0);
+					windowEar.view.children.at(65).enabled_(false);
+					windowEar.view.children.at(85).children.at(1).valueAction_(12);
+					windowEar.view.children.at(85).children.at(1).valueAction_(0);
 					windowEar.view.children.at(85).enabled_(false);
+					windowEar.view.children.at(86).enabled_(false);
 				},
 				// Tempered
 				1, {nil},
@@ -4791,11 +4785,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			);
 			if(item.value > 1 and: {item.value < 28}, {tuning = Tuning.et12; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
 				// Setup GUI Value
-				windowEar.view.children.at(85).children.at(1).valueAction = degrees.asString;
+				windowEar.view.children.at(86).children.at(1).valueAction = degrees.asString;
 			});
 			if(item.value > 28, {tuning = Tuning.sruti; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
 				// Setup GUI Value
-				windowEar.view.children.at(85).children.at(1).valueAction = degrees.asString;
+				windowEar.view.children.at(86).children.at(1).valueAction = degrees.asString;
 			});
 		};
 		// Root
@@ -4830,15 +4824,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		file = File(pathData++"Init Preset.scd","w");
 		file.write(fonctionSavePreset.value(listeWindows).asCompileString);
 		file.close;
-
-		//// Setup Font View
-		//listeWindows.do({arg window;
-		//	window.view.do({arg view;
-		//		view.children.do({arg subView;
-		//			subView.font = Font("Helvetica", 10);
-		//			});
-		//		});
-		//	});
 
 	}
 
