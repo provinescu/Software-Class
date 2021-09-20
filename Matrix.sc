@@ -3287,7 +3287,7 @@ y ... -					Musical keys.
 				if(view.value == 0, {groupe.set(\loopOne, 0); loop1 = 0},{groupe.set(\loopOne, 1); loop1 = 1});
 			};
 			// Duree Sample One
-			durSampleOneSlider = NumberBox(windowSynth, 50 @ 20);
+			durSampleOneSlider = NumberBox(windowSynth, 50 @ 20).minDecimals_(4).maxDecimals_(4);
 			durSampleOneSlider.action = {|time|
 				if(time.value < 0.01, {time.value = 0.01});
 				if(time.value > 60, {time.value = 60});
@@ -3336,7 +3336,7 @@ y ... -					Musical keys.
 				if(view.value == 0, {groupe.set(\loopTwo, 0); loop2 = 0},{groupe.set(\loopTwo, 1); loop2 = 1});
 			};
 			// Duree Sample Two
-			durSampleTwoSlider = NumberBox(windowSynth, 50 @ 20);
+			durSampleTwoSlider = NumberBox(windowSynth, 50 @ 20).minDecimals_(4);
 			durSampleTwoSlider.action = {|time|
 				if(time.value < 0.01, {time.value = 0.01});
 				if(time.value > 60, {time.value = 60});
@@ -3490,7 +3490,7 @@ y ... -					Musical keys.
 			automationSliderSynth = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Synth", Color.black,  Color.green(0.8, 0.25)],["Synth", Color.black, Color.red(0.8, 0.25)]];
 			automationSliderSynth.action = {|view| };
 			// % Change Synth
-			automationNumberSynth = NumberBox(windowSynth,Rect(0, 0, 25, 20));
+			automationNumberSynth = NumberBox(windowSynth,Rect(0, 0, 25, 20)).minDecimals_(4);
 			automationNumberSynth.action = {|view|};
 			automationNumberSynth.step_(0.01); automationNumberSynth.clipLo_(0); automationNumberSynth.clipHi_(10); automationNumberSynth.scroll_step_(0.01); automationNumberSynth.value_(onOffSynthValue.at(0));
 			automationSliderFreq.enabled_(false); automationSliderDur.enabled_(false); automationSliderSynth.enabled_(false); automationNumberSynth.enabled_(false); automationSliderBuffer.enabled_(false);
