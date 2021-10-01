@@ -2749,7 +2749,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		});
 		windowKeyboard.front;
 		setupKeyboardShortCut.focus;
-		~listewindow=~listewindow.add(windowKeyboard);
 
 		// PARTITIONS PANEL
 		~wp =Window("Robot by HP Scores", Rect(475, 275, 555, 465), scroll: true);
@@ -2777,7 +2776,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~looppartbutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~looppartbutton",view.value);~flaglooppart.wrapPut(i,view.value)};
 		});
 		~playpartbutton.wrapAt(0).focus;
-		~listewindow=~listewindow.add(~wp);
 
 		// MasterFX
 		~windowMasterFX = Window.new("MasterFX", Rect(0, 50, 260, 60), scroll: true);
@@ -2789,7 +2787,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| ~masterFX.set(\postAmp, ez.value.dbamp);~writepartitions.value(nil,'masterFX','off',"~windowMasterFXPostAmp",ez.value)}, 0,labelWidth: 60,numberWidth: 40);
 		~windowMasterFX.view.decorator.nextLine;
 		~windowMasterFX.front;
-		~listewindow=~listewindow.add(~windowMasterFX);
 
 		// Windows instruments
 		~nombreinstrument.do({arg i;
@@ -2797,7 +2794,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			w = Window("Robot by HP Instrument"+(i+1).asString, Rect(i*20, 200 - (i*33.33), 905, 525), scroll: true);
 			w.alpha=1.0;w.front;
 			w.view.decorator = FlowLayout(w.view.bounds);
-			StaticText(w, Rect(0, 0, 890, 12)).string_("SYSTEM PARAMETERS").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("SYSTEM PARAMETERS").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			w.view.decorator.nextLine;
 			// Bouton start stop playing
 			~startbutton = ~startbutton.add(Button(w,Rect(0,0,50,18)));
@@ -2841,7 +2838,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~kchaosviewdur",ez.value);~instanceChaosD.wrapAt(i).init(ez.value)},
 				3.852,labelWidth: 75,numberWidth: 50));
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 890, 12)).string_("FILTER ANALYSE").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("FILTER ANALYSE").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			w.view.decorator.nextLine;
 			// inter fhz
 			~differencefreqinstrument = ~differencefreqinstrument.add(EZSlider(w, 200 @ 18, "Dist Freq",ControlSpec(0.0, 12.0, \lin, 0.0),
@@ -2875,7 +2872,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~datassizeinstrument",ez.value);~listedatassize.wrapPut(i,ez.value)},
 				24,labelWidth: 65,numberWidth: 25));
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 890, 12)).string_("ALGORITHM PARAMETERS").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("ALGORITHM PARAMETERS").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			w.view.decorator.nextLine;
 			//neurone button
 			~neuroneviewmode = ~neuroneviewmode.add(Button(w,Rect(0,0,115,18)));
@@ -2926,7 +2923,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~genetiqueviewmutation",ez.value);~genetiquemutation.wrapPut(i,ez.value)},
 				0.05,labelWidth: 100,numberWidth: 40));
 			w.view.decorator.nextLine;
-			//StaticText(w, Rect(0, 0, 900, 12)).string_("						ALGORITHM INPUT	  	                                                                                        ALGORITHM OUTPUT").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			//StaticText(w, Rect(0, 0, 900, 12)).string_("						ALGORITHM INPUT	  	                                                                                        ALGORITHM OUTPUT").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			//w.view.decorator.nextLine;
 			// SET FHZ IN
 			~choixdatasinfreqview=~choixdatasinfreqview.add(PopUpMenu(w,Rect(0,0,140,18)).items = ~choixdatasinfreq);
@@ -2959,7 +2956,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(algo.value == 1, {~flagalgoinstrneuroneduree.wrapPut(i,"NeuroneAlgo1")});
 				if(algo.value == 2, {~flagalgoinstrneuroneduree.wrapPut(i,"NeuroneAlgo2")})};
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 890, 12)).string_("SYNTHESIZEUR").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("SYNTHESIZEUR").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			w.view.decorator.nextLine;
 			// Set Synth
 			~synthcontrol=~synthcontrol.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~listSynth);
@@ -2987,7 +2984,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~numRecLevel2.at(i).value = ~synthcontrolviewlevelsdatas.wrapAt(son.value).value.at(1);
 			};
 			// Text
-			StaticText(w, Rect(0,0, 75, 18)).string_(" <- Sample1").stringColor_(Color.black);
+			StaticText(w, Rect(0,0, 75, 18)).string_(" <- Sample1").stringColor_(Color.yellow);
 			// rec sample
 			~recsamplebutton = ~recsamplebutton.add(Button(w,Rect( 0, 0, 58, 18)));
 			~recsamplebutton.wrapAt(i).states = [["Rec off", Color.black,  Color.green(0.8, 0.25)],["Rec on", Color.white, Color.red(0.8, 0.25)]];
@@ -3046,12 +3043,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~writepartitions.value(i,'reverse sample',~numerobuffer.wrapAt(i),"~reversebutton",view.value);
 				if(view.value == 0, {~reversesampledatas.wrapPut(i,~reversesampledatas.wrapAt(i).wrapPut(~numerobuffer.wrapAt(i),1));~busoffsetplaysampler.wrapAt(i).set(~sampleroffsetcontrol.wrapAt(i).value)},{~reversesampledatas.wrapPut(i,~reversesampledatas.wrapAt(i).wrapPut(~numerobuffer.wrapAt(i),-1));~busoffsetplaysampler.wrapAt(i).set(1-~sampleroffsetcontrol.wrapAt(i).value)})};
 			// Text
-			StaticText(w, Rect(0,0, 75, 18)).string_(" Sample2 ->").stringColor_(Color.black);
+			StaticText(w, Rect(0,0, 75, 18)).string_(" Sample2 ->").stringColor_(Color.yellow);
 			// Set buffer pour FFT
 			~soncontrolfft=~soncontrolfft.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~displaySons2);
 			~soncontrolfft.wrapAt(i).action = {arg son;~writepartitions.value(i,'normal','off',"~soncontrolfft",son.value);~numerobufferAdd.wrapPut(i,son.value)};
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 100, 12)).string_("SYNTH").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 100, 12)).string_("SYNTH").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
 			// number box synth
 			~synthparametresnumber=~synthparametresnumber.add(NumberBox(w,Rect(0,0,50,12)));
 			~synthparametresnumber.wrapAt(i).action={arg nombre;var c, datas;
@@ -3063,7 +3060,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				datas=~synthcontrolviewparametresdatas.wrapAt(i).value;
 				datas.wrapPut(~synthcontrol.wrapAt(i).value,c);
 				~synthcontrolviewparametresdatas.wrapPut(i,datas.value)};
-			StaticText(w, Rect(0, 0, 135, 12)).string_("Envelope").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 135, 12)).string_("Envelope").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
 			// Controles envelope
 			~synthenvelopenumberx=~synthenvelopenumberx.add(NumberBox(w,Rect(0,0,46,12)));
 			~synthenvelopenumberx.wrapAt(i).action={arg nombre;var val, index;
@@ -3085,7 +3082,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//// Version avec envelope pour chaque synth
 				//~levelenvsynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value,val.wrapAt(1));
 				~synthsliderenvelope.wrapAt(i).value=val};
-			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)));
+			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)));
 			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)));
 			~numRecLevel1.wrapAt(i).action={arg level;
 				var levels;
@@ -3102,7 +3099,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				levels.put(1, level.value);
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
 			};
-			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
 			~syntheffetsPrenumber=~syntheffetsPrenumber.add(NumberBox(w,Rect(0,0,50,12)));
 			~syntheffetsPrenumber.wrapAt(i).action={arg nombre;var datas;
 				~writepartitions.value(i,'normal','off',"~syntheffetsPrenumber",nombre.value);
@@ -3122,7 +3119,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~dataseffetsPres=~synthcontrolvieweffetsPredatas.wrapAt(i).value;
 				~dataseffetsPres.wrapPut(~listenodeeffetsPresynth.wrapAt(i).value,~synthcontrolvieweffetsPre.wrapAt(i).value);
 				~synthcontrolvieweffetsPredatas.wrapPut(i,~dataseffetsPres.value)};
-			StaticText(w, Rect(0, 0, 150, 12)).string_("Post FX").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 150, 12)).string_("Post FX").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
 			~syntheffetsPostnumber=~syntheffetsPostnumber.add(NumberBox(w,Rect(0,0,50,12)));
 			~syntheffetsPostnumber.wrapAt(i).action={arg nombre;var datas;
 				~writepartitions.value(i,'normal','off',"~syntheffetsPostnumber",nombre.value);
@@ -3270,7 +3267,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~automationparametres.wrapAt(i).states = [["Random Instrument Off", Color.black,  Color.green(0.8, 0.25)],["Random Instrument On", Color.white, Color.red(0.8, 0.25)]];
 			~automationparametres.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~automationparametres",view.value);
 				~randomValueParametreSynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value, view.value)};
-			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			// EFFET PRE
 			~syntheffetsPrecontrol= ~syntheffetsPrecontrol.add(PopUpMenu(w,Rect(0,0,161,18)).items = ~fxPre);
 			~syntheffetsPrecontrol.wrapAt(i).action = {arg effetsPre;
@@ -3329,7 +3326,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					//// Version avec pan pour chaque synth
 					//~synthpancontrolValue.wrapAt(i).wrapPut(~numeroSynth.wrapAt(i).value, [ez.lo, ez.hi]);
 			}, [-0.1, 0.1], false, 42, 35));
-			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			// PRE pan
 			~synthpaneffetsPrestep = ~synthpaneffetsPrestep.add(EZSlider(w, 205 @ 18, "Pan_pre", \bipolar,
 				{|ez| ~writepartitions.value(i,'pan_pre',~listenodeeffetsPresynth.wrapAt(i).value,"~synthpaneffetsPrestep",ez.value);~listeeffetsPresynth.wrapAt(i).wrapAt(~listenodeeffetsPresynth.wrapAt(i).value).set(\pan, ez.value);
@@ -3360,7 +3357,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					freq.size.do({arg ii;~busfreqsynth.wrapAt(i).wrapAt(ii).set(freq.wrapAt(ii))});
 					freqRate.size.do({arg ii;~busfreqRatesynth.wrapAt(i).wrapAt(ii).set(freqRate.wrapAt(ii))})},
 				0,labelWidth: 42,numberWidth: 35));
-			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			// pre AMP
 			~synthampeffetsPrestep = ~synthampeffetsPrestep.add(EZSlider(w, 205 @ 18, "Amp_pre", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'amp_pre',~listenodeeffetsPresynth.wrapAt(i).value,"~synthampeffetsPrestep",ez.value);~listeeffetsPresynth.wrapAt(i).wrapAt(~listenodeeffetsPresynth.wrapAt(i).value).set(\amp, ez.value.dbamp);
@@ -3395,7 +3392,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~gsynth.at(i).setn(\ampPost, ez.value.dbamp);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
-			//StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			//StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			// Automation pan effets_pre
 			~automationeffetpanpre = ~automationeffetpanpre.add(Button(w,Rect(0,0,205,18)));
 			~automationeffetpanpre.wrapAt(i).states = [["Random Pan Effect_Pre Off", Color.black,  Color.green(0.8, 0.25)],["Random Pan Effect_Pre On", Color.white, Color.red(0.8, 0.25)]];
@@ -3418,7 +3415,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~dureeMul.wrapPut(i, tempo);
 					~writepartitions.value(i,'special','off',"~dureestep", tempo)},
 				1,labelWidth: 42,numberWidth: 35));
-			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
 			// Automation controls effets_pre
 			~automationeffetpre = ~automationeffetpre.add(Button(w,Rect(0,0,205,18)));
 			~automationeffetpre.wrapAt(i).states = [["Random Effect_Pre Off", Color.black,  Color.green(0.8, 0.25)],["Random Effect_Pre On", Color.white, Color.red(0.8, 0.25)]];
@@ -4348,6 +4345,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		// Audio In Display (for testing)
 		~audioDisplay = StaticText(~wg, Rect(0, 0, 40, 18)).string_("Audio").background_(Color.white(1, 1));
+
+		~listewindow=~listewindow.add(~windowMasterFX);
+		~listewindow=~listewindow.add(~wp);
+		~listewindow=~listewindow.add(windowKeyboard);
+		~listewindow=~listewindow.add(windowVST);
 
 		// Setup Font View
 		~listewindow.do({arg window;
