@@ -3433,7 +3433,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				100,labelWidth: 42,numberWidth: 35));
 
 			//Band + Tunes
-			// Number FhzBand 85
+			// Number FhzBand 87
 			~numberBand = ~numberBand.add(EZKnob(w, 110 @ 18, "FhzBand", ControlSpec(1, 12, \lin, 1),
 				{|ez| var band, array, range;
 					~writepartitions.value(i,'normal','off',"~numberBand", ez.value);
@@ -3462,7 +3462,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~listeaudiofreq.wrapPut(i,[]);~listeaudioamp.wrapPut(i,[]);~listeaudioduree.wrapPut(i,[]);~freqtampon.wrapPut(i,nil);~amptampon.wrapPut(i,nil);~freqbefore.wrapPut(i,0);~ampbefore.wrapPut(i,0);~dureebefore.wrapPut(i,0);~lastTimeAudio = Main.elapsedTime;~lastDureeInstrAudio.wrapPut(i, Main.elapsedTime);
 			}, 12, layout: \horz);
 			);
-			// SynthBand 86 to 98
+			// SynthBand 88 to 98
 			// Band 0 to 12
 			~synthBand0 = ~synthBand0.add(Button.new(w, 16 @ 18).
 				states_([["0", Color.green], ["0", Color.red]]).
@@ -3563,11 +3563,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~writepartitions.value(i,'normal','off',"~buttonSynthBand",flag.value);
 					if(flag.value == 0,
 						{~flagSynthBand.put(i, 'off');
-
 							w.view.children.at(87).enabled_(false);
+							//Band
 							w.view.children.at(88).enabled_(false);
 							w.view.children.at(89).enabled_(false);
-							w.view.children.at(88).enabled_(false);
+							w.view.children.at(90).enabled_(false);
 							w.view.children.at(91).enabled_(false);
 							w.view.children.at(92).enabled_(false);
 							w.view.children.at(93).enabled_(false);
