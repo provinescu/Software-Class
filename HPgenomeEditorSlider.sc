@@ -30,7 +30,7 @@ HPgenomeEditorSlider {
 		//Activation genomes Agents-Synth
 		~wEditor = Window("Genomes Editor for Agents by HP", Rect(10, 10, 650, 735), scroll: true);
 		~wEditor.view.decorator = FlowLayout(~wEditor.view.bounds);
-		StaticText(~wEditor, Rect(0, 0, 500, 24)).string_("A Genomes Editor for Agents").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(~wEditor, Rect(0, 0, 500, 24)).string_("A Genomes Editor for Agents").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 14));
 		~wEditor.view.decorator.nextLine;
 		// Menu Genome
 		~menuGenome = PopUpMenu(~wEditor,Rect(0, 0, 150, 20)).items = ["Genomes Menu", "Load Genome",  "Load Genomes", "Save Genome", "Save Genomes"];
@@ -55,7 +55,7 @@ HPgenomeEditorSlider {
 		};
 		~menuGenome.focus;
 		// Choix de l'agent et routine automation display
-		StaticText(~wEditor, Rect(0, 0, 50, 18)).string_("Agent").stringColor_(Color.black(1.0,1.0));
+		StaticText(~wEditor, Rect(0, 0, 50, 18)).string_("Agent").stringColor_(Color.yellow(1.0,1.0));
 		~agentNumber=NumberBox(~wEditor, 25 @ 18);
 		~agentNumber.value = 1;
 		~agentNumber.action={|num| var number;
@@ -69,13 +69,13 @@ HPgenomeEditorSlider {
 			},{~agentNumber.value_(0)});
 		};
 		// Copy Genome
-		~fonctionCopyGenome = Button(~wEditor,Rect(0, 0, 175, 20)).states=[["->   Copy Genome   ->", Color.black, Color.yellow(0.8, 0.25)]];
+		~fonctionCopyGenome = Button(~wEditor,Rect(0, 0, 175, 20)).states=[["->   Copy Genome   ->", Color.white, Color.red(0.8, 0.25)]];
 		~fonctionCopyGenome.action={arg item;
 			~fonctionRecordScore.value("~fonctionCopyGenome", 1);
 			if(~agentEditor >= 1 and: {~agentEditor <= ~agents},
 				{~genomes.wrapPut(~agentCopy.value - 1, ~genomes.wrapAt(~agentEditor-1).copy)});
 		};
-		StaticText(~wEditor, Rect(0, 0, 50, 18)).string_("Agent").stringColor_(Color.black(1.0,1.0));
+		StaticText(~wEditor, Rect(0, 0, 50, 18)).string_("Agent").stringColor_(Color.yellow(1.0,1.0));
 		~agentCopy=NumberBox(~wEditor, 25 @ 18);
 		~agentCopy.value = 1;
 		~agentCopy.action={|num|
@@ -96,7 +96,7 @@ HPgenomeEditorSlider {
 		};
 		~wEditor.view.decorator.nextLine;
 		// Bio Genome
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Bio Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Bio Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		~ag0 = EZKnob(~wEditor, 175@25, "Ageing", ControlSpec(0, 1, \lin, 0),
 			{arg view;
@@ -132,7 +132,7 @@ HPgenomeEditorSlider {
 		listeView=listeView.add(~ag3);
 		~wEditor.view.decorator.nextLine;
 		// Music Genome
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Music Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Music Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		~ag4 = EZKnob(~wEditor, 175@25, "Fhz Low", ControlSpec(0, 127, \lin, 0),
 			{arg view;
@@ -202,7 +202,7 @@ HPgenomeEditorSlider {
 		listeView=listeView.add(~ag11);
 		~wEditor.view.decorator.nextLine;
 		// Panoramic Genome
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Panoramic Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Panoramic Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		~ag12= EZKnob(~wEditor, 175@25, "Panoramic", ControlSpec(-1, 1, \lin, 0),
 			{arg view;
@@ -214,7 +214,7 @@ HPgenomeEditorSlider {
 		listeView=listeView.add(~ag12);
 		~wEditor.view.decorator.nextLine;
 		// Sample Genome
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Sample Buffer Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Sample Buffer Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		~ag13= EZKnob(~wEditor, 175@25, "Buffer Duration", ControlSpec(0.015625, ~tempsmaxsignal, \lin, 0),
 			{arg view;var dureeBuffer;
@@ -265,7 +265,7 @@ HPgenomeEditorSlider {
 		listeView=listeView.add(~ag17);
 		~wEditor.view.decorator.nextLine;
 		// Env Genome
-		StaticText(~wEditor, Rect(0, 0, 525, 18)).string_("Envelopes Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 525, 18)).string_("Envelopes Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		~ag18=EnvelopeView(~wEditor, Rect(0, 0, 615, 80));
 		~ag18.drawLines_(true);
@@ -293,7 +293,7 @@ HPgenomeEditorSlider {
 		forBy(19, 33, 1, {listeView=listeView.add(nil)});
 		~wEditor.view.decorator.nextLine;
 		// Synth Genome
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Synthesizeur Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Synthesizeur Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		StaticText(~wEditor, Rect(0, 0, 75, 18)).string_("Synthesizeur");
 		~ag34= PopUpMenu(~wEditor, 190@25).items_(~listSynth);
@@ -303,7 +303,7 @@ HPgenomeEditorSlider {
 			~flagGene=34;
 		};
 		listeView=listeView.add(~ag34);
-		StaticText(~wEditor, Rect(0, 0, 125, 18)).string_("Controls Synthesizeur").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 125, 18)).string_("Controls Synthesizeur").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 12));
 		~ag35=MultiSliderView(~wEditor, Rect(0, 0, 150, 90));
 		~ag35.value_([0, 0, 0]);
 		~ag35.fillColor_(Color(0, 0.25, 0.5));
@@ -345,7 +345,7 @@ HPgenomeEditorSlider {
 		//listeView=listeView.add(~ag37);
 		~wEditor.view.decorator.nextLine;
 		// Space Genome
-		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Space Genome").stringColor_(Color.black(1.0,1.0)).font_(Font("Georgia", 12));
+		StaticText(~wEditor, Rect(0, 0, 500, 18)).string_("Space Genome").stringColor_(Color.yellow(1.0,1.0)).font_(Font("Georgia", 12));
 		~wEditor.view.decorator.nextLine;
 		~ag38= EZKnob(~wEditor, 225@25, "Audio Out", ControlSpec(1, ~sourceOutAgents.size, \lin, 1),
 			{arg view;
