@@ -1473,11 +1473,13 @@ f						Switch File for Analyze.
 									}.defer;
 									// Re-Check MIDI
 									if(listeDataBand.at(indexNumFhzBand) == [] or: {modeMIDIOSC.at(synth) == 'Note'},
-										{midiOscFreq = 0},
+										{midiOscFreq = 12.neg},
 										{
 											if(switchOSCfreq.at(synth) == 1,
-												{midiOscFreq = listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(0) - 60},
-												{midiOscFreq = 0});
+												{midiOscFreq = listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(0);// - 60
+													midiOscFreq = 12 * (midiOscFreq / 12).frac;
+												},
+												{midiOscFreq = 12.neg});
 											if(switchOSCamp.at(synth) == 1,
 												{amp = ampMIDIOSC},
 												{nil});
@@ -1499,7 +1501,6 @@ f						Switch File for Analyze.
 										freq = freq.cpsmidi;
 									});
 									// Set Rate
-									//freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
 									freqToMidi = (freq + 0.5).floor;
 									freqSynth = freq.midicps;
 									freqRate = (freq - 48).midicps;
@@ -1721,20 +1722,20 @@ f						Switch File for Analyze.
 				fonctionUserOperatingSystem.value(1, windowControlGUI, 'on');
 			}),
 			MenuAction("Load Preset", {
-				fonctionUserOperatingSystem.value(1, windowControlGUI, 'off');
+				fonctionUserOperatingSystem.value(2, windowControlGUI, 'off');
 			}),
 			MenuAction("Save Preset",{
-				fonctionUserOperatingSystem.value(2, windowControlGUI);
+				fonctionUserOperatingSystem.value(3, windowControlGUI);
 			});
 		);
 		MainMenu.register(menuPreset.title_("Preset"), "TimeTools");
 
 		menuSynth = Menu(
 			MenuAction("Load Synthesizer", {
-				fonctionUserOperatingSystem.value(3, windowControlGUI);
+				fonctionUserOperatingSystem.value(4, windowControlGUI);
 			}),
 			MenuAction("Save Synthesizer",{
-				fonctionUserOperatingSystem.value(4, windowControlGUI);
+				fonctionUserOperatingSystem.value(5, windowControlGUI);
 			}),
 			Menu(
 				MenuAction("Set Synth Source",
