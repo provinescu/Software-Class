@@ -58,6 +58,12 @@ Density {
 		s.options.hardwareBufferSize_(size);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.recChannels_(recChannels);
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
+
 		headerFormat = "aiff";
 		sampleFormat = "float";
 
@@ -3244,7 +3250,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						pathData = pathData.pathOnly;*/
 						windowEar.name="Density" + " | " + pathData.asString;
 						fonctionCollectFolders.value;
-					}, fileMode: 0);
+					}, fileMode: 2);
 				});
 			};
 		};

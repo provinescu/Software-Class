@@ -46,6 +46,11 @@ Robot {
 		s.recSampleFormat_(~sampleFormat);
 		~startChannelAudioOut = 0;
 		~switchAudioOut = f.asSymbol;
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -2488,10 +2493,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				})},
 				{21}, {
 					// New all environment
-					Dialog.openPanel({ arg paths;
+					FileDialog.new({ arg path;
 						var p;
-						p = PathName.new(paths);
-						p = p.pathOnly;
+						p = path.at(0).asString ++"/";
+						/*p = PathName.new(paths);
+						p = p.pathOnly;*/
 						s.bind{
 							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 							~nombrebuffer.do({arg i;
@@ -2512,7 +2518,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						};
 						hpRobot.kill;
 						HPRobot.new(p);
-					});
+					}, fileMode: 2ﬁ);
 				},
 				// OSC Off
 				{22}, {~oscStateFlag='off';~stateOSCdisplay.string = "OSC Off"},

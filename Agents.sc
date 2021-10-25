@@ -40,6 +40,11 @@ Agents {
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -394,9 +399,9 @@ G                       Init Genome Agent (solo).
 				});
 			).title_("Setting"),
 			Menu(
-				MenuAction("On", {~userOperatingSystem.valueAction_(20)};
+				MenuAction("On", {~userOperatingSystem.valueAction_(22)};
 				),
-				MenuAction("Off", {~userOperatingSystem.valueAction_(21)};
+				MenuAction("Off", {~userOperatingSystem.valueAction_(23)};
 				),
 			).title_("MIDI Out"),
 			Menu(
@@ -532,24 +537,28 @@ G                       Init Genome Agent (solo).
 					~wp.name=~nomFenetre+paths;
 					~loadUnivers.value(file, 'on', 'on');
 					file.close},{"cancelled".postln})},
+				// Do Nothing
+				4, {nil},
+				// Do Nothing
+				5, {nil},
 				// Load Genome
-				4, {Dialog.openPanel({ arg paths;
+				6, {Dialog.openPanel({ arg paths;
 					var file;
 					file=File(paths,"r");
 					~genomes = file.readAllString.interpret;
 					file.close},{"cancelled".postln})},
 				// Load Sequences
-				5, {Dialog.openPanel({ arg paths;
+				7, {Dialog.openPanel({ arg paths;
 					var file, seq;
 					file=File(paths,"r");
 					seq = file.readAllString.interpret;file.close;
 					~listeagentfreq=seq.wrapAt(0);~listeagentamp=seq.wrapAt(1);~listeagentduree=seq.wrapAt(2)},{"cancelled".postln})},
 				// Commande Save Control Panel
-				6, {Dialog.savePanel({arg path; var file;
+				8, {Dialog.savePanel({arg path; var file;
 					~wp.name=~nomFenetre+path;
 					file=File(path++".scd","w");file.write(~foncSaveMonde.value.asCompileString);file.close},{"cancelled".postln})},
 				// Commande Save Preset
-				7, {Dialog.savePanel({arg path;
+				9, {Dialog.savePanel({arg path;
 					var name, pathonly, fileName;
 					path = PathName.new(path);
 					pathonly = path.pathOnly;
@@ -560,18 +569,18 @@ G                       Init Genome Agent (solo).
 					path = PathName.new(path).fullPath;
 					~wp.name=~nomFenetre + fileName;
 					file=File(path++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close},{"cancelled".postln})},
-				// Commande Save Preset+Genome
-				8, {nil},
-				// Commande Save Preset+Genome+Sequence
-				9, {nil},
+				// Do Nothing
+				10, {nil},
+				// Do Nothing
+				11, {nil},
 				// Save Genome
-				10, {Dialog.savePanel({arg path; var file;
+				12, {Dialog.savePanel({arg path; var file;
 					file=File(path++".scd","w");file.write(~genomes.asCompileString);file.close},{"cancelled".postln})},
 				// Save Sequences
-				11, {Dialog.savePanel({arg path; var file;
+				13, {Dialog.savePanel({arg path; var file;
 					file=File(path++".scd","w");file.write([~listeagentfreq,~listeagentamp,~listeagentduree].asCompileString);file.close},{"cancelled".postln})},
 				// New synth environment
-				12, {
+				14, {
 					//Init Path
 					Dialog.openPanel({ arg paths;
 						var file="List Synth.scd", p;
@@ -599,7 +608,7 @@ G                       Init Genome Agent (solo).
 							s.sync};
 				})},
 				// New sound environment
-				13, {
+				15, {
 					//Init Path
 					Dialog.openPanel({ arg paths;
 						var p, file="List Sounds.scd";
@@ -638,7 +647,7 @@ G                       Init Genome Agent (solo).
 							s.sync};
 				})},
 				// New FX environment
-				14, {
+				16, {
 					//Init Path
 					Dialog.openPanel({ arg paths;
 						var p, file="List FX.scd";
@@ -673,15 +682,16 @@ G                       Init Genome Agent (solo).
 							s.sync};
 				})},
 				// New all environment
-				15, {
+				17, {
 					//// Create Last Work
 					//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 					//Post << "Writing File Last Work" << Char.nl;
 					//Init Path
-					Dialog.openPanel({arg paths;
+					FileDialog.new({arg path;
 						var p, fileSynth="List Synth.scd",  fileSound="List Sounds.scd", fileFX="List FX.scd";
-						~nompathdata = PathName.new(paths);
-						p = ~nompathdata = ~nompathdata.pathOnly;
+						p = ~nompathdata = path.at(0).asString ++"/";
+						/*~nompathdata = PathName.new(paths);
+						p = ~nompathdata = ~nompathdata.pathOnly;*/
 						~nomFenetre = "Control Panel"+~algoMusic+~nompathdata.asString;
 						~wp.name=~nomFenetre;
 						s.bind{
@@ -792,15 +802,15 @@ G                       Init Genome Agent (solo).
 						if(file.find("preset+genome+sequence ") == 0, {file});
 						};
 						~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
-				})},
+				}, fileMode: 2)},
 				// OSC Off
-				16, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
+				18, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
 				// OSC Master
-				17, {~oscStateFlag='master';~stateOSC.string = "OSC Master"},
+				19, {~oscStateFlag='master';~stateOSC.string = "OSC Master"},
 				// OSC Slave
-				18, {~oscStateFlag='slave';~stateOSC.string = "OSC Slave"},
+				20, {~oscStateFlag='slave';~stateOSC.string = "OSC Slave"},
 				// OSC Setting
-				19, {
+				21, {
 					// Set OSC Addresse et Port Master
 					addrM=NetAddr.localAddr;
 					addrS=NetAddr.localAddr;
@@ -819,11 +829,13 @@ G                       Init Genome Agent (solo).
 						});
 					});
 				},
-				20, {~flagMidiOut = 'on';if(~geneMidiOutButton.value == 0, {~canalMidiOutSlider.enabled_(true)},{~canalMidiOutSlider.enabled_(false)});~geneMidiOutButton.enabled_(true)},
-				21, {~flagMidiOut = 'off';~canalMidiOutSlider.enabled_(false);~geneMidiOutButton.enabled_(false);
+				// Midi
+				22, {~flagMidiOut = 'on';if(~geneMidiOutButton.value == 0, {~canalMidiOutSlider.enabled_(true)},{~canalMidiOutSlider.enabled_(false)});~geneMidiOutButton.enabled_(true)},
+				23, {~flagMidiOut = 'off';~canalMidiOutSlider.enabled_(false);~geneMidiOutButton.enabled_(false);
 					16.do({arg canal; ~midiOut.allNotesOff(canal)});
 				},
-				22, {
+				// Add Agent
+				24, {
 					if(~agents < ~maximumagents, {~initagents.value(~agents, nil, nil, nil, 'init', [], [], [], 0, 0, 0);~agents=~agents + 1});
 				}
 			);
@@ -6090,13 +6102,13 @@ G                       Init Genome Agent (solo).
 				// key N -> Add a copy of an agent
 				if(modifiers==131072 and: {unicode==78} and: {keycode==45}, {~commandeExecute='Add copy agent'});
 				//key alt + k
-				if(modifiers==524288 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(12)});
+				if(modifiers==524288 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(14)});
 				//key K
-				if(modifiers==131072 and: {unicode==75} and: {keycode==40}, {~userOperatingSystem.valueAction_(13)});
+				if(modifiers==131072 and: {unicode==75} and: {keycode==40}, {~userOperatingSystem.valueAction_(15)});
 				//key k
-				if(modifiers==0 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(15)});
+				if(modifiers==0 and: {unicode==107} and: {keycode==40}, {~userOperatingSystem.valueAction_(17)});
 				//key ctrl + k
-				if(modifiers==262144 and: {unicode==11} and: {keycode==40},{~userOperatingSystem.valueAction_(14)});
+				if(modifiers==262144 and: {unicode==11} and: {keycode==40},{~userOperatingSystem.valueAction_(16)});
 				// Key z -> load Preset aleatoire
 				if(modifiers==0 and: {unicode==122} and: {keycode==16}, {
 					while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
@@ -13356,10 +13368,10 @@ G                       Init Genome Agent (solo).
 					localBuf = LocalBuf(s.sampleRate, 1);
 					buffer = RecordBuf.ar(ineffet, localBuf);
 					local = LocalIn.ar(1);
-					rate = control3*4;
+					rate = control1*4;
 					//if(rate < 0.5 , BufRateScale.kr(buffer) * rate, BufRateScale.kr(buffer) * rate, * 20 - 9);
 					// effet
-					effet = Warp1.ar(1, localBuf, control2, BufRateScale.kr(buffer) * rate, control4, -1, control5*16, control6, 2);// + ou - local;
+					effet = Warp1.ar(1, localBuf, control2, BufRateScale.kr(buffer) * rate, control3, -1, control4*16, control5, 2);// + ou - local;
 					//effet = effet * EnvGen.kr(Env.sine(1,1), Impulse.kr(control1*16+0.0625), levelScale: amp);
 					//effet = effet * EnvGen.kr(Env.perc(0.05, 1, 1, -5), Impulse.kr(control1*16+0.0625));
 					effet = Mix(effet);
@@ -13396,7 +13408,7 @@ G                       Init Genome Agent (solo).
 					rate = control3*4;
 					//if(rate < 0.5 , BufRateScale.kr(buffer) * rate, BufRateScale.kr(buffer) * rate, * 20 - 9);
 					// effet
-					effet = PlayBuf.ar(1, localBuf, BufRateScale.kr(buffer) * rate, Impulse.kr(control1*64+0.0625), 0, 1, control7, control8);// + ou - local;
+					effet = PlayBuf.ar(1, localBuf, BufRateScale.kr(buffer) * rate, Impulse.kr(control1*64+0.0625), 0, 1, control4, control5);// + ou - local;
 					effet = effet * EnvGen.kr(Env.sine(1,1), Impulse.kr(control2*64+0.0625), levelScale: amp);
 					//effet = effet * EnvGen.kr(Env.perc(0.05, 1, 1, -5), Impulse.kr(control2*64+0.0625));
 					effet = Mix(effet);

@@ -45,6 +45,11 @@ Matrix {
 		s.recHeaderFormat_(headerFormat);
 		sampleFormat = "float";
 		s.recSampleFormat_(sampleFormat);
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
 
 		// MIDI INIT
 		// Connect first device by default
@@ -1811,12 +1816,13 @@ y ... -					Musical keys.
 					//windowControl.view.children.at(33).valueAction_(0);
 					//fonctionUserOperatingSystem.value(9);
 					flagCollectFolders = 'on';
-					Dialog.openPanel({arg paths;
-						pathMatrix= PathName.new(paths);
-						pathMatrix = pathMatrix.pathOnly;
+					FileDialog.new({arg path;
+						pathMatrix  = path.at(0).asString ++"/";
+						/*pathMatrix= PathName.new(paths);
+						pathMatrix = pathMatrix.pathOnly;*/
 						windowControl.name="Matrix Control" + " | " + pathMatrix.asString;
 						fonctionCollectFolders.value;
-					}, {flagCollectFolders = 'off'});
+					}, fileMode: 2);
 				});
 				// key m -> Switch Algo Tempo�
 				if(char == $m, {if(bpmOnOff.value == 0, {bpmOnOff.valueAction_(1)},
@@ -2778,13 +2784,13 @@ y ... -					Musical keys.
 			synthAnalyzeIn.set(\in, in.value, \busAnalyze, busAnalyze.index);
 		};
 		// Audio In
-		sendBusIn = PopUpMenu(windowControl,Rect(0, 0, 80, 20)).items = ["File->Bus1", "File->Bus2", "File->Bus3", "File->Bus4", "File->Bus5", "File->Bus6", "File->Bus7", "File->Bus8", "File->Bus9", "File->Bus10", "File->Bus11", "File->Bus12", "File->Bus13", "File->Bus14", "File->Bus15", "File->Bus16", "File->Bus17", "File->Bus18", "File->Bus19", "File->Bus20", "File->Bus21", "File->Bus22", "File->Bus23", "File->Bus24", "File->Bus25", "File->Bus26", "File->Bus27", "File->Bus28", "File->Bus29", "File->Bus30", "File->Bus31", "File->Bus32"];
+		sendBusIn = PopUpMenu(windowControl,Rect(0, 0, 83, 20)).items = ["File->Bus 1", "File->Bus 2", "File->Bus 3", "File->Bus 4", "File->Bus 5", "File->Bus 6", "File->Bus 7", "File->Bus 8", "File->Bus 9", "File->Bus 10", "File->Bus 11", "File->Bus 12", "File->Bus 13", "File->Bus 14", "File->Bus 15", "File->Bus 16", "File->Bus 17", "File->Bus 18", "File->Bus 19", "File->Bus 20", "File->Bus 21", "File->Bus 22", "File->Bus 23", "File->Bus 24", "File->Bus 25", "File->Bus 26", "File->Bus 27", "File->Bus 28", "File->Bus 29", "File->Bus 30", "File->Bus 31", "File->Bus 32"];
 		sendBusIn.action = {arg in;
 			synthFileIn.set(\busIn, listeBusInOut.at(in.value));
 		};
 		sendBusIn.stringColor = Color.white;
 		// BPM System
-		bpmSlider=EZSlider(windowControl, Rect(0, 0, 155, 20), "BPM", ControlSpec(1, 960, \exp, 0),
+		bpmSlider=EZSlider(windowControl, Rect(0, 0, 150, 20), "BPM", ControlSpec(1, 960, \exp, 0),
 			{|ez| if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
 				systemBPM.schedAbs(systemBPM.beats, {systemBPM.tempo_(ez.value / 60)})}, 60, labelWidth: 30,numberWidth: 45);
 		bpmSlider.enabled_(false);
