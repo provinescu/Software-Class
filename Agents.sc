@@ -40,11 +40,6 @@ Agents {
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
-		// Safety Limiter
-		//s.options.safetyClipThreshold = 1.26; // Testing
-		Safety(s);
-		//Safety(s).enabled;
-		//Safety.setLimit(1.neg.dbamp);
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -687,11 +682,10 @@ G                       Init Genome Agent (solo).
 					//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 					//Post << "Writing File Last Work" << Char.nl;
 					//Init Path
-					FileDialog.new({arg path;
+					Dialog.openPanel({arg paths;
 						var p, fileSynth="List Synth.scd",  fileSound="List Sounds.scd", fileFX="List FX.scd";
-						p = ~nompathdata = path.at(0).asString ++"/";
-						/*~nompathdata = PathName.new(paths);
-						p = ~nompathdata = ~nompathdata.pathOnly;*/
+						~nompathdata = PathName.new(paths);
+						p = ~nompathdata = ~nompathdata.pathOnly;
 						~nomFenetre = "Control Panel"+~algoMusic+~nompathdata.asString;
 						~wp.name=~nomFenetre;
 						s.bind{
@@ -802,7 +796,7 @@ G                       Init Genome Agent (solo).
 						if(file.find("preset+genome+sequence ") == 0, {file});
 						};
 						~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
-				}, fileMode: 2)},
+				})},
 				// OSC Off
 				18, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
 				// OSC Master

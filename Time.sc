@@ -39,12 +39,6 @@ Time {
 		s.options.numOutputBusChannels_(numberOut);
 		s.options.hardwareBufferSize_(size);
 		typeMasterOut = format;
-		// Safety Limiter
-		//s.options.safetyClipThreshold = 1.26; // Testing
-		Safety(s);
-		//Safety(s).enabled;
-		//Safety.setLimit(1.neg.dbamp);
-
 		// Run the Soft
 		this.run;
 
@@ -1994,13 +1988,12 @@ f						Switch File for Analyze.
 				});
 				//key k New Environment
 				if(char == $k, {
-					FileDialog.new({arg path;
-						~pathTime  = path.at(0).asString ++"/";
-						/*~pathTime = PathName.new(paths);
-						~pathTime = ~pathTime.pathOnly;*/
+					Dialog.openPanel({arg paths;
+						~pathTime = PathName.new(paths);
+						~pathTime = ~pathTime.pathOnly;
 						windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  ~pathTime.asString;
 						fonctionCollectFolders.value;
-					}, fileMode: 2);
+					});
 				});
 				// Key z -> load Preset aleatoire
 				if(char == $z, {
