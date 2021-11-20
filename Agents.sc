@@ -40,6 +40,11 @@ Agents {
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -682,10 +687,11 @@ G                       Init Genome Agent (solo).
 					//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 					//Post << "Writing File Last Work" << Char.nl;
 					//Init Path
-					Dialog.openPanel({arg paths;
+					FileDialog.new({arg path;
 						var p, fileSynth="List Synth.scd",  fileSound="List Sounds.scd", fileFX="List FX.scd";
-						~nompathdata = PathName.new(paths);
-						p = ~nompathdata = ~nompathdata.pathOnly;
+						p = ~nompathdata = path.at(0).asString ++"/";
+						/*~nompathdata = PathName.new(paths);
+						p = ~nompathdata = ~nompathdata.pathOnly;*/
 						~nomFenetre = "Control Panel"+~algoMusic+~nompathdata.asString;
 						~wp.name=~nomFenetre;
 						s.bind{
@@ -796,7 +802,7 @@ G                       Init Genome Agent (solo).
 						if(file.find("preset+genome+sequence ") == 0, {file});
 						};
 						~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
-				})},
+				}, fileMode: 2)},
 				// OSC Off
 				18, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
 				// OSC Master
@@ -812,11 +818,11 @@ G                       Init Genome Agent (solo).
 					~oscHPtempo.free;
 					~oscHPstart.free;
 					~oscHPrec.free;
-					SCRequestString(addrM.ip, "Enter the NetAddr of Master Application", {arg strg; addrM=strg;
+					SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
 						SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); ~masterAppAddr = addrM;
 							// Set OSC Addresse et Port Slave
 							SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-								SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave Application", {arg strg; addrS=NetAddr(addrS, strg.asInteger); ~slaveAppAddr = addrS;
+								SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); ~slaveAppAddr = addrS;
 									~initOSCresponder.value;
 								});
 							});

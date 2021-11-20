@@ -58,6 +58,12 @@ Density {
 		s.options.hardwareBufferSize_(size);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.recChannels_(recChannels);
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
+
 		headerFormat = "aiff";
 		sampleFormat = "float";
 
@@ -2917,11 +2923,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				/*oscHPtempo.free;
 				oscHPstart.free;
 				oscHPrec.free;*/
-				SCRequestString(addrM.ip, "Enter the NetAddr of Application", {arg strg; addrM=strg;
-					SCRequestString(NetAddr.langPort.asString, "Enter the Port of App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
+				SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
+					SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
 						// Set OSC Addresse et Port Slave
 						SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-							SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave Application", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
+							SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
 								//initOSCresponder.value;
 							});
 						});
@@ -3244,7 +3250,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						pathData = pathData.pathOnly;*/
 						windowEar.name="Density" + " | " + pathData.asString;
 						fonctionCollectFolders.value;
-					}, fileMode: 0);
+					}, fileMode: 2);
 				});
 			};
 		};

@@ -540,11 +540,11 @@ y ... -					Musical keys.
 				/*oscHPtempo.free;
 				oscHPstart.free;
 				oscHPrec.free;*/
-				SCRequestString(addrM.ip, "Enter the NetAddr of Application", {arg strg; addrM=strg;
-					SCRequestString(NetAddr.langPort.asString, "Enter the Port of App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
+				SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
+					SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
 						// Set OSC Addresse et Port Slave
 						SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-							SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave Application", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
+							SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
 								//initOSCresponder.value;
 							});
 						});

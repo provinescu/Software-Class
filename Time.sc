@@ -39,6 +39,12 @@ Time {
 		s.options.numOutputBusChannels_(numberOut);
 		s.options.hardwareBufferSize_(size);
 		typeMasterOut = format;
+		// Safety Limiter
+		//s.options.safetyClipThreshold = 1.26; // Testing
+		Safety(s);
+		//Safety(s).enabled;
+		//Safety.setLimit(1.neg.dbamp);
+
 		// Run the Soft
 		this.run;
 
@@ -1794,11 +1800,11 @@ f						Switch File for Analyze.
 					oscHPtempo.free;
 					oscHPstart.free;
 					oscHPrec.free;
-					SCRequestString(addrM.ip, "Enter the NetAddr of Master Application", {arg strg; addrM=strg;
+					SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
 						SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
 							// Set OSC Addresse et Port Slave
 							SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-								SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave Application", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
+								SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
 									initOSCresponder.value;
 								});
 							});
@@ -1988,12 +1994,13 @@ f						Switch File for Analyze.
 				});
 				//key k New Environment
 				if(char == $k, {
-					Dialog.openPanel({arg paths;
-						~pathTime = PathName.new(paths);
-						~pathTime = ~pathTime.pathOnly;
+					FileDialog.new({arg path;
+						~pathTime  = path.at(0).asString ++"/";
+						/*~pathTime = PathName.new(paths);
+						~pathTime = ~pathTime.pathOnly;*/
 						windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  ~pathTime.asString;
 						fonctionCollectFolders.value;
-					});
+					}, fileMode: 2);
 				});
 				// Key z -> load Preset aleatoire
 				if(char == $z, {
