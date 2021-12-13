@@ -4146,6 +4146,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~choiceFilter = PopUpMenu(~wg, Rect(0, 0, 75, 18)).
 		items_(["Off", "LoPass", "HiPass"]).
 		action = {|filter|
+			~writepartitions.value(nil,'control panel normal','off',"~choiceFilter",filter.value);
 			if(filter.value == 0, {
 				~groupeAnalyse.setn(\ampInput, 1, \ampLoPass, 0, \ampHiPass, 0);
 				~hzFilter.enabled_(false);
@@ -4160,10 +4161,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			});
 		};
 		~hzFilter = EZSlider(~wg, 170 @ 18, "HzPass", \freq,
-			{|ez| ~groupeAnalyse.set(\hzPass, ez.value)}, 440,labelWidth: 50, numberWidth: 50);
+			{|ez|
+				~writepartitions.value(nil,'control panel normal','off',"~hzFilter",ez.value);
+				~groupeAnalyse.set(\hzPass, ez.value)}, 440,labelWidth: 50, numberWidth: 50);
 		~hzFilter.enabled_(false);
 
-		~seuilanalyse=EZSlider(~wg, 250 @ 18, "Thresh Analyse", ControlSpec(0.01, 1, \lin), {|ez| ~writepartitions.value(nil,'control panel normal','off',"~seuilanalyse",ez.value);
+		~seuilanalyse=EZSlider(~wg, 250 @ 18, "Thresh Analyse", ControlSpec(0.01, 1, \lin), {|ez|
+			~writepartitions.value(nil,'control panel normal','off',"~seuilanalyse",ez.value);
 			~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapPut(0, ez.value);
 			~audioIn.set(\seuil,ez.value);~audioFile.set(\seuil,ez.value)}, 0.5, labelWidth: 115,numberWidth:50);
 		~wg.view.decorator.nextLine;

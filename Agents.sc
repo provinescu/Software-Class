@@ -4230,7 +4230,7 @@ G                       Init Genome Agent (solo).
 
 		~buttonGeneBand = Button(~wg,Rect(0, 0, 25, 18)).states=[["On", Color.black, Color.green(0.8, 0.25)],["Off", Color.black, Color.red(0.8, 0.25)]];
 		~buttonGeneBand.action = {arg flag;
-			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneBandButton", flag.value)});
+			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~buttonGeneBand", flag.value)});
 			if(flag.value == 0,
 				{~flagGeneBand = 'off';
 					~geneBand0.enabled_(false);
@@ -4994,6 +4994,7 @@ G                       Init Genome Agent (solo).
 		~choiceFilter = PopUpMenu(~wp,Rect(0, 0, 75, 20)).
 		items_(["Off", "LoPass", "HiPass"]).
 		action = {|filter|
+			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~choiceFilter", filter.value)});
 			if(filter.value == 0, {
 				~groupeAnalyse.setn(\ampInput, 1, \ampLoPass, 0, \ampHiPass, 0);
 				~hzFilter.enabled_(false);
@@ -5008,11 +5009,16 @@ G                       Init Genome Agent (solo).
 			});
 		};
 		~hzFilter = EZKnob(~wp, 150 @ 20, "FHzPass", \freq,
-			{|ez| ~groupeAnalyse.set(\hzPass, ez.value)}, 440, labelWidth: 50,unitWidth: 0, layout: 'horz');
+			{|ez|
+				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~hzFilter", ez.value)});
+				~groupeAnalyse.set(\hzPass, ez.value)},
+			440, labelWidth: 50,unitWidth: 0, layout: 'horz');
 		~hzFilter.enabled_(false);
 		// Number FhzBand 28
 		~numberBand = EZKnob(~wp, 110 @ 20, "FhzBand", ControlSpec(1, 12, \lin, 1),
-			{|ez| ~numFhzBand = ez.value;
+			{|ez|
+				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~numberBand", ez.value)});
+				~numFhzBand = ez.value;
 				~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
 				~bandFHZ = ~bandFHZ.add(127);
 				~bandFHZ = ~bandFHZ.reverse;
@@ -5107,6 +5113,7 @@ G                       Init Genome Agent (solo).
 		~buttonSynthBand = Button(~wp, Rect(0, 0, 40, 20))
 		.states_([["On", Color.green], ["Off", Color.red]])
 		.action = {arg flag;
+			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~buttonSynthBand", flag.value)});
 			if(flag.value == 0,
 				{~flagSynthBand = 'off';
 					//~numberBand.enabled_(false);
@@ -5351,6 +5358,7 @@ G                       Init Genome Agent (solo).
 		~listTuning = PopUpMenu(~wp, Rect(0, 0, 130, 20)).
 		items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
 		action = {arg item;
+			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~listTuning", item.value)});
 			// Setup GUI Value
 			~rootChoice.valueAction_(12);
 			~rootChoice.valueAction_(0);
@@ -5458,10 +5466,14 @@ G                       Init Genome Agent (solo).
 
 		// Root
 		~rootChoice = EZKnob(~wp, 80 @ 20, "Root", ControlSpec(0, 21, \lin, 1),
-			{|ez| ~root = ez.value; ~scale=Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning)}, 0, layout: \horz, labelWidth: 30);
+			{|ez|
+				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~rootChoice", ez.value)});
+				~root = ez.value; ~scale=Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning)}, 0, layout: \horz, labelWidth: 30);
 		// Degrees
 		~displayDegrees = EZText(~wp, Rect(0, 0, 475, 20), "Degrees",
-			{arg string; ~degrees = string.value; ~scale=Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning)},
+			{arg string;
+				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~displayDegrees", string.value)});
+				~degrees = string.value; ~scale=Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning)},
 			~degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
 		~wp.view.decorator.nextLine;
 
@@ -7373,7 +7385,7 @@ G                       Init Genome Agent (solo).
 					// write duree ecoulee dans avant dernier evenement
 					if(~scoreRecording.size > 1, {~scoreRecording.wrapAt(~scoreRecording.size - 2).wrapPut(0, time)});
 					~lastTimeRecordScore=newTime;
-				}, {// ctrl+u and esc
+				}, {// ctrl+u and esc and spacebar
 					if(valeur.wrapAt(0) != 21.asAscii and: {valeur.wrapAt(0) != 27.asAscii}, {
 						// write commande et valeur en cours
 						~scoreRecording=~scoreRecording.add([0, commande, valeur]);
