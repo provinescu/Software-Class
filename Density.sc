@@ -2710,6 +2710,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				}),
 				MenuAction("Edit/Save", {arg window, text;
 					window = Document.new("Synth Edit/Save", synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; synthOrchestra = text.interpret};
+					//window = TextView().name_("Synth Edit/Save").string_(synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret.postcs; synthOrchestra = text.interpret};
 				});
 			).title_("Synth"),
 			Menu(
@@ -2725,12 +2726,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{"cancelled".postln});
 				}),
 				MenuAction("Edit/Save", {arg window, text;
-					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret;
+					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret};
+					//window = TextView().name_("Sounds Edit/Save").string_(soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret};
 						s.bind{
 							fonctionLoadSoundOrchestra.value(soundOrchestra);
 							s.sync;
 						};
-					};
 				});
 			).title_("Sound"),
 			Menu(
@@ -2743,6 +2744,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				}),
 				MenuAction("Edit/Save", {arg window, text;
 					window = Document.new("FX Edit/Save", fxOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; fxOrchestra = text.interpret};
+					//window = TextView().name_("FX Edit/Save").string_(fxOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; fxOrchestra = text.interpret};
 				});
 			).title_("FX")
 		);
@@ -2951,7 +2953,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		);
 		MainMenu.register(menuAlgo.title_("Algorithm"), "DensityTools");
 
-		menuHelp = MenuAction("Help ShortCut", {Document.new("ShortCut for Density", helpDensity)});
+		menuHelp = MenuAction("Help ShortCut", {
+			//Document.new("ShortCut for Density", helpDensity);
+			TextView().name_("ShortCut for Density").string_(helpDensity).front;
+		});
 		MainMenu.register(menuHelp, "DensityTools");
 
 		// Fonction ShortCut

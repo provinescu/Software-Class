@@ -289,7 +289,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		);
 		MainMenu.register(~menuMidi.title_("MIDI"), "RobotTools");
 
-		~menuShortCut = MenuAction("ShortCuts", {Document.new("ShortCuts for Robot", ~helpRobot)});
+		~menuShortCut = MenuAction("ShortCuts", {
+			//Document.new("ShortCuts for Robot", ~helpRobot);
+				TextView().name_("ShortCuts for Robot").string_(~helpRobot).front;
+		});
 		MainMenu.register(~menuShortCut, "RobotTools");
 
 
@@ -8960,7 +8963,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
-					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate,  trigger, BufFrames.kr(buffer)*pos, loop, BufFrames.kr(buffer)*controls.at(0), BufFrames.kr(buffer)*controls.at(1));
+					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, BufFrames.kr(buffer)*controls.at(0), BufFrames.kr(buffer)*controls.at(1));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out

@@ -154,6 +154,26 @@ f						Switch File for Analyze.
 			'PlayBuf',
 			'HPplayBufMedianLeakDC',
 			'Waveloss',
+			'Synth HPshiftDown',
+			'Synth MagShift',
+			'Synth LocalMax',
+			'Synth RandComb',
+			'Synth BinShift',
+			'Synth BinScramble',
+			'Synth BrickWall',
+			'Synth ConformalMap',
+			'Synth Diffuser',
+			'Synth MagAbove',
+			'Synth MagBelow',
+			'Synth MagClip',
+			'Synth MagSquared',
+			'Synth RectComb',
+			'Synth MagSmooth',
+			'Synth Compander',
+			'Synth SpectralEnhance',
+			'Synth MagStretch',
+			'Synth MagShift+Stretch',
+			'Synth Cutoff',
 			'SinOsc',
 			'SawSynth',
 			'CombSynth',
@@ -416,7 +436,6 @@ f						Switch File for Analyze.
 						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI, 'on');
 						f.close;
 						windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  PathName.new(paths).fileName;
-						Document.listener.string="";
 						s.queryAllNodes;"".postln;
 					}, {"cancelled".postln});
 				},
@@ -428,7 +447,6 @@ f						Switch File for Analyze.
 						fonctionLoadPreset.value(f.readAllString.interpret, windowControlGUI,'off');
 						f.close;
 						windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  PathName.new(paths).fileName;
-						Document.listener.string="";
 						s.queryAllNodes;"".postln;
 					}, {"cancelled".postln});
 				},
@@ -453,7 +471,7 @@ f						Switch File for Analyze.
 								fonctionCopyTargetSynth.value(f.readAllString.interpret, synthTarget);
 								f.close;
 								windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + PathName.new(paths).fileName;
-								Document.listener.string="";
+
 								s.queryAllNodes;"".postln;
 							}, {"cancelled".postln});
 						}, {synthTarget = nil; "cancelled".postln});
@@ -1820,12 +1838,12 @@ f						Switch File for Analyze.
 		);
 		MainMenu.register(menuOSC.title_("OSC"), "TimeTools");
 
-		menuHelp = Menu(
-			MenuAction("Help ShortCut",
-				{Document.new("ShortCut for Time", helpTime)};
-			)
-		);
-		MainMenu.register(menuHelp.title_("Help ShortCut"), "TimeTools");
+		menuHelp = MenuAction("Help ShortCut",
+				{
+					//Document.new("ShortCut for Time", helpTime);
+					TextView().name_("ShortCut for Time").string_(helpTime).front;
+			});
+		MainMenu.register(menuHelp, "TimeTools");
 
 		// Fonction ShortCut
 		fonctionShortCut = {arg window;
@@ -3943,7 +3961,7 @@ f						Switch File for Analyze.
 				// Synth
 				oscFlatness = (oscFlatness * 30 + 1).clip(1, 31);
 				oscFlux = oscFlux.clip(0.01, 0.995);
-				chain = LeakDC.ar(Median.ar(oscFlatness * 30 + 1, HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, 0, 0.06) * envelope), oscFlux);
+				chain = LeakDC.ar(Median.ar(oscFlatness, HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, 0, 0.06) * envelope), oscFlux);
 				Out.ar(out, chain);
 		}).add;
 
@@ -3960,6 +3978,370 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = WaveLoss.ar(chain, oscFlux * 20 + 20, oscFlatness * 40 + 40);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth HPshiftDown',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_HPshiftDown(chain, oscFlux.clip(0.001, 1) * 32);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagShift',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagShift(chain, oscFlux.clip(0.001, 1) * 4, oscFlatness.clip(0.001, 1) * 128 - 64);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth LocalMax',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_LocalMax(chain, oscFlux*64);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth RandComb',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_RandComb(chain, oscFlux,  LFNoise2.kr(oscFlatness*64));
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth BinScramble',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_BinShift(chain, oscFlux * 4,  oscFlatness * 256 - 128);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth BinShift',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				oscDuree = if(oscDuree > 1, oscDuree.reciprocal, oscDuree);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_BinScramble(chain, oscFlux,  oscFlatness, LFNoise2.kr(oscDuree.reciprocal));
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth BrickWall',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_BrickWall(chain, oscFlux*2 - 1);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth ConformalMap',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_ConformalMap(chain, oscFlux*2 - 1, oscFlatness*2 - 1);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth Diffuser',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(oscFlux*100), (oscFlatness*100).reciprocal));
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagAbove',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagAbove(chain, oscFlux*64);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagBelow',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagBelow(chain, oscFlux * 64);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagClip',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagClip(chain, oscFlux*16);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagSquared',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagSquared(chain);
+				chain= IFFT(chain) * 0.01;
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth RectComb',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				oscDuree = if(oscDuree > 1, oscDuree.reciprocal, oscDuree);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_RectComb(chain, oscFlux * 32, oscFlatness, oscDuree);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagSmooth',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagSmooth(chain, oscFlux);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth Compander',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				oscDuree = if(oscDuree > 1, oscDuree.reciprocal, oscDuree);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_Compander(chain, 80*oscFlux.clip(0.1, 1), (oscFlatness*5).clip(2, 5), oscDuree);
+				chain= IFFT(chain);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth SpectralEnhance',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				oscDuree = if(oscDuree > 1, oscDuree.reciprocal, oscDuree);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_SpectralEnhance(chain, (oscFlux*8+0.5).floor, oscFlatness*4+1, oscDuree);
+				chain= IFFT(chain) * 0.125;
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagStretch',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagShift(chain, oscFlux.clip(0.25, 4));
+				chain= IFFT(chain) * 0.125;
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth MagShift+Stretch',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_MagShift(chain, oscFlux.clip(0.25, 4), oscFlatness - 0.5 * 128);
+				chain= IFFT(chain) * 0.125;
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('Synth Cutoff',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
+				var envelope, chain, trig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
+				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = PV_Cutoff(chain, oscFlux * 2 - 1);
+				chain= IFFT(chain) * 0.125;
 				Out.ar(out, chain);
 		}).add;
 
@@ -5059,7 +5441,7 @@ f						Switch File for Analyze.
 				ReplaceOut.ar(out, chain);
 		}).add;
 
-	//////////////// VST Plugin //////////////////////
+		//////////////// VST Plugin //////////////////////
 
 		// Synth VST
 		SynthDef("VST Stereo",

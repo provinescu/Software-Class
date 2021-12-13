@@ -563,12 +563,11 @@ y ... -					Musical keys.
 		);
 		MainMenu.register(menuOSC.title_("OSC"), "MatrixTools");
 
-		menuHelp = Menu(
-			MenuAction("ShortCut", {
-				Document.new("ShortCut for Matrix", helpMatrix);
+		menuHelp = MenuAction("ShortCut", {
+				//Document.new("ShortCut for Matrix", helpMatrix);
+				TextView().name_("ShortCut for Matrix").string_(helpMatrix).front;
 			});
-		);
-		MainMenu.register(menuHelp.title_("Help"), "MatrixTools");
+		MainMenu.register(menuHelp, "MatrixTools");
 
 		fonctionUserOperatingSystem = {arg item, window;
 			var data, tampon, dataControlSynth;
@@ -5020,7 +5019,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = LoopBuf.ar(1, buffer, rate* reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, BufFrames.kr(buffer) * ctrl1, BufFrames.kr(buffer) * ctrl2);
+				chain = LoopBuf.ar(1, buffer, rate* reverse1, 1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1, BufFrames.kr(buffer) * ctrl2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 'Stereo',

@@ -127,7 +127,7 @@ alt + v			 		Init virtual space.
 w / ctrl + w			Display windows.
 y						Mean state system on/off.
 z				 		Random load preset.
-/*alt + z					Random load preset with genome.
+/*alt + z				Random load preset with genome.
 alt + Z					Random load preset with genome and sequence.*/
 ctrl + z				Stop all score.
 
@@ -139,7 +139,7 @@ f						Switch file for analyze.
 alt + l					Load preset with genome.
 alt + L					Load preset with genome+sequence.
 ctrl + l				Load preset synchro on Temporal Grid (nextBar).
-/*ctrl + alt + l			Load preset with genome on Temporal Grid (nextBar).
+/*ctrl + alt + l		Load preset with genome on Temporal Grid (nextBar).
 ctrl + alt + L			Load preset with genome+sequence on Temporal Grid (nextBar).*/
 L			 			Load control panel.
 N						Add a copy of an agent.
@@ -147,7 +147,7 @@ p / ctrl + p			Play (loop off) / Stop score.
 P						Play score (loop on).
 alt + p					Switch synthDef.
 s				 		Save preset.
-/*alt + s					Save preset with genome.
+/*alt + s				Save preset with genome.
 alt + S					Save preset with genome+sequence.*/
 S				 		Save control panel.
 t			 			Automation: 1. Init agents.
@@ -432,10 +432,14 @@ G                       Init Genome Agent (solo).
 		MainMenu.register(~menuSoft.title_("Soft"), "AgentsTools");
 
 		~menuKeys = Menu(
-			MenuAction("List ShortCuts Agents", {Document.new("ShortCuts for Agents",~helpHPAgents)};
+			MenuAction("List ShortCuts Agents", {
+				//Document.new("ShortCut for Agents", ~helpHPAgents);
+				TextView().name_("ShortCut for Agents").string_(~helpHPAgents).front};
 			),
-			MenuAction("List ShortCuts Genome + Sequence Editor", {Document.new("ShortCuts for Genome + Sequence Editor", ~helpHPgenomesequenceEditor)};
-			);
+			MenuAction("List ShortCuts Genome + Sequence Editor", {
+				//Document.new("ShortCuts for Genome + Sequence Editor", ~helpHPgenomesequenceEditor)};
+				TextView().name_("List ShortCuts Genome + Sequence Editor").string_(~helpHPgenomesequenceEditor).front;
+				});
 		);
 		MainMenu.register(~menuKeys.title_("ShortCuts"), "AgentsTools");
 
@@ -8026,7 +8030,7 @@ G                       Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate,  Impulse.kr(controlF * 64), BufFrames.kr(buffer)*offset, loop, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD);
+					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate,  1, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlF, BufFrames.kr(buffer)*controlA);
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
