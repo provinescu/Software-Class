@@ -145,9 +145,12 @@ L			 			Load control panel.
 N						Add a copy of an agent.
 p / ctrl + p			Play (loop off) / Stop score.
 P						Play score (loop on).
+ctrl + alt + p          Play step score (loop off).
+ctrl + shift + alt + p  Play step score(loop on).
+enter                   Next event step score.
 alt + p					Switch synthDef.
 s				 		Save preset.
-/*alt + s				Save preset with genome.
+alt + s				    Save preset with genome.
 alt + S					Save preset with genome+sequence.*/
 S				 		Save control panel.
 t			 			Automation: 1. Init agents.
@@ -6221,11 +6224,11 @@ G                       Init Genome Agent (solo).
 					});
 				});
 
-				// key alt + p score step by step loop off
-				if(modifiers==524288 and: {unicode==112} and: {keycode==35},
-					{~commandeExecute='play score step loop off'});
-				// key ctrl + alt + p score step by step loop on
+				// key ctrl + alt + p score step by step loop off
 				if(modifiers==786432 and: {unicode==16} and: {keycode==35},
+					{~commandeExecute='play score step loop off'});
+				// key ctrl + alt + shift + p score step by step loop on
+				if(modifiers==917504 and: {unicode==16} and: {keycode==35},
 					{~commandeExecute='play score step loop on'});
 				// key enter score step next event
 				if(modifiers==0 and: {unicode==13} and: {keycode==36},
