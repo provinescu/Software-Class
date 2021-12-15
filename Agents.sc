@@ -439,7 +439,7 @@ G                       Init Genome Agent (solo).
 			MenuAction("List ShortCuts Genome + Sequence Editor", {
 				//Document.new("ShortCuts for Genome + Sequence Editor", ~helpHPgenomesequenceEditor)};
 				TextView().name_("List ShortCuts Genome + Sequence Editor").string_(~helpHPgenomesequenceEditor).front;
-				});
+			});
 		);
 		MainMenu.register(~menuKeys.title_("ShortCuts"), "AgentsTools");
 
@@ -911,6 +911,10 @@ G                       Init Genome Agent (solo).
 			// Init liste score pour tdef
 			~listeRoutinePlayingScore=[];
 			~listeFlagRoutinePlayingScore=[];
+			~indexStepScore=0;
+			~flagStepScore='off';
+			~score=nil;
+			~numberStepScore=nil;
 			40.do({arg i; ~listeRoutinePlayingScore=~listeRoutinePlayingScore.add([]);
 				~listeFlagRoutinePlayingScore=~listeFlagRoutinePlayingScore.add([]);
 			});
@@ -6200,6 +6204,8 @@ G                       Init Genome Agent (solo).
 						~listeRoutinePlayingScore.wrapPut(i, []);
 						~listeFlagRoutinePlayingScore.wrapPut(i, []);
 					});
+					~scor
+
 				});
 				// key u -> start record score
 				if(modifiers==0 and: {unicode==117} and: {keycode==32},
@@ -6214,6 +6220,17 @@ G                       Init Genome Agent (solo).
 							("Stop recording score"+~numeroScore.asString).postln;nil});
 					});
 				});
+
+				// key alt + p score step by step loop off
+				if(modifiers==524288 and: {unicode==112} and: {keycode==35},
+					{~commandeExecute='play score step loop off'});
+				// key ctrl + alt + p score step by step loop on
+				if(modifiers==786432 and: {unicode==16} and: {keycode==35},
+					{~commandeExecute='play score step loop on'});
+				// key enter score step next event
+				if(modifiers==0 and: {unicode==13} and: {keycode==36},
+					{~scoreStep.value(~score, ~indexStepScore, ~flagStepScore, ~numberStepScore)});
+
 				// Genome Editor
 				if(~flagHPgenomeEditor == 'on',
 					{// key alt + x next ~agentEditor
@@ -6496,6 +6513,21 @@ G                       Init Genome Agent (solo).
 						~listeRoutinePlayingScore.wrapPut(number-1, file)});
 				});
 			});
+			// Play score step loop off
+			if(commande == 'play score step loop off' and:{~flagRecordScore != 'on'}, {
+				if(File.exists(~nompathdata++"score"+number.asString++".scd"),{file=File(~nompathdata++"score"+number.asString++".scd","r");
+					datafile=file.readAllString.interpret;file.close;
+					//ici fonction init et playing score
+					~indexStepScore=0;~flagStepScore='off';~score=datafile;~numberStepScore=number;
+				});
+			});
+			// Play score step loop on
+			if(commande == 'play score step loop on' and:{~flagRecordScore != 'on'}, {
+				if(File.exists(~nompathdata++"score"+number.asString++".scd"),{file=File(~nompathdata++"score"+number.asString++".scd","r");
+					datafile=file.readAllString.interpret;file.close;
+					~indexStepScore=0;~flagStepScore='on';~score=datafile;~numberStepScore=number;
+				});
+			});
 			// Stop score
 			if(commande == 'stop score' and:{~flagRecordScore != 'on'}, {
 				~listeRoutinePlayingScore.wrapAt(number-1).size.do({arg i;
@@ -6505,6 +6537,7 @@ G                       Init Genome Agent (solo).
 				});
 				~listeRoutinePlayingScore.wrapPut(number-1, []);
 				~listeFlagRoutinePlayingScore.wrapPut(number-1, []);
+				~score=nil;
 			});
 			// Add a copy of this agent
 			if(commande == 'Add copy agent', {
@@ -7411,7 +7444,8 @@ G                       Init Genome Agent (solo).
 							if(cmd != "End Score", {
 								if(cmd == "~evaluationKeyDown", {{cmd.interpret.value(val.wrapAt(0), val.wrapAt(1),val.wrapAt(2),val.wrapAt(3), val.wrapAt(4))}.defer},
 									{if(cmd == "~validGenomeAll",{~genomes=val; {~fonctionUpdateGenomeAll.value}.defer},
-										{if(cmd == "~validSeqFreqAmpDur",{~listeagentfreq=val.wrapAt(0);~listeagentamp=val.wrapAt(1);~listeagentduree=val.wrapAt(2); {~fonctionUpdateSequence.value(~agentSequence)}.defer},
+										{if(cmd ==
+											"~validSeqFreqAmpDur",{~listeagentfreq=val.wrapAt(0);~listeagentamp=val.wrapAt(1);~listeagentduree=val.wrapAt(2); {~fonctionUpdateSequence.value(~agentSequence)}.defer},
 											{if(cmd == "Special Cmd", {val.interpret},
 												{{cmd.interpret.valueAction_(val)}.defer})})})})},
 							{if(flagLoop == 'on', {
@@ -7441,6 +7475,37 @@ G                       Init Genome Agent (solo).
 				}.play;
 				};
 			);
+		};
+
+		~scoreStep={arg score, index, flag, number; //~score, ~indexStepScore, ~flagStepScore;
+			var event, time, cmd, val;
+			Post << "Event: " << index << " " << "Score " << number << Char.nl;
+			if(index >= (score.size - 1),
+				{
+					if(flag == 'on', {
+						("Loop score"+number.asString).postln;
+						~indexStepScore=0; index = 0;
+					},
+					{
+						("Stop Score"+number.asString).postln;
+						~score=nil; score = nil;
+			})});
+			if(score != nil,
+				{
+					event = score.at(index);
+					time = event.wrapAt(0);
+					cmd = event.wrapAt(1);
+					val = event.wrapAt(2);
+					if(cmd != "End Score", {
+						if(cmd == "~evaluationKeyDown", {cmd.interpret.value(val.wrapAt(0), val.wrapAt(1),val.wrapAt(2),val.wrapAt(3), val.wrapAt(4))},
+							{if(cmd == "~validGenomeAll",{~genomes=val; {~fonctionUpdateGenomeAll.value}.defer},
+								{if(cmd ==
+									"~validSeqFreqAmpDur",{~listeagentfreq=val.wrapAt(0);~listeagentamp=val.wrapAt(1);~listeagentduree=val.wrapAt(2); {~fonctionUpdateSequence.value(~agentSequence)}.defer},
+									{if(cmd == "Special Cmd", {val.interpret},
+										{{cmd.interpret.valueAction_(val)}.defer})})})});
+					});
+					~indexStepScore = ~indexStepScore + 1;
+			});
 		};
 
 	}
