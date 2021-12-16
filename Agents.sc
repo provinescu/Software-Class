@@ -6207,8 +6207,7 @@ G                       Init Genome Agent (solo).
 						~listeRoutinePlayingScore.wrapPut(i, []);
 						~listeFlagRoutinePlayingScore.wrapPut(i, []);
 					});
-					~scor
-
+					~score=nil; ~numberStepScore=nil;
 				});
 				// key u -> start record score
 				if(modifiers==0 and: {unicode==117} and: {keycode==32},
@@ -6223,7 +6222,6 @@ G                       Init Genome Agent (solo).
 							("Stop recording score"+~numeroScore.asString).postln;nil});
 					});
 				});
-
 				// key ctrl + alt + p score step by step loop off
 				if(modifiers==786432 and: {unicode==16} and: {keycode==35},
 					{~commandeExecute='play score step loop off'});
@@ -6233,7 +6231,6 @@ G                       Init Genome Agent (solo).
 				// key enter score step next event
 				if(modifiers==0 and: {unicode==13} and: {keycode==36},
 					{~scoreStep.value(~score, ~indexStepScore, ~flagStepScore, ~numberStepScore)});
-
 				// Genome Editor
 				if(~flagHPgenomeEditor == 'on',
 					{// key alt + x next ~agentEditor
@@ -6540,7 +6537,7 @@ G                       Init Genome Agent (solo).
 				});
 				~listeRoutinePlayingScore.wrapPut(number-1, []);
 				~listeFlagRoutinePlayingScore.wrapPut(number-1, []);
-				~score=nil;
+				~score=nil; ~numberStepScore=nil;
 			});
 			// Add a copy of this agent
 			if(commande == 'Add copy agent', {
@@ -7491,7 +7488,7 @@ G                       Init Genome Agent (solo).
 					},
 					{
 						("Stop Score"+number.asString).postln;
-						~score=nil; score = nil;
+						~score=nil; score = nil; ~numberStepScore=nil; number=nil;
 			})});
 			if(score != nil,
 				{
