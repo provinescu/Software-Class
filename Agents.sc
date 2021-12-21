@@ -6517,6 +6517,7 @@ G                       Init Genome Agent (solo).
 			if(commande == 'play score step loop off' and:{~flagRecordScore != 'on'}, {
 				if(File.exists(~nompathdata++"score"+number.asString++".scd"),{file=File(~nompathdata++"score"+number.asString++".scd","r");
 					datafile=file.readAllString.interpret;file.close;
+					("Play Step Score"+number.asString++"."+"(Loop"+~flagStepScore.asString++")").postln;
 					//ici fonction init et playing score
 					~indexStepScore=0;~flagStepScore='off';~score=datafile;~numberStepScore=number;
 				});
@@ -6525,6 +6526,7 @@ G                       Init Genome Agent (solo).
 			if(commande == 'play score step loop on' and:{~flagRecordScore != 'on'}, {
 				if(File.exists(~nompathdata++"score"+number.asString++".scd"),{file=File(~nompathdata++"score"+number.asString++".scd","r");
 					datafile=file.readAllString.interpret;file.close;
+					("Play Step Score"+number.asString++"."+"(Loop"+~flagStepScore.asString++")").postln;
 					~indexStepScore=0;~flagStepScore='on';~score=datafile;~numberStepScore=number;
 				});
 			});
@@ -7432,7 +7434,7 @@ G                       Init Genome Agent (solo).
 
 		~routinePlayingScore = {arg score, number, pos, flagLoop;
 			var time=0.04167 / ~tempoMusicPlay.tempo.reciprocal, cmd, val;
-			("Play score"+number.asString++"."++pos.asString+"(Loop"+flagLoop.asString++")").postln;
+			("Play Step Score"+number.asString++"."++pos.asString+"(Loop"+flagLoop.asString++")").postln;
 			Tdef(("score"+number.asString+Date.localtime.asString).asSymbol,
 				{Routine{arg inval;
 					score.do({arg item;
@@ -7479,15 +7481,16 @@ G                       Init Genome Agent (solo).
 
 		~scoreStep={arg score, index, flag, number; //~score, ~indexStepScore, ~flagStepScore;
 			var event, time, cmd, val;
-			Post << "Event: " << index << " " << "Score " << number << Char.nl;
+			("Play score"+number.asString++"."+"(Loop"+flag.asString++")").postln;
+			Post << "Event: " << index << " " << "Step Score " << number << Char.nl;
 			if(index >= (score.size - 1),
 				{
 					if(flag == 'on', {
-						("Loop score"+number.asString).postln;
+						("Loop Step score"+number.asString).postln;
 						~indexStepScore=0; index = 0;
 					},
 					{
-						("Stop Score"+number.asString).postln;
+						("Stop Step Score"+number.asString).postln;
 						~score=nil; score = nil; ~numberStepScore=nil; number=nil;
 			})});
 			if(score != nil,
