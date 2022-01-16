@@ -4,15 +4,15 @@ Matrix {
 
 	classvar  < s;
 
-	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, switchAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST;
+	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, switchAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5;
 
-	*new	{arg path="~/Documents/Matrix/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
+	*new	{arg path="~/Documents/Matrix/", o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
-		^super.new.init(path, o, r, f, devIn, devOut, size);
+		^super.new.init(path, o, r, f, devIn, devOut, size, wid, ori, flag);
 
 	}
 
-	init	{arg path, o, r, f, devIn, devOut, size;
+	init	{arg path, o, r, f, devIn, devOut, size, wid, ori, flag;
 
 		//// Setup GUI style
 		//GUI.qt;
@@ -27,7 +27,7 @@ Matrix {
 
 		numberAudioOut = o;
 		recChannels = r;
-		switchAudioOut = f.asSymbol;// Type Format stereo, ambisonic, etc...
+		switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
 		s = Server.default;
 
@@ -45,6 +45,10 @@ Matrix {
 		s.recHeaderFormat_(headerFormat);
 		sampleFormat = "float";
 		s.recSampleFormat_(sampleFormat);
+		flagMC = flag;
+		widthMC = wid;
+		orientationMC = ori;
+
 		// Safety Limiter
 		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
@@ -89,7 +93,7 @@ Matrix {
 		// Init variables
 		listeGroupeSynth=[];
 		flagRecording='off';
-		switchAudioOut='Stereo';
+		switchAudioOut=0;
 		listeBusInOut=[];
 		listeBusFX=[];
 		listeGroupeSynthID=[];
@@ -465,13 +469,13 @@ y ... -					Musical keys.
 			}),
 			Menu(
 				MenuAction("Stereo", {
-					switchAudioOut='Stereo'; this.initSynthDef}),
+					switchAudioOut=0; this.initSynthDef}),
 				MenuAction("MultiSpeaker", {
-					switchAudioOut='Multispeaker'; this.initSynthDef}),
+					switchAudioOut=2; this.initSynthDef}),
 				MenuAction("Rotate2", {
-					switchAudioOut='Rotate2'; this.initSynthDef}),
+					switchAudioOut=1; this.initSynthDef}),
 				MenuAction("Ambisonic", {
-					switchAudioOut='Ambisonic'; this.initSynthDef})
+					switchAudioOut=3; this.initSynthDef})
 			).title_("Format");
 		);
 		MainMenu.register(menuAudio.title_("Audio"), "MatrixTools");
@@ -4508,7 +4512,7 @@ y ... -					Musical keys.
 										{
 											// MIDI OFF
 											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-												if(flagVST == 'on', {									~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
 											});
 											lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
 											indexMusicData = 9999;
@@ -4918,13 +4922,13 @@ y ... -					Musical keys.
 				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);,
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);,
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
 							// Ambisonic
@@ -4968,19 +4972,19 @@ y ... -					Musical keys.
 				chain = GrainBuf.ar(1, Dust.kr(ctrl1 * 100), ctrl1 * 0.1, buffer, BufRateScale.kr(buffer) * rate * reverse1, ctrl2, 4, 0, -1, 512);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5022,19 +5026,19 @@ y ... -					Musical keys.
 				chain = LoopBuf.ar(1, buffer, rate* reverse1, 1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1, BufFrames.kr(buffer) * ctrl2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5074,19 +5078,19 @@ y ... -					Musical keys.
 				// Main Synth
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(1, BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer)), BufRateScale.kr(buffer) * reverse1, loopOne, ctrlHP1, ctrlHP2);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5126,19 +5130,19 @@ y ... -					Musical keys.
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5178,19 +5182,19 @@ y ... -					Musical keys.
 				chain = LeakDC.ar(Median.ar(ctrl2 * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2)), ctrl3);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5232,19 +5236,19 @@ y ... -					Musical keys.
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl2, mul: 128 * ctrl3), Impulse.kr(ctrl1 * 100), BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5285,19 +5289,19 @@ y ... -					Musical keys.
 				chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl2 * dureeSample.reciprocal * 10, mul: ctrl3, add: BufRateScale.kr(buffer) * rate * reverse1), Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5339,19 +5343,19 @@ y ... -					Musical keys.
 				chain = Mix(HPtGrains.ar(2, Impulse.kr(ctrl1*100), buffer, BufRateScale.kr(buffer) * rate * reverse1, BufDur.kr(buffer) * ctrl4, (duree*ctrl2)/(ctrl3*100), 0, 1, ctrlHP1, ctrlHP2));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5391,19 +5395,19 @@ y ... -					Musical keys.
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Trig1.kr(Impulse.kr(ctrl1 * 100), ctrl2), BufFrames.kr(buffer) * ctrl3, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5446,19 +5450,19 @@ y ... -					Musical keys.
 				chain = Resonz.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5503,19 +5507,19 @@ y ... -					Musical keys.
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4), 0.333), RHPF.ar(chain, XLine.ar(108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6 + 1.midicps, dureeSample*ctrl7), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5557,19 +5561,19 @@ y ... -					Musical keys.
 				chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 10, ctrl3 * 10);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5611,19 +5615,19 @@ y ... -					Musical keys.
 				chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 40, 40, abs(ctrl3 * 2 - 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5665,19 +5669,19 @@ y ... -					Musical keys.
 				chain = FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 1024 - 512, ctrl3 * 2pi);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5721,19 +5725,19 @@ y ... -					Musical keys.
 				chain = Warp1.ar(1, buffer, offset1, BufRateScale.kr(buffer) * rate * reverse1, ctrl1 + 0.01, -1, ctrl2 * 15 + 1, ctrl3, 2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5777,19 +5781,19 @@ y ... -					Musical keys.
 				BufWr.ar(in1 + chain * 0.5, local, Phasor.ar(0, ctrl5 + 0.001, 0, BufFrames.kr(local)), 1);
 				// chain = Limiter.ar(chain + in1, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5834,19 +5838,19 @@ y ... -					Musical keys.
 				BufWr.ar(chain, local, Phasor.ar(0, ctrl5+0.01, 0, BufFrames.kr(local)), 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5888,19 +5892,19 @@ y ... -					Musical keys.
 				chain = CombC.ar(chain, 0.1, Line.kr(ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5942,19 +5946,19 @@ y ... -					Musical keys.
 				chain = CombC.ar(chain, 0.1, Line.kr(Rand(ctrl2.clip(0.01, 0.99), ctrl3.clip(0.01, 0.99))/100, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -5994,19 +5998,19 @@ y ... -					Musical keys.
 				chain = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, ctrl2, ctrl3, ctrl4);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6047,19 +6051,19 @@ y ... -					Musical keys.
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureeSample.reciprocal), BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer)* offset1, BufFrames.kr(buffer)* ctrl1 ).lag(ctrl2) * LFNoise2.kr(ctrl3).sign, 1, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6106,19 +6110,19 @@ y ... -					Musical keys.
 				chain = BBandPass.ar(chain, LFNoise2.kr(dureeSample) + 1 * 1000, ctrl5.clip(0.01, 1.0), 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6160,19 +6164,19 @@ y ... -					Musical keys.
 				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6217,19 +6221,19 @@ y ... -					Musical keys.
 				chain = Median.ar(3, chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), 1),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), 1, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), 1, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
 							// Ambisonic v1
@@ -6275,19 +6279,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6331,19 +6335,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6387,19 +6391,19 @@ y ... -					Musical keys.
 		//chain= IFFT(chain) * 3;
 		//// chain = Limiter.ar(chain, 1.0, 0.01);
 		//// Switch Audio Out
-		//chain = if(switchAudioOut == 'Stereo',
-		//if(Rand(-1, 1) <= 0,
+		//chain = if(switchAudioOut == 0,
+		//if(flagMC == 0,
 		//// Pan v1
 		//Pan2.ar(chain, Rand(panLo, panHi), envelope),
 		//// Pan v2
 		//Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-		//if(switchAudioOut == 'Multispeaker',
-		//if(Rand(-1, 1) <= 0,
+		//if(switchAudioOut == 2,
+		//if(flagMC == 0,
 		//// PanAz v1
-		//PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+		//PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 		//// PanAz v2
-		//PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-		//if(switchAudioOut == 'Rotate2',
+		//PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+		//if(switchAudioOut == 1,
 		//// Rotate2 v1
 		//Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 		//// Ambisonic v1
@@ -6443,19 +6447,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6499,19 +6503,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6555,19 +6559,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6611,19 +6615,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6667,19 +6671,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6723,19 +6727,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6779,19 +6783,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6835,19 +6839,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6891,19 +6895,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -6947,19 +6951,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7003,19 +7007,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7059,19 +7063,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7115,19 +7119,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7171,19 +7175,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.01;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7227,19 +7231,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7283,19 +7287,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7339,19 +7343,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7395,19 +7399,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7451,19 +7455,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7507,19 +7511,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7563,19 +7567,19 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7625,19 +7629,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7685,19 +7689,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7745,19 +7749,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7805,19 +7809,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.01;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7865,19 +7869,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7925,19 +7929,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -7985,19 +7989,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8045,19 +8049,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8105,19 +8109,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain)* 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8165,19 +8169,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8225,19 +8229,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8282,19 +8286,19 @@ y ... -					Musical keys.
 				chain = Convolution.ar(chain1, chain2, 2048) * 0.01;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8339,19 +8343,19 @@ y ... -					Musical keys.
 				chain = Concat.ar(chain2, chain1, (ctrl3 * 4).clip(1, 4), ctrl4.clip(0.01, 1.0), (ctrl5 * 4).clip(1, 4), ctrl6.clip(0.01,0.5), ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, mul: 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8387,19 +8391,19 @@ y ... -					Musical keys.
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8435,19 +8439,19 @@ y ... -					Musical keys.
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(63.5.midicps*ctrl1+27.5, freq, duree*ctrl3), 0.333), RHPF.ar(chain, XLine.ar(127.midicps*ctrl2+27.5, freq, duree*ctrl3), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8482,19 +8486,19 @@ y ... -					Musical keys.
 				chain = if(freq >= 60.midicps , Resonz.ar(chain, XLine.ar(127.midicps*ctrl1+21.midicps, 55*ctrl2 + 21.midicps, duree*ctrl3)), Resonz.ar(chain, XLine.ar(55*ctrl1+21.midicps, 127.midicps*ctrl2 + 21.midicps, duree*ctrl3)));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8528,19 +8532,19 @@ y ... -					Musical keys.
 				chain = Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), ctrl1 * 10, ctrl2 *10);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8574,19 +8578,19 @@ y ... -					Musical keys.
 				chain = WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), ctrl1 * 40, 40, abs(ctrl2 * 2 - 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8620,19 +8624,19 @@ y ... -					Musical keys.
 				chain = FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), ctrl1 * 1024 - 512, ctrl2 * 2pi);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8666,19 +8670,19 @@ y ... -					Musical keys.
 				chain = PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), 0.2, ctrl1.clip(0.01, 1) * 8, ctrl2, ctrl3, 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8718,19 +8722,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8768,19 +8772,19 @@ y ... -					Musical keys.
 		//chain = IFFT(chain) * 3;
 		//// chain = Limiter.ar(chain, 1.0, 0.01);
 		//// Switch Audio Out
-		//chain = if(switchAudioOut == 'Stereo',
-		//if(Rand(-1, 1) <= 0,
+		//chain = if(switchAudioOut == 0,
+		//if(flagMC == 0,
 		//// Pan v1
 		//Pan2.ar(chain, Rand(panLo, panHi), envelope),
 		//// Pan v2
 		//Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-		//if(switchAudioOut == 'Multispeaker',
-		//if(Rand(-1, 1) <= 0,
+		//if(switchAudioOut == 2,
+		//if(flagMC == 0,
 		//// PanAz v1
-		//PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+		//PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 		//// PanAz v2
-		//PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-		//if(switchAudioOut == 'Rotate2',
+		//PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+		//if(switchAudioOut == 1,
 		//// Rotate2 v1
 		//Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 		//// Ambisonic v1
@@ -8818,19 +8822,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8868,19 +8872,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8918,19 +8922,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -8968,19 +8972,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9018,19 +9022,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9068,19 +9072,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9118,19 +9122,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9168,19 +9172,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9218,19 +9222,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9268,19 +9272,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9318,19 +9322,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9368,19 +9372,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9418,19 +9422,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9468,19 +9472,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.1;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9518,19 +9522,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9568,19 +9572,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9618,19 +9622,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9678,19 +9682,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9736,19 +9740,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9794,19 +9798,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9852,19 +9856,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.1;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9910,19 +9914,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -9968,19 +9972,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10026,19 +10030,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10084,19 +10088,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10142,19 +10146,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10200,19 +10204,19 @@ y ... -					Musical keys.
 				chain = IFFT(chain) * 0.5;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10255,19 +10259,19 @@ y ... -					Musical keys.
 				chain = Convolution(in1, in2, 2048) * 0.1;
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10303,19 +10307,19 @@ y ... -					Musical keys.
 				chain = SinOsc.ar(freq);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10349,19 +10353,19 @@ y ... -					Musical keys.
 				chain = Mix(SinOsc.ar(freq + SinOsc.ar(250*ctrl1, mul: 250 * ctrl2), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(500*ctrl3, mul: 500 * ctrl4), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(750*ctrl5, mul: 750 * ctrl6), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(1000*ctrl7, mul: 1000 * ctrl8), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(1250*ctrl9, mul: 1250 * ctrl10), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(1500*ctrl11, mul: 1500 * ctrl12), mul: amp / 6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10397,19 +10401,19 @@ y ... -					Musical keys.
 				chain = Mix(SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl1, mul: 1000 * ctrl2), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl3, mul: 1000 * ctrl4), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl5, mul: 1000 * ctrl6), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl7, mul: 1000 * ctrl8), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl9, mul: 1000 * ctrl10), mul: amp / 6) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl11, mul: 1000 * ctrl2), mul: amp / 6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10443,19 +10447,19 @@ y ... -					Musical keys.
 				chain = Mix(SinOsc.ar(SinOsc.kr(ctrl1*8, mul: Line.kr(0, ctrl2*100, ctrl3*duree), add: freq), mul: amp / 4) + SinOsc.ar(SinOsc.kr(ctrl4*16, mul: Line.kr(0, ctrl5*100, ctrl6*duree), add: freq), mul: amp / 4) + SinOsc.ar(SinOsc.kr(ctrl7*24, mul: Line.kr(0, ctrl8*100, ctrl9*duree), add: freq), mul: amp / 4) + SinOsc.ar(SinOsc.kr(ctrl10*32, mul: Line.kr(0, ctrl11*100, ctrl12*duree), add: freq), mul: amp / 4));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10489,19 +10493,19 @@ y ... -					Musical keys.
 				chain = Mix(Formant.ar(freq, LFNoise0.kr(ctrl1.reciprocal) * (ctrl2 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl3 * 127).midicps, amp / 4) + Formant.ar(freq, LFNoise0.kr(ctrl4.reciprocal) * (ctrl5 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl6 * 127).midicps, amp / 4) + Formant.ar(freq, LFNoise0.kr(ctrl7.reciprocal) * (ctrl8 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl9 * 127).midicps, amp / 4) + Formant.ar(freq, LFNoise0.kr(ctrl10.reciprocal) * (ctrl11 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl12 * 127).midicps, amp / 4));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10536,19 +10540,19 @@ y ... -					Musical keys.
 				chain = CombL.ar(chain, freq.reciprocal, freq.reciprocal, duree, amp);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10585,19 +10589,19 @@ y ... -					Musical keys.
 				//chain = BBandPass.ar(chain, ctrl1 * 4186 + 27.5, ctrl2 + 0.001);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10631,19 +10635,19 @@ y ... -					Musical keys.
 				chain = Mix(Gendy3.ar(ctrl1 * 6, ctrl2 * 6, ctrl3 * 0.1, ctrl4 * 0.1, freq, ctrl5 * 0.1, ctrl6 * 0.1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10677,19 +10681,19 @@ y ... -					Musical keys.
 				chain = Mix(Klang.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, [amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12], nil], freq));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10723,19 +10727,19 @@ y ... -					Musical keys.
 				chain = Mix(Blip.ar(freq, Line.kr(50 * ctrl1 + 1,50 * ctrl2 + 1, duree * ctrl3), 0.5));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10769,19 +10773,19 @@ y ... -					Musical keys.
 				chain = Mix(VarSaw.ar(freq, ctrl1, ctrl2, 0.5));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10815,19 +10819,19 @@ y ... -					Musical keys.
 				chain = Mix(Pulse.ar(freq, ctrl1, 0.5));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10861,19 +10865,19 @@ y ... -					Musical keys.
 				chain = Mix(DynKlank.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, amp / 12, nil], Dust2.ar(duree.reciprocal * 100), freq));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10907,19 +10911,19 @@ y ... -					Musical keys.
 				chain = Mix(DynKlank.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, amp / 12, nil], Impulse.ar(duree.reciprocal * 64), freq));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -10959,19 +10963,19 @@ y ... -					Musical keys.
 				chain = PMOsc.ar(freq, outforce, Line.kr(ctrl4, ctrl5 * 2pi), 0, 0.25);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
-					if(Rand(-1, 1) <= 0,
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
 						// Pan v1
 						Pan2.ar(chain, Rand(panLo, panHi), envelope),
 						// Pan v2
 						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 'Multispeaker',
-						if(Rand(-1, 1) <= 0,
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
 							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, 2, 0.5),
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-						if(switchAudioOut == 'Rotate2',
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 							// Ambisonic v1
@@ -11005,13 +11009,13 @@ y ... -					Musical keys.
 				chain = Mix(AllpassC.ar(in, 0.2, [ctrl1,ctrl2/2,ctrl3/3,ctrl4/4,ctrl1,ctrl5/5,ctrl6/6], [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12]*30, amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11042,13 +11046,13 @@ y ... -					Musical keys.
 				chain = FreeVerb.ar(in, ctrl1, ctrl2, ctrl3, amp);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11080,13 +11084,13 @@ y ... -					Musical keys.
 				chain = Mix(left, right);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11117,13 +11121,13 @@ y ... -					Musical keys.
 				chain = Mix(JPverb.ar(in, t60: ctrl1 * 60, damp: ctrl2, size: ctrl3 * 300, earlyDiff: ctrl4, modDepth: ctrl5, modFreq: ctrl6 * 10, low: ctrl7, mid: ctrl8, high: ctrl9, lowcut: ctrl10, highcut: ctrl11));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11154,13 +11158,13 @@ y ... -					Musical keys.
 				chain = Mix(DelayC.ar(in, 4.0, [ctrl1*4.0,ctrl2*4.0,ctrl3*4.0,ctrl4*4.0,ctrl5*4.0,ctrl6*4.0,ctrl7*4.0,ctrl8*4.0,ctrl9*4.0,ctrl10*4.0,ctrl11*4.0,ctrl12*4.0].clip(0.01, 4.0), amp / 6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11191,13 +11195,13 @@ y ... -					Musical keys.
 				chain = in * EnvGen.kr(Env.perc, Trig1.kr(Impulse.kr(ctrl1 * 100), ctrl2), 1, 0, ctrl3);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11228,13 +11232,13 @@ y ... -					Musical keys.
 				chain = Mix(BPF.ar(in,[ctrl1*1000+27.5,ctrl2*1000+750,ctrl3*1000+1500,ctrl4*1000+2250,ctrl5*1000+3000,ctrl6*1000+3750], [ctrl7,ctrl8,ctrl9,ctrl10,ctrl11,ctrl12]+0.001, amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11265,13 +11269,13 @@ y ... -					Musical keys.
 				chain = Mix(BRF.ar(in,[ctrl1*1000+27.5,ctrl2*1000+750,ctrl3*1000+1500,ctrl4*1000+2250,ctrl5*1000+3000,ctrl6*1000+3750], [ctrl7,ctrl8,ctrl9,ctrl10,ctrl11,ctrl12]+0.001, amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11302,13 +11306,13 @@ y ... -					Musical keys.
 				chain = Mix(MidEQ.ar(in, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6]*4186+27.5, 0.5, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12]*48-24, amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11339,13 +11343,13 @@ y ... -					Musical keys.
 				chain = Mix(TwoPole.ar(in, [ctrl1*500,ctrl2*500+500,ctrl3*500+1000,ctrl4*500+1500,ctrl5*500+2000,ctrl6*500+2500], [ctrl7,ctrl8,ctrl9,ctrl10,ctrl11,ctrl12], amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11376,13 +11380,13 @@ y ... -					Musical keys.
 				chain = Mix(Median.ar(ctrl1 * 30 + 1, in, amp));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11413,13 +11417,13 @@ y ... -					Musical keys.
 				chain = Mix(LeakDC.ar(in, ctrl1, amp));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11450,13 +11454,13 @@ y ... -					Musical keys.
 				chain = Mix(LeakDC.ar(Median.ar(ctrl1 * 30 + 1, in, amp), ctrl2));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11487,13 +11491,13 @@ y ... -					Musical keys.
 				chain = Mix(CombC.ar(in, 0.2, [ctrl1,ctrl2/2,ctrl3/3,ctrl4/4,ctrl1,ctrl5/5,ctrl6/6].clip(0.01, 1) / 100, [ctrl7*4, ctrl8*4, ctrl9*4, ctrl10*4, ctrl11*4, ctrl12*4].clip(0.0001, 4), amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11525,13 +11529,13 @@ y ... -					Musical keys.
 				chain = Mix(RHPF.ar(in, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6] * 108.midicps + 50, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12], amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11562,13 +11566,13 @@ y ... -					Musical keys.
 				chain = Mix(RLPF.ar(in, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6] * 108.midicps + 50, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12], amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11599,13 +11603,13 @@ y ... -					Musical keys.
 				chain = Mix(Ringz.ar(in, [ctrl1*500,ctrl2*500+500,ctrl3*500+1000,ctrl4*500+1500,ctrl5*500+2000,ctrl6*500+2500], [ctrl7,ctrl8,ctrl9,ctrl10, ctrl11, ctrl12] * 0.1, amp/6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11636,13 +11640,13 @@ y ... -					Musical keys.
 				chain = Mix(Formlet.ar(in, [ctrl1*300,ctrl2*300+300,ctrl3*300+600,ctrl4*300+900,ctrl5*300+1200,ctrl6*300+1500,ctrl7*300+1800,ctrl8*300+2100,ctrl9*300+2400,ctrl10*300+2700], ctrl11, ctrl12, amp/10));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11673,13 +11677,13 @@ y ... -					Musical keys.
 				chain = Mix(Resonz.ar(in, [ctrl1*1000,ctrl2*1000+1000,ctrl3*1000+2000,ctrl4*1000+3000,ctrl5*1000+4000,ctrl6*1000+5000], [ctrl7,ctrl8, ctrl9, ctrl10, ctrl11, ctrl12], amp));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11710,13 +11714,13 @@ y ... -					Musical keys.
 				chain = Mix(DynKlang.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6] * 4186 + 37, [amp / 6, amp / 6, amp / 6, amp / 6, amp / 6, amp / 6], [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12]], in));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11747,13 +11751,13 @@ y ... -					Musical keys.
 				chain = Mix(PitchShift.ar(in, 0.1, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, amp));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11787,13 +11791,13 @@ y ... -					Musical keys.
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl6, ctrl7));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11827,13 +11831,13 @@ y ... -					Musical keys.
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl5/1000, ctrl6));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11872,13 +11876,13 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				// Switch Audio Out
 				chain = chain * amp;
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11917,13 +11921,13 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				// Switch Audio Out
 				chain = chain * amp;
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -11962,13 +11966,13 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				// Switch Audio Out
 				chain = chain * amp;
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12001,13 +12005,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12040,13 +12044,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12079,13 +12083,13 @@ y ... -					Musical keys.
 		//chain= IFFT(chain) * 3;
 		//chain = chain * amp;
 		//// Switch Audio Out
-		//chain = if(switchAudioOut == 'Stereo',
+		//chain = if(switchAudioOut == 0,
 		//// Pan
 		//Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-		//if(switchAudioOut == 'Multispeaker',
+		//if(switchAudioOut == 2,
 		//// PanAz
-		//PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-		//if(switchAudioOut == 'Rotate2',
+		//PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+		//if(switchAudioOut == 1,
 		//// Rotate2
 		//Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 		//// Ambisonic
@@ -12118,13 +12122,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12157,13 +12161,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12196,13 +12200,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12235,13 +12239,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12274,13 +12278,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12313,13 +12317,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12352,13 +12356,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12391,13 +12395,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12430,13 +12434,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.015625;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12469,13 +12473,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12508,13 +12512,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12547,13 +12551,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12586,13 +12590,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12625,13 +12629,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12664,13 +12668,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12703,13 +12707,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12742,13 +12746,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12781,13 +12785,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12820,13 +12824,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12859,13 +12863,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12898,13 +12902,13 @@ y ... -					Musical keys.
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12938,13 +12942,13 @@ y ... -					Musical keys.
 				chain = Convolution2L.ar(in, buffer, trig * tempo, 2048) * 0.1;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic
@@ -12997,13 +13001,13 @@ y ... -					Musical keys.
 				LocalOut.ar(DelayC.ar(chain, 4, tempo, tempo.reciprocal));
 				// Switch Audio Out
 				chain = chain * amp;
-				chain = if(switchAudioOut == 'Stereo',
+				chain = if(switchAudioOut == 0,
 					// Pan
 					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
-					if(switchAudioOut == 'Multispeaker',
+					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, 2, 0.5),
-						if(switchAudioOut == 'Rotate2',
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						if(switchAudioOut == 1,
 							// Rotate2
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
 							// Ambisonic

@@ -4,15 +4,15 @@ Time {
 
 	classvar  < s;
 
-	var <> pathTime, numberAudioOut, recChannels, groupeSynth, groupePostProduction, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTime, menuTime, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter;
+	var <> pathTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTime, menuTime, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter, widthMC=2.0, orientationMC=0.5;
 
-	*new	{arg path="~/Documents/Time/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
+	*new	{arg path="~/Documents/Time/", numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5;
 
-		^super.new.init(path, numberOut, numberRec, format, devIn, devOut, size);
+		^super.new.init(path, numberOut, numberRec, format, devIn, devOut, size, wid, ori);
 
 	}
 
-	init	{arg path, numberOut, numberRec, format, devIn, devOut, size;
+	init	{arg path, numberOut, numberRec, format, devIn, devOut, size, wid, ori;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -32,13 +32,22 @@ Time {
 		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware*/
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		~numberAudioOut = numberOut;
+		numberAudioOut = numberOut;
 		recChannels = numberRec;
 		s.recChannels_(numberRec);
 		s.options.numInputBusChannels_(20);
 		s.options.numOutputBusChannels_(numberOut);
 		s.options.hardwareBufferSize_(size);
-		typeMasterOut = format;
+		typeMasterOut = switch(format,
+			0, {"Stereo"},
+			1, {"Rotate2"},
+			2, {"MultiSpeaker"},
+			3, {"Ambisonic"},
+			4, {"Dolby5.1"},
+		);// Type Format stereo, ambisonic, etc...
+		widthMC = wid;
+		orientationMC = ori;
+
 		// Safety Limiter
 		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
@@ -819,10 +828,9 @@ f						Switch File for Analyze.
 			this.initSynthDef;
 
 			// Group
-			groupeAudioRec=ParGroup.new(s, \addToTail);
-			groupeSynth=ParGroup.new(s, \addToTail);
-			groupePostProduction=ParGroup.new(s, \addToTail);
-			groupeLimiter = ParGroup.new(s, \addToTail);
+			groupeAudioRec=Group.new(s, \addToTail);
+			groupeSynth=Group.new(s, \addToTail);
+			groupeLimiter = Group.new(s, \addToTail);
 
 			// Bus Audio In pour FileIn et FileRec
 			busAudioIn = Bus.audio(s, 1);
@@ -840,11 +848,11 @@ f						Switch File for Analyze.
 			// Synthesizer
 			numberSynth.do({arg synth;
 				// Group
-				listeGroupAudioRec=listeGroupAudioRec.add(ParGroup.new(groupeAudioRec, \addToTail));
-				listeGroupSynth=listeGroupSynth.add(ParGroup.new(groupeSynth, \addToTail));
-				listeGroupDolby=listeGroupDolby.add(ParGroup.new(listeGroupSynth.at(synth)), \addToTail);
-				listeGroupFX=listeGroupFX.add(ParGroup.new(listeGroupSynth.at(synth)), \addToTail);
-				listeGroupFilter=listeGroupFilter.add(ParGroup.new(listeGroupSynth.at(synth)), \addToTail);
+				listeGroupAudioRec=listeGroupAudioRec.add(Group.new(groupeAudioRec, \addToTail));
+				listeGroupSynth=listeGroupSynth.add(Group.new(groupeSynth, \addToTail));
+				listeGroupDolby=listeGroupDolby.add(Group.new(listeGroupSynth.at(synth)), \addToTail);
+				listeGroupFX=listeGroupFX.add(Group.new(listeGroupSynth.at(synth)), \addToTail);
+				listeGroupFilter=listeGroupFilter.add(Group.new(listeGroupSynth.at(synth)), \addToTail);
 				// Bus
 				listeBusInFilter=listeBusInFilter.add(Bus.audio(s, 1));
 				listeBusInFX=listeBusInFX.add(Bus.audio(s, 1));
@@ -873,7 +881,7 @@ f						Switch File for Analyze.
 				// Synth ByPassFX
 				Synth.new("ByPassFX", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth)], listeGroupFX.at(synth), \addToTail);
 				// Dolby5.1
-				Synth.new(typeMasterOut, [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
+				Synth.new(typeMasterOut, [\in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
 			});
 			// Create Synth OSC
 			synthOSCkeyboard = Synth.newPaused("Time Keyboard", [\busIn, busAudioIn], groupeAudioRec, \addToHead);
@@ -896,7 +904,7 @@ f						Switch File for Analyze.
 			synthLimiter = Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
 
 			// VST
-			~synthVST = Synth.new("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+			~synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 			~fxVST = VSTPluginController(~synthVST);
 
 			freqBefore=0; ampBefore=0; dureeBefore=0; lastTime = Main.elapsedTime;
@@ -1620,14 +1628,13 @@ f						Switch File for Analyze.
 		formatRecordingMenu = Menu(
 			MenuAction("Stereo",
 				{recChannels = 2;
-					~numberAudioOut = 2;
+					numberAudioOut = 2;
 					s.recChannels_(recChannels.asInteger);
 					s.options.numInputBusChannels_(20);
 					s.options.numOutputBusChannels_(2);
 					this.initSynthDef;
-					groupePostProduction.freeAll;
 					groupeLimiter.freeAll;
-					~synthVST = Synth.new("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+					~synthVST = Synth.newPaused("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 					~fxVST = VSTPluginController(~synthVST);
 					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
 					numberSynth.do({arg synth;
@@ -1640,14 +1647,13 @@ f						Switch File for Analyze.
 			}),
 			MenuAction("Dolby5.1",
 				{recChannels = 6;
-					~numberAudioOut = 6;
+					numberAudioOut = 6;
 					s.recChannels_(recChannels.asInteger);
 					s.options.numInputBusChannels_(20);
 					s.options.numOutputBusChannels_(6);
 					this.initSynthDef;
-					groupePostProduction.freeAll;
 					groupeLimiter.freeAll;
-					~synthVST = Synth.new("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+					~synthVST = Synth.newPaused("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 					~fxVST = VSTPluginController(~synthVST);
 					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
 					numberSynth.do({arg synth;
@@ -1662,14 +1668,13 @@ f						Switch File for Analyze.
 				MenuAction("Channels",
 					{
 						SCRequestString("2", "Channels", {arg recChannels;
-							~numberAudioOut = recChannels.asInteger;
+							numberAudioOut = recChannels.asInteger;
 							s.recChannels_(recChannels.asInteger);
 							s.options.numInputBusChannels_(20);
 							s.options.numOutputBusChannels_(recChannels.asInteger);
 							this.initSynthDef;
-							groupePostProduction.freeAll;
 							groupeLimiter.freeAll;
-							~synthVST = Synth.new("VST MultiSpeaker", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+							~synthVST = Synth.newPaused("VST MultiSpeaker", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 							~fxVST = VSTPluginController(~synthVST);
 							synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
 							numberSynth.do({arg synth;
@@ -1684,14 +1689,13 @@ f						Switch File for Analyze.
 			).title_("MultiSpeaker"),
 			MenuAction("Rotate2",
 				{recChannels = 2;
-					~numberAudioOut = 2;
+					numberAudioOut = 2;
 					s.recChannels_(recChannels.asInteger);
 					s.options.numInputBusChannels_(20);
 					s.options.numOutputBusChannels_(2);
 					this.initSynthDef;
-					groupePostProduction.freeAll;
 					groupeLimiter.freeAll;
-					~synthVST = Synth.new("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+					~synthVST = Synth.newPaused("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 					~fxVST = VSTPluginController(~synthVST);
 					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
 					numberSynth.do({arg synth;
@@ -1706,15 +1710,14 @@ f						Switch File for Analyze.
 				MenuAction("Channels",
 					{
 						SCRequestString("2", "Channels", {arg recChannels;
-							~numberAudioOut = recChannels.asInteger;
+							numberAudioOut = recChannels.asInteger;
 							s.recChannels_(recChannels.asInteger);
 							s.options.numInputBusChannels_(20);
 							s.options.numOutputBusChannels_(recChannels.asInteger);
 							this.initSynthDef;
-							groupePostProduction.freeAll;
-							~synthVST = Synth.new("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupePostProduction, \addToTail).map(\bpm, busOSCtempo);
+							~synthVST = Synth.newPaused("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToTail).map(\bpm, busOSCtempo);
 							~fxVST = VSTPluginController(~synthVST);
-							synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupePostProduction, \addToTail);
+							synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
 							numberSynth.do({arg synth;
 								listeGroupDolby.at(synth).freeAll;
 								listeGroupDolby = listeGroupDolby.add(
@@ -5225,7 +5228,7 @@ f						Switch File for Analyze.
 		/////////////////////////// Dolby5.1 or Stereo //////////////////////
 
 		// Dolby 5.1
-		SynthDef('Dolby5.1',
+		SynthDef("Dolby5.1",
 			{arg out=0, in, panX, panY;
 				var signal, chain, front, center, lfe, rear;
 				signal = In.ar(in, 1);
@@ -5243,7 +5246,7 @@ f						Switch File for Analyze.
 		}).add;
 
 		// Stereo
-		SynthDef('Stereo',
+		SynthDef("Stereo",
 			{arg out=0, in, panX;
 				var signal, chain;
 				signal = In.ar(in, 1);
@@ -5252,16 +5255,16 @@ f						Switch File for Analyze.
 		}).add;
 
 		// MultiSpeaker
-		SynthDef('MultiSpeaker',
+		SynthDef("MultiSpeaker",
 			{arg out=0, in, panX;
 				var signal, chain;
 				signal = In.ar(in, 1);
-				chain = PanAz.ar(~numberAudioOut, signal, (panX * 2)%2, 1, 2, 0.5);
+				chain = PanAz.ar(numberAudioOut, signal, panX, 1, widthMC, orientationMC);
 				Out.ar(out, chain);
 		}).add;
 
 		// Rotate2
-		SynthDef('Rotate2',
+		SynthDef("Rotate2",
 			{arg out=0, in, panX;
 				var signal, chain;
 				signal = In.ar(in, 1);
@@ -5270,20 +5273,20 @@ f						Switch File for Analyze.
 		}).add;
 
 		// Ambisonic
-		SynthDef('Ambisonic',
+		SynthDef("Ambisonic",
 			{arg out=0, in, panX;
 				var signal, chain, ambisonic;
 				signal = In.ar(in, 1);
 				ambisonic = PanB2.ar(signal, panX);
-				chain = DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
+				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				Out.ar(out, chain);
 		}).add;
 
 		/*// Ambisonic
-		SynthDef('Ambisonic',
+		SynthDef("Ambisonic",
 		{arg out=0, in, panX, panY;
 		var signal, chain, ambisonic, azimuth = [], elevation = [];
-		~numberAudioOut.do({arg i; azimuth = azimuth.add(pi * (i / ~numberAudioOut - (~numberAudioOut.reciprocal * (~numberAudioOut / 2).floor))); elevation = elevation.add(0)});
+		numberAudioOut.do({arg i; azimuth = azimuth.add(pi * (i / numberAudioOut - (numberAudioOut.reciprocal * (numberAudioOut / 2).floor))); elevation = elevation.add(0)});
 		signal = In.ar(in, 1);
 		ambisonic = BFEncode1.ar(signal, panX * 2pi - pi, panY * 2pi - pi);
 		chain = BFDecode1.ar( ambisonic[0], ambisonic[1], ambisonic[2], ambisonic[3], azimuth, elevation);
@@ -5436,7 +5439,7 @@ f						Switch File for Analyze.
 		SynthDef("MasterFX",
 			{arg out=0, limit = 0.8, postAmp = 1.0;
 				var chain, in;
-				in = LeakDC.ar(In.ar(0, ~numberAudioOut));
+				in = LeakDC.ar(In.ar(0, numberAudioOut));
 				chain = Limiter.ar(in * postAmp, limit);
 				ReplaceOut.ar(out, chain);
 		}).add;
@@ -5448,8 +5451,8 @@ f						Switch File for Analyze.
 			{arg out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
 				var signal, chain;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
-				signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
-				chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -5460,8 +5463,8 @@ f						Switch File for Analyze.
 			{arg out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
 				var signal, chain;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
-				signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
-				chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
 				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
 				// Out
@@ -5473,9 +5476,9 @@ f						Switch File for Analyze.
 			{arg out=0, xFade=0.5, panLo=0, panHi=0, bpm=1, gainIn=0.5;
 				var signal, chain;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
-				signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
-				chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
-				chain = PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -5485,11 +5488,11 @@ f						Switch File for Analyze.
 			{arg out=0, xFade=0.5, panLo=1.neg, panHi=1, bpm=1, gainIn=0.5;
 				var signal, chain, ambisonic;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
-				signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
-				chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
 				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
-				chain = DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
+				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -5501,8 +5504,8 @@ f						Switch File for Analyze.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				posX = TRand.kr(panLo, panHi, Impulse.kr(bpm));
 				posY = TRand.kr(panLo, panHi, Impulse.kr(bpm));
-				signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
-				chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
+				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				front = Pan2.ar(chain, posX);
 				rear = Pan2.ar(chain, posY);
 				center = ((posX*posX) + (posY*posY))**0.5;

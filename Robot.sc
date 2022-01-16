@@ -4,15 +4,15 @@ Robot {
 
 	classvar < s, < hpRobot;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5;
 
-	*new {arg path="~/Documents/Robot/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
+	*new {arg path="~/Documents/Robot/", o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
-		^super.new.init(path, o, r, f, devIn, devOut, size);
+		^super.new.init(path, o, r, f, devIn, devOut, size, wid, ori, flag);
 
 	}
 
-	init {arg path, o, r, f, devIn, devOut, size;
+	init {arg path, o, r, f, devIn, devOut, size, wid, ori, flag;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -45,7 +45,11 @@ Robot {
 		~sampleFormat = "float";
 		s.recSampleFormat_(~sampleFormat);
 		~startChannelAudioOut = 0;
-		~switchAudioOut = f.asSymbol;
+		~switchAudioOut = f;
+		flagMC = flag;
+		widthMC = wid;
+		orientationMC = ori;
+
 		// Safety Limiter
 		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
@@ -234,10 +238,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		MainMenu.register(~menuBuf, "RobotTools");
 
 		~menuAudio = Menu(
-			MenuAction.new("Stereo", {~switchAudioOut='Stereo'; this.initSynthDef}),
-			MenuAction.new("MultiSpeaker", {~switchAudioOut='Multispeaker'; this.initSynthDef}),
-			MenuAction.new("Rotate2", {~switchAudioOut='Rotate2'; this.initSynthDef}),
-			MenuAction.new("Ambisonic", {~switchAudioOut='Ambisonic'; this.initSynthDef});
+			MenuAction.new("Stereo", {~switchAudioOut=0; this.initSynthDef}),
+			MenuAction.new("MultiSpeaker", {~switchAudioOut=2; this.initSynthDef}),
+			MenuAction.new("Rotate2", {~switchAudioOut=1; this.initSynthDef}),
+			MenuAction.new("Ambisonic", {~switchAudioOut=3; this.initSynthDef});
 		);
 		MainMenu.register(~menuAudio.title_("Audio"), "RobotTools");
 
@@ -5939,13 +5943,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			// Keyboard Audio
 			SynthDef("OSC Robot Keyboard",
 				{arg in=0,note=60, amp=0.5, trigger = 0;
-					/*var input, centroid, flatness, fft, energy, key, flux;
-					input= Mix(SoundIn.ar(in));
-					fft = FFT(LocalBuf(2048, 1), input);
-					centroid = SpecCentroid.kr(fft);
-					flatness =  SpecFlatness.kr(fft);
-					energy =  SpecPcile.kr(fft);
-					flux =  FFTFlux.kr(fft);*/
 					note = note.cpsmidi / 127;
 					SendReply.kr(trigger, '/Robot_Analyse_Audio', values: [note, amp], replyID: [1, 2]);
 			}).send(s);
@@ -6015,8 +6012,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg in=[0, 1], buffer, bufferPlay, offset=0, run=0, loop=0, trigger=0, reclevel1=1, reclevel2=0;
 					var fileIn;
 					fileIn=In.ar(in);
-					/*Poll.kr(Impulse.kr(10), reclevel1, "rec1");
-					Poll.kr(Impulse.kr(10), reclevel2, "rec2");*/
 					RecordBuf.ar(fileIn, buffer, offset, reclevel1, reclevel2, run, loop, trigger);
 			}).send(s);
 
@@ -6032,26 +6027,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			// Keyboard
 			SynthDef("OSC Robot Keyboard File",
 				{arg in=0,note=60, amp=0.5, trigger = 0;
-					/*var input, centroid, flatness, fft, energy, key, flux;
-					input= Mix(SoundIn.ar(in));
-					fft = FFT(LocalBuf(2048, 1), input);
-					centroid = SpecCentroid.kr(fft);
-					flatness =  SpecFlatness.kr(fft);
-					energy =  SpecPcile.kr(fft);
-					flux =  FFTFlux.kr(fft);*/
 					note = note.cpsmidi / 127;
 					SendReply.kr(trigger, '/Robot_Analyse_Audio', values: [note, amp], replyID: [1, 2]);
 			}).send(s);
-
-
-			// Mod�le de d�finition d'enregistrement de buffer audio
-
-			//// Synth pour record music
-			//SynthDef("Recording",
-			//{arg out, limit=0.8, vol=1.0;
-			//// DiskOut.ar(out, Limiter.ar(LeakDC.ar(In.ar(0 ~numberAudioOut), 0.995), limit) * vol);// All input recording
-			//DiskOut.ar(out, Limiter.ar(LeakDC.ar(In.ar(0, ~recChannels), 0.995), limit) * vol);// Stereo recording
-			//}).send(s);
 
 			// Synth MasterFX
 			SynthDef("MasterFX",
@@ -6084,21 +6062,24 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					bpm = if(bpm > 1, bpm.reciprocal, bpm);
 					signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
 					chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
-					//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
-					chain = if(~switchAudioOut == 'Stereo',
-						// Pan
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
-						if(~switchAudioOut == 'Multispeaker',
-							// PanAz
-							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);,
-							if(~switchAudioOut == 'Rotate2',
+					chain = if(~switchAudioOut == 0,
+						if(flagMC == 0,
+							// Pan 1
+							Pan2.ar(chain, Rand(panLo, panHi)),
+							// Pan 2
+							Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), bpm))),
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, chain, Rand(panLo, panHi), 1, widthMC, orientationMC),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), bpm), 1, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
-								Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
+								Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), bpm)),
 								// Ambisonic
-								(
-									ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
-					))));
+								(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), bpm));
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					XOut.ar(out, xFade, chain);
 			}).add;
@@ -6121,21 +6102,20 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					trigger = Impulse.kr(controls.at(0)*100);
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
 					//main = Limiter.ar(main, 1.0, 0.01);
-
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -6160,19 +6140,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6197,19 +6177,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6235,19 +6215,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6276,19 +6256,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6316,19 +6296,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6356,19 +6336,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6396,19 +6376,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6442,19 +6422,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			////main = Limiter.ar(main, 1.0, 0.01);
 			////
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 			//// Ambisonic
@@ -6488,19 +6468,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			////main = Limiter.ar(main, 1.0, 0.01);
 			////
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 			//// Ambisonic
@@ -6534,19 +6514,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6580,19 +6560,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6626,19 +6606,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6672,19 +6652,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6718,19 +6698,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6764,19 +6744,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6810,19 +6790,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6856,19 +6836,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6902,19 +6882,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6948,19 +6928,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -6994,19 +6974,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7040,19 +7020,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7086,19 +7066,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7132,19 +7112,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7178,19 +7158,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7224,19 +7204,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7270,19 +7250,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7316,19 +7296,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7367,19 +7347,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7418,19 +7398,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7469,19 +7449,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7520,19 +7500,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7571,19 +7551,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7622,19 +7602,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7673,19 +7653,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7724,19 +7704,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7775,19 +7755,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7826,19 +7806,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7874,19 +7854,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7915,19 +7895,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7952,19 +7932,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -7989,19 +7969,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8026,19 +8006,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8063,19 +8043,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8100,19 +8080,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8140,19 +8120,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8180,19 +8160,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8220,19 +8200,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8263,19 +8243,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8300,19 +8280,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8337,19 +8317,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8374,19 +8354,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8411,19 +8391,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8448,19 +8428,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8494,19 +8474,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8539,19 +8519,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), 1),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * 1,
 								// Ambisonic
@@ -8579,19 +8559,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8614,19 +8594,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Synth
 					main=Klank.ar(`[[controls.at(4)+1, controls.at(5)/2+1, controls.at(6)/3+1,1-controls.at(7),1-(controls.at(8)/2),1-(controls.at(9)/3)]],Decay2.ar(Impulse.ar(duree/1000,0,0.025),controls.at(1)/10,controls.at(2),LFNoise2.ar(12000*controls.at(0))),freq,0,controls.at(3));
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8649,19 +8629,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Synth
 					main=Klank.ar(`[Array.series(12, freq, freq),Array.geom(12,1,rrand(controls.at(0),controls.at(1))),Array.fill(12, {rrand(1,3)})], BrownNoise.ar(0.007) * LFNoise1.kr(duree/16));
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8684,19 +8664,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Synth
 					main=Klank.ar(`[Array.series(16, freq, freq),Array.geom(16,1,rrand(controls.at(3),controls.at(4))),Array.fill(16, {rrand(0.1,2.5)})],Decay2.ar(Impulse.ar(duree/1000),controls.at(1)/100,controls.at(2)/100,BrownNoise.ar(controls.at(0)/2)));
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8722,19 +8702,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					main=Mix.ar(Array.fill(3, {arg i;delaytime=listefreq.wrapAt(i);
 						CombL.ar(Decay2.ar(Impulse.ar(duree/1000),controls.at(1)/10,controls.at(2),LFNoise2.ar(3000*controls.at(0))),0.01,delaytime,duree,mul: 0.6)}));
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8764,19 +8744,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					main=Mix.ar(Array.fill(3, {arg i;delaytime=listefreq.wrapAt(i);
 						CombL.ar(pp,0.01,delaytime,duree,mul: 0.6)}));
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8808,19 +8788,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), 1),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * 1,
 								// Ambisonic
@@ -8851,19 +8831,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), 1),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * 1,
 								// Ambisonic
@@ -8890,19 +8870,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -8931,19 +8911,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			////main = Limiter.ar(main, 1.0, 0.01);
 			//
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 			//// Ambisonic
@@ -8971,19 +8951,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9012,19 +8992,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9052,19 +9032,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9092,19 +9072,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9132,19 +9112,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9175,19 +9155,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9216,19 +9196,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9258,19 +9238,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9300,19 +9280,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9342,19 +9322,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9382,19 +9362,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9422,19 +9402,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9462,19 +9442,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9572,19 +9552,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			////main = Limiter.ar(main, 1.0, 0.01);
 			//
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), 1),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
 			//// Ambisonic
@@ -9615,19 +9595,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//// sortie kitdrumsample
 			//main = if(freq <= 42.midicps, synthB, if(freq <= 84.midicps, synthS, synthH));
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), 1),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * 1,
 			//// Ambisonic
@@ -9659,19 +9639,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			////main = Limiter.ar(main, 1.0, 0.01);
 			//
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 			//// Ambisonic
@@ -9701,19 +9681,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			////main = Limiter.ar(main, 1.0, 0.01);
 			//
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 'Multispeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 			//// Ambisonic
@@ -9744,19 +9724,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9787,19 +9767,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9830,19 +9810,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9873,19 +9853,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9916,19 +9896,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9959,19 +9939,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10002,19 +9982,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10045,19 +10025,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10088,19 +10068,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10131,19 +10111,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10174,19 +10154,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10217,19 +10197,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10260,19 +10240,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10303,19 +10283,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10346,19 +10326,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10389,19 +10369,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10432,19 +10412,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10475,19 +10455,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10522,19 +10502,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10566,19 +10546,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10613,19 +10593,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10660,19 +10640,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10707,19 +10687,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10754,19 +10734,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10801,19 +10781,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10848,19 +10828,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10895,19 +10875,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10942,19 +10922,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10989,19 +10969,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11034,19 +11014,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11080,19 +11060,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11121,19 +11101,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11162,19 +11142,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11203,19 +11183,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11243,19 +11223,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11290,19 +11270,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					main = Limiter.ar(post, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11336,19 +11316,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11380,19 +11360,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'Multispeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -11417,13 +11397,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11445,13 +11425,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11473,13 +11453,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(PitchShift.ar(ineffet, 0.3, [control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11501,13 +11481,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(AllpassC.ar(ineffet, 0.2, [control1,control2/2,control3/3,control4/4], [control5*30,control6*30,control7*30,control8*30], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11529,13 +11509,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*16,control6*16,control7*16,control8*16], amp/4*0.6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11557,13 +11537,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11588,13 +11568,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(DelayC.ar(ineffet, 10.0, [control1*duree,control2*duree,control3*duree,control4*duree,control5*duree,control6*duree], amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11616,13 +11596,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(BPF.ar(ineffet, [control1*3000+27.5,control2*3000+3000,control3*3000+6000,control4*3000+9000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11644,13 +11624,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(BRF.ar(ineffet, [control1*3000+27.5,control2*3000+3000,control3*3000+6000,control4*3000+9000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11672,13 +11652,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(Formlet.ar(ineffet,[control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11700,13 +11680,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11728,13 +11708,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(HPF.ar(ineffet,[control1*4186+312, control2*4186+312, control3*4186+312, control4*4186+312, control5*8372+312, control6*8372+312, control7*8372+312, control8*8372+312], amp/8));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11756,13 +11736,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(LPF.ar(ineffet, [control1*500+27.5, control2*500+27.5, control3*500+27.5, control4*500+27.5, control5*1000+27.5, control6*1000+27.5, control7*1000+27.5, control8*1000+27.5], amp/8));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11784,13 +11764,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(Resonz.ar(ineffet, [control1*1000,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6,control7,control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11812,13 +11792,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+312, control2*4186+312, control3*4186+312, control4*4186+312], [control5, control6, control7, control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11840,13 +11820,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(RLPF.ar(ineffet, [control1*1000+27.5, control2*1000+27.5, control3*1000+27.5, control4*1000+27.5], [control5, control6, control7, control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11868,13 +11848,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=SOS.ar(ineffet, control1, control2, control3, control4*(-1.0), control5*(-1.0), amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11896,13 +11876,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11924,13 +11904,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=LeakDC.ar(ineffet, control1, amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11952,13 +11932,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1 ,ineffet, amp), control2);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -11980,13 +11960,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=FreeVerb.ar(ineffet, control1, control2, control3, amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12009,13 +11989,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(left,right);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12037,13 +12017,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = Mix(JPverb.ar(ineffet, control1 * 60, control2, control3 * 5, control4, control5, control6, control7 *5900 + 100, control8 * 9000 + 1000)) * amp;
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12069,13 +12049,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					LocalOut.ar(DelayC.ar(effet, 1, control7, control8));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12104,13 +12084,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					LocalOut.ar(DelayC.ar(effet, 1.0, control5/1000, control6));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12134,13 +12114,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = IFFT(effet);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12164,13 +12144,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12191,13 +12171,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12218,13 +12198,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(PitchShift.ar(ineffet, 0.3, [control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12245,13 +12225,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(AllpassC.ar(ineffet, 0.2, [control1,control2/2,control3/3,control4/4], [control5*30,control6*30,control7*30,control8*30], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12272,13 +12252,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*16,control6*16,control7*16,control8*16], amp/4*0.6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12299,13 +12279,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12329,13 +12309,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(DelayC.ar(ineffet, 10.0, [control1*duree,control2*duree,control3*duree,control4*duree,control5*duree,control6*duree], amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12356,13 +12336,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(BPF.ar(ineffet, [control1*3000+27.5,control2*3000+3000,control3*3000+6000,control4*3000+9000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12383,13 +12363,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(BRF.ar(ineffet, [control1*3000+27.5,control2*3000+3000,control3*3000+6000,control4*3000+9000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12410,13 +12390,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(Formlet.ar(ineffet,[control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12437,13 +12417,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12464,13 +12444,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(HPF.ar(ineffet,  [control1*4186+312, control2*4186+312, control3*4186+312, control4*4186+312, control5*8372+312, control6*8372+312, control7*8372+312, control8*8372+312], amp/8));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12491,13 +12471,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(LPF.ar(ineffet, [control1*500+27.5, control2*500+27.5, control3*500+27.5, control4*500+27.5, control5*1000+27.5, control6*1000+27.5, control7*1000+27.5, control8*1000+27.5], amp/8));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12518,13 +12498,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(Resonz.ar(ineffet, [control1*1000,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6,control7,control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12545,13 +12525,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+312, control2*4186+312, control3*4186+312, control4*4186+312], [control5, control6, control7, control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12572,13 +12552,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(RLPF.ar(ineffet, [control1*1000+27.5, control2*1000+27.5, control3*1000+27.5, control4*1000+27.5], [control5, control6, control7, control8], amp/4));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12599,13 +12579,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=SOS.ar(ineffet, control1, control2, control3, control4*(-1.0), control5*(-1.0), amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12626,13 +12606,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12653,13 +12633,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=LeakDC.ar(ineffet, control1, amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12680,13 +12660,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12707,13 +12687,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=FreeVerb.ar(ineffet, control1, control2, control3, amp);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12735,13 +12715,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet=Mix(left,right);
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12762,13 +12742,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = Mix(JPverb.ar(ineffet, control1 * 60, control2, control3 * 5, control4, control5, control6, control7 *5900 + 100, control8 * 9000 + 1000)) * amp;
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12793,13 +12773,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					LocalOut.ar(DelayC.ar(effet, 1, control7, control8));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -12826,13 +12806,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					LocalOut.ar(DelayC.ar(effet, 1.0, control5/1000, control6));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1

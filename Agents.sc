@@ -5,15 +5,15 @@ Agents {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5;
 
-	*new	{arg path="~/Documents/Agents/", o=2, r=2, f="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256;
+	*new	{arg path="~/Documents/Agents/", o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
-		^super.new.init(path, o, r, f, devIn, devOut, size);
+		^super.new.init(path, o, r, f, devIn, devOut, size, wid, ori, flag);
 
 	}
 
-	init	{arg path, o, r, f, devIn, devOut, size;
+	init	{arg path, o, r, f, devIn, devOut, size, wid, ori, flag;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -25,7 +25,7 @@ Agents {
 
 		~numberAudioOut = o;
 		~recChannels = r;
-		~switchAudioOut = f.asSymbol;// Type Format stereo, ambisonic, etc...
+		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
 		s = Server.default;
 		s.options.memSize = 2**20;
@@ -40,11 +40,16 @@ Agents {
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
+		flagMC = flag;
+		widthMC = wid;
+		orientationMC = ori;
+
 		// Safety Limiter
 		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
 		//Safety(s).enabled;
 		//Safety.setLimit(1.neg.dbamp);
+
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -345,13 +350,13 @@ G                       Init Genome Agent (solo).
 			};
 			),*/
 			//Menu(
-			MenuAction("Stereo", {~switchAudioOut='Stereo'; this.initSynthDef}
+			MenuAction("Stereo", {~switchAudioOut=0; this.initSynthDef}
 			),
-			MenuAction("MultiSpeaker", {~switchAudioOut='MultiSpeaker'; this.initSynthDef}
+			MenuAction("MultiSpeaker", {~switchAudioOut=2; this.initSynthDef}
 			),
-			MenuAction("Rotate2", {~switchAudioOut='Rotate2'; this.initSynthDef};
+			MenuAction("Rotate2", {~switchAudioOut=1; this.initSynthDef};
 			),
-			MenuAction("Ambisonic", {~switchAudioOut='Ambisonic'; this.initSynthDef};
+			MenuAction("Ambisonic", {~switchAudioOut=3; this.initSynthDef};
 			);
 			//).title_("Audio Out");
 		);
@@ -7823,13 +7828,13 @@ G                       Init Genome Agent (solo).
 					signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
 					chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
 					//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
-					chain = if(~switchAudioOut == 'Stereo',
+					chain = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
-						if(~switchAudioOut == 'Multispeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, 2, 0.5);,
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);,
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
 								// Ambisonic
@@ -7861,19 +7866,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -7903,19 +7908,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -7945,19 +7950,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -7987,19 +7992,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8031,19 +8036,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8073,19 +8078,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8114,19 +8119,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8161,19 +8166,19 @@ G                       Init Genome Agent (solo).
 			//// main = Limiter.ar(main, 1.0, 0.01);
 			////ampreal = if(amp <= 0, ampreal, amp);
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), 1),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 'MultiSpeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
 			//// Ambisonic
@@ -8203,19 +8208,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8245,19 +8250,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8287,19 +8292,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8329,19 +8334,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8371,19 +8376,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8413,19 +8418,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8456,19 +8461,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8498,19 +8503,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8542,19 +8547,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8583,19 +8588,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8624,19 +8629,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8665,19 +8670,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8706,19 +8711,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8750,19 +8755,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8792,19 +8797,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8838,19 +8843,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8882,19 +8887,19 @@ G                       Init Genome Agent (solo).
 			//// main = Limiter.ar(main, 1.0, 0.01);
 			////ampreal = if(amp <= 0, ampreal, amp);
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 'MultiSpeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 			//// Ambisonic
@@ -8926,19 +8931,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -8970,19 +8975,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9014,19 +9019,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9058,19 +9063,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9102,19 +9107,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9146,19 +9151,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9190,19 +9195,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9234,19 +9239,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9278,19 +9283,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9322,19 +9327,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9366,19 +9371,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9410,19 +9415,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9454,19 +9459,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9498,19 +9503,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9542,19 +9547,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9586,19 +9591,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9630,19 +9635,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9674,19 +9679,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9718,19 +9723,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9762,19 +9767,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9806,19 +9811,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9852,19 +9857,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9898,19 +9903,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9944,19 +9949,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -9990,19 +9995,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10036,19 +10041,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10082,19 +10087,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10128,19 +10133,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10174,19 +10179,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10220,19 +10225,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10266,19 +10271,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10312,19 +10317,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10356,19 +10361,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -10395,19 +10400,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10431,19 +10436,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10470,19 +10475,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10507,19 +10512,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10542,19 +10547,19 @@ G                       Init Genome Agent (solo).
 					main = Formant.ar(freq, LFNoise0.kr(controlD.reciprocal)*(controlA*127).midicps, LFNoise0.kr(duree.reciprocal)*(controlF*127).midicps, 0.5);
 					// main = Limiter.ar(main, 0.33, 0.01);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10580,19 +10585,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10617,19 +10622,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10654,19 +10659,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10691,19 +10696,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10728,19 +10733,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10765,19 +10770,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10802,19 +10807,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10839,19 +10844,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10883,19 +10888,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10922,19 +10927,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -10964,19 +10969,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11005,19 +11010,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11045,19 +11050,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11085,19 +11090,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11125,19 +11130,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11165,19 +11170,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11213,19 +11218,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11259,19 +11264,19 @@ G                       Init Genome Agent (solo).
 			//// main = Limiter.ar(main, 1.0, 0.01);
 			////ampreal = if(amp <= 0, ampreal, amp);
 			//// Switch Audio Out
-			//main = if(~switchAudioOut == 'Stereo',
-			//if(Rand(-1, 1 ) <= 0,
+			//main = if(~switchAudioOut == 0,
+			//if(flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 'MultiSpeaker',
-			//if(Rand(-1, 1 ) <= 0,
+			//if(~switchAudioOut == 2,
+			//if(flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 			//// Ambisonic
@@ -11305,19 +11310,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11351,19 +11356,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11397,19 +11402,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11443,19 +11448,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11489,19 +11494,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11535,19 +11540,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11581,19 +11586,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11627,19 +11632,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11673,19 +11678,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11719,19 +11724,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11765,19 +11770,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11811,19 +11816,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11857,19 +11862,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11903,19 +11908,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11949,19 +11954,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -11995,19 +12000,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12041,19 +12046,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12089,19 +12094,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12137,19 +12142,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12185,19 +12190,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12233,19 +12238,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12281,19 +12286,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12329,19 +12334,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12377,19 +12382,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12426,19 +12431,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12474,19 +12479,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12522,19 +12527,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12567,19 +12572,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
 								// Ambisonic
@@ -12612,19 +12617,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main+in1, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12657,19 +12662,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12703,19 +12708,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12745,19 +12750,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12787,19 +12792,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12829,19 +12834,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12870,19 +12875,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12918,19 +12923,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
@@ -12974,19 +12979,19 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
-					main = if(~switchAudioOut == 'Stereo',
-						if(Rand(-1, 1 ) <= 0,
+					main = if(~switchAudioOut == 0,
+						if(flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), 1),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 'MultiSpeaker',
-							if(Rand(-1, 1 ) <= 0,
+						if(~switchAudioOut == 2,
+							if(flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, 2, 0.5),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, 2, 0.5)),
-							if(~switchAudioOut == 'Rotate2',
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
+							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
 								// Ambisonic
@@ -13011,13 +13016,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*4,control6*4,control7*4,control8*4], amp/4 * 0.6));
 					////effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13037,13 +13042,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13063,13 +13068,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(BPF.ar(ineffet, [control1*1000+27.5,control2*1000+500,control3*1000+1000,control4*1000+1500], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13089,13 +13094,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(BRF.ar(ineffet,[control1*1000+27.5,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13115,13 +13120,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+320.24370022528, control2*4186+320.24370022528, control3*4186+320.24370022528, control4*4186+320.24370022528], [control5, control6, control7, control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13141,13 +13146,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(RLPF.ar(ineffet, [control1*320.24370022528+27.5, control2*320.24370022528+27.5, control3*320.24370022528+27.5, control4*320.24370022528+27.5], [control5, control6, control7, control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13167,13 +13172,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(PitchShift.ar(ineffet, 0.1,[control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13193,13 +13198,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13219,13 +13224,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(Formlet.ar(ineffet, [control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13245,13 +13250,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(Resonz.ar(ineffet, [control1*500,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6, control7, control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13271,13 +13276,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13297,13 +13302,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13323,13 +13328,13 @@ G                       Init Genome Agent (solo).
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13349,13 +13354,13 @@ G                       Init Genome Agent (solo).
 					effet=LeakDC.ar(ineffet, control1, amp);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13375,13 +13380,13 @@ G                       Init Genome Agent (solo).
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13401,13 +13406,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(MidEQ.ar(ineffet, [control1, control2, control3, control4]*4186+27.5, 0.5, [control5, control6, control7, control8]*48-24, amp/2));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13427,13 +13432,13 @@ G                       Init Genome Agent (solo).
 					effet=Mix(DynKlank.ar(`[[control1, control2, control3, control4]*4186+37, [amp / 4, amp /4, amp /4, amp / 4] / 4, [control5, control6, control7, control8]], ineffet));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13464,13 +13469,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13500,13 +13505,13 @@ G                       Init Genome Agent (solo).
 					LocalOut.ar(effet);
 					//LocalOut.ar(DelayC.ar(effet, 4, control4, amp));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13528,13 +13533,13 @@ G                       Init Genome Agent (solo).
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, 2);// + ou - local;
 					LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13557,13 +13562,13 @@ G                       Init Genome Agent (solo).
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					LocalOut.ar(DelayC.ar(effet, 4, control6, control7));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13587,13 +13592,13 @@ G                       Init Genome Agent (solo).
 					effet= IFFT(effet);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13617,13 +13622,13 @@ G                       Init Genome Agent (solo).
 					effet= IFFT(effet);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13647,13 +13652,13 @@ G                       Init Genome Agent (solo).
 					effet= IFFT(effet);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13676,13 +13681,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13705,13 +13710,13 @@ G                       Init Genome Agent (solo).
 			//effet = effet * amp;
 			////effet = Limiter.ar(effet, 1.0, 0.01);
 			//// Switch Audio Out
-			//effet = if(~switchAudioOut == 'Stereo',
+			//effet = if(~switchAudioOut == 0,
 			//// Pan
 			//Pan2.ar(effet, pan),
-			//if(~switchAudioOut == 'MultiSpeaker',
+			//if(~switchAudioOut == 2,
 			//// PanAz
-			//PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-			//if(~switchAudioOut == 'Rotate2',
+			//PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+			//if(~switchAudioOut == 1,
 			//// Rotate2 v1
 			//Rotate2.ar(effet, effet, pan),
 			//// Ambisonic v1
@@ -13734,13 +13739,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13763,13 +13768,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13792,13 +13797,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13821,13 +13826,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13850,13 +13855,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13879,13 +13884,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13908,13 +13913,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13937,13 +13942,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13966,13 +13971,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -13995,13 +14000,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14024,13 +14029,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14053,13 +14058,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14082,13 +14087,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14111,13 +14116,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14140,13 +14145,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14169,13 +14174,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14198,13 +14203,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14227,13 +14232,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14256,13 +14261,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14285,13 +14290,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14314,13 +14319,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14343,13 +14348,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14373,13 +14378,13 @@ G                       Init Genome Agent (solo).
 					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14404,13 +14409,13 @@ G                       Init Genome Agent (solo).
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					LocalOut.ar(DelayC.ar(effet, 4, control5/1000, control6));
 					// Switch Audio Out
-					effet = if(~switchAudioOut == 'Stereo',
+					effet = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
 								// Ambisonic v1
@@ -14434,13 +14439,13 @@ G                       Init Genome Agent (solo).
 					verb=Mix(AllpassC.ar(inverb, 0.2, [control1,control2/2,control3/3,control4/4], [control5, control6, control7, control8]*30));
 					//verb = Limiter.ar(verb, 1.0, 0.01);
 					// Switch Audio Out
-					verb = if(~switchAudioOut == 'Stereo',
+					verb = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
 								// Ambisonic v1
@@ -14459,13 +14464,13 @@ G                       Init Genome Agent (solo).
 					verb = FreeVerb.ar(inverb, control1, control2, control3);
 					//verb = Limiter.ar(verb, 1.0, 0.01);
 					// Switch Audio Out
-					verb = if(~switchAudioOut == 'Stereo',
+					verb = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
 								// Ambisonic v1
@@ -14485,13 +14490,13 @@ G                       Init Genome Agent (solo).
 					verb = Mix(left,right);
 					//verb = Limiter.ar(verb, 1.0, 0.01);
 					// Switch Audio Out
-					verb = if(~switchAudioOut == 'Stereo',
+					verb = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
 								// Ambisonic v1
@@ -14510,13 +14515,13 @@ G                       Init Genome Agent (solo).
 					verb = Mix(JPverb.ar(inverb, control1 * 60, control2, control3 * 5, control4, control5, control6, control7 *5900 + 100, control8 * 9000 + 1000));
 					//verb = Limiter.ar(verb, 1.0, 0.01);
 					// Switch Audio Out
-					verb = if(~switchAudioOut == 'Stereo',
+					verb = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
 								// Ambisonic v1
@@ -14537,13 +14542,13 @@ G                       Init Genome Agent (solo).
 					//verb = Limiter.ar(verb, 1.0, 0.01);
 					pan = LFSaw.kr(control8, mul: pan.sign);
 					// Switch Audio Out
-					verb = if(~switchAudioOut == 'Stereo',
+					verb = if(~switchAudioOut == 0,
 						// Pan
 						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 'MultiSpeaker',
+						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, 2, 0.5),
-							if(~switchAudioOut == 'Rotate2',
+							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
 								// Ambisonic v1
