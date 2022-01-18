@@ -3692,7 +3692,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(8).children.at(1).valueAction_
 					(0);
 					windowGVerb.view.children.at(8).children.at(3).valueAction_(0);
-					groupeVerb.set(\panLo, 0, \panHi, 0);
+					groupeVerb.set(\panLo, 0);
+					groupeVerb.set(\panHi, 0);
 				},
 				//BathRoom
 				1, {
@@ -3711,7 +3712,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-6.5.dbamp);
 					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				//Living Room
 				2, {
@@ -3731,7 +3733,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-8.5.dbamp);
 					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				//Church
 				3, {
@@ -3751,7 +3754,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-5.5.dbamp);
 					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				//Cathedral
 				4, {
@@ -3771,7 +3775,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-4.5.dbamp);
 					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				//Canyon
 				5, {
@@ -3791,7 +3796,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-10.dbamp);
 					//windowGVerb.view.children.at(7).children.at(1).valueAction_(0);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				// FreeVerb
 				6, {
@@ -3806,7 +3812,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(5).children.at(1).valueAction_(0.dbamp);
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-1.dbamp);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				// Allpass
 				7, {
@@ -3821,7 +3828,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(5).children.at(1).valueAction_(-3.dbamp);
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(-12.dbamp);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 				// jpVerb
 				8, {
@@ -3840,7 +3848,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowGVerb.view.children.at(5).children.at(1).valueAction_(-12.dbamp);
 					windowGVerb.view.children.at(6).children.at(1).valueAction_(0.5);
 					groupeVerb.set(\xFade, windowGVerb.view.children.at(7).children.at(1).value);
-					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value, \panHi, windowGVerb.view.children.at(8).children.at(3).value);
+					groupeVerb.set(\panLo, windowGVerb.view.children.at(8).children.at(1).value);
+					groupeVerb.set(\panHi, windowGVerb.view.children.at(8).children.at(3).value);
 				},
 
 			)
@@ -3861,7 +3870,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		EZKnob(windowGVerb, 80 @ 80, "Dry/Wet", \unipolar,
 			{|ez| groupeVerb.set(\xFade, ez.value)}, 0, layout: \vert2);
 		EZRanger(windowGVerb , 550 @ 20, "Pan", \bipolar,
-			{|ez| groupeVerb.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+			{|ez| groupeVerb.set(\panLo, ez.value.at(0)); groupeVerb.set(\panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
 		// Setup GUI Value
 		windowGVerb.view.children.at(0).focus;
 		windowGVerb.onClose_({groupeVerb.free});
@@ -8479,7 +8488,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(GVerb.ar(signal, roomsize, revtime, damping, inputbw, spread, drylevel, earlylevel, taillevel,roomsize + 1));
-				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8493,7 +8502,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(GVerb.ar(signal, roomsize, revtime, damping, inputbw, spread, drylevel, earlylevel, taillevel, roomsize + 1));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
-				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8506,7 +8515,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(GVerb.ar(signal, roomsize, revtime, damping, inputbw, spread, drylevel, earlylevel, taillevel, roomsize + 1));
-				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)), 1, widthMC, orientationMC);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8520,7 +8529,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(GVerb.ar(signal, roomsize, revtime, damping, inputbw, spread, drylevel, earlylevel, taillevel, roomsize + 1));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
-				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -8559,7 +8568,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(FreeVerb.ar(signal, 1, room: earlylevel, damp: taillevel));
-				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8573,7 +8582,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(FreeVerb.ar(signal, 1, room: earlylevel, damp: taillevel));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
-				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8586,7 +8595,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(FreeVerb.ar(signal, 1, room: earlylevel, damp: taillevel));
-				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)), 1, widthMC, orientationMC);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8600,7 +8609,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(FreeVerb.ar(signal, 1, room: earlylevel, damp: taillevel));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
-				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -8639,7 +8648,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(AllpassC.ar(signal, 0.2, delaytime: [earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4)], decaytime: [taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60)], mul: 0.25));
-				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8653,7 +8662,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(AllpassC.ar(signal, 0.2, delaytime: [earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4)], decaytime: [taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60)], mul: 0.25));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
-				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8666,7 +8675,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(AllpassC.ar(signal, 0.2, delaytime: [earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4)], decaytime: [taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60)], mul: 0.25));
-				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)), 1, widthMC, orientationMC);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8680,7 +8689,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(AllpassC.ar(signal, 0.2, delaytime: [earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4), earlylevel / Rand(1, 4)], decaytime: [taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60), taillevel * Rand(1, 60)], mul: 0.25));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
-				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -8719,7 +8728,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, 2));
 				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
-				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8733,7 +8742,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
-				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8743,10 +8752,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{arg in=0, out=0, xFade=0.5, panLo=0, panHi=0,
 				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.7, taillevel=0.5, bpm=1;
 				var signal, chain=0;
+				Poll.kr(Impulse.kr(1), panLo, "lo");
+				Poll.kr(Impulse.kr(1), panHi, "hi");
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
-				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)), 1, widthMC, orientationMC);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8760,7 +8771,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
-				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out
 				XOut.ar(out, xFade, chain);
@@ -8806,7 +8817,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
-				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8819,7 +8830,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//chain = Rotate2.ar(chain, chain, LFSaw.kr(dur, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Impulse.kr(bpm)), add: panLo));
-				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				chain = Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8831,7 +8842,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
 				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
-				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);
+				chain = PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr(bpm)), 1, widthMC, orientationMC);
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8844,7 +8855,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//ambisonic = PanB.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
-				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
+				ambisonic = PanB2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out
 				XOut.ar(out, xFade, chain);
