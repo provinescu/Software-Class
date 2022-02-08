@@ -7568,7 +7568,7 @@ G                       Init Genome Agent (solo).
 					input= SoundIn.ar(in);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, smallCutoff: filtre);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7587,7 +7587,7 @@ G                       Init Genome Agent (solo).
 					input= SoundIn.ar(in);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7609,8 +7609,8 @@ G                       Init Genome Agent (solo).
 					harmonic = FFT(LocalBuf(512, 1), inputFilter);
 					percussive = FFT(LocalBuf(512, 1), inputFilter);
 					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
-					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
+					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7626,7 +7626,7 @@ G                       Init Genome Agent (solo).
 				{arg in=0, seuil=0.5, filtre=1;
 					var input, detect, freqin, ampin, centroid, flatness, fft, energy, key, flux;
 					input= SoundIn.ar(in);
-					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \rcomplex);
+					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
@@ -7661,7 +7661,7 @@ G                       Init Genome Agent (solo).
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, smallCutoff: filtre);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7680,7 +7680,7 @@ G                       Init Genome Agent (solo).
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median:1, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7702,8 +7702,8 @@ G                       Init Genome Agent (solo).
 					harmonic = FFT(LocalBuf(512, 1), inputFilter);
 					percussive = FFT(LocalBuf(512, 1), inputFilter);
 					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
-					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
+					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7719,7 +7719,7 @@ G                       Init Genome Agent (solo).
 				{arg  busFileIn, seuil=0.5, filtre=1;
 					var detect, freqin, ampin, input, centroid, flatness, fft, energy, key, flux;
 					input = In.ar(busFileIn);
-					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \rcomplex);
+					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));

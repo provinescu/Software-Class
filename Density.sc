@@ -4915,9 +4915,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				harmonic = FFT(LocalBuf(512, 1), inputFilter);
 				percussive = FFT(LocalBuf(512, 1), inputFilter);
 				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
-				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
-				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), minFreq: 60
-					, maxFreq: 4000, median: 3, peakThreshold: filtre);
+				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
+				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
@@ -4928,7 +4927,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{arg busIn, seuil=0.5, filtre=0.5;
 				var input, detect, freqIn, ampIn, timeIn=0, key;
 				input = In.ar(busIn);
-				detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \wphase);
+				detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);
 				key = KeyTrack.kr(FFT(LocalBuf(4096, 1), input), (filtre * 4).clip(0, 4));
 				if(key < 12, freqIn = (key + 60).midicps, freqIn = (key - 12 + 60).midicps);
 				ampIn = A2K.kr(Amplitude.ar(input));

@@ -4812,9 +4812,8 @@ y ... -					Musical keys.
 				harmonic = FFT(LocalBuf(512, 1), inputFilter);
 				percussive = FFT(LocalBuf(512, 1), inputFilter);
 				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
-				detect= Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
-				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), minFreq: 60
-					, maxFreq: 4000, execFreq: 30, median: 3, peakThreshold: filtre);
+				detect= Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
+				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				fft2 = FFT(LocalBuf(1024, 1), input);
 				centroid = SpecCentroid.kr(fft2);
@@ -4831,7 +4830,7 @@ y ... -					Musical keys.
 			{arg busAnalyze, seuil=0.5, filtre=1, lock=0;
 				var input, detect, freqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, key;
 				input = In.ar(busAnalyze);
-				detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \wphase);
+				detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);
 				key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 				if(key < 12, freqIn = (key + 60).midicps, freqIn = (key - 12 + 60).midicps);
 				ampIn = A2K.kr(Amplitude.ar(input));

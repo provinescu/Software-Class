@@ -5893,7 +5893,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, smallCutoff: filtre);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5906,7 +5906,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 60, maxFreq: 4186, median: 3, peakThreshold: filtre);
+					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5921,8 +5921,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					harmonic = FFT(LocalBuf(512, 1), inputFilter);
 					percussive = FFT(LocalBuf(512, 1), inputFilter);
 					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
-					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
+					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5932,7 +5932,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg in = 0, seuil=0.125, filtre=0.5;
 					var input, detect, freqin, ampin, key;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
-					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \rcomplex);// \rcomplex
+					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);// \rcomplex
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
@@ -5954,7 +5954,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, smallCutoff: filtre);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Convertir hertz en midi puis entre (0 et 1) !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5967,7 +5967,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);// \rcomplex
-					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5982,8 +5982,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					harmonic = FFT(LocalBuf(512, 1), inputFilter);
 					percussive = FFT(LocalBuf(512, 1), inputFilter);
 					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
-					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
-					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), minFreq: 60, maxFreq: 4000, median: 3, peakThreshold: filtre);
+					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
+					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5993,7 +5993,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg bufferplay, busFileIn,  seuil=0.125, filtre=0.5;
 					var input, detect, freqin, ampin, key;
 					input = In.ar(busFileIn);
-					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \rcomplex);// \rcomplex
+					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);// \rcomplex
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
