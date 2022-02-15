@@ -159,11 +159,11 @@ alt + s				    Save preset with genome.
 alt + S					Save preset with genome+sequence.*/
 S				 		Save control panel.
 t			 			Automation: 1. Init agents.
-2. Random load preset.
-3. Sliders control.
-4. Genes music.
-5. Genes synth.
-6. Sliders synth
+                                    2. Random load preset.
+                                    3. Sliders control.
+                                    4. Genes music.
+                                    5. Genes synth.
+                                    6. Sliders synth
 u						Start recording score.
 alt + u			 		Switch samples.
 

@@ -666,6 +666,8 @@ y ... -					Musical keys.
 				},
 				// Save Synthesizer
 				5, {
+					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
+						{
 					Dialog.savePanel({arg path;
 						var name, pathonly, fileName, f;
 						path = PathName.new(path);
@@ -679,6 +681,7 @@ y ... -					Musical keys.
 						f.write(fonctionSaveSynthesizer.value(window).asCompileString);
 						f.close},
 					{"cancelled".postln});
+					});
 				},
 				// Save Preset
 				6, {
@@ -699,6 +702,8 @@ y ... -					Musical keys.
 				},
 				// Copy Synthesizer
 				7, {
+					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
+						{
 					tampon = listeDataOSC;
 					data = fonctionSaveSynthesizer.value(window);
 					fonctionLoadSynthesizer.value(data);
@@ -707,6 +712,7 @@ y ... -					Musical keys.
 					listeDataOSC = tampon;
 					/*// Init Band for Synth
 					fonctionInitBand.value(numFhzBand);*/
+					});
 				},
 				// Copy Preset
 				8, {
