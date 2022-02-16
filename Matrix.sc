@@ -568,9 +568,9 @@ y ... -					Musical keys.
 		MainMenu.register(menuOSC.title_("OSC"), "MatrixTools");
 
 		menuHelp = MenuAction("ShortCut", {
-				//Document.new("ShortCut for Matrix", helpMatrix);
-				TextView().name_("ShortCut for Matrix").string_(helpMatrix).front;
-			});
+			//Document.new("ShortCut for Matrix", helpMatrix);
+			TextView().name_("ShortCut for Matrix").string_(helpMatrix).front;
+		});
 		MainMenu.register(menuHelp, "MatrixTools");
 
 		fonctionUserOperatingSystem = {arg item, window;
@@ -643,6 +643,14 @@ y ... -					Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
+						tampon = data.last;// Load OSCmusicData
+						data.remove(data.last);// Remove OSCmusicData
+						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						data.remove(data.last);// Remove control panel
+						dataControlSynth = data.last; // ControlSynth Panel
+						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						data.remove(data.last);// Remove controlSynth panel
+						fonctionLoadSynthesizer.value(data);
 						listeDataOSC = tampon;
 					}, {"cancelled".postln});
 				},
@@ -660,6 +668,14 @@ y ... -					Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).
 						front;indexWindows=3;
+						tampon = data.last;// Load OSCmusicData
+						data.remove(data.last);// Remove OSCmusicData
+						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						data.remove(data.last);// Remove control panel
+						dataControlSynth = data.last; // ControlSynth Panel
+						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						data.remove(data.last);// Remove controlSynth panel
+						fonctionLoadSynthesizer.value(data);
 						listeDataOSC = tampon;
 					},
 					{"cancelled".postln});
@@ -668,19 +684,24 @@ y ... -					Musical keys.
 				5, {
 					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
-					Dialog.savePanel({arg path;
-						var name, pathonly, fileName, f;
-						path = PathName.new(path);
-						pathonly = path.pathOnly;
-						name = path.fileName;
-						name = "synthesizer"+name;
-						path = pathonly++name;
-						fileName = PathName.new(path).fileName;
-						path = PathName.new(path).fullPath;
-						f=File(path ++ ".scd", "w");
-						f.write(fonctionSaveSynthesizer.value(window).asCompileString);
-						f.close},
-					{"cancelled".postln});
+							Dialog.savePanel({arg path;
+								var name, pathonly, fileName, f;
+								path = PathName.new(path);
+								pathonly = path.pathOnly;
+								name = path.fileName;
+								name = "synthesizer"+name;
+								path = pathonly++name;
+								fileName = PathName.new(path).fileName;
+								path = PathName.new(path).fullPath;
+								f=File(path ++ ".scd", "w");
+								data = fonctionSaveSynthesizer.value(window);
+								data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
+								data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
+								data = data.add(listeDataOSC.value);//Save OSCmusicData
+								f.write(data.asCompileString);
+								f.close;
+							},
+							{"cancelled".postln});
 					});
 				},
 				// Save Preset
@@ -704,14 +725,14 @@ y ... -					Musical keys.
 				7, {
 					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
-					tampon = listeDataOSC;
-					data = fonctionSaveSynthesizer.value(window);
-					fonctionLoadSynthesizer.value(data);
-					//Document.listener.string="";
-					s.queryAllNodes;
-					listeDataOSC = tampon;
-					/*// Init Band for Synth
-					fonctionInitBand.value(numFhzBand);*/
+							tampon = listeDataOSC;
+							data = fonctionSaveSynthesizer.value(window);
+							fonctionLoadSynthesizer.value(data);
+							//Document.listener.string="";
+							s.queryAllNodes;
+							listeDataOSC = tampon;
+							/*// Init Band for Synth
+							fonctionInitBand.value(numFhzBand);*/
 					});
 				},
 				// Copy Preset
