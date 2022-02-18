@@ -4056,7 +4056,7 @@ f						Switch File for Analyze.
 				Out.ar(out, chain);
 		}).add;
 
-		SynthDef('Synth BinScramble',
+		SynthDef('Synth BinShift',
 			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
@@ -4069,12 +4069,12 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_BinShift(chain, oscFlux * 4,  oscFlatness * 256 - 128);
+				chain = PV_BinShift(chain, oscFlux * 4, oscFlatness * 256);
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
 
-		SynthDef('Synth BinShift',
+		SynthDef('Synth BinScramble',
 			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
@@ -4160,7 +4160,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_MagAbove(chain, oscFlux*64);
+				chain = PV_MagAbove(chain, oscFlux * 2048);
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
@@ -4178,7 +4178,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_MagBelow(chain, oscFlux * 64);
+				chain = PV_MagBelow(chain,  oscFlux * 2048);
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
@@ -4196,7 +4196,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_MagClip(chain, oscFlux*16);
+				chain = PV_MagClip(chain, oscFlux * 2048);
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
@@ -4233,7 +4233,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_RectComb(chain, oscFlux * 32, oscFlatness, oscDuree);
+				chain = PV_RectComb(chain, oscFlux * 2048, oscFlatness);
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
@@ -4270,7 +4270,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_Compander(chain, 80*oscFlux.clip(0.1, 1), (oscFlatness*5).clip(2, 5), oscDuree);
+				chain = PV_Compander(chain, 256 * oscFlux.clip(0.1, 1), (oscFlatness * 5).clip(2, 5), oscDuree);
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
@@ -4289,7 +4289,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_SpectralEnhance(chain, (oscFlux*8+0.5).floor, oscFlatness*4+1, oscDuree);
+				chain = PV_SpectralEnhance(chain, (oscFlux * 8 + 0.5).floor, oscFlatness * 4 + 1);
 				chain= IFFT(chain) * 0.125;
 				Out.ar(out, chain);
 		}).add;
@@ -4307,7 +4307,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_MagShift(chain, oscFlux.clip(0.25, 4));
+				chain = PV_MagShift(chain, oscFlux * 256);
 				chain= IFFT(chain) * 0.125;
 				Out.ar(out, chain);
 		}).add;
@@ -4325,7 +4325,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_MagShift(chain, oscFlux.clip(0.25, 4), oscFlatness - 0.5 * 128);
+				chain = PV_MagShift(chain, oscFlux * 256, oscFlatness * 128);
 				chain= IFFT(chain) * 0.125;
 				Out.ar(out, chain);
 		}).add;
