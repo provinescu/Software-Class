@@ -3049,7 +3049,7 @@ f						Switch File for Analyze.
 			// recLevel
 			StaticText(windowControlGUI, Rect(synth * 315 + 205, numberSynth * 25 + 150, 10, 20)).
 			string_("R").stringColor = Color.yellow;
-			NumberBox(windowControlGUI, Rect(synth * 315 + 220, numberSynth * 25 + 150, 35, 20)).
+			NumberBox(windowControlGUI, Rect(synth * 315 + 220, numberSynth * 25 + 150, 35, 20)).minDecimals_(4).maxDecimals_(4).
 			action = {arg val;
 				val = val.value;
 				if(val < 0, {val = 0});
@@ -3061,7 +3061,7 @@ f						Switch File for Analyze.
 			// preLevel
 			StaticText(windowControlGUI, Rect(synth * 315 + 260, numberSynth * 25 + 150, 10, 20)).
 			string_("P").stringColor = Color.yellow;
-			NumberBox(windowControlGUI, Rect(synth * 315 + 275, numberSynth * 25 + 150, 35, 20)).
+			NumberBox(windowControlGUI, Rect(synth * 315 + 275, numberSynth * 25 + 150, 35, 20)).minDecimals_(4).maxDecimals_(4).
 			action = {arg val;
 				val = val.value;
 				if(val < 0, {val = 0});

@@ -3096,7 +3096,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//~levelenvsynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value,val.wrapAt(1));
 				~synthsliderenvelope.wrapAt(i).value=val};
 			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)));
-			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)));
+			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(4).maxDecimals_(4));
 			~numRecLevel1.wrapAt(i).action={arg level;
 				var levels;
 				~writepartitions.value(i,'normal','off',"~numRecLevel1",level.value);
@@ -3104,7 +3104,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				levels.put(0, level.value);
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
 			};
-			~numRecLevel2 = ~numRecLevel2.add(NumberBox(w,Rect(0,0,35,12)));
+			~numRecLevel2 = ~numRecLevel2.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(4).maxDecimals_(4));
 			~numRecLevel2.wrapAt(i).action={arg level;
 				var levels;
 				~writepartitions.value(i,'normal','off',"~numRecLevel2",level.value);
@@ -3113,7 +3113,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
 			};
 			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
-			~syntheffetsPrenumber=~syntheffetsPrenumber.add(NumberBox(w,Rect(0,0,50,12)));
+			~syntheffetsPrenumber=~syntheffetsPrenumber.add(NumberBox(w,Rect(0,0,50,12)).minDecimals_(4).maxDecimals_(4));
 			~syntheffetsPrenumber.wrapAt(i).action={arg nombre;var datas;
 				~writepartitions.value(i,'normal','off',"~syntheffetsPrenumber",nombre.value);
 				switch(~lasteffetsPreindex.wrapAt(i),
@@ -3133,7 +3133,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~dataseffetsPres.wrapPut(~listenodeeffetsPresynth.wrapAt(i).value,~synthcontrolvieweffetsPre.wrapAt(i).value);
 				~synthcontrolvieweffetsPredatas.wrapPut(i,~dataseffetsPres.value)};
 			StaticText(w, Rect(0, 0, 150, 12)).string_("Post FX").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
-			~syntheffetsPostnumber=~syntheffetsPostnumber.add(NumberBox(w,Rect(0,0,50,12)));
+			~syntheffetsPostnumber=~syntheffetsPostnumber.add(NumberBox(w,Rect(0,0,50,12)).minDecimals_(4).maxDecimals_(4));
 			~syntheffetsPostnumber.wrapAt(i).action={arg nombre;var datas;
 				~writepartitions.value(i,'normal','off',"~syntheffetsPostnumber",nombre.value);
 				switch(~lasteffetsPostindex.wrapAt(i),

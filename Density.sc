@@ -4512,17 +4512,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| offsetSound = ez.value}, 0, layout: \vert2);
 		// Duree Sample
 		EZKnob(windowEar, 80 @ 80, "DurSample", ControlSpec(0.01, 8, \exp, 0.01),
-			{|ez| dureeSample = ez.value}, 1, layout: \vert2);
+			{|ez| dureeSample = ez.value}, 1, layout: \vert2).view.children.at(2).decimals = 4;
 		// Rec/Pre Level Sample
 		MultiSliderView(windowEar, Rect(0, 0, 35, 70)).value_([1, 0]).action={arg levels;
 			recLevel = levels.value.at(0); preLevel = levels.value.at(1); groupeRecBuffer.set(\level1, recLevel, \level2, preLevel); groupeSynth.set(\level1, recLevel, \level2, preLevel); windowEar.view.children.at(44).value = recLevel; windowEar.view.children.at(45).value = preLevel};
 		// Display value recbutton 1
-		NumberBox(windowEar, Rect(0, 0, 35, 18)).action = {arg num;
+		NumberBox(windowEar, Rect(0, 0, 35, 18)).decimals_(4).action = {arg num;
 			recLevel = num.value;
 			windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);
 		};
 		// Display value recbutton 2
-		NumberBox(windowEar, Rect(0, 0, 35, 18)).action = {arg num;
+		NumberBox(windowEar, Rect(0, 0, 35, 18)).decimals_(4).action = {arg num;
 			preLevel = num.value;
 			windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);
 		};

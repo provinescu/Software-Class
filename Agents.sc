@@ -159,11 +159,11 @@ alt + s				    Save preset with genome.
 alt + S					Save preset with genome+sequence.*/
 S				 		Save control panel.
 t			 			Automation: 1. Init agents.
-                                    2. Random load preset.
-                                    3. Sliders control.
-                                    4. Genes music.
-                                    5. Genes synth.
-                                    6. Sliders synth
+2. Random load preset.
+3. Sliders control.
+4. Genes music.
+5. Genes synth.
+6. Sliders synth
 u						Start recording score.
 alt + u			 		Switch samples.
 
@@ -3983,6 +3983,8 @@ G                       Init Genome Agent (solo).
 		~genePanRanger.enabled_(false);
 		~wg.view.decorator.nextLine;
 		~geneBufferRanger=EZRanger(~wg, 300 @ 18, "Time Buffer Sound", ControlSpec(0.01, ~tempsmaxsignal, \exp, 0), {|view| if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneBufferRanger", view.value)})}, [0.015625, ~tempsmaxsignal], false, 125, 40);
+		~geneBufferRanger.view.children.at(1).decimals = 4;
+		~geneBufferRanger.view.children.at(3).decimals = 4;
 		~geneBufferButton=Button(~wg,Rect(0, 0, 25, 18)).states=[["On", Color.black, Color.green(0.8, 0.25)],["Off", Color.black, Color.red(0.8, 0.25)]];
 		~geneBufferButton.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneBufferButton", action.value)});
@@ -4471,7 +4473,7 @@ G                       Init Genome Agent (solo).
 			if(view.value == 0 , {~flagAmpSynth = 'off'},{~flagAmpSynth = 'on'});
 		};
 		// Display value recbutton 1
-		~valRec1 = NumberBox(~wi, Rect(0, 0, 35, 18));
+		~valRec1 = NumberBox(~wi, Rect(0, 0, 35, 18)).minDecimals_(4).maxDecimals_(4);
 		~valRec1.value = 1;
 		~valRec1.action = {arg num;
 			var levels;
@@ -4480,7 +4482,7 @@ G                       Init Genome Agent (solo).
 			~recSamplesLevelsMenu.valueAction_(levels);
 		};
 		// Display value recbutton 2
-		~valRec2 = NumberBox(~wi, Rect(0, 0, 35, 18));
+		~valRec2 = NumberBox(~wi, Rect(0, 0, 35, 18)).minDecimals_(4).maxDecimals_(4);
 		~valRec2.value = 0;
 		~valRec2.action = {arg num;
 			var levels;
