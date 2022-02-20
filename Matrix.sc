@@ -3348,8 +3348,8 @@ y ... -					Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer one
 			knobOffset1 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset1, ez.value); ctrlBuffer.put(3, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
-			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30);
-			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30);
+			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
+			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
 			knobRecOn1 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec", Color.black, Color.red(0.8, 0.25)]];
 			knobRecOn1.action = {|view| bufferRecording1.set(\loop, view.value); ctrlBuffer.put(2, view.value)};
 			windowSynth.view.decorator.nextLine;
