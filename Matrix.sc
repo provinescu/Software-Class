@@ -32,8 +32,12 @@ Matrix {
 		s = Server.default;
 
 		s.options.memSize = 2**20;
+		s.options.numWireBufs = 128;
 		s.options.inDevice = devIn;
 		s.options.outDevice = devOut;
+		/*s.options.numBuffers = 1024 * 256; // increase this if you need to load more samples
+		s.options.memSize = 8192 * 32; // increase this if you get “alloc failed” messages
+		s.options.maxNodes = 1024 * 32; // increase this if you are getting drop outs and the message “too many nodes”*/
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
 		//s.options.device = "JackRouter";// use Jack if is available
 		//s.options.sampleRate = nil;// use the currently selected samplerate of the select hardware
