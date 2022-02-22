@@ -5021,8 +5021,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5075,8 +5075,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5127,8 +5127,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5179,8 +5179,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5231,8 +5231,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5285,8 +5285,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5338,8 +5338,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5392,8 +5392,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5444,8 +5444,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5499,8 +5499,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5556,8 +5556,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5610,8 +5610,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5664,8 +5664,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5718,8 +5718,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5774,8 +5774,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5830,8 +5830,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5887,8 +5887,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5941,8 +5941,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -5995,8 +5995,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6047,8 +6047,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6100,8 +6100,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6159,8 +6159,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6213,8 +6213,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6270,8 +6270,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6328,8 +6328,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6384,8 +6384,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6440,8 +6440,8 @@ y ... -					Musical keys.
 		//(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 		//DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 		//// Out
-		//OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-		//OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+		//Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+		//Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 		//Out.ar(out, chain * flagAmpOnOff);
 		//}).add;
 
@@ -6496,8 +6496,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6552,8 +6552,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6608,8 +6608,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6664,8 +6664,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6720,8 +6720,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6776,8 +6776,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6832,8 +6832,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6888,8 +6888,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -6944,8 +6944,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7000,8 +7000,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7056,8 +7056,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7112,8 +7112,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7168,8 +7168,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7224,8 +7224,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7280,8 +7280,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7336,8 +7336,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7392,8 +7392,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7448,8 +7448,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7504,8 +7504,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7560,8 +7560,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7616,8 +7616,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7678,8 +7678,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7738,8 +7738,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7798,8 +7798,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7858,8 +7858,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7918,8 +7918,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -7978,8 +7978,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8038,8 +8038,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8098,8 +8098,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8158,8 +8158,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8218,8 +8218,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8278,8 +8278,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8335,8 +8335,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8392,8 +8392,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8440,8 +8440,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8488,8 +8488,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8535,8 +8535,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8581,8 +8581,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8627,8 +8627,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8673,8 +8673,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8719,8 +8719,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8771,8 +8771,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8821,8 +8821,8 @@ y ... -					Musical keys.
 		//(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 		//DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 		//// Out
-		//OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-		//OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+		//Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+		//Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 		//Out.ar(out, chain * flagAmpOnOff);
 		//}).add;
 
@@ -8871,8 +8871,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8921,8 +8921,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -8971,8 +8971,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9021,8 +9021,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9071,8 +9071,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9121,8 +9121,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9171,8 +9171,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9221,8 +9221,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9271,8 +9271,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9321,8 +9321,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9371,8 +9371,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9421,8 +9421,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9471,8 +9471,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9521,8 +9521,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9571,8 +9571,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9621,8 +9621,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9671,8 +9671,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9731,8 +9731,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9789,8 +9789,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9847,8 +9847,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9905,8 +9905,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -9963,8 +9963,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10021,8 +10021,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10079,8 +10079,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10137,8 +10137,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10195,8 +10195,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10253,8 +10253,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10308,8 +10308,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10356,8 +10356,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10402,8 +10402,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10450,8 +10450,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10496,8 +10496,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10542,8 +10542,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10589,8 +10589,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10638,8 +10638,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10684,8 +10684,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10730,8 +10730,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10776,8 +10776,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10822,8 +10822,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10868,8 +10868,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10914,8 +10914,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -10960,8 +10960,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11012,8 +11012,8 @@ y ... -					Musical keys.
 							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11041,19 +11041,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11078,19 +11078,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11116,19 +11116,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11153,19 +11153,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11190,19 +11190,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11227,19 +11227,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11264,19 +11264,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11301,19 +11301,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11338,19 +11338,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11375,19 +11375,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11412,19 +11412,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11449,19 +11449,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11486,19 +11486,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11523,19 +11523,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11561,19 +11561,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11598,19 +11598,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11635,19 +11635,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11672,19 +11672,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11709,19 +11709,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11746,19 +11746,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11783,19 +11783,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11823,19 +11823,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11863,19 +11863,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11908,19 +11908,19 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11953,19 +11953,19 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -11998,19 +11998,19 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12037,19 +12037,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12076,19 +12076,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12115,19 +12115,19 @@ y ... -					Musical keys.
 		//// Switch Audio Out
 		//chain = if(switchAudioOut == 0,
 		//// Pan
-		//Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+		//Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 		//if(switchAudioOut == 2,
 		//// PanAz
-		//PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+		//PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 		//if(switchAudioOut == 1,
 		//// Rotate2
-		//Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+		//Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 		//// Ambisonic
-		//(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+		//(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 		//DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 		//// Out
-		//OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-		//OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+		//Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+		//Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 		//Out.ar(out, chain * flagAmpOnOff);
 		//}).add;
 
@@ -12154,19 +12154,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12193,19 +12193,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12232,19 +12232,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12271,19 +12271,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12310,19 +12310,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12349,19 +12349,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12388,19 +12388,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12427,19 +12427,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12466,19 +12466,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12505,19 +12505,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12544,19 +12544,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12583,19 +12583,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12622,19 +12622,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12661,19 +12661,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12700,19 +12700,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12739,19 +12739,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12778,19 +12778,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12817,19 +12817,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12856,19 +12856,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12895,19 +12895,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12934,19 +12934,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -12974,19 +12974,19 @@ y ... -					Musical keys.
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
@@ -13033,19 +13033,19 @@ y ... -					Musical keys.
 				chain = chain * amp;
 				chain = if(switchAudioOut == 0,
 					// Pan
-					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal))),
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
 					if(switchAudioOut == 2,
 						// PanAz
-						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo), 1, widthMC, orientationMC),
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
 						if(switchAudioOut == 1,
 							// Rotate2
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo)),
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
 							// Ambisonic
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo.reciprocal).reciprocal)), add: panLo));
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 				// Out
-				OffsetOut.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				OffsetOut.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 	}
