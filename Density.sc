@@ -7656,7 +7656,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				//FX
 				3.do({arg i; in = AllpassC.ar(in, 1, Rand(0.01, 1), Rand(0.1, 1))}) * envelope;
 				chain = Mix(in);
@@ -7670,7 +7670,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				//FX
 				chain = Mix(DelayC.ar(in, 4, [Rand(0.01, 4), Rand(0.01, 4), Rand(0.01, 4)])) * envelope;
 				// Out
@@ -7683,7 +7683,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7699,7 +7699,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7715,7 +7715,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7731,7 +7731,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7747,7 +7747,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7763,7 +7763,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7779,7 +7779,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7795,7 +7795,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
@@ -7811,7 +7811,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
@@ -7827,7 +7827,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
@@ -7843,7 +7843,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7859,7 +7859,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7875,7 +7875,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7891,7 +7891,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7907,7 +7907,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -7924,7 +7924,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				centroid = (centroid / 8372 * 4186).clip(50, 4186).lag(durSynth);
@@ -7941,7 +7941,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				chain = FFT(LocalBuf(2048, 1), in);
 				chain = PV_MagNoise(chain);
 				chain= IFFT(chain) * envelope;
@@ -7956,7 +7956,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				chain = FFT(LocalBuf(2048, 1), in);
@@ -7973,7 +7973,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				chain = FFT(LocalBuf(2048, 1), in);
@@ -7990,7 +7990,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8008,7 +8008,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8026,7 +8026,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8044,7 +8044,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				chain = FFT(LocalBuf(2048, 1), in);
 				chain = PV_MagSquared(chain);
 				chain= IFFT(chain) * 0.25 * envelope;
@@ -8059,7 +8059,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				chain = FFT(LocalBuf(2048, 1), in);
@@ -8076,7 +8076,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				chain = FFT(LocalBuf(2048, 1), in);
@@ -8093,7 +8093,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8111,7 +8111,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8129,7 +8129,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8147,7 +8147,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8165,7 +8165,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8183,7 +8183,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8201,7 +8201,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8219,7 +8219,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8237,7 +8237,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8255,7 +8255,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8273,7 +8273,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, buffer=LocalBuf(s.sampleRate, 1).clear, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8293,7 +8293,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, buffer=LocalBuf(s.sampleRate, 1).clear, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = (flux * 2 - 1).clip(-0.99, 0.4);
 				flatness = flatness.clip(0.01, 1.0);
@@ -8312,7 +8312,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8329,7 +8329,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8346,7 +8346,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, buffer, trig, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				//FX
@@ -8365,7 +8365,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8383,7 +8383,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				var chain, envelope;
 				in = In.ar(in);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -8404,7 +8404,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Pan Stereo
 				//chain = Pan2.ar(signal, LFSaw.kr(bpm), 1) * EnvGen.kr(Env.linen(0.05, durSynth - 0.1, 0.05, 1, \sine), gate, 1, 0, 1, 2);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				chain = Pan2.ar(signal, TRand.kr(panX, panY, Impulse.kr(bpm)).lag(durSynth)) * envelope;
 				// Out Stereo
 				Out.ar(out,  chain);
@@ -8418,7 +8418,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Pan Rotate2
 				//chain = Rotate2.ar(signal, signal, LFSaw.kr(dur.reciprocal)) * EnvGen.kr(Env.linen(0.05, durSynth - 0.1, 0.05, 1, \sine), gate, 1, 0, 1, 2);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				chain = Rotate2.ar(signal, signal, TRand.kr(panX, panY, Impulse.kr(bpm)).lag(durSynth)) * envelope;
 				// Out Stereo
 				Out.ar(out,  chain);
@@ -8432,7 +8432,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Pan MultiSpeaker
 				//chain = PanAz.ar(numberAudioOut, signal, TRand.kr(panX, panY, Impulse.kr(dur.reciprocal)), 1, widthMC, orientationMC) * EnvGen.kr(Env.linen(0.05, durSynth - 0.1, 0.05, 1, \sine), gate, 1, 0, 1, 2);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				chain = PanAz.ar(numberAudioOut, signal, TRand.kr(panX, panY, Impulse.kr(bpm).lag(durSynth)), 1, widthMC, orientationMC) * envelope;
 				// Out Stereo
 				Out.ar(out,  chain);
@@ -8448,7 +8448,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//ambisonic = PanB.ar(signal, panX, panY * 0.5 * pi);
 				//ambisonic = PanB.ar(signal, TRand.kr(panX, panY, Impulse.kr(bpm)) * pi, TRand.kr(0.5.neg, 0.5, Impulse.kr(bpm)) * pi);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				ambisonic = PanB2.ar(signal, TRand.kr(panX, panY, Impulse.kr(bpm)).lag(durSynth)) * envelope;
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
 				// Out Stereo
@@ -8464,7 +8464,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//front = Pan2.ar(signal, LFSaw.kr(dur.reciprocal), LFSaw.kr(dur.reciprocal) + 1 / 2) * EnvGen.kr(Env.linen(0.05, durSynth - 0.1, 0.05, 1, \sine), gate, 1, 0, 1, 2);
 				//rear = Pan2.ar(signal, LFSaw.kr(dur.reciprocal), 1 - (LFSaw.kr(dur.reciprocal) + 1 / 2)) * EnvGen.kr(Env.linen(0.05, durSynth - 0.1, 0.05, 1, \sine), gate, 1, 0, 1, 2);
 				// Envelope
-				envelope = EnvGen.kr(Env.linen(0.01, 0.98, 0.01, 1), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				front = Pan2.ar(signal, panX, panY + 1 / 2) * envelope;
 				rear = Pan2.ar(signal, panX, 1 - (panY + 1 / 2))  * envelope;
 				center = ((panX*panX) + (panY*panY))**0.5  * envelope;

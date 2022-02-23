@@ -13017,6 +13017,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*4,control6*4,control7*4,control8*4], amp/4 * 0.6));
 					////effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13043,6 +13044,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13069,6 +13071,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(BPF.ar(ineffet, [control1*1000+27.5,control2*1000+500,control3*1000+1000,control4*1000+1500], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13095,6 +13098,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(BRF.ar(ineffet,[control1*1000+27.5,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13121,6 +13125,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+320.24370022528, control2*4186+320.24370022528, control3*4186+320.24370022528, control4*4186+320.24370022528], [control5, control6, control7, control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13147,6 +13152,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(RLPF.ar(ineffet, [control1*320.24370022528+27.5, control2*320.24370022528+27.5, control3*320.24370022528+27.5, control4*320.24370022528+27.5], [control5, control6, control7, control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13173,6 +13179,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(PitchShift.ar(ineffet, 0.1,[control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13199,6 +13206,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13225,6 +13233,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(Formlet.ar(ineffet, [control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13251,6 +13260,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(Resonz.ar(ineffet, [control1*500,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6, control7, control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13277,6 +13287,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13303,6 +13314,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13329,6 +13341,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13354,6 +13367,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=LeakDC.ar(ineffet, control1, amp);
+					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13381,6 +13395,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13407,6 +13422,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(MidEQ.ar(ineffet, [control1, control2, control3, control4]*4186+27.5, 0.5, [control5, control6, control7, control8]*48-24, amp/2));
 					//effet = Limiter.ar(effet, 1.0, 0.01);
+					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13432,6 +13448,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(DynKlank.ar(`[[control1, control2, control3, control4]*4186+37, [amp / 4, amp /4, amp /4, amp / 4] / 4, [control5, control6, control7, control8]], ineffet));
+					effet = effet * amp;
 					//effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
