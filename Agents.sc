@@ -5683,7 +5683,7 @@ G                       Init Genome Agent (solo).
 			window.view.keyDownAction = {arg view,char,modifiers,unicode, keycode;
 				if(view.asString != "a SCTextView", {
 					// Write score (pas ctrl+u -> stop recording)
-					if(unicode != 21 and: {keycode != 32}, {~fonctionRecordScore.value("~evaluationKeyDown", [char,modifiers,unicode, keycode, 'on'])});
+					if(unicode != 21 and: {keycode != 32}, {~fonctionRecordScore.value("~evaluationKeyDown", [char.asString,modifiers,unicode, keycode, 'on'])});
 					~flagScoreRecordGUI = 'off'; // Set off pour score
 					~evaluationKeyDown.value(char,modifiers,unicode, keycode, 'off')});
 			};
