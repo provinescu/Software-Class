@@ -5685,8 +5685,8 @@ G                       Init Genome Agent (solo).
 					// Write score (pas ctrl+u -> stop recording)
 					if(unicode != 21 and: {keycode != 32}, {
 						if(unicode != 0, {
-						~fonctionRecordScore.value("~evaluationKeyDown", [char.asString,modifiers,unicode, keycode, 'on']);
-					});
+							~fonctionRecordScore.value("~evaluationKeyDown", [char.asString,modifiers,unicode, keycode, 'on']);
+						});
 					});ˆ
 					~flagScoreRecordGUI = 'off'; // Set off pour score
 					~evaluationKeyDown.value(char,modifiers,unicode, keycode, 'off')});
@@ -7440,18 +7440,27 @@ G                       Init Genome Agent (solo).
 						~lastTimeRecordScore=newTime;
 					});
 				});
+				Post << "Score: "<< ~numeroScore << Char.nl;
+				Post << "Commande: "<< commande << Char.nl;
+				Post << "Value: "<< valeur << Char.nl;
+				Post << "Time: "<< time << Char.nl;
 			});
 		};
 
 		~routinePlayingScore = {arg score, number, pos, flagLoop;
 			var time=0.04167 / ~tempoMusicPlay.tempo.reciprocal, cmd, val;
-			("Play Step Score"+number.asString++"."++pos.asString+"(Loop"+flagLoop.asString++")").postln;
+			//("Play Step Score"+number.asString++"."++pos.asString+"(Loop"+flagLoop.asString++")").postln;
 			Tdef(("score"+number.asString+Date.localtime.asString).asSymbol,
 				{Routine{arg inval;
 					score.do({arg item;
 						time = item.wrapAt(0);
 						cmd = item.wrapAt(1);
 						val = item.wrapAt(2);
+						Post << "Score: "<< number << " Loop " << flagLoop << Char.nl;
+						Post << "Commande: "<< cmd << Char.nl;
+						Post << "Value: "<< val << Char.nl;
+						Post << "Time: "<< time << Char.nl;
+						//Post.nl;
 						if(time < 0.015625, {time = 0.04167 * ~tempoMusicPlay.tempo});// Prevention pour timing trop court affichage GUI
 						if(~listeFlagRoutinePlayingScore.wrapAt(number-1).wrapAt(pos-1) == 'on', {
 							if(cmd != "End Score", {
@@ -7492,16 +7501,14 @@ G                       Init Genome Agent (solo).
 
 		~scoreStep={arg score, index, flag, number; //~score, ~indexStepScore, ~flagStepScore;
 			var event, time, cmd, val;
-			("Play score"+number.asString++"."+"(Loop"+flag.asString++")").postln;
-			Post << "Event: " << index << " " << "Step Score " << number << Char.nl;
 			if(index >= (score.size - 1),
 				{
 					if(flag == 'on', {
-						("Loop Step score"+number.asString).postln;
+						Post << "Score: "<< number << " Loop " << flag << Char.nl;
 						~indexStepScore=0; index = 0;
 					},
 					{
-						("Stop Step Score"+number.asString).postln;
+						Post << "Score: "<< number << " Stop " << Char.nl;
 						~score=nil; score = nil; ~numberStepScore=nil; number=nil;
 			})});
 			if(score != nil,
@@ -7510,6 +7517,10 @@ G                       Init Genome Agent (solo).
 					time = event.wrapAt(0);
 					cmd = event.wrapAt(1);
 					val = event.wrapAt(2);
+					Post << "Score: "<< number << " Loop " << flag << Char.nl;
+					Post << "Commande: "<< cmd << Char.nl;
+					Post << "Value: "<< val << Char.nl;
+					Post << "Time: "<< time << Char.nl;
 					if(cmd != "End Score", {
 						if(cmd == "~evaluationKeyDown", {cmd.interpret.value(val.wrapAt(0), val.wrapAt(1),val.wrapAt(2),val.wrapAt(3), val.wrapAt(4))},
 							{if(cmd == "~validGenomeAll",{~genomes=val; {~fonctionUpdateGenomeAll.value}.defer},
