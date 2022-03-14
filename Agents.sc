@@ -5200,6 +5200,7 @@ G                       Init Genome Agent (solo).
 		~choiceAlgoData = PopUpMenu(~wp,Rect(0, 0, 100, 20)).
 		items_(~listeAlgorithm).
 		action = {|algo|
+			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~choiceAlgoData", algo.value)});
 			~algoMusic = ~listeAlgorithm.wrapAt(algo.value);
 		};
 		~wp.view.decorator.nextLine;
