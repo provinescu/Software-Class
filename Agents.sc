@@ -2104,6 +2104,16 @@ G                       Init Genome Agent (solo).
 					and: {abs(newTime - ~lastTimeAutomationPreset) > ~limitTemps} and: {meanProbaPresetFlux < (q1U - ecartqU) or: {meanProbaPresetFlux > (q3U + ecartqU)}} and: {meanProbaPresetFlatness < (q1A - ecartqA) or: {meanProbaPresetFlatness > (q3A + ecartqA)}}, {
 						while({number == ~lastNumberChoiceConfig and: {compteur <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0) + 1)}
 						}, {number = rrand(~choixChangeConfig.wrapAt(0), ~choixChangeConfig.wrapAt(1)); compteur = compteur + 1});
+						// Collect all Preset
+						~foldersToScanAll = PathName.new(~nompathdata).files.collect{ |path| var file;
+							file = path.fileName;
+							if(file.find("preset") == 0 or: {file.find("Preset") == 0}, {file});
+						};
+						~foldersToScanAll = ~foldersToScanAll.reject({arg item; item == nil});
+						// Collect preset
+						~foldersToScanPreset = ~foldersToScanAll.collect{ |file|
+							if(file.find("preset ") == 0 or: {file.find("Preset ") == 0}, {file});
+						};
 						~lastTimeAutomationPreset = newTime;
 						~lastNumberChoiceConfig = number;
 						~lastTimePreset = 0;
@@ -2133,6 +2143,16 @@ G                       Init Genome Agent (solo).
 					and: {abs(newTime - ~lastTimeAutomationPreset) > ~limitTemps} and: {abs(meanProbaPresetFlux - ~lastMeanProbaPresetFlux) > seuil and: {abs(meanProbaPresetFlatness - ~lastMeanProbaPresetFlatness) > seuil}}, {
 						while({number == ~lastNumberChoiceConfig and: {compteur <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0) + 1)}
 						}, {number = rrand(~choixChangeConfig.wrapAt(0), ~choixChangeConfig.wrapAt(1)); compteur = compteur + 1});
+						// Collect all Preset
+						~foldersToScanAll = PathName.new(~nompathdata).files.collect{ |path| var file;
+							file = path.fileName;
+							if(file.find("preset") == 0 or: {file.find("Preset") == 0}, {file});
+						};
+						~foldersToScanAll = ~foldersToScanAll.reject({arg item; item == nil});
+						// Collect preset
+						~foldersToScanPreset = ~foldersToScanAll.collect{ |file|
+							if(file.find("preset ") == 0 or: {file.find("Preset ") == 0}, {file});
+						};
 						~lastTimeAutomationPreset = newTime;
 						~lastNumberChoiceConfig = number;
 						~lastTimePreset = 0;
@@ -6147,10 +6167,24 @@ G                       Init Genome Agent (solo).
 				// Key z -> load Preset aleatoire
 				if(modifiers==0 and: {unicode==122} and: {keycode==16}, {
 					while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
+						if(~foldersToScanPreset == [], {
+							// Collect all Preset
+							~foldersToScanAll = PathName.new(~nompathdata).files.collect{ |path| var file;
+								file = path.fileName;
+								if(file.find("preset") == 0 or: {file.find("Preset") == 0}, {file});
+							};
+							~foldersToScanAll = ~foldersToScanAll.reject({arg item; item == nil});
+							// Collect preset
+							~foldersToScanPreset = ~foldersToScanAll.collect{ |file|
+								if(file.find("preset ") == 0 or: {file.find("Preset ") == 0}, {file});
+							};
+						});
 						numberFile=rrand(0, ~foldersToScanPreset.size - 1);compteurEssai=compteurEssai+1;
 						if(File.exists(~nompathdata++~foldersToScanPreset.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPreset.wrapAt(numberFile),"r");
 							~wp.name=~nomFenetre + ~foldersToScanPreset.wrapAt(numberFile);
-							~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
+							~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on';
+							~foldersToScanPreset.removeAt(numberFile);
+					})});
 				});
 				/*// Key alt + z -> load Preset+Genome aleatoire
 				if(modifiers==524288 and: {unicode==122} and: {keycode==16}, {
