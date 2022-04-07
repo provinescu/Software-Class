@@ -4251,7 +4251,7 @@ f						Switch File for Analyze.
 				// Synth
 				chain = PlayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop) * envelope;
 				chain = FFT(LocalBuf(2048, 1), chain);
-				chain = PV_MagSmooth(chain, oscFlux);
+				chain = PV_MagSmooth(chain, oscFlux.clip(0, 1));
 				chain= IFFT(chain);
 				Out.ar(out, chain);
 		}).add;
