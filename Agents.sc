@@ -5,15 +5,15 @@ Agents {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
-	*new	{arg path="~/Documents/Agents/", o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
+	*new	{arg path="~/Documents/Agents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
-		^super.new.init(path, o, r, f, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
 
 	}
 
-	init	{arg path, o, r, f, devIn, devOut, size, wid, ori, flag;
+	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -23,6 +23,7 @@ Agents {
 		if(File.exists(path).not) {systemCmd("mkdir" + path)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
+		numberAudioIn = ni;
 		~numberAudioOut = o;
 		~recChannels = r;
 		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
@@ -34,7 +35,7 @@ Agents {
 		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
 		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
-		s.options.numInputBusChannels_(20);
+		s.options.numInputBusChannels_(numberAudioIn);
 		s.options.numOutputBusChannels_(~numberAudioOut);
 		s.options.hardwareBufferSize_(size);
 		~headerFormat = "aiff";
