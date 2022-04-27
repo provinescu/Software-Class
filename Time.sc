@@ -4,7 +4,7 @@ Time {
 
 	classvar  < s;
 
-	var <> pathTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTime, menuTime, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter, widthMC=2.0, orientationMC=0.5, numberAudioIn;
+	var <> pathTime, channelsSynth, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTime, menuTime, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter, widthMC, orientationMC, numberAudioIn;
 
 	*new	{arg path="~/Documents/Time/", ni=26, numberOut=2, numberRec=2, format="Stereo", devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5;
 
@@ -268,6 +268,7 @@ f						Switch File for Analyze.
 		autoRoot = 'off';
 		ambitusFreq = [0, 127];
 		flagVST = 'off';
+		channelsSynth = [0, 0, 0, 0];
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -882,7 +883,7 @@ f						Switch File for Analyze.
 				// Synth ByPassFX
 				Synth.new("ByPassFX", [\out, listeBusInDolby.at(synth), \in, listeBusInFX.at(synth)], listeGroupFX.at(synth), \addToTail);
 				// Dolby5.1
-				Synth.new(typeMasterOut, [\in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
+				Synth.new(typeMasterOut, [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
 			});
 			// Create Synth OSC
 			synthOSCkeyboard = Synth.newPaused("Time Keyboard", [\busIn, busAudioIn], groupeAudioRec, \addToHead);
@@ -1627,12 +1628,28 @@ f						Switch File for Analyze.
 		MainMenu.register(menuFile.title_("File for Analyze"), "TimeTools");
 
 		formatRecordingMenu = Menu(
+			MenuAction("Channels Synth Out", {
+				SCRequestString("[0, 0, 0, 0]", "Channels", {arg strg; channelsSynth = strg.value.interpret;
+					this.initSynthDef;
+					groupeLimiter.freeAll;
+					~synthVST = Synth.newPaused("VST"+typeMasterOut, [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+					~fxVST = VSTPluginController(~synthVST);
+					synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
+					numberSynth.do({arg synth;
+						listeGroupDolby.at(synth).freeAll;
+						listeGroupDolby = listeGroupDolby.add(
+							Synth.new(typeMasterOut, [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
+						)
+					});
+				});
+			}),
 			MenuAction("Stereo",
-				{recChannels = 2;
+				{
+					/*recChannels = 2;
 					numberAudioOut = 2;
 					s.recChannels_(recChannels.asInteger);
-					s.options.numInputBusChannels_(20);
-					s.options.numOutputBusChannels_(2);
+					s.options.numInputBusChannels_(numberAudioIn);
+					s.options.numOutputBusChannels_(2);*/
 					this.initSynthDef;
 					groupeLimiter.freeAll;
 					~synthVST = Synth.newPaused("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
@@ -1641,17 +1658,18 @@ f						Switch File for Analyze.
 					numberSynth.do({arg synth;
 						listeGroupDolby.at(synth).freeAll;
 						listeGroupDolby = listeGroupDolby.add(
-							Synth.new("Stereo", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
+							Synth.new("Stereo", [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 						)
 					});
 					windowVST.name = "VST Stereo";
 			}),
 			MenuAction("Dolby5.1",
-				{recChannels = 6;
+				{
+					/*recChannels = 6;
 					numberAudioOut = 6;
 					s.recChannels_(recChannels.asInteger);
-					s.options.numInputBusChannels_(20);
-					s.options.numOutputBusChannels_(6);
+					s.options.numInputBusChannels_(numberAudioIn);
+					s.options.numOutputBusChannels_(6);*/
 					this.initSynthDef;
 					groupeLimiter.freeAll;
 					~synthVST = Synth.newPaused("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
@@ -1660,7 +1678,7 @@ f						Switch File for Analyze.
 					numberSynth.do({arg synth;
 						listeGroupDolby.at(synth).freeAll;
 						listeGroupDolby = listeGroupDolby.add(
-							Synth.new("Dolby5.1", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
+							Synth.new("Dolby5.1", [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 						)
 					});
 					windowVST.name = "Dolby5.1";
@@ -1671,7 +1689,7 @@ f						Switch File for Analyze.
 						SCRequestString("2", "Channels", {arg recChannels;
 							numberAudioOut = recChannels.asInteger;
 							s.recChannels_(recChannels.asInteger);
-							s.options.numInputBusChannels_(20);
+							/*s.options.numInputBusChannels_(numberAudioIn);*/
 							s.options.numOutputBusChannels_(recChannels.asInteger);
 							this.initSynthDef;
 							groupeLimiter.freeAll;
@@ -1681,7 +1699,7 @@ f						Switch File for Analyze.
 							numberSynth.do({arg synth;
 								listeGroupDolby.at(synth).freeAll;
 								listeGroupDolby = listeGroupDolby.add(
-									Synth.new("MultiSpeaker", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
+									Synth.new("MultiSpeaker", [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 								)
 							});
 							windowVST.name = "MultiSpeaker";
@@ -1689,11 +1707,12 @@ f						Switch File for Analyze.
 				});
 			).title_("MultiSpeaker"),
 			MenuAction("Rotate2",
-				{recChannels = 2;
+				{
+					/*recChannels = 2;
 					numberAudioOut = 2;
 					s.recChannels_(recChannels.asInteger);
-					s.options.numInputBusChannels_(20);
-					s.options.numOutputBusChannels_(2);
+					s.options.numInputBusChannels_(numberAudioIn);
+					s.options.numOutputBusChannels_(2);*/
 					this.initSynthDef;
 					groupeLimiter.freeAll;
 					~synthVST = Synth.newPaused("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
@@ -1702,7 +1721,7 @@ f						Switch File for Analyze.
 					numberSynth.do({arg synth;
 						listeGroupDolby.at(synth).freeAll;
 						listeGroupDolby = listeGroupDolby.add(
-							Synth.new("Rotate2", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
+							Synth.new("Rotate2", [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5], listeGroupDolby.at(synth), \addToTail);
 						)
 					});
 					windowVST.name = "Rotate2";
@@ -1713,7 +1732,7 @@ f						Switch File for Analyze.
 						SCRequestString("2", "Channels", {arg recChannels;
 							numberAudioOut = recChannels.asInteger;
 							s.recChannels_(recChannels.asInteger);
-							s.options.numInputBusChannels_(20);
+							/*s.options.numInputBusChannels_(numberAudioIn);*/
 							s.options.numOutputBusChannels_(recChannels.asInteger);
 							this.initSynthDef;
 							~synthVST = Synth.newPaused("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToTail).map(\bpm, busOSCtempo);
@@ -1722,7 +1741,7 @@ f						Switch File for Analyze.
 							numberSynth.do({arg synth;
 								listeGroupDolby.at(synth).freeAll;
 								listeGroupDolby = listeGroupDolby.add(
-									Synth.new("Ambisonic", [\out, 0, \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
+									Synth.new("Ambisonic", [\out, channelsSynth.at(synth), \in, listeBusInDolby.at(synth), \panX, 0.5, \panY, 0.5], listeGroupDolby.at(synth), \addToTail);
 								)
 							});
 							windowVST.name = "Ambisonic";
@@ -1843,10 +1862,10 @@ f						Switch File for Analyze.
 		MainMenu.register(menuOSC.title_("OSC"), "TimeTools");
 
 		menuHelp = MenuAction("Help ShortCut",
-				{
-					//Document.new("ShortCut for Time", helpTime);
-					TextView().name_("ShortCut for Time").string_(helpTime).front;
-			});
+			{
+				//Document.new("ShortCut for Time", helpTime);
+				TextView().name_("ShortCut for Time").string_(helpTime).front;
+		});
 		MainMenu.register(menuHelp, "TimeTools");
 
 		// Fonction ShortCut
