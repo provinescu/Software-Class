@@ -8731,7 +8731,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				roomsize=10, revtime=3, damping=0.5, inputbw=1, spread=0.5, drylevel=0, earlylevel=0.25118864315096, taillevel=0.12589254117942, bpm=1;
 				var signal, chain=0;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
-				signal = Mix(In.ar(0, 2));
+				signal = Mix(In.ar(0, numberAudioOut));
 				chain = Mix(JPverb.ar(signal, t60: revtime / 2.5, damp: damping, size: inputbw * 5, earlyDiff: earlylevel, modDepth: spread, modFreq: spread * 10));
 				chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr(bpm)));
 				// Out
