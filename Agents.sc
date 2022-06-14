@@ -5,7 +5,7 @@ Agents {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn;
 
 	*new	{arg path="~/Documents/Agents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
@@ -41,9 +41,9 @@ Agents {
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
-		flagMC = flag;
-		widthMC = wid;
-		orientationMC = ori;
+		~flagMC = flag;
+		~widthMC = wid;
+		~orientationMC = ori;
 
 		// Safety Limiter
 		//s.options.safetyClipThreshold = 1.26; // Testing
@@ -859,6 +859,12 @@ G                       Init Genome Agent (solo).
 			// Init Synth
 			this.initSynthDef(true);
 
+			// Load if file SynthDef and SynthDefFX adding synth and fx
+			if(File.exists(~nompathdata++"List Synth adding.scd"),{f=File(~nompathdata++"List Synth adding.scd", "r");f.readAllString.interpret;f.close;"Adding File Synth !".postln},{"No Adding File Synth !".postln});
+			~listSynthAdd.postcs;
+			if(File.exists(~nompathdata++"List FX adding.scd"),{f=File(~nompathdata++"List FX adding.scd", "r");f.readAllString.interpret;f.close;"Adding File FX !".postln},{"No Adding File FX !".postln});
+			~listFXAdd.postcs;
+
 			// INIT ALL SYSTEM
 
 			~ardourOSC = NetAddr("127.0.0.1", 3819);// define NetAddr on local machine with Ardour's port number
@@ -1374,6 +1380,7 @@ G                       Init Genome Agent (solo).
 					"SynthOnFly",
 				];
 				file=File(~nompathdata++"List Synth.scd","w");file.write("~listSynth="++~listSynth.asCompileString);file.close});
+			~listSynth = ~listSynth ++ ~listSynthAdd;
 			~audioOutSynth=[];
 			~controlsSynth=[];
 			~valueJitterControlsSynth = 0.1;
@@ -1581,6 +1588,7 @@ G                       Init Genome Agent (solo).
 					"FXonFly",
 				];
 				file=File(~nompathdata++"List FX.scd","w");file.write("~listEffets="++~listEffets.asCompileString);file.close});
+			~listEffets = ~listEffets ++ ~listFXAdd;
 		};
 		~initAllEffet.value(~nompathdata, "List FX.scd");
 
@@ -3046,7 +3054,7 @@ G                       Init Genome Agent (solo).
 				},
 				"Neural", {
 					maxTraining = ~listeagentfreq.wrapAt(agent).size * 100;
-					if(maxTraining > 1000, {maxTraining = 1000});
+					if(maxTraining > 640, {maxTraining = 640});
 					maxTraining.do({arg i;
 						~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax]);
 					});
@@ -3169,17 +3177,18 @@ G                       Init Genome Agent (solo).
 					// Random Controls Synth
 					if(~automationControlsSynth.wrapAt(indexSynth) == 1,
 						{
-							controlF = (controlF + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(-1.0, 1.0))).clip(0.01, 0.99);
-							controlA = (controlA + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(-1.0, 1.0))).clip(0.01, 0.99);
-							controlD = (controlD + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(-1.0, 1.0))).clip(0.01, 0.99)});
+							controlF = (controlF + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+							controlA = (controlA + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+							controlD = (controlD + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+					});
 				},
 				{controlF = ~genomes.wrapAt(agent).wrapAt(35); controlA = ~genomes.wrapAt(agent).wrapAt(36); controlD = ~genomes.wrapAt(agent).wrapAt(37);
 					// Random Controls Synth
 					if(~valueRandomControlsSynth == 1,
 						{
-							controlF = (controlF + (~valueJitterControlsSynth * rrand(-1.0, 1.0))).clip(0.01, 0.99);
-							controlA = (controlA + (~valueJitterControlsSynth * rrand(-1.0, 1.0))).clip(0.01, 0.99);
-							controlD = (controlD + (~valueJitterControlsSynth * rrand(-1.0, 1.0))).clip(0.01, 0.99);
+							controlF = (controlF + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+							controlA = (controlA + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+							controlD = (controlD + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
 					});
 			});
 			// sourceOut
@@ -3369,7 +3378,7 @@ G                       Init Genome Agent (solo).
 						if(genomes.size != nil, {genBio = genomes.copyRange(0, 3).asString;
 						});
 					});
-					~viewgenomes.string = "Genome (Bio)" + genBio + " " + "Fitness (Inborn + gain)"+~fitnessInne.normalize.mediane.asString+" "++~fitnessAcquis.normalize.mediane.asString;
+					~viewgenomes.string = "Genome (Bio)" + genBio + " " + "Fitness (Inborn + gain)"+~fitnessInne.normalize.mediane.asString +" "++~fitnessAcquis.normalize.mediane.asString;
 					~viewagesagents.string = ~ages.mediane.asString;
 					~viewviesagents.string = "Life"+~vies.mediane.round(0.001).asString;
 					~viewenfantsagents.string = "Children"+~enfants.mediane.round(0.001).asString;
@@ -7607,12 +7616,6 @@ G                       Init Genome Agent (solo).
 
 		if(flag == true, {
 
-			// Load if file SynthDef and SynthDefFX adding synth and fx
-			if(File.exists(~nompathdata++"List SynthDef.scd"),{f=File(~nompathdata++"List SynthDef.scd", "r");f.readAllString.interpret;f.close;"Adding File SynthDef !".postln},{"No Adding File SynthDef !".postln});
-			if(File.exists(~nompathdata++"List SynthDefFX.scd"),{f=File(~nompathdata++"List SynthDefFX.scd", "r");f.readAllString.interpret;f.close;"Adding File SynthDefFX !".postln},{"No Adding File SynthDefFX !".postln});
-
-			// Synth pour systeme Agents
-
 			// New Analyse Audio
 			SynthDef("OSC Agents Onsets",
 				{arg in=0,  seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
@@ -7886,7 +7889,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, widthMC, orientationMC);,
+							PanAz.ar(~numberAudioOut, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm).lag(bpm.reciprocal + 1)), 1, ~widthMC, ~orientationMC);,
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(chain, chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1)),
@@ -7920,17 +7923,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -7962,17 +7965,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8004,17 +8007,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8046,17 +8049,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8090,17 +8093,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8132,17 +8135,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8173,17 +8176,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8220,17 +8223,17 @@ G                       Init Genome Agent (solo).
 			////ampreal = if(amp <= 0, ampreal, amp);
 			//// Switch Audio Out
 			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
+			//if(~flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), 1),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
+			//if(~flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, ~widthMC, ~orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, ~widthMC, ~orientationMC)),
 			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
@@ -8262,17 +8265,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8304,17 +8307,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8346,17 +8349,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8388,17 +8391,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8430,17 +8433,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8472,17 +8475,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8515,17 +8518,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8557,17 +8560,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8601,17 +8604,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8642,17 +8645,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8683,17 +8686,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8724,17 +8727,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8765,17 +8768,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8809,17 +8812,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8851,17 +8854,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8897,17 +8900,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8941,17 +8944,17 @@ G                       Init Genome Agent (solo).
 			////ampreal = if(amp <= 0, ampreal, amp);
 			//// Switch Audio Out
 			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
+			//if(~flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
+			//if(~flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -8985,17 +8988,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9029,17 +9032,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9073,17 +9076,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9117,17 +9120,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9161,17 +9164,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9205,17 +9208,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9249,17 +9252,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9293,17 +9296,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9337,17 +9340,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9381,17 +9384,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9425,17 +9428,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9469,17 +9472,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9513,17 +9516,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9557,17 +9560,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9601,17 +9604,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9645,17 +9648,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9689,17 +9692,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9733,17 +9736,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9777,17 +9780,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9821,17 +9824,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9865,17 +9868,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9911,17 +9914,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -9957,17 +9960,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10003,17 +10006,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10049,17 +10052,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10095,17 +10098,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10141,17 +10144,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10187,17 +10190,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10233,17 +10236,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10279,17 +10282,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10325,17 +10328,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10371,17 +10374,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10415,17 +10418,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -10454,17 +10457,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10490,17 +10493,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10529,17 +10532,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10566,17 +10569,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10601,17 +10604,17 @@ G                       Init Genome Agent (solo).
 					// main = Limiter.ar(main, 0.33, 0.01);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10639,17 +10642,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10676,17 +10679,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10713,17 +10716,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10750,17 +10753,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10787,17 +10790,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10824,17 +10827,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10861,17 +10864,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10898,17 +10901,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10942,17 +10945,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -10981,17 +10984,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11023,17 +11026,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11064,17 +11067,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11104,17 +11107,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11144,17 +11147,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11184,17 +11187,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11224,17 +11227,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11272,17 +11275,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11318,17 +11321,17 @@ G                       Init Genome Agent (solo).
 			////ampreal = if(amp <= 0, ampreal, amp);
 			//// Switch Audio Out
 			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
+			//if(~flagMC == 0,
 			//// Pan 1
 			//Pan2.ar(main, Rand(panLo, panHi), envelope),
 			//// Pan 2
 			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
+			//if(~flagMC == 0,
 			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 			//if(~switchAudioOut == 1,
 			//// Rotate2
 			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11364,17 +11367,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11410,17 +11413,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11456,17 +11459,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11502,17 +11505,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11548,17 +11551,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11594,17 +11597,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11640,17 +11643,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11686,17 +11689,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11732,17 +11735,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11778,17 +11781,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11824,17 +11827,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11870,17 +11873,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11916,17 +11919,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -11962,17 +11965,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12008,17 +12011,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12054,17 +12057,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12100,17 +12103,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12148,17 +12151,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12196,17 +12199,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12244,17 +12247,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12292,17 +12295,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12340,17 +12343,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12388,17 +12391,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12436,17 +12439,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12485,17 +12488,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12533,17 +12536,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12581,17 +12584,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12626,17 +12629,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
@@ -12671,17 +12674,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12716,17 +12719,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12762,17 +12765,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12804,17 +12807,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12846,17 +12849,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12888,17 +12891,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12929,17 +12932,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -12977,17 +12980,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
@@ -13033,17 +13036,17 @@ G                       Init Genome Agent (solo).
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
-						if(flagMC == 0,
+						if(~flagMC == 0,
 							// Pan 1
 							Pan2.ar(main, Rand(panLo, panHi), 1),
 							// Pan 2
 							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
 						if(~switchAudioOut == 2,
-							if(flagMC == 0,
+							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
 								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
@@ -13075,7 +13078,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13102,7 +13105,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13129,7 +13132,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13156,7 +13159,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13183,7 +13186,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13210,7 +13213,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13237,7 +13240,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13264,7 +13267,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13291,7 +13294,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13318,7 +13321,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13345,7 +13348,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13372,7 +13375,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13399,7 +13402,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13426,7 +13429,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13453,7 +13456,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13480,7 +13483,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13507,7 +13510,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13544,7 +13547,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13580,7 +13583,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13608,7 +13611,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13637,7 +13640,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13667,7 +13670,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13697,7 +13700,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13727,7 +13730,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13756,7 +13759,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13785,7 +13788,7 @@ G                       Init Genome Agent (solo).
 			//Pan2.ar(effet, pan),
 			//if(~switchAudioOut == 2,
 			//// PanAz
-			//PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+			//PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 			//if(~switchAudioOut == 1,
 			//// Rotate2 v1
 			//Rotate2.ar(effet, effet, pan),
@@ -13814,7 +13817,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13843,7 +13846,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13872,7 +13875,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13901,7 +13904,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13930,7 +13933,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13959,7 +13962,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -13988,7 +13991,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14017,7 +14020,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14046,7 +14049,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14075,7 +14078,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14104,7 +14107,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14133,7 +14136,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14162,7 +14165,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14191,7 +14194,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14220,7 +14223,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14249,7 +14252,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14278,7 +14281,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14307,7 +14310,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14336,7 +14339,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14365,7 +14368,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14394,7 +14397,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14423,7 +14426,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14453,7 +14456,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14484,7 +14487,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(effet, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(effet, effet, pan),
@@ -14514,7 +14517,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(verb, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
@@ -14539,7 +14542,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(verb, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
@@ -14565,7 +14568,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(verb, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
@@ -14590,7 +14593,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(verb, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
@@ -14617,7 +14620,7 @@ G                       Init Genome Agent (solo).
 						Pan2.ar(verb, pan),
 						if(~switchAudioOut == 2,
 							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, widthMC, orientationMC),
+							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
 							if(~switchAudioOut == 1,
 								// Rotate2 v1
 								Rotate2.ar(verb, verb, pan),
