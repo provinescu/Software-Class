@@ -4,7 +4,7 @@ Density {
 
 	classvar <> s;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, flagMC, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth;
+	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, flagMC, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb;
 
 	*new {arg path = "~/Documents/Density/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
@@ -225,6 +225,7 @@ Density {
 		flagVST = 'off';
 		flagRecSound == 'off';
 		12.do({arg i; channelsSynth = channelsSynth.add(0)});// Channels Synth Ouput en fonction des numFhzBand
+		channelsVerb = 0; // Verb ouput channel
 
 		// Audio Out
 		listeMasterOut = [
@@ -1005,16 +1006,16 @@ Density {
 
 			//Init EndProcessing
 
-			gVerb = Synth.newPaused("GVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+			gVerb = Synth.newPaused("GVerb" + typeMasterOut, [\out, channelsVerb, \xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
-			freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+			freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\out, channelsVerb, \xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
-			allPass = Synth.newPaused("Allpass" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+			allPass = Synth.newPaused("Allpass" + typeMasterOut, [\out, channelsVerb, \xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
-			jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+			jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\out, channelsVerb, \xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
 			s.sync;
 
 			Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
@@ -2803,6 +2804,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			MenuAction("Channels FhzBand Out", {
 				SCRequestString("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]", "Channels", {arg strg;
 					channelsSynth = strg.value.interpret; channelsSynth = channelsSynth.max(1) - 1;
+					groupeVerb.set(\out, channelsVerb);
+				});
+			}),
+			MenuAction("Channels Reverb Out", {
+				SCRequestString("1", "Channels", {arg strg;
+					channelsVerb = strg.value.asInteger; channelsVerb = channelsVerb.max(1) - 1;
+					groupeVerb.set(\out, channelsVerb.value);
 				});
 			}),
 			MenuAction("Stereo", {recChannels = 2; numberAudioOut = 2;
@@ -2815,11 +2823,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				groupeLimiter.freeAll;
 				groupeVST.freeAll;
 				this.initSynthDef;
-				gVerb = Synth.new("GVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Stereo", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				gVerb = Synth.new("GVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Stereo", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
 				fxVST = VSTPluginController(synthVST);
 				// Setup GUI Value
 				windowGVerb.view.children.at(0).valueAction_(0);
@@ -2838,11 +2846,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				groupeLimiter.freeAll;
 				groupeVST.freeAll;
 				this.initSynthDef;
-				Synth.new("GVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Rotate2", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				Synth.new("GVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Rotate2", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
 				fxVST = VSTPluginController(synthVST);
 				// Setup GUI Value
 				windowGVerb.view.children.at(0).valueAction_(0);
@@ -2862,11 +2870,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					groupeLimiter.freeAll;
 					groupeVST.freeAll;
 					this.initSynthDef;
-					Synth.new("GVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					allPass = Synth.newPaused("Allpass MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					jpVerb = Synth.newPaused("JPverb MultiSpeaker", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					synthVST = Synth.newPaused("VST MultiSpeaker", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					Synth.new("GVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("JPverb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST MultiSpeaker", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
 					fxVST = VSTPluginController(synthVST);
 					// Setup GUI Value
 					windowGVerb.view.children.at(0).valueAction_(0);
@@ -2887,11 +2895,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					groupeLimiter.freeAll;
 					groupeVST.freeAll;
 					this.initSynthDef;
-					Synth.new("GVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					allPass = Synth.newPaused("Allpass Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					jpVerb = Synth.newPaused("JPverb Ambisonic", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					synthVST = Synth.newPaused("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					Synth.new("GVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("JPverb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST Ambisonic", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
 					fxVST = VSTPluginController(synthVST);
 					// Setup GUI Value
 					windowGVerb.view.children.at(0).valueAction_(0);
@@ -2911,11 +2919,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				groupeLimiter.freeAll;
 				groupeVST.freeAll;
 				this.initSynthDef;
-				Synth.new("GVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Dolby5.1", [\xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				Synth.new("GVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Dolby5.1", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
 				fxVST = VSTPluginController(synthVST);
 				// Setup GUI Value
 				windowGVerb.view.children.at(0).valueAction_(0);
