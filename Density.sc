@@ -2804,7 +2804,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			MenuAction("Channels FhzBand Out", {
 				SCRequestString("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]", "Channels", {arg strg;
 					channelsSynth = strg.value.interpret; channelsSynth = channelsSynth.max(1) - 1;
-					groupeVerb.set(\out, channelsVerb);
 				});
 			}),
 			MenuAction("Channels Reverb Out", {
