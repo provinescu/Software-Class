@@ -4,7 +4,7 @@ Matrix {
 
 	classvar  < s;
 
-	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn;
+	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, switchAudioOut, numberAudioIn;
 
 	*new	{arg path="~/Documents/Matrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
@@ -5209,8 +5209,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = LeakDC.ar(Median.ar(ctrl2 * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2)), ctrl3);
-				chain = LeakDC.ar(Median.ar(ctrl2 * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2)), ctrl3);
+				chain = LeakDC.ar(Median.ar(ctrl2 * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2)), ctrl3);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -5264,8 +5263,7 @@ y ... -					Musical keys.
 				// Set Direct AudioIn (levelLocalIn)
 				in = In.ar(busIn);
 				// Synth
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl2, mul: 128 * ctrl3), Impulse.kr(ctrl1 * 100), BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl2, mul: 128 * ctrl3), 0, BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl2, mul: 128 * ctrl3), Impulse.kr(ctrl1 * 100), BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -5318,8 +5316,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl2 * dureeSample.reciprocal * 10, mul: ctrl3, add: BufRateScale.kr(buffer) * rate * reverse1), Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl2 * dureeSample.reciprocal * 10, mul: ctrl3, add: BufRateScale.kr(buffer) * rate * reverse1), 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl2 * dureeSample.reciprocal * 10, mul: ctrl3, add: BufRateScale.kr(buffer) * rate * reverse1), Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -5479,8 +5476,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = Resonz.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -5537,8 +5533,7 @@ y ... -					Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				freq = freq.clip(20, 20000);
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4), 0.333), RHPF.ar(chain, XLine.ar(108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6 + 1.midicps, dureeSample*ctrl7), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -5593,8 +5588,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 10, ctrl3 * 10);
-				chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 10, ctrl3 * 10);
+				chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 10, ctrl3 * 10);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -5648,8 +5642,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 40, 40, abs(ctrl3 * 2 - 1));
-				chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 40, 40, abs(ctrl3 * 2 - 1));
+				chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 40, 40, abs(ctrl3 * 2 - 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -5703,8 +5696,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 1024 - 512, ctrl3 * 2pi);
-				chain = FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 1024 - 512, ctrl3 * 2pi);
+				chain = FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl2 * 1024 - 512, ctrl3 * 2pi);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -5926,8 +5918,7 @@ y ... -					Musical keys.
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 10, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = CombC.ar(chain, 0.1, Line.kr(ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -5981,8 +5972,7 @@ y ... -					Musical keys.
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = CombC.ar(chain, 0.1, Line.kr(Rand(ctrl2.clip(0.01, 0.99), ctrl3.clip(0.01, 0.99))/100, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -6034,8 +6024,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, ctrl2, ctrl3, ctrl4);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -6146,8 +6135,7 @@ y ... -					Musical keys.
 				//ctrl4 = if(ctrl4.value <= 0 , ctrl4.value, Logistic.kr(ctrl4*4, 1, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				//chain =  HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain =  HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain =  HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain= Mix(RHPF.ar(chain,  formantfreqs * freq * ctrl2, formantbandwidths / (formantfreqs * freq * ctrl3.clip(0.01, 1.0)) * (ctrl4.clip(0.01, 1.0) / 33), 0.5));
 				chain = BBandPass.ar(chain, LFNoise2.kr(dureeSample) + 1 * 1000, ctrl5.clip(0.01, 1.0), 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
@@ -6202,8 +6190,7 @@ y ... -					Musical keys.
 				ctrl3 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -8381,10 +8368,8 @@ y ... -					Musical keys.
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
 				// Synth
-				//chain1 = HPplayBuf.ar(1, buffer1, BufRateScale.kr(buffer1) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer1) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				//chain2 = HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, Impulse.kr(ctrl2 * 100), BufFrames.kr(buffer2) * offset2, loopTwo, ctrlHP1, ctrlHP2);
-				chain1 = HPplayBuf.ar(1, buffer1, BufRateScale.kr(buffer1) * rate * reverse1, 0, BufFrames.kr(buffer1) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain2 = HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, 0, BufFrames.kr(buffer2) * offset2, loopTwo, ctrlHP1, ctrlHP2);
+				chain1 = HPplayBuf.ar(1, buffer1, BufRateScale.kr(buffer1) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer1) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain2 = HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, Impulse.kr(ctrl2 * 100), BufFrames.kr(buffer2) * offset2, loopTwo, ctrlHP1, ctrlHP2);
 				chain = Concat.ar(chain2, chain1, (ctrl3 * 4).clip(1, 4), ctrl4.clip(0.01, 1.0), (ctrl5 * 4).clip(1, 4), ctrl6.clip(0.01,0.5), ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, mul: 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
