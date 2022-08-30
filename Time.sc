@@ -4,7 +4,7 @@ Time {
 
 	classvar  < s;
 
-	var <> pathTime, channelsSynth, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTime, menuTime, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, musicAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter, widthMC, orientationMC, numberAudioIn;
+	var <> pathTime, channelsSynth, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter, listeCtrl3Filter, listeActiveJitterCtrl3Filter, listeActiveJitterPanX, listeActiveJitterPanY, listeCtrl1FX, listeCtrl2FX, listeCtrl3FX, listeCtrl4FX, listeCtrl5FX, listeGUIpanner, helpTime, menuTime, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, bufferRecording, headerFormat, sampleFormat, formatRecordingMenu, sampleFormatRecordingMenu, fonctionUserOperatingSystem, fonctionLoadPreset, fonctionSavePreset, fonctionShortCut, fonctionCommandes, commande, bufferAndSoundFile, listeGUIsoundFile, listeActiveJitterWavePos, listeJitterVolumeFilter, listeActiveJitterVolumeFilter, listeJitterCtrl1Filter, listeJitterCtrl2Filter, listeJitterCtrl3Filter, listeJitterVolumeFX, listeActiveJitterVolumeFX,  listeJitterCtrl1FX, listeActiveJitterCtrl1FX, listeJitterCtrl2FX, listeActiveJitterCtrl2FX,  listeJitterCtrl3FX, listeActiveJitterCtrl3FX, listeJitterCtrl4FX, listeActiveJitterCtrl4FX, listeJitterCtrl5FX, listeActiveJitterCtrl5FX,  listeVolumeFilter, listeVolumeFX, listePanX, listePanY, listeJitterPanX, listeJitterPanY, listeMuteSynth, listeSoloSynth, choiceTypeSequencer, numberMaxStepSequencer, numberStepSequencer, listeSynthStepSequencer, listeWeightSynth, file, fonctionSetupSliders, modeMIDIOSC, bendMIDI, changeChoiceMIDI, requestSynthesizerSource, requestSynthesizerTarget, fonctionCopySourceSynth, fonctionCopyTargetSynth, synthSource, synthTarget, copySynthMenu, choiceCanalMIDI, canalMIDI, lastDureeMIDI, menuMIDI, choiceTypeSynthDef, changeChoiceSynthDef, typeSynthDef, scalingTuningMenu, scale, tuning, flagScaling, degrees, root, startSystem, synthAudioIn, synthAudioRec,  listeBufferAudioRec, busAudioIn, groupeAudioRec, listeGroupAudioRec, synthFileIn, fonctionLoadFileForAnalyse, bufferFile, listeActiveAudioRec, serverAdresse, masterAppAddr, slaveAppAddr, ardourOSC, synthOSConset, synthOSCpitch, synthOSCpitch2, synthOSCkeytrack, synthOSCkeyboard, timeOSC, chordDureeOSC, maxDureeOSC, flagOSC, windowExternalControlGUI, userOperatingSystem, userOSchoiceControl, fhzFilter, ampFilter, durFilter, setupKeyboardShortCut, windowKeyboard, keyboardShortCut, keyboardTranslate, keyboard, keyVolume, keyboardTranslateBefore, keyboardVolume, freqBefore, ampBefore, dureeBefore, flagKeyboard, indexWindows, listeWindows, activateOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscStateFlag, initOSCresponder, audioFileText, switchOSCfreq, switchOSCamp, switchOSCdur, ampMIDIOSC, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, flagAutomation, lastValue1Automation, lastValue2Automation, lastNumberChoiceConfig, fonctionAutomationPreset, lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand, rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter, widthMC, orientationMC, numberAudioIn, rangeFFT;
 
 	*new	{arg path="~/Documents/Time/", ni=26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5;
 
@@ -269,6 +269,7 @@ f						Switch File for Analyze.
 		ambitusFreq = [0, 127];
 		flagVST = 'off';
 		channelsSynth = [0, 0, 0, 0];
+		rangeFFT = [0, 1];
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -539,7 +540,7 @@ f						Switch File for Analyze.
 						if(data.at(item).at(0) == "a View" or: {data.at(item).at(0) == "a CompositeView"} or: {data.at(item).at(0) == "a QCompositeView"} or: {data.at(item).at(0) == "a QView"} or: {data.at(item).at(0) == "a SCCompositeView"}, {
 							if(data.at(item).at(1) == "a QStaticText" or: {data.at(item).at(1) == "a SCStaticText"} or: {data.at(item).at(1) == "a StaticText"} or: {data.at(item).at(1) == nil}, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
 							if(data.at(item).at(1) == "a QSlider" or: {data.at(item).at(1) == "a SCSlider"} or: {data.at(item).at(1) == "a Slider"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
-							if(data.at(item).at(1) == "a QRangeSlider" or: {data.at(item).at(1) == "a SCRangeSlider"} or: {data.at(item).at(1) == "a RangeSlider"}, {view.children.at(2).activeLo_(0); view.children.at(2).activeHi_(1); view.children.at(2).activeLo_(data.at(item).at	(2).at(2).at(0)); view.children.at(2).activeHi_(data.at(item).at(2).at(2).at(1))});
+							if(data.at(item).at(1) == "a QRangeSlider" or: {data.at(item).at(1) == "a SCRangeSlider"} or: {data.at(item).at(1) == "a RangeSlider"}, {view.children.at(2).activeLo_(0); view.children.at(2).activeHi_(1); view.children.at(2).activeLo_(data.at(item).at(2).at(2).at(0)); view.children.at(2).activeHi_(data.at(item).at(2).at(2).at(1))});
 							if(data.at(item).at(1) == "a QKnob" or: {data.at(item).at(1) == "a SCKnob"} or: {data.at(item).at(1) == "a Knob"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
 						});
 						// StaticText
@@ -581,11 +582,15 @@ f						Switch File for Analyze.
 			});
 			// Init Band
 			windowExternalControlGUI.view.children.at(22).children.at(2).valueAction_(control.at(14));
+			// Init Range FFT
+			rangeFFT = control.at(15);
+			windowExternalControlGUI.view.children.at(27).children.at(2).activeLo = control.at(15).at(0);
+			windowExternalControlGUI.view.children.at(27).children.at(2).activeHi = control.at(15).at(1);
 		};
 
 		// Fonction Save Preset
 		fonctionSavePreset = {arg window;
-			var data=[], synth=0, control=[];
+			var data=[], synth=0, control=[], range=[];
 			// Save views values
 			window.view.children.do({arg view, index;
 				var arrayData=[], subArrayData=[], subType=nil;
@@ -595,7 +600,7 @@ f						Switch File for Analyze.
 					{view.children.do({arg subView;
 						if(subView.asString == "a StaticText" or: {subView.asString == "a SCStaticText"} or: {subView.asString == "a QStaticText"} or: {subView.asString == "a TextField"} or: {subView.asString == "a SCTextField"} or: {subView.asString == "a QTextField"}, {arrayData = arrayData.add(subView.string)});
 						if(subView.asString == "a QSlider" or: {subView.asString == "a SCSlider"} or: {subView.asString == "a Slider"}, {arrayData=arrayData.add(subView.value); subType = subView.asString});
-						if(subView.asString == "a QRangeSlider" or: {subView.asString == "a SCRangeSlider"} or: {subView.asString == "a RangeSlider"}, {subArrayData=subArrayData.add		(subView.lo);subArrayData=subArrayData.add(subView.hi); arrayData=arrayData.add		(subArrayData); subType = subView.asString});
+						if(subView.asString == "a QRangeSlider" or: {subView.asString == "a SCRangeSlider"} or: {subView.asString == "a RangeSlider"}, {subArrayData=subArrayData.add(subView.lo);subArrayData=subArrayData.add(subView.hi); arrayData=arrayData.add(subArrayData); subType = subView.asString});
 						if(subView.asString == "a QNumberBox" or: {subView.asString == "a SCNumberBox"} or: {subView.asString == "a NumberBox"}, {arrayData=arrayData.add(subView.value)});
 						if(subView.asString == "a Knob" or: {subView.asString == "a QKnob"} or: {subView.asString == "a SCKnob"}, {arrayData=arrayData.add(subView.value); subType = subView.asString});
 					});
@@ -636,6 +641,10 @@ f						Switch File for Analyze.
 			control = control.add(windowExternalControlGUI.view.children.at(20).children.at(2).value);
 			control = control.add(windowExternalControlGUI.view.children.at(21).children.at(2).value);
 			control = control.add(windowExternalControlGUI.view.children.at(22).children.at(2).value);// Band
+			// Range FFT
+			range = range.add(windowExternalControlGUI.view.children.at(27).children.at(2).lo);
+			range = range.add(windowExternalControlGUI.view.children.at(27).children.at(2).hi);
+			control = control.add(range);
 			data = data.add(control);
 			// Sortie Data
 			data.value;
@@ -789,7 +798,6 @@ f						Switch File for Analyze.
 			serverAdresse = s.addr; // Adresse Server -> NetAddr(0.0.0.0, 0)
 			masterAppAddr = NetAddr.localAddr;
 			slaveAppAddr = NetAddr.localAddr;
-			musicAppAddr = NetAddr.localAddr;
 			oscStateFlag = 'off';
 
 			ardourOSC = NetAddr("127.0.0.1", 3819);// Ardour's port number
@@ -921,6 +929,11 @@ f						Switch File for Analyze.
 						energy = msg.at(5);
 						flux = msg.at(6);
 						bpm = msg.at(7);
+						// Normalize
+						flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+						flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+						centroid = (centroid / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
+						energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
 						if(flagTempo == 1, {tempoOSC = bpm;
 							{bpmDisplay.string_(bpm.round(0.01)).stringColor_(Color.red)}.defer},
 						{tempoOSC = 1;
@@ -1447,7 +1460,7 @@ f						Switch File for Analyze.
 									// Ctrl1 Filter
 									if(listeActiveJitterCtrl1Filter.at(synth) == 1, {
 										ctrl1Filter = listeCtrl1Filter.at(synth) * (10 ** (1.5 * listeJitterCtrl1Filter.at(synth) * rrand(-1.0, 1.0)));
-										ctrl1Filter = ctrl1Filter.clip(20, 20000);
+										ctrl1Filter = ctrl1Filter.clip(20, 12544);
 									}, {ctrl1Filter = listeCtrl1Filter.at(synth)});
 									// Ctrl2 Filter
 									if(listeActiveJitterCtrl2Filter.at(synth) == 1, {
@@ -2500,7 +2513,7 @@ f						Switch File for Analyze.
 		keyboardShortCut.value(windowKeyboard);
 
 		// External window osc and midi controls
-		windowExternalControlGUI = Window("Time Controls", Rect(815, 650, 500, 200), scroll: true);
+		windowExternalControlGUI = Window("Time Controls", Rect(815, 650, 500, 220), scroll: true);
 		windowExternalControlGUI.view.background_(Color.new255(32,40,52));
 		windowExternalControlGUI.alpha=1.0;
 		windowExternalControlGUI.view.decorator = FlowLayout(windowExternalControlGUI.view.bounds);
@@ -2775,6 +2788,10 @@ f						Switch File for Analyze.
 
 		// Audio In Display (for testing)
 		audioDisplay = StaticText(windowExternalControlGUI, Rect(0, 0, 50, 20)).string_("Audio").background_(Color.white).stringColor_(Color.red);
+
+		//Normalize FFT
+		EZRanger(windowExternalControlGUI , 490 @ 15, "Range FFT", \unipolar,
+			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 64);
 
 		windowExternalControlGUI.onClose_({nil});
 
@@ -3727,7 +3744,11 @@ f						Switch File for Analyze.
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
+			~synthVST.free;
 			~fxVST.close;
+			// New VST
+			~synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
+			~fxVST = VSTPluginController(~synthVST);
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| groupeLimiter.set(\xFade, ez.value)}, 0.5, layout: \horz);
@@ -4468,7 +4489,7 @@ f						Switch File for Analyze.
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp / 2, 0, duree, 2);
 				// Synth
-				//chain = Gendy3.ar(Rand(0, 6), duree, oscFlatness, oscFlux, freq, oscCentroid / 20000, oscEnergy / 20000, mul: envelope);
+				//chain = Gendy3.ar(Rand(0, 6), duree, oscFlatness, oscFlux, freq, oscCentroid / 12544, oscEnergy / 12544, mul: envelope);
 				chain = Gendy3.ar(Rand(0, 6), Rand(0, 6), oscFlatness, oscFlux, freq, amp / 100, duree / 100, mul: envelope);
 				Out.ar(out, chain);
 		}).add;
@@ -4685,7 +4706,7 @@ f						Switch File for Analyze.
 
 				// choose either noise source below
 				//	snare_noise = Crackle.ar(2.01, 1);
-				snare_noise = LFNoise0.ar(20000, 0.1);
+				snare_noise = LFNoise0.ar(12544, 0.1);
 				snare_env = EnvGen.ar(Env.perc(0.005, decay), 1.0, doneAction: 2);
 				snare_brf_1 = BRF.ar(in: snare_noise, freq: 8000, mul: 0.5, rq: 0.1);
 				snare_brf_2 = BRF.ar(in: snare_brf_1, freq: 5000, mul: 0.5, rq: 0.1);
@@ -4849,7 +4870,7 @@ f						Switch File for Analyze.
 		SynthDef('CombCFilter',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(CombC.ar(signal, 0.1, ctrl1 / 20000 / 10, ctrl2 * 4 * (ctrl3 - 0.5 + 0.001).sign, vol, signal * (1 - vol)));
+				chain = Mix(CombC.ar(signal, 0.1, ctrl1 / 12544 / 10, ctrl2 * 4 * (ctrl3 - 0.5 + 0.001).sign, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -4867,7 +4888,7 @@ f						Switch File for Analyze.
 		SynthDef('FreqShift',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(FreqShift.ar(signal, ctrl1 / 20000 * 5000, ctrl2 * 2pi, vol, signal * (1 - vol)));
+				chain = Mix(FreqShift.ar(signal, ctrl1 / 12544 * 5000, ctrl2 * 2pi, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -4876,7 +4897,7 @@ f						Switch File for Analyze.
 		SynthDef('PitchShift',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(PitchShift.ar(signal, 0.1, ctrl1 / 20000 * 4 + 0.08, ctrl2, ctrl3, vol, signal * (1 - vol)));
+				chain = Mix(PitchShift.ar(signal, 0.1, ctrl1 / 12544 * 4 + 0.08, ctrl2, ctrl3, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -4886,7 +4907,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear;
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
-				chain = HPplayBuf.ar(1, buffer, (ctrl1 / 20000 * 4).clip(0.25, 4), 1, loop: 1);
+				chain = HPplayBuf.ar(1, buffer, (ctrl1 / 12544 * 4).clip(0.25, 4), 1, loop: 1);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagFreeze(chain, SinOsc.kr(ctrl2.clip(0.0625, 1)));
 				chain= IFFT(chain);
@@ -4900,7 +4921,7 @@ f						Switch File for Analyze.
 		//{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 		//var chain, signal=In.ar(in, 1);
 		//chain = FFT(LocalBuf(2048, 1), signal);
-		//chain = PV_HPshiftDown(chain, ctrl1 / 20000 * 64);
+		//chain = PV_HPshiftDown(chain, ctrl1 / 12544 * 64);
 		//chain= IFFT(chain);
 		//chain = Mix(chain * vol + (signal * (1 - vol)));
 		//chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -4924,7 +4945,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagClip(chain, ( 1 - (ctrl1 / 20000)) * 16);
+				chain = PV_MagClip(chain, ( 1 - (ctrl1 / 12544)) * 16);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -4936,7 +4957,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagSmooth(chain, ctrl1 / 20000);
+				chain = PV_MagSmooth(chain, ctrl1 / 12544);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -4948,7 +4969,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1 / 20000 * 100), (ctrl2 * 100).reciprocal));
+				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1 / 12544 * 100), (ctrl2 * 100).reciprocal));
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -4960,7 +4981,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_BrickWall(chain, ctrl1 / 20000 * 2 - 1);
+				chain = PV_BrickWall(chain, ctrl1 / 12544 * 2 - 1);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -4972,7 +4993,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_LocalMax(chain, ctrl1 / 20000 * 64);
+				chain = PV_LocalMax(chain, ctrl1 / 12544 * 64);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -4986,7 +5007,7 @@ f						Switch File for Analyze.
 				chain = FFT(LocalBuf(2048, 1), signal);
 				chain = PV_MagSquared(chain);
 				chain= IFFT(chain);
-				chain = Mix(chain * vol + (ctrl1 / 20000 * (vol - 1)));
+				chain = Mix(chain * vol + (ctrl1 / 12544 * (vol - 1)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -4996,7 +5017,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagBelow(chain, (1 - (ctrl1 / 20000)) * 64);
+				chain = PV_MagBelow(chain, (1 - (ctrl1 / 12544)) * 64);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5008,7 +5029,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagAbove(chain, ctrl1 / 20000 * 64);
+				chain = PV_MagAbove(chain, ctrl1 / 12544 * 64);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5020,7 +5041,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_RandComb(chain, ctrl1 / 20000, LFNoise2.kr(ctrl2 * 100));
+				chain = PV_RandComb(chain, ctrl1 / 12544, LFNoise2.kr(ctrl2 * 100));
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5032,7 +5053,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagShift(chain, ctrl1 / 20000 * 4, ctrl2 * 128 - 64);
+				chain = PV_MagShift(chain, ctrl1 / 12544 * 4, ctrl2 * 128 - 64);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5044,7 +5065,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_BinScramble(chain, ctrl1 / 20000, ctrl2, LFNoise2.kr((1 - ctrl3).reciprocal));
+				chain = PV_BinScramble(chain, ctrl1 / 12544, ctrl2, LFNoise2.kr((1 - ctrl3).reciprocal));
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5056,7 +5077,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_BinShift(chain, ctrl1 / 20000 * 4, ctrl2 * 256 - 64);
+				chain = PV_BinShift(chain, ctrl1 / 12544 * 4, ctrl2 * 256 - 64);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5068,7 +5089,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_RectComb(chain, ctrl1 / 20000 * 32, ctrl2, ctrl3);
+				chain = PV_RectComb(chain, ctrl1 / 12544 * 32, ctrl2, ctrl3);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5080,7 +5101,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_ConformalMap(chain, ctrl1 / 20000 * 2 - 1, ctrl2 * 2 - 1);
+				chain = PV_ConformalMap(chain, ctrl1 / 12544 * 2 - 1, ctrl2 * 2 - 1);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5092,7 +5113,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_Compander(chain, ctrl1 / 20000 * 64, ctrl2 * 10, ctrl3 * 10);
+				chain = PV_Compander(chain, ctrl1 / 12544 * 64, ctrl2 * 10, ctrl3 * 10);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5104,7 +5125,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_SpectralEnhance(chain, (ctrl1 / 20000 * 100 + 1).floor, ctrl2 * 4 + 1, ctrl3);
+				chain = PV_SpectralEnhance(chain, (ctrl1 / 12544 * 100 + 1).floor, ctrl2 * 4 + 1, ctrl3);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5116,7 +5137,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagShift(chain, (ctrl1 / 20000).log.abs.clip(0.25, 4));
+				chain = PV_MagShift(chain, (ctrl1 / 12544).log.abs.clip(0.25, 4));
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5128,7 +5149,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_MagShift(chain, (ctrl1 / 20000).log.abs.clip(0.25, 4), ctrl2 - 0.5 * 128);
+				chain = PV_MagShift(chain, (ctrl1 / 12544).log.abs.clip(0.25, 4), ctrl2 - 0.5 * 128);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5140,7 +5161,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear, local=LocalIn.ar(1);
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
-				chain = Mix(PlayBuf.ar(1, buffer, (ctrl1 / 20000 * 4) + LFNoise2.kr(ctrl2.reciprocal), 1, 0, loop: 1) + (local * 0.5));
+				chain = Mix(PlayBuf.ar(1, buffer, (ctrl1 / 12544 * 4) + LFNoise2.kr(ctrl2.reciprocal), 1, 0, loop: 1) + (local * 0.5));
 				LocalOut.ar(DelayC.ar(chain, 1, ctrl3.clip(0.01, 1)));
 				chain = Mix(chain  * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5151,7 +5172,7 @@ f						Switch File for Analyze.
 		SynthDef('WaveLoss',
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain  = Mix(WaveLoss.ar(signal, ctrl1 / 20000 * 40, 40, abs(ctrl2 * 2 - 1), vol, signal * (1 - vol)));
+				chain  = Mix(WaveLoss.ar(signal, ctrl1 / 12544 * 40, 40, abs(ctrl2 * 2 - 1), vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -5160,7 +5181,7 @@ f						Switch File for Analyze.
 		SynthDef('Median',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(Median.ar(ctrl1 / 20000 * 30 + 1, signal, vol, signal * (1 - vol)));
+				chain = Mix(Median.ar(ctrl1 / 12544 * 30 + 1, signal, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -5169,7 +5190,7 @@ f						Switch File for Analyze.
 		SynthDef('LeakDC',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(LeakDC.ar(signal, ctrl1 / 20000, vol, signal * (1 - vol)));
+				chain = Mix(LeakDC.ar(signal, ctrl1 / 12544, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -5178,7 +5199,7 @@ f						Switch File for Analyze.
 		SynthDef('Median+LeakDC',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
-				chain = Mix(LeakDC.ar(Median.ar(ctrl1 / 20000 * 30 + 1, signal, vol, signal * (1 - vol)), ctrl2));
+				chain = Mix(LeakDC.ar(Median.ar(ctrl1 / 12544 * 30 + 1, signal, vol, signal * (1 - vol)), ctrl2));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
@@ -5188,7 +5209,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1);
 				chain = FFT(LocalBuf(2048, 1), signal);
-				chain = PV_Cutoff(chain, ctrl1 / 20000 * 2 - 1);
+				chain = PV_Cutoff(chain, ctrl1 / 12544 * 2 - 1);
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5200,7 +5221,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, local, signal=In.ar(in, 1);
 				local = LocalIn.ar(1) + signal;
-				chain = Mix(DelayC.ar(local, 5.0, ctrl1 / 20000 * 5.0, vol, signal * (1 - vol)));
+				chain = Mix(DelayC.ar(local, 5.0, ctrl1 / 12544 * 5.0, vol, signal * (1 - vol)));
 				LocalOut.ar(chain);
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
@@ -5212,7 +5233,7 @@ f						Switch File for Analyze.
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
 				LocalIn.ar(1).clear;
 				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
-				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 / 20000 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), 0.2, -1, 8, 0, 1, vol, signal * (1 - vol)));
+				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 / 12544 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), 0.2, -1, 8, 0, 1, vol, signal * (1 - vol)));
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl3.clip(0.01, 4)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
@@ -5479,7 +5500,7 @@ f						Switch File for Analyze.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));
-				SendReply.kr(Impulse.kr(speed), '/Time_FFT_Data', values: [centroid, flatness.max(0.001), energy, flux.max(0.001), tempo], replyID: [1, 2, 3, 4, 5]);
+				SendReply.kr(Impulse.kr(speed), '/Time_FFT_Data', values: [centroid.clip(20, 12544), flatness.max(0.001), energy.clip(20, 12544), flux.max(0.001), tempo], replyID: [1, 2, 3, 4, 5]);
 		}).add;
 
 		// Synth AudioIn

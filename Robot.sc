@@ -2428,7 +2428,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							s.sync;
 							~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
 							s.sync;
-							Document.listener.string="";
+							//Document.listener.string="";
 							s.sync;
 							s.queryAllNodes;
 							s.sync;
@@ -2491,7 +2491,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							s.sync;
 							~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
 							s.sync;
-							Document.listener.string="";
+							//Document.listener.string="";
 							s.sync;
 							s.queryAllNodes;
 							s.sync;
@@ -2699,7 +2699,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
+			~synthVST.free;
 			~fxVST.close;
+			// New VST
+			~synthVST = Synth.newPaused("VST Plugin", [\xFade, 0.5, \gainIn, 0.5], ~groupeMasterFX, \addToHead);
+			~fxVST = VSTPluginController(~synthVST);
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| ~groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
@@ -3097,7 +3101,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//~levelenvsynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value,val.wrapAt(1));
 				~synthsliderenvelope.wrapAt(i).value=val};
 			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)));
-			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(4).maxDecimals_(4));
+			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(5).maxDecimals_(5));
 			~numRecLevel1.wrapAt(i).action={arg level;
 				var levels;
 				~writepartitions.value(i,'normal','off',"~numRecLevel1",level.value);
@@ -3105,7 +3109,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				levels.put(0, level.value);
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
 			};
-			~numRecLevel2 = ~numRecLevel2.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(4).maxDecimals_(4));
+			~numRecLevel2 = ~numRecLevel2.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(5).maxDecimals_(5));
 			~numRecLevel2.wrapAt(i).action={arg level;
 				var levels;
 				~writepartitions.value(i,'normal','off',"~numRecLevel2",level.value);
@@ -3218,7 +3222,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~synthcontrolviewlevels.wrapAt(i).fillColor_(Color.blue);
 			~synthcontrolviewlevels.wrapAt(i).drawLines(false);
 			~synthcontrolviewlevels.wrapAt(i).elasticMode_(1);
-			~synthcontrolviewlevels.wrapAt(i).step_(0.001);
+			~synthcontrolviewlevels.wrapAt(i).step_(0.00001);
 			//effet pre slider
 			~synthcontrolvieweffetsPre=~synthcontrolvieweffetsPre.add(MultiSliderView(w, Rect(0, 0, 205, 100)));
 			~synthcontrolvieweffetsPre.wrapAt(i).action = {arg control;
@@ -8989,7 +8993,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1));
-					main=Resonz.ar(main, XLine.ar(20000*controls.at(2)+27.5, 110*controls.at(3) + 27.5, controls.at(4)*dureesample));
+					main=Resonz.ar(main, XLine.ar(12544*controls.at(2)+27.5, 110*controls.at(3) + 27.5, controls.at(4)*dureesample));
 					//main = Limiter.ar(main, 1.0, 0.01);
 
 					// Switch Audio Out
@@ -9521,7 +9525,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			//
 			//// choose either noise source below
 			////	snare_noise = Crackle.ar(2.01, 1);
-			//	snare_noise = LFNoise0.ar(20000, 0.1);
+			//	snare_noise = LFNoise0.ar(12544, 0.1);
 			//	snare_env = EnvGen.ar(Env.perc(0.005, decaySynthS), 1.0, doneAction: 2);
 			//	snare_brf_1 = BRF.ar(in: snare_noise, freq: 8000, mul: 0.5, rq: 0.1);
 			//	snare_brf_2 = BRF.ar(in: snare_brf_1, freq: 5000, mul: 0.5, rq: 0.1);

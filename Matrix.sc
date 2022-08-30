@@ -2454,7 +2454,11 @@ y ... -					Musical keys.
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
+			~synthVST.free;
 			~fxVST.close;
+			// New VST
+			~synthVST = Synth.newPaused("VST Plugin", [\xFade, 0.5, \gainIn, 0.5], groupeMasterFX, \addToHead).map(\freq, busOSC.at(0));// Attention map bus systemBPM not a bus !!!!!!
+			~fxVST = VSTPluginController(~synthVST);
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
@@ -5536,7 +5540,7 @@ y ... -					Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				freq = freq.clip(20, 20000);
+				freq = freq.clip(20, 12544);
 				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4), 0.333), RHPF.ar(chain, XLine.ar(108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6 + 1.midicps, dureeSample*ctrl7), 0.333));
@@ -8479,7 +8483,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				freq = freq.clip(20,20000);
+				freq = freq.clip(20,12544);
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(63.5.midicps*ctrl1+27.5, freq, duree*ctrl3), 0.333), RHPF.ar(chain, XLine.ar(127.midicps*ctrl2+27.5, freq, duree*ctrl3), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
@@ -10628,7 +10632,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, duree, 2);
 				// Synth
-				freq = freq.clip(20,20000);
+				freq = freq.clip(20,12544);
 				chain = Saw.ar(freq, 0.5);
 				chain = RHPF.ar(chain, Line.kr(ctrl1*4000, ctrl2*4000, duree*ctrl4), ctrl3, 1, RLPF.ar(chain, Line.kr(ctrl5*2000, ctrl7*2000, duree*ctrl8), ctrl6));
 				//chain = BBandPass.ar(chain, ctrl1 * 4186 + 27.5, ctrl2 + 0.001);

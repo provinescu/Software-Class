@@ -4,7 +4,7 @@ Density {
 
 	classvar <> s;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, flagMC, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb;
+	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, flagMC, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT;
 
 	*new {arg path = "~/Documents/Density/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
 
@@ -226,6 +226,7 @@ Density {
 		flagRecSound == 'off';
 		12.do({arg i; channelsSynth = channelsSynth.add(0)});// Channels Synth Ouput en fonction des numFhzBand
 		channelsVerb = 0; // Verb ouput channel
+		rangeFFT = [0.0, 1.0];
 
 		// Audio Out
 		listeMasterOut = [
@@ -719,7 +720,7 @@ Density {
 				// Save views values
 				window.view.children.do({arg view, arrayData=[], subArrayData=[], subType=nil;
 					// View or CompositeView
-					arrayData=[];
+					arrayData=[]; subArrayData=[];
 					if(view.asString == "a View" or: {view.asString == "a CompositeView"} or: {view.asString == "a QCompositeView"} or: {view.asString == "a QView"} or: {view.asString == "a SCCompositeView"},
 						{view.children.do({arg subView;
 							if(subView.asString == "a StaticText" or: {subView.asString == "a SCStaticText"} or: {subView.asString == "a QStaticText"}, {arrayData = arrayData.add(subView.string)});
@@ -1078,6 +1079,11 @@ Density {
 						centroid = msg.at(5);
 						energy = msg.at(6);
 						bpm = msg.at(7);
+						// Normalize
+						flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+						flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+						centroid = (centroid / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
+						energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
 						// Set Bus Flux
 						busOSCflux.at(0).set(flux);
 						if(maximumData > dataFlux.at(0).size,
@@ -2071,11 +2077,11 @@ Density {
 				// Centroid
 				centroid = centroid.mediane;
 				centroid = centroid + rrand(jitterControls.neg * 12543, jitterControls * 12543);
-				centroid = centroid.mod(20000);
+				centroid = centroid.mod(12544);
 				// Energy
 				energy = energy.mediane;
 				energy = energy + rrand(jitterControls.neg * 12543, jitterControls * 12543);
-				energy = energy.mod(20000);
+				energy = energy.mod(12544);
 				// BPM
 				bpm = bpm.mediane;
 				/*bpm = bpm + rrand(jitterControls.neg, jitterControls);
@@ -3595,7 +3601,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
+			synthVST.free;
 			fxVST.close;
+			// New VST
+			synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+			fxVST = VSTPluginController(synthVST);
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| groupeVST.set(\xFade, ez.value)}, 0.5, layout: \horz);
@@ -3679,22 +3689,25 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		refreshDisplayDataMusic.focus;
 
 		////// Window Plotter FFT /////
-		windowPlotterFFT = Window("Analyze [Flux | Flatness | Centroid | Energy | BPM]", Rect(710, 275, 515, 340), scroll: true);
+		windowPlotterFFT = Window("Analyze [Flux | Flatness | Centroid | Energy | BPM]", Rect(710, 275, 515, 345), scroll: true);
 		windowPlotterFFT.alpha=1.0;
 		windowPlotterFFT.front;
 		windowPlotterFFT.view.decorator = FlowLayout(windowPlotterFFT.view.bounds);
 		// Display ON / OFF
-		Button(windowPlotterFFT, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
+		Button(windowPlotterFFT, Rect(0, 0, 100, 15)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
 		// Refresh Display
-		refreshDisplayFFT = Button(windowPlotterFFT,Rect(0, 0, 100, 20));
+		refreshDisplayFFT = Button(windowPlotterFFT,Rect(0, 0, 100, 15));
 		refreshDisplayFFT.states = [["Refresh Plotter"]];
 		refreshDisplayFFT.action = {|view| plotterFFTGUI.value = [[0], [0], [0], [0], [0]]; plotterFFT = [[0], [0], [0], [0], [0]];
 		};
-		EZKnob(windowPlotterFFT, 120 @ 20, "Speed", ControlSpec(-100, 100, \lin, 0.01),
+		EZKnob(windowPlotterFFT, 120 @ 15, "Speed", ControlSpec(-100, 100, \lin, 0.01),
 			{|ez| if(ez.value < 0,
 				{groupeAnalyse.set(\speed, ez.value.abs.reciprocal)},
 				{groupeAnalyse.set(\speed, ez.value)});
 		}, 24, layout: \horz);
+		// Range FFT
+		EZRanger(windowPlotterFFT , 500 @ 15, "Range FFT", \unipolar,
+			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65);
 		// Plotter
 		plotterFFTGUI = Plotter("Analyze FFT", Rect(0, 0, 500, 300), windowPlotterFFT).plotMode_(\steps);
 		plotterFFTGUI.value = [[0], [0], [0], [0], [0]];
@@ -4549,18 +4562,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		EZKnob(windowEar, 80 @ 80, "Offset", \unipolar,
 			{|ez| offsetSound = ez.value}, 0, layout: \vert2);
 		// Duree Sample
-		EZKnob(windowEar, 80 @ 80, "DurSample", ControlSpec(0.01, 8, \exp, 0.01),
-			{|ez| dureeSample = ez.value}, 1, layout: \vert2).view.children.at(2).decimals = 4;
+		EZKnob(windowEar, 80 @ 80, "DurSample", ControlSpec(0.0001, 8, \exp, 0.0001),
+			{|ez| dureeSample = ez.value}, 1, layout: \vert2).view.children.at(2).minDecimals_(5).maxDecimals_(5);
 		// Rec/Pre Level Sample
 		MultiSliderView(windowEar, Rect(0, 0, 35, 70)).value_([1, 0]).action={arg levels;
 			recLevel = levels.value.at(0); preLevel = levels.value.at(1); groupeRecBuffer.set(\level1, recLevel, \level2, preLevel); groupeSynth.set(\level1, recLevel, \level2, preLevel); windowEar.view.children.at(44).value = recLevel; windowEar.view.children.at(45).value = preLevel};
 		// Display value recbutton 1
-		NumberBox(windowEar, Rect(0, 0, 35, 18)).decimals_(4).action = {arg num;
+		NumberBox(windowEar, Rect(0, 0, 35, 18)).minDecimals_(4).maxDecimals_(4).action = {arg num;
 			recLevel = num.value;
 			windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);
 		};
 		// Display value recbutton 2
-		NumberBox(windowEar, Rect(0, 0, 35, 18)).decimals_(4).action = {arg num;
+		NumberBox(windowEar, Rect(0, 0, 35, 18)).minDecimals_(4).maxDecimals_(4).action = {arg num;
 			preLevel = num.value;
 			windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);
 		};
@@ -4911,7 +4924,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(Impulse.kr(speed), '/Density_FFT_Data', values: [flux.clip(0.0001, 1), flatness.clip(0.0001, 1), centroid.clip(20, 20000), energy.clip(20, 20000), bpm], replyID: [1, 2, 3, 4, 5]);
+				SendReply.kr(Impulse.kr(speed), '/Density_FFT_Data', values: [flux.clip(0.0001, 1), flatness.clip(0.0001, 1), centroid.clip(20, 12544), energy.clip(20, 12544), bpm], replyID: [1, 2, 3, 4, 5]);
 		}).add;
 
 		// Density Audio Analyze Onsets
@@ -5364,7 +5377,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play
-				freq = freq.clip(20,20000);
+				freq = freq.clip(20,12544);
 				chain = Mix(RHPF.ar(Saw.ar(freq, 0.25), energy, flatness) + RLPF.ar(Saw.ar(freq, 0.25), centroid, flatness)) * envelope;
 				// Out
 				Out.ar(out, chain);

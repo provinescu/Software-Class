@@ -443,7 +443,8 @@ G                       Init Genome Agent (solo).
 		~menuKeys = Menu(
 			MenuAction("List ShortCuts Agents", {
 				//Document.new("ShortCut for Agents", ~helpHPAgents);
-				TextView().name_("ShortCut for Agents").string_(~helpHPAgents).front};
+				TextView().name_("ShortCut for Agents").string_(~helpHPAgents).front
+			};
 			),
 			MenuAction("List ShortCuts Genome + Sequence Editor", {
 				//Document.new("ShortCuts for Genome + Sequence Editor", ~helpHPgenomesequenceEditor)};
@@ -5694,7 +5695,11 @@ G                       Init Genome Agent (solo).
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
+			~synthVST.free;
 			~fxVST.close;
+			// New VST
+			~synthVST = Synth.newPaused("VST Plugin", [\xFade, 0.5, \gainIn, 0.5], ~groupeMasterFX, \addToHead);
+			~fxVST = VSTPluginController(~synthVST);
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| ~groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
@@ -8597,7 +8602,7 @@ G                       Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					freq = freq.clip(20, 20000);
+					freq = freq.clip(20, 12544);
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+27.5, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+27.5, freq, duree*controlD), 0.333));
 					// main = Limiter.ar(main, 1.0, 0.01);
@@ -10525,7 +10530,7 @@ G                       Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					freq = freq.clip(20,20000);
+					freq = freq.clip(20,12544);
 					main = Saw.ar(freq, 0.5);
 					main = RHPF.ar(main, Line.kr(controlF*4000, freq, duree*controlD), controlA, 0.5, RLPF.ar(main, Line.kr(controlF*2000, freq, duree*controlD), controlA));
 					// main = Limiter.ar(main, 1.0, 0.01);
@@ -11019,7 +11024,7 @@ G                       Init Genome Agent (solo).
 					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					freq = freq.clip(20,20000);
+					freq = freq.clip(20,12544);
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+55, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+55, freq, duree*controlD), 0.333));
 					// main = Limiter.ar(main, 1.0, 0.01);
