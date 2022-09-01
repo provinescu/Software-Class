@@ -296,7 +296,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		~menuShortCut = MenuAction("ShortCuts", {
 			//Document.new("ShortCuts for Robot", ~helpRobot);
-				TextView().name_("ShortCuts for Robot").string_(~helpRobot).front;
+			TextView().name_("ShortCuts for Robot").string_(~helpRobot).front;
 		});
 		MainMenu.register(~menuShortCut, "RobotTools");
 
@@ -2001,14 +2001,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{~playinstrument.wrapPut(i,"off")},{~playinstrument.wrapPut(i,"on");
 					if(~algoinstrumentfreq.wrapAt(i) != ~algorithmesmusicauxfreq.wrapAt(4),{
 						// non-probabilite
-						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
+						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0)});
 						freq=freq.add((listeoutfreq.wrapAt(~flagfreq.wrapAt(i))*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat;
 						~flagfreq.wrapPut(i,~flagfreq.wrapAt(i)+1)},{
 						// probabilite
 						freq=freq.add((listeoutfreq.wrapAt(listeoutfreq.size.rand)*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat});
 					if(~algoinstrumentamp.wrapAt(i) != ~algorithmesmusicauxamp.wrapAt(4),{
 						// non-probabilite
-						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
+						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0)});
 						amp=amp+(listeoutamp.wrapAt(~flagamp.wrapAt(i))* (~synthamprange.wrapAt(i).hi.dbamp - ~synthamprange.wrapAt(i).lo.dbamp) + ~synthamprange.wrapAt(i).lo.dbamp);
 						~flagamp.wrapPut(i,~flagamp.wrapAt(i)+1)},{
 						// probabilite
@@ -2017,7 +2017,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					if(~algoinstrumentduree.wrapAt(i) != ~algorithmesmusicauxduree.wrapAt(4),{
 						// non-probabilite
-						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
+						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0)});
 						duree=listeoutduree.wrapAt(~flagduree.wrapAt(i));
 						~flagduree.wrapPut(i,~flagduree.wrapAt(i)+1)},{
 						// probabilite
@@ -2025,14 +2025,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// test accord
 					while({duree < ~dureeaccord.wrapAt(i) and: {freq.size < ~maxaccord.wrapAt(i)} and: {~flagfreq.wrapAt(i).value < listeoutfreq.size} and: {~flagamp.wrapAt(i).value < listeoutamp.size} and: {~flagduree.wrapAt(i).value < listeoutduree.size}}, {if(~algoinstrumentfreq.wrapAt(i) != ~algorithmesmusicauxfreq.wrapAt(4),{
 						// non-probabilite
-						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
+						if(~flagfreq.wrapAt(i).value >= listeoutfreq.size, {~flagfreq.wrapPut(i,0)});
 						freq=freq.add((listeoutfreq.wrapAt(~flagfreq.wrapAt(i))*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat;
 						~flagfreq.wrapPut(i,~flagfreq.wrapAt(i)+1)},{
 						// probabilite
 						freq=freq.add((listeoutfreq.wrapAt(listeoutfreq.size.rand)*(~synthfreqrange.wrapAt(i).hi - ~synthfreqrange.wrapAt(i).lo) + ~synthfreqrange.wrapAt(i).lo +~synthfreqstep.wrapAt(i).value).midicps).flat});
 					if(~algoinstrumentamp.wrapAt(i) != ~algorithmesmusicauxamp.wrapAt(4),{
 						// non-probabilite
-						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
+						if(~flagamp.wrapAt(i).value >= listeoutamp.size, {~flagamp.wrapPut(i,0)});
 						if(listeoutamp.wrapAt(~flagamp.wrapAt(i)) >= 0.001, {
 							amp=amp+(listeoutamp.wrapAt(~flagamp.wrapAt(i))*(~synthamprange.wrapAt(i).hi.dbamp - ~synthamprange.wrapAt(i).lo.dbamp) + ~synthamprange.wrapAt(i).lo.dbamp);
 						},
@@ -2046,7 +2046,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					if(~algoinstrumentduree.wrapAt(i) != ~algorithmesmusicauxduree.wrapAt(4),{
 						// non-probabilite
-						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0); ~playinstrument.wrapPut(i,"off")});
+						if(~flagduree.wrapAt(i).value >= listeoutduree.size, {~flagduree.wrapPut(i,0)});
 						duree=listeoutduree.wrapAt(~flagduree.wrapAt(i));
 						~flagduree.wrapPut(i,~flagduree.wrapAt(i)+1)},{
 						// probabilite
@@ -2347,7 +2347,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						datasfile=datasfile.add(~listeofffreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeoffamp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeoffduree.wrapAt(ii));
 					});
 					file=File(path++".scd","w");file.write(datasfile.value.asCompileString);file.close},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
-				{13}, {if(File.exists(~nompathdata++"clear control panel.scd"),{file=File(~nompathdata++"clear control panel.scd", "r");datas=file.readAllString.interpret;file.close;~readcontrolpanel.value(datas)});~saveloaddatasinstrument.wrapAt(i).value=0},
+				{13}, {if(File.exists(~nompathdata++"clear control panel.scd"),{file=File(~nompathdata++"clear control panel.scd", "r");datas=file.readAllString.interpret;file.close;~readcontrolpanel.value(datas.at(0))});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{9}, {Dialog.openPanel({ arg paths;
 					file=File(paths, "r");datas=file.readAllString.interpret;file.close;
 					40.do({arg i;~listeplaypart.wrapPut(i,datas.wrapAt(i));~dureeplaypart.wrapPut(i,0);~pointeurplaypart.wrapPut(i,0)})},{"cancelled".postln});
@@ -2960,17 +2960,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~indatasdureeinstrument.wrapPut(i,~choixdatasinduree.wrapAt(in.value))};
 			// Algo freq
 			~choixalgoviewfreq=~choixalgoviewfreq.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~algorithmesmusicauxfreq);
-			~choixalgoviewfreq.wrapAt(i).action = {arg algo;~writepartitions.value(i,'normal','off',"~choixalgoviewfreq",algo.value);~algoinstrumentfreq.wrapPut(i,~algorithmesmusicauxfreq.wrapAt(algo.value));
+			~choixalgoviewfreq.wrapAt(i).action = {arg algo;	~writepartitions.value(i,'normal','off',"~choixalgoviewfreq",algo.value);~algoinstrumentfreq.wrapPut(i,~algorithmesmusicauxfreq.wrapAt(algo.value));
 				if(algo.value == 1, {~flagalgoinstrneuronefreq.wrapPut(i,"NeuroneAlgo1")});
 				if(algo.value == 2, {~flagalgoinstrneuronefreq.wrapPut(i,"NeuroneAlgo2")})};
 			// Algo amp
 			~choixalgoviewamp=~choixalgoviewamp.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~algorithmesmusicauxamp);
-			~choixalgoviewamp.wrapAt(i).action = {arg algo;~writepartitions.value(i,'normal','off',"~choixalgoviewamp",algo.value);~algoinstrumentamp.wrapPut(i,~algorithmesmusicauxamp.wrapAt(algo.value));
+			~choixalgoviewamp.wrapAt(i).action = {arg algo;
+	~writepartitions.value(i,'normal','off',"~choixalgoviewamp",algo.value);~algoinstrumentamp.wrapPut(i,~algorithmesmusicauxamp.wrapAt(algo.value));
 				if(algo.value == 1, {~flagalgoinstrneuroneamp.wrapPut(i,"NeuroneAlgo1")});
 				if(algo.value == 2, {~flagalgoinstrneuroneamp.wrapPut(i,"NeuroneAlgo2")})};
 			// Algo duree
 			~choixalgoviewduree=~choixalgoviewduree.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~algorithmesmusicauxduree);
-			~choixalgoviewduree.wrapAt(i).action = {arg algo;~writepartitions.value(i,'normal','off',"~choixalgoviewduree",algo.value);~algoinstrumentduree.wrapPut(i,~algorithmesmusicauxduree.wrapAt(algo.value));
+			~choixalgoviewduree.wrapAt(i).action = {arg algo;	~writepartitions.value(i,'normal','off',"~choixalgoviewduree",algo.value);~algoinstrumentduree.wrapPut(i,~algorithmesmusicauxduree.wrapAt(algo.value));
 				if(algo.value == 1, {~flagalgoinstrneuroneduree.wrapPut(i,"NeuroneAlgo1")});
 				if(algo.value == 2, {~flagalgoinstrneuroneduree.wrapPut(i,"NeuroneAlgo2")})};
 			w.view.decorator.nextLine;
@@ -4634,7 +4635,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					if(modifiers==655360 and: {unicode==83} and: {keycode==1},{~saveloaddatasinstr.valueAction=3;~commande=nil});
 					// key v -> clear instruments
 					if(modifiers==0 and: {unicode==118} and: {keycode==9},{~saveloaddatasinstr.valueAction=12;~commande=nil});
-					// key V> clear instrument
+					// key V -> clear instrument
 					if(modifiers==131072 and: {unicode==86} and: {keycode==9},{~commande='clear'});
 					// alt v-> clear control panel
 					if(modifiers==524288 and: {unicode==118} and: {keycode==9},{~saveloaddatasinstr.valueAction=13;~commande=nil});
@@ -4946,26 +4947,70 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			});
 			});
 			// next F A D input
-			if(~commande == 'fadinnext' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
-				~choixdatasinfreqview.wrapAt(i).valueAction=~choixdatasinfreqview.wrapAt(i).value+1;~choixdatasinampview.wrapAt(i).valueAction=~choixdatasinampview.wrapAt(i).value+1;~choixdatasindureeview.wrapAt(i).valueAction=~choixdatasindureeview.wrapAt(i).value+1})});
+			if(~commande == 'fadinnext' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
+			var index;
+				i=i-1;
+			index = ~choixdatasinfreqview.wrapAt(i).value;
+				if(index >= 7, {index = -1});
+				~choixdatasinfreqview.wrapAt(i).valueAction=index+1;
+				index = ~choixdatasinampview.wrapAt(i).value;
+				if(index >= 7, {index = -1});
+				~choixdatasinampview.wrapAt(i).valueAction=index+1;
+				index = ~choixdatasindureeview.wrapAt(i).value;
+				if(index >= 7, {index = -1});
+				~choixdatasindureeview.wrapAt(i).valueAction=index+1;
+			})});
 			});
 			// previous F A D input
-			if(~commande == 'fadinprevious' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
-				~choixdatasinfreqview.wrapAt(i).valueAction=~choixdatasinfreqview.wrapAt(i).value-1;~choixdatasinampview.wrapAt(i).valueAction=~choixdatasinampview.wrapAt(i).value-1;~choixdatasindureeview.wrapAt(i).valueAction=~choixdatasindureeview.wrapAt(i).value-1})});
+			if(~commande == 'fadinprevious' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
+				var index;
+				i=i-1;
+			index = ~choixdatasinfreqview.wrapAt(i).value;
+				if(index <= 0, {index = 8});
+				~choixdatasinfreqview.wrapAt(i).valueAction=index-1;
+				index = ~choixdatasinampview.wrapAt(i).value;
+				if(index <= 0, {index = 8});
+				~choixdatasinampview.wrapAt(i).valueAction=index-1;
+				index = ~choixdatasindureeview.wrapAt(i).value;
+				if(index <= 0, {index = 8});
+				~choixdatasindureeview.wrapAt(i).valueAction=index-1;
+			})});
 			});
 			// F A D input off
 			if(~commande == 'fadinoff' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
 				~choixdatasinfreqview.wrapAt(i).valueAction=0;~choixdatasinampview.wrapAt(i).valueAction=0;~choixdatasindureeview.wrapAt(i).valueAction=0})});
 			});
 			// next F A D output
-			if(~commande == 'fadoutnext' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
-				~choixalgoviewfreq.wrapAt(i).valueAction=~choixalgoviewfreq.wrapAt(i).value+1;~choixalgoviewamp.wrapAt(i).valueAction=~choixalgoviewamp.wrapAt(i).value+1;~choixalgoviewduree.wrapAt(i).valueAction=~choixalgoviewduree.wrapAt(i).value+1})});
+			if(~commande == 'fadoutnext' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
+				var index;
+				i=i-1;
+				index = ~choixalgoviewfreq.wrapAt(i).value;
+				if(index >= 6, {index = -1});
+				~choixalgoviewfreq.wrapAt(i).valueAction=index+1;
+				index = ~choixalgoviewamp.wrapAt(i).value;
+				if(index >= 6, {index = -1});
+				~choixalgoviewamp.wrapAt(i).valueAction=index+1;
+				index = ~choixalgoviewduree.wrapAt(i).value;
+				if(index >= 6, {index = -1});
+				~choixalgoviewduree.wrapAt(i).valueAction=index+1;
+			})});
 			});
 			// previous F A D output
-			if(~commande == 'fadoutprevious' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
-				~choixalgoviewfreq.wrapAt(i).valueAction=~choixalgoviewfreq.wrapAt(i).value-1;~choixalgoviewamp.wrapAt(i).valueAction=~choixalgoviewamp.wrapAt(i).value-1;~choixalgoviewduree.wrapAt(i).valueAction=~choixalgoviewduree.wrapAt(i).value-1})});
+			if(~commande == 'fadoutprevious' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
+				var index;
+				i=i-1;
+				index = ~choixalgoviewfreq.wrapAt(i).value;
+				if(index <= 0, {index = 7});
+				~choixalgoviewfreq.wrapAt(i).valueAction=index-1;
+				index = ~choixalgoviewamp.wrapAt(i).value;
+				if(index <= 0, {index = 7});
+				~choixalgoviewamp.wrapAt(i).valueAction=index-1;
+				index = ~choixalgoviewduree.wrapAt(i).value;
+				if(index <= 0, {index = 7});
+				~choixalgoviewduree.wrapAt(i).valueAction=index-1;
+			})});
 			});
-			// F A D input output
+			// F A D output off
 			if(~commande == 'fadoutoff' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
 				~choixalgoviewfreq.wrapAt(i).valueAction=0;~choixalgoviewamp.wrapAt(i).valueAction=0;~choixalgoviewduree.wrapAt(i).valueAction=0})});
 			});
@@ -5707,7 +5752,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 		// Read Datas Control Panel
 		~readcontrolpanel={arg d;
-			d = d.at(0);
 			//~algoAnalyse.valueAction=d.wrapAt(0);
 			~seuilanalyse.value=d.wrapAt(1);
 			~filtreanalyse.value=d.wrapAt(2);
@@ -5736,7 +5780,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~canalAudioIn = d.wrapAt(16);
 			~groupeAnalyse.set(\in, d.wrapAt(16).value);
 			~groupeBuffer.set(\in, d.wrapAt(16).value);*/
-			"fin".postln;
 		};
 
 		// Save Control Panel
