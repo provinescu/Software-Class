@@ -5707,6 +5707,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 		// Read Datas Control Panel
 		~readcontrolpanel={arg d;
+			d = d.at(0);
 			//~algoAnalyse.valueAction=d.wrapAt(0);
 			~seuilanalyse.value=d.wrapAt(1);
 			~filtreanalyse.value=d.wrapAt(2);
@@ -5735,6 +5736,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~canalAudioIn = d.wrapAt(16);
 			~groupeAnalyse.set(\in, d.wrapAt(16).value);
 			~groupeBuffer.set(\in, d.wrapAt(16).value);*/
+			"fin".postln;
 		};
 
 		// Save Control Panel
