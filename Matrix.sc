@@ -4094,7 +4094,7 @@ y ... -					Musical keys.
 							{
 								newDuree = newDuree + (ecartSemiQ * dissymetrie.sign);
 						});
-						newDuree = newDuree.clip(0, 1);
+						newDuree = newDuree.mod(1);
 						// Amp Transformation
 						# q1, mediane, q3, ecartQ, ecartSemiQ = newAmp.quartiles;
 						ecartType = newAmp.ecartType;
@@ -4133,7 +4133,7 @@ y ... -					Musical keys.
 								newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
 							});
 						});
-						newFreq = newFreq.clip(0, 1);
+						newFreq = newFreq.mod(1);
 					},
 					"Euclide", {
 						// Distances Euclidiennes 3D -> Vecteur 1D
@@ -4164,7 +4164,7 @@ y ... -					Musical keys.
 								newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
 							});
 						});
-						newFreq = newFreq.clip(0, 1);
+						newFreq = newFreq.mod(1);
 						// Amp
 						newAmp = newAmp * distances;
 						// Transpose
@@ -4177,7 +4177,7 @@ y ... -					Musical keys.
 						{
 							newAmp = newAmp + (ecartSemiQ * dissymetrie.sign)
 						});
-						newAmp = newAmp.clip(0, 1);
+						newAmp = newAmp.mod(1);
 						// Duree
 						newDuree = newDuree / distances;
 						// Transpose
@@ -4190,7 +4190,7 @@ y ... -					Musical keys.
 						{
 							newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
 						});
-						newDuree = newDuree.clip(0, 1);
+						newDuree = newDuree.mod(1);
 					},
 					"Genetic", {
 						freqGen = [];
@@ -4212,34 +4212,31 @@ y ... -					Musical keys.
 					"Kohonen", {
 						// Training Kohonen Freq
 						maxTraining = newFreq.size * 10;
-						if(maxTraining > 640, {maxTraining = 640});
+						maxTraining = maxTraining.clip(64, 128);
+						newFreq = newFreq * 127;
 						maxTraining.do({arg i; kohonenF.training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
 						// Calculate Kohonen Freq
 						newFreq = newFreq.collect({arg item, index, z;
 							item = kohonenF.training(item.asArray, 1, 1, 0);
 							item = item.at(0).at(1);// Vecteur
-							if(item < 0, {item = 0});
-							if(item > 127, {item = 127});
 							item = item / 127;
 						});
 						// Training Kohonen Amp
+						newAmp = newAmp * 127;
 						maxTraining.do({arg i; kohonenA.training(newAmp.wrapAt(i).asArray, i+1, maxTraining, 1)});
 						// Calculate Kohonen Amp
 						newAmp = newAmp.collect({arg item, index;
 							item = kohonenA.training(item.asArray, 1, 1, 0);
 							item = item.at(0).at(1);// Vecteur
-							if(item < 0, {item = 0});
-							if(item > 127, {item = 127});
 							item = item / 127;
 						});
 						// Training Kohonen Duree
+						newDuree = newDuree * 127;
 						maxTraining.do({arg i; kohonenD.training(newDuree.wrapAt(i).asArray, i+1, maxTraining, 1)});
 						// Calculate Kohonen Duree
 						newDuree = newDuree.collect({arg item, index;
 							item = kohonenD.training(item.asArray, 1, 1, 0);
 							item = item.at(0).at(1);// Vecteur
-							if(item < 0, {item = 0});
-							if(item > 127, {item = 127});
 							item = item / 127;
 						});
 					},
@@ -4248,8 +4245,8 @@ y ... -					Musical keys.
 						ampNeu = [];
 						durNeu = [];
 						// Training Neural
-						maxTraining = newFreq.size * 24;
-						if(maxTraining > 640, {maxTraining = 640});
+						maxTraining = newFreq.size * 10;
+						maxTraining = maxTraining.clip(64, 128);
 						maxTraining.do({arg i; neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray])});
 						// Calculate Neural
 						newFreq.size.do({arg i, f, a, d;

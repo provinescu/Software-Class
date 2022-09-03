@@ -2901,10 +2901,10 @@ G                       Init Genome Agent (solo).
 							newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
 						});
 					});
-					newFreq = newFreq.clip(0, 1);
+					newFreq = newFreq.mod(1);
 					~listeagentfreq.wrapPut(agent, newFreq);
 					// Amp Transformation
-					newAmp = ~listeagentfreq.wrapAt(agent);
+					newAmp = ~listeagentamp.wrapAt(agent);
 					# q1, mediane, q3, ecartQ, ecartSemiQ = newAmp.quartiles;
 					ecartType = newAmp.ecartType;
 					cv = ecartType / newAmp.mean;
@@ -2917,10 +2917,10 @@ G                       Init Genome Agent (solo).
 						{
 							newAmp = newAmp + (ecartSemiQ * dissymetrie.sign);
 					});
-					newAmp = newAmp.clip(0, 1);
+					newAmp = newAmp.mod(1);
 					~listeagentamp.wrapPut(agent, newAmp);
 					// Duree Transformation
-					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax;
+					newDuree = ~listeagentduree.wrapAt(agent);// / ~dureeanalysemax;
 					# q1, mediane, q3, ecartQ, ecartSemiQ = newDuree.quartiles;
 					ecartType = newDuree.ecartType;
 					cv = ecartType / newDuree.mean;
@@ -2933,7 +2933,7 @@ G                       Init Genome Agent (solo).
 						{
 							newDuree = newDuree + (ecartSemiQ * dissymetrie.sign);
 					});
-					newDuree = newDuree.clip(0, 1) * ~dureeanalysemax;
+					newDuree = newDuree.mod(~dureeanalysemax);
 					~listeagentduree.wrapPut(agent, newDuree);
 				},
 				"Euclide", {
@@ -2968,7 +2968,7 @@ G                       Init Genome Agent (solo).
 							newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
 						});
 					});
-					newFreq = newFreq.clip(0, 1);
+					newFreq = newFreq.mod(1);
 					~listeagentfreq.wrapPut(agent, newFreq);
 					// Amp
 					newAmp = distances;
@@ -2982,7 +2982,7 @@ G                       Init Genome Agent (solo).
 					{
 						newAmp = newAmp + (ecartSemiQ * dissymetrie.sign)
 					});
-					newAmp = newAmp.clip(0, 1);
+					newAmp = newAmp.mod(1);
 					~listeagentamp.wrapPut(agent, newAmp);
 					// Duree
 					newDuree = distances;
@@ -2996,7 +2996,7 @@ G                       Init Genome Agent (solo).
 					{
 						newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
 					});
-					newDuree = newDuree.clip(0, ~dureeanalysemax);
+					newDuree = newDuree.mod(1) * ~dureeanalysemax;
 					~listeagentduree.wrapPut(agent, newDuree);
 				},
 				"Genetic", {
@@ -3014,19 +3014,18 @@ G                       Init Genome Agent (solo).
 					~listeagentduree.wrapPut(agent, newDuree);
 				},
 				"Kohonen", {
-					newFreq = ~listeagentfreq.wrapAt(agent);
-					newAmp = ~listeagentamp.wrapAt(agent);
-					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax;
+					newFreq = ~listeagentfreq.wrapAt(agent) * 127;
+					newAmp = ~listeagentamp.wrapAt(agent) * 127;
+					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax * 127;
 					// Training Kohonen Freq
 					maxTraining = newFreq.size * 10;
-					if(maxTraining > 640, {maxTraining = 640});
+					maxTraining = maxTraining.clip(64, 128);
 					maxTraining.do({arg i; ~kohonenF.wrapAt(agent).training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
 					// Calculate Kohonen Freq
 					newFreq = newFreq.collect({arg item, index, z;
 						item = ~kohonenF.wrapAt(agent).training(item.asArray, 1, 1, 0);
 						item = item.wrapAt(0).wrapAt(1);// Vecteur
-						if(item < 0, {item = 0});
-						if(item > 127, {item = 127});
+						//item = item.mod(127);
 						item = item / 127;
 					});
 					~listeagentfreq.wrapPut(agent, newFreq);
@@ -3036,8 +3035,7 @@ G                       Init Genome Agent (solo).
 					newAmp = newAmp.collect({arg item, index;
 						item = ~kohonenA.wrapAt(agent).training(item.asArray, 1, 1, 0);
 						item = item.wrapAt(0).wrapAt(1);// Vecteur
-						if(item < 0, {item = 0});
-						if(item > 127, {item = 127});
+						//item = item.mod(127);
 						item = item / 127;
 					});
 					~listeagentamp.wrapPut(agent, newAmp);
@@ -3047,15 +3045,14 @@ G                       Init Genome Agent (solo).
 					newDuree = newDuree.collect({arg item, index;
 						item = ~kohonenD.wrapAt(agent).training(item.asArray, 1, 1, 0);
 						item = item.wrapAt(0).wrapAt(1);// Vecteur
-						if(item < 0, {item = 0});
-						if(item > 127, {item = 127});
+						//item = item.mod(127);
 						item = item / 127 * ~dureeanalysemax;
 					});
 					~listeagentduree.wrapPut(agent, newDuree);
 				},
 				"Neural", {
-					maxTraining = ~listeagentfreq.wrapAt(agent).size * 100;
-					if(maxTraining > 640, {maxTraining = 640});
+					maxTraining = ~listeagentfreq.wrapAt(agent).size * 10;
+					maxTraining = maxTraining.clip(64, 128);
 					maxTraining.do({arg i;
 						~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax]);
 					});

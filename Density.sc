@@ -1506,7 +1506,7 @@ Density {
 							newAmp = amp;
 							newDuree = duree;
 						});
-						newDuree = newDuree.clip(0,1);
+						newDuree = newDuree.mod(1);
 						//Set Range newDuree
 						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
 						// Quantization newDuree
@@ -1516,7 +1516,7 @@ Density {
 							newDuree.put(index, item);
 						});
 						// newFreq Transformation
-						newFreq = newFreq.clip(0, 1);
+						newFreq = newFreq.mod(1);
 						// Setup Range newFreq
 						newFreq = newFreq.collect({arg note, index;
 							note.asArray.collect({arg chord, index;
@@ -1600,7 +1600,7 @@ Density {
 								newDuree = ecartSemiQ / newDuree;
 							});
 						});
-						newDuree = newDuree.clip(0,1);
+						newDuree = newDuree.mod(1);
 						//Set Range newDuree
 						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
 						// Quantization newDuree
@@ -1629,7 +1629,7 @@ Density {
 								newFreq = ecartSemiQ / newFreq;
 							});
 						});
-						newFreq = newFreq.clip(0, 1);
+						newFreq = newFreq.mod(1);
 						// Setup Range newFreq
 						newFreq = newFreq.collect({arg note, index;
 							note.asArray.collect({arg chord, index;
@@ -1666,9 +1666,9 @@ Density {
 						# flux, flatness, centroid, energy, bpm = data.at(0);*/
 						// Freq Transformation
 						// Training Kohonen Freq
-						maxTraining = freq.size * 24;
-						maxTraining = maxTraining.min(640);
-						maxTraining.do({arg i; kohonenF.training(freq.wrapAt(i).asArray, i+1, maxTraining, 1)});
+						maxTraining = freq.size * 10;
+						maxTraining = maxTraining.clip(64, 128);
+						maxTraining.do({arg i; kohonenF.training(freq.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Freq
 						freq = freq.collect({arg item, index, z;
 							item = kohonenF.training(item.asArray, 1, 1, 0);
@@ -1699,7 +1699,7 @@ Density {
 						});
 						// Amp Transformation
 						// Training Kohonen Amp
-						maxTraining.do({arg i; kohonenA.training(amp.wrapAt(i).asArray, i+1, maxTraining, 1)});
+						maxTraining.do({arg i; kohonenA.training(amp.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Amp
 						amp = amp.collect({arg item, index;
 							item = kohonenA.training(item.asArray, 1, 1, 0);
@@ -1710,7 +1710,7 @@ Density {
 						// Duree Transformation
 						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Training Kohonen Duree
-						maxTraining.do({arg i; kohonenD.training(duree.wrapAt(i).asArray, i+1, maxTraining, 1)});
+						maxTraining.do({arg i; kohonenD.training(duree.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Duree
 						duree = duree.collect({arg item, index;
 							item = kohonenD.training(item.asArray, 1, 1, 0);
@@ -1950,8 +1950,8 @@ Density {
 						# flux, flatness, centroid, energy, bpm = data.at(0);
 						// Freq Transformation
 						// Training Neural
-						maxTraining = freq.size * 24;
-						maxTraining = maxTraining.min(640);
+						maxTraining = freq.size * 10;
+						maxTraining = maxTraining.clip(64, 128);
 						maxTraining.do({arg i; neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray])});
 						// Calculate Neural Freq Amp Duree
 						freq.size.do({arg i, f, a, d;
