@@ -381,7 +381,7 @@ Density {
 				"PV_BinWipeStreamPrePostBufEnv",
 				"PV_RectComb2StreamPrePostBufEnv",
 			],
-			// FFT Pre
+			/*// FFT Pre
 			[
 				"FFTpvcollectPreBuf",
 				"FFTpvcalcPreBuf",
@@ -405,7 +405,7 @@ Density {
 			[
 				"FFTpvcalc2",
 				"FFTpvcalc2Stream",
-			],
+			],*/
 			// Special
 			[
 				"Silent",
@@ -7700,7 +7700,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		// FFT Synth PreBuf
 
-		SynthDef("FFTpvcollectPreBuf",
+		/*SynthDef("FFTpvcollectPreBuf",
 			{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
 				freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
@@ -8039,7 +8039,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				chain = IFFT(chain) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
-		}).add;
+		}).add;*/
 
 		//////////////////////////// FX //////////////////////////////////////
 
