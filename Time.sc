@@ -2832,10 +2832,11 @@ f						Switch File for Analyze.
 		// BPM In Display
 		bpmDisplay = StaticText(windowControlGUI, Rect(580, 5, 30, 20)).string_("BPM").background_(Color.white).stringColor_(Color.red);
 
+		// Auto Root
 		Button(windowControlGUI, Rect(615, 5, 105, 20))
 		.background_(Color.white).
 		states_([["Auto On", Color.green, Color.black(0.75, 0.25)],["Auto Off", Color.red(1, 1), Color.black(0.75, 0.25)]]).
-		action_({arg etat; if(etat.value == 0, {autoRoot = 'off'; windowControlGUI.view.children.at(7).children.at(2).valueAction_(0)}, {autoRoot = 'on'})});
+		action_({arg etat; if(etat.value == 0, {autoRoot = 'off'; /*windowControlGUI.view.children.at(7).children.at(2).valueAction_(0)*/}, {autoRoot = 'on'})});
 
 		// Tuning
 		PopUpMenu(windowControlGUI, Rect(725, 5, 130, 20)).

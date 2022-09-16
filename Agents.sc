@@ -5604,7 +5604,7 @@ G                       Init Genome Agent (solo).
 		~rootAutomation = Button(~wad, Rect(0, 0, 75, 20)).states=[["Root On", Color.black, Color.green(0.8, 0.25)],["Root Off", Color.black, Color.red(0.8, 0.25)]];
 		~rootAutomation.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~rootAutomation", action.value)});
-			if(action.value == 1, {~flagRootAutomation='on'}, {~flagRootAutomation='off'; ~rootChoice.valueAction_(0)})};
+			if(action.value == 1, {~flagRootAutomation='on'}, {~flagRootAutomation='off'; /*~rootChoice.valueAction_(0)*/})};
 		~wad.front;
 	}
 
