@@ -4688,8 +4688,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			}, {flagRoot = 'off';
 				// Setup GUI Value
 				windowEar.view.children.at(85).enabled_(true);
-				windowEar.view.children.at(85).children.at(1).valueAction_(12);
-				windowEar.view.children.at(85).children.at(1).valueAction_(0);
+				/*windowEar.view.children.at(85).children.at(1).valueAction_(12);
+				windowEar.view.children.at(85).children.at(1).valueAction_(0);*/
 			};
 			);
 		});
