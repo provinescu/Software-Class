@@ -3213,6 +3213,7 @@ G                       Init Genome Agent (solo).
 			freq = freq / 127 * freqRange + freqLow + freqTrans;
 			if(~flagScaling != 'off', {
 				freq = freq.collect({arg item, index;
+					pos = 0;
 					octave = item.midicps.cpsoct.round(0.001);
 					ratio = octave.frac;
 					octave = octave.floor;

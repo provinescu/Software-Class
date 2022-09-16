@@ -985,6 +985,7 @@ f						Switch File for Analyze.
 
 											// Setup Freq with Scaling and Tuning
 											if(flagScaling != 'off', {
+												pos = 0;
 												oct = freq.cpsoct.round(0.001);
 												ratio = oct.frac;
 												oct = oct.floor;
@@ -1123,6 +1124,7 @@ f						Switch File for Analyze.
 
 										// Setup Freq with Scaling and Tuning
 										if(flagScaling != 'off', {
+											pos = 0;
 											oct = freq.cpsoct.round(0.001);
 											ratio = oct.frac;
 											oct = oct.floor;
@@ -1534,6 +1536,7 @@ f						Switch File for Analyze.
 									// Setup Freq with Scaling and Tuning
 									freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
 									if(flagScaling != 'off', {
+										pos = 0;
 										oct = freq.midicps.cpsoct.round(0.001);
 										ratio = oct.frac;
 										oct = oct.floor;

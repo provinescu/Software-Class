@@ -3514,7 +3514,7 @@ y ... -					Musical keys.
 			// AutomationSynthMusicData start stop playing
 			startAutomationSynthMusicData = Button(windowSynth,Rect(0, 0, 100, 20));
 			startAutomationSynthMusicData.states = [["MusicData Off", Color.black,  Color.green(0.8, 0.25)],["MusicData On", Color.black, Color.red(0.8, 0.25)]];
-			startAutomationSynthMusicData.action = {|view| if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false); windowSynth.view.children.at(80).children.at(2).valueAction_(0)}, {tdefMusicData.play; tempoAutomationSynthMusicData.enabled_(true);jitterAutomationMusicData.enabled_(true)}); fonctionEnabledSlider.value(view.value);
+			startAutomationSynthMusicData.action = {|view| if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false); /*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/}, {tdefMusicData.play; tempoAutomationSynthMusicData.enabled_(true);jitterAutomationMusicData.enabled_(true)}); fonctionEnabledSlider.value(view.value);
 			};
 			// Tempo AutomationSynthMusicData Synth
 			tempoAutomationSynthMusicData = EZRanger(windowSynth, 180 @ 20, "Tempo", ControlSpec(60.reciprocal, 100.0, \exp, 0), {|tempo| }, [0.125, 1.0], labelWidth: 40, numberWidth: 40);
@@ -3723,7 +3723,7 @@ y ... -					Musical keys.
 			Button(windowSynth,Rect(0, 0, 20, 20)).
 			states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]]).
 			action_({arg view; flagRoot = view.value;
-				if(view.value == 0, {windowSynth.view.children.at(80).children.at(2).valueAction_(0)});
+				if(view.value == 0, {/*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/});
 			});
 			// Degrees
 			EZText(windowSynth, Rect(0, 0, 390, 20), "Degrees",
@@ -4277,6 +4277,7 @@ y ... -					Musical keys.
 					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
 					// Setup Freq with Scaling and Tuning
 					if(flagScaling != 'off', {
+						pos = 0;
 						octave = freq.cpsoct.round(0.001);
 						ratio = octave.frac;
 						octave = octave.floor;
@@ -4361,6 +4362,7 @@ y ... -					Musical keys.
 												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
 												// Setup Freq with Scaling and Tuning
 												if(flagScaling != 'off', {
+													pos = 0;
 													octave = freq.cpsoct.round(0.001);
 													ratio = octave.frac;
 													octave = octave.floor;
@@ -4494,6 +4496,7 @@ y ... -					Musical keys.
 													freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
 													// Setup Freq with Scaling and Tuning
 													if(flagScaling != 'off', {
+														pos = 0;
 														octave = freq.cpsoct.round(0.001);
 														ratio = octave.frac;
 														octave = octave.floor;
@@ -4630,6 +4633,7 @@ y ... -					Musical keys.
 																freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
 																// Setup Freq with Scaling and Tuning
 																if(flagScaling != 'off', {
+																	pos = 0;
 																	octave = freq.cpsoct.round(0.001);
 																	ratio = octave.frac;
 																	octave = octave.floor;

@@ -1530,6 +1530,7 @@ Density {
 						if(flagScaling == 'on', {
 							newFreq = newFreq.collect({arg item, index;
 								item.asArray.collect({arg note, index;
+									position = 0;
 									octave = note.cpsoct.round(0.001);
 									ratio = octave.frac;
 									octave = octave.floor;
@@ -1643,6 +1644,7 @@ Density {
 						if(flagScaling == 'on', {
 							newFreq = newFreq.collect({arg item, index;
 								item.asArray.collect({arg note, index;
+									position = 0;
 									octave = note.cpsoct.round(0.001);
 									ratio = octave.frac;
 									octave = octave.floor;
@@ -1684,6 +1686,7 @@ Density {
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
 							freq = freq.collect({arg item, index;
+								position = 0;
 								octave = item.cpsoct.round(0.001);
 								ratio = octave.frac;
 								octave = octave.floor;
@@ -1783,6 +1786,7 @@ Density {
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
 							freq = freq.collect({arg item, index;
+								position = 0;
 								octave = item.cpsoct.round(0.001);
 								ratio = octave.frac;
 								octave = octave.floor;
@@ -1881,6 +1885,7 @@ Density {
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
 							freq = freq.collect({arg item, index;
+								position = 0;
 								octave = item.cpsoct.round(0.001);
 								ratio = octave.frac;
 								octave = octave.floor;
@@ -1974,6 +1979,7 @@ Density {
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
 							freq = freq.collect({arg item, index;
+								position = 0;
 								octave = item.cpsoct.round(0.001);
 								ratio = octave.frac;
 								octave = octave.floor;

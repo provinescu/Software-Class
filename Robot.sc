@@ -2,7 +2,7 @@
 
 Robot {
 
-	classvar < s, < hpRobot;
+	classvar < s;
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
@@ -17,8 +17,6 @@ Robot {
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
-
-		hpRobot = this;
 
 		// Verify path
 		if(File.exists(path).not) {systemCmd("mkdir" + path)};
@@ -2176,6 +2174,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						// Set Tuning and Scaling
 						if(~flagScaling.at(i) != 'off', {
 							freq = freq.collect({arg item, index;
+								pos = 0;
 								octave = item.cpsoct.round(0.001);
 								ratio = octave.frac;
 								octave = octave.floor;
@@ -2415,7 +2414,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				},{"cancelled".postln})},
 				{19}, {
 					//New synth environment
-					Dialog.openPanel({ arg paths;
+					"No Operate".postln;
+					/*Dialog.openPanel({ arg paths;
 						var p, file="List Synth.scd";
 						p = PathName.new(paths);
 						file = p.fileName;
@@ -2435,10 +2435,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							Tdef.all.reset;
 							s.sync;
 						};
-				})},
+				});*/
+				},
 				{20}, {
 					//New sound environment
-					Dialog.openPanel({ arg paths;
+					"No Operate".postln;
+					/*Dialog.openPanel({ arg paths;
 						var p, file="List Sounds.scd";
 						p = PathName.new(paths);
 						file = p.fileName;
@@ -2498,35 +2500,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							Tdef.all.reset;
 							s.sync;
 						};
-				})},
+				});*/
+				},
 				{21}, {
 					// New all environment
-					FileDialog.new({ arg path;
+					"No Operate".postln;
+					/*FileDialog.new({ arg path;
 						var p;
 						p = path.at(0).asString ++"/";
-						/*p = PathName.new(paths);
-						p = p.pathOnly;*/
-						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
-							~nombrebuffer.do({arg i;
-								~listebuffer.wrapAt(i).free;
-								~busreclevel.wrapAt(i).free;
-							});
-							s.sync;
-							~nombreinstrument.do({arg i;
-								~bufferTampon.wrapAt(i).free;
-								~bufferAddTampon.wrapAt(i).free;
-								~nombrebuffer.do({arg b;
-									~listebufferTampon.wrapAt(i).wrapAt(b).free;
-								});
-							});
-							s.sync;
-							~groupeBuffer.deepFree;
-							s.sync;
-						};
-						hpRobot.kill;
-						HPRobot.new(p);
-					}, fileMode: 2);
+						~nompathdata=PathName.new(p).pathOnly;
+					}, fileMode: 2);*/
 				},
 				// OSC Off
 				{22}, {~oscStateFlag='off';~stateOSCdisplay.string = "OSC Off"},
@@ -2568,9 +2551,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~listewindow.do({arg w; w.close});
 			windowVST.close;
 			ProxySpace.clearAll;
-			// Kill instance of Class and quit
-			//hpRobot.kill;
-			//s.quit;
 		};
 
 		//Load partitions
