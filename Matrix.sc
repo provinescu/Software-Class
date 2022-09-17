@@ -3155,21 +3155,21 @@ y ... -					Musical keys.
 			startStop.action = {arg view;
 				if(view.value == 1, {
 					if(startSystem.value == 1, {
-						groupe.run(true);
+						//groupe.run(true);
 						indexMusicData = 9999; if(flagModeSynth == 'Tdef', {tdefSynthesizer.play});
 						if(startAutomationSynthControls.value == 1, {tdefControls.play});
 						if(startAutomationSynthMusicData.value == 1, {tdefMusicData.play});
 					},
 					{
 						if(flagModeSynth == 'Tdef', {tdefSynthesizer.reset; tdefSynthesizer.stop}); indexMusicData = 9999;
-						groupe.run(false);
+						//groupe.run(false);
 						if(startAutomationSynthControls.value == 1, {tdefControls.stop});
 						if(startAutomationSynthMusicData.value == 1, {tdefMusicData.stop})});
 				},
 				{
 					if(flagModeSynth == 'Tdef', {tdefSynthesizer.reset; tdefSynthesizer.stop});
 					indexMusicData = 9999;
-					groupe.run(false);
+					//groupe.run(false);
 					if(startAutomationSynthControls.value == 1, {tdefControls.stop});
 					if(startAutomationSynthMusicData.value == 1, {tdefMusicData.stop});
 					// MIDI OFF
