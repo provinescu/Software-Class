@@ -7,13 +7,13 @@ Agents {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn;
 
-	*new	{arg path="~/Documents/Agents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
+	*new	{arg path="~/Documents/Agents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Agents";
 
-		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
 
 	}
 
-	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
+	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -28,10 +28,12 @@ Agents {
 		~recChannels = r;
 		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
+		Server.default = s = Server(name,NetAddr("localhost",57565), Server.default.options);
+
 		s = Server.default;
 		s.options.memSize = 2**20;
-		s.options.inDevice = devIn;
-		s.options.outDevice = devOut;
+		s.options.inDevice_(devIn);
+		s.options.outDevice_(devOut);
 		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
 		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
@@ -50,7 +52,7 @@ Agents {
 		Safety(s);
 		//Safety(s).enabled;
 		//Safety.setLimit(1.neg.dbamp);
-
+		s.makeGui;
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -280,9 +282,9 @@ G                       Init Genome Agent (solo).
 			~automationSpeedEffets = [];
 			~listeFXTime = [];
 			~listEffets.size.do({arg i;
-				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', -12.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
+				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', -12.dbamp, 'pan', 0.0, 'control1', 0.5,  'control2', 0.5,  'control3', 0.5,  'control4', 0.5,  'control5', 0.5,  'control6', 0.5,  'control7', 0.5,  'control8', 0.5], ~groupeEffets, \addToTail));
 				~audioOutEffets=~audioOutEffets.add(0);
-				~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
+				~controlsSynthEffets=~controlsSynthEffets.add([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
 				~playSynthEffets=~playSynthEffets.add(0);
 				~panSynthEffets=~panSynthEffets.add(0.0);
 				~jitterPanSynthEffets=~jitterPanSynthEffets.add(0.1);
@@ -680,7 +682,7 @@ G                       Init Genome Agent (solo).
 							~sourceOutEffets.valueAction=0;
 							~effetsInstrMenu.valueAction_(0);
 							~playEffetsButton.valueAction_(0);
-							~controlsEffetsMenu.valueAction_([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
+							~controlsEffetsMenu.valueAction_([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
 							~panEffets.valueAction_(0);
 							~jitterPanEffets.valueAction_(0.1);
 							~ampEffets.valueAction_(-3);
@@ -761,7 +763,7 @@ G                       Init Genome Agent (solo).
 							~sourceOutEffets.valueAction=0;
 							~effetsInstrMenu.valueAction_(0);
 							~playEffetsButton.valueAction_(0);
-							~controlsEffetsMenu.valueAction_([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
+							~controlsEffetsMenu.valueAction_([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
 							~panEffets.valueAction_(0);
 							~jitterPanEffets.valueAction_(0.1);
 							~ampEffets.valueAction_(-3);
@@ -893,7 +895,7 @@ G                       Init Genome Agent (solo).
 			~differenceduree=0.03125;// interval minimum entre 2 durees analyse
 			~dureeaccord=0.0625;// interval min pour accord
 			~maxaccord=3;// accord maximum notes
-			~listedatasizein=6;// evenements max data audioIn et MidiIn
+			~listedatasizein=12;// evenements max data audioIn et MidiIn
 			~dureeanalysemax=4.0;//secondes
 			~tempsmaxsignal=4.0;// secondes
 			~indexwindow=0;//control panel = position 0 dans la liste
@@ -908,18 +910,18 @@ G                       Init Genome Agent (solo).
 			~trancheage=[0.18, 0.85];
 			~jeunesse=~dureeVieAgents - (~trancheage.wrapAt(0) * ~dureeVieAgents);
 			~vieilliesse=~dureeVieAgents - (~trancheage.wrapAt(1) * ~dureeVieAgents);
-			~distanceagents=~dat=0.125;
+			~distanceagents=~dat=0.25;
 			~distancesignaux=~dst=0.25;
 			~mutation=0.15;
 			~croisement=0.5;
 			~learning=0.075;
 			~naissance=0.5;
 			~listedatamusiqueagents=12;
-			~startpopulation=8;
-			~agents=8;
-			~maximumagents=16;
+			~startpopulation=6;
+			~agents=6;
+			~maximumagents=12;
 			~maximumabsoluagents=64;// Maximum absolu d'agents
-			~maximumenfants=2;
+			~maximumenfants=3;
 			~vitesseagents=1.0;//granulation temporelle de l'espace
 			~deviance=~dvt=0.0625;// % deviance signaux agents voisins
 			~paraAlgoAnalyseAudio=[[0.5, 0.5], [0.5, 0.5], [0.5, 0.5]];
@@ -1096,7 +1098,7 @@ G                       Init Genome Agent (solo).
 			~flagSynthMusiqueAutomation='off';
 			~flagRootAutomation='off';
 			~flagAS='SoundIn';
-			~antiClick=[0.33, 0.5];
+			~antiClick=[0.5, 0.5];
 			~geneSamplePopUpLow=0;
 			~geneSamplePopUpHigh=~displaySons.size - 1;
 			~geneSynthPopUpLow=0;
@@ -1388,7 +1390,7 @@ G                       Init Genome Agent (solo).
 			~valueRandomControlsSynth = 0;
 			~automationControlsSynth=[];
 			~automationJitterControlsSynth=[];
-			~controlsValues=[0.333, 0.333, 0.333];
+			~controlsValues=[0.5, 0.5, 0.5];
 			~listSynth.size.do({arg i;
 				~audioOutSynth=~audioOutSynth.add(0);
 				~controlsSynth=~controlsSynth.add(~controlsValues);
@@ -1732,10 +1734,10 @@ G                       Init Genome Agent (solo).
 			~automationSpeedEffets = [];
 			~listeFXTime = [];
 			~listEffets.size.do({arg i;
-				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
+				~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.5,  'control2', 0.5,  'control3', 0.5,  'control4', 0.5,  'control5', 0.5,  'control6', 0.5,  'control7', 0.5,  'control8', 0.5], ~groupeEffets, \addToTail));
 				s.sync;
 				~audioOutEffets=~audioOutEffets.add(0);
-				~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
+				~controlsSynthEffets=~controlsSynthEffets.add([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
 				~playSynthEffets=~playSynthEffets.add(0);
 				~panSynthEffets=~panSynthEffets.add(0.0);
 				~jitterPanSynthEffets=~jitterPanSynthEffets.add(0.1);
@@ -1764,10 +1766,10 @@ G                       Init Genome Agent (solo).
 			~automationSpeedVerb = [];
 			~listeVerbTime = [];
 			~listVerb.size.do({arg i;
-				~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeVerb, \addToTail));
+				~listSynthVerb=~listSynthVerb.add(Synth.newPaused(~listVerb.wrapAt(i).asString,['in', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.5,  'control2', 0.5,  'control3', 0.5,  'control4', 0.5,  'control5', 0.5,  'control6', 0.5,  'control7', 0.5,  'control8', 0.5], ~groupeVerb, \addToTail));
 				s.sync;
 				~audioOutVerb=~audioOutVerb.add(0);
-				~controlsSynthVerb=~controlsSynthVerb.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
+				~controlsSynthVerb=~controlsSynthVerb.add([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
 				~playSynthVerb=~playSynthVerb.add(0);
 				~panSynthVerb=~panSynthVerb.add(0.0);
 				~jitterPanSynthVerb=~jitterPanSynthVerb.add(0.1);
@@ -4430,7 +4432,7 @@ G                       Init Genome Agent (solo).
 		};
 		// Controls antiClick Synth (plugins hp)
 		~controlsAntiClickMenu=MultiSliderView(~wi, Rect(0, 0, 25, 50));
-		~controlsAntiClickMenu.value_([0.33, 0.5]);
+		~controlsAntiClickMenu.value_([0.5, 0.5]);
 		~controlsAntiClickMenu.fillColor_(Color.black);
 		~controlsAntiClickMenu.strokeColor_(Color.cyan);
 		~controlsAntiClickMenu.xOffset_(2);
@@ -4673,7 +4675,7 @@ G                       Init Genome Agent (solo).
 		~controlsEffetsMenu.drawRects_(true);
 		~controlsEffetsMenu.xOffset_(8);
 		~controlsEffetsMenu.thumbSize_(16);
-		~controlsEffetsMenu.value_([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25]);
+		~controlsEffetsMenu.value_([0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]);
 		~controlsEffetsMenu.elasticMode_(1);
 		~controlsEffetsMenu.action={arg controls;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~controlsEffetsMenu", controls.value)});
@@ -4768,7 +4770,7 @@ G                       Init Genome Agent (solo).
 		~controlsVerbMenu.drawRects_(true);
 		~controlsVerbMenu.xOffset_(8);
 		~controlsVerbMenu.thumbSize_(16);
-		~controlsVerbMenu.value_([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25]);
+		~controlsVerbMenu.value_([0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]);
 		~controlsVerbMenu.elasticMode_(1);
 		~controlsVerbMenu.action={arg controls;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~controlsVerbMenu", controls.value)});

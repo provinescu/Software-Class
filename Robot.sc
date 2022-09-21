@@ -6,13 +6,13 @@ Robot {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
-	*new {arg path="~/Documents/Robot/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
+	*new {arg path="~/Documents/Robot/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Robot";
 
-		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
 
 	}
 
-	init {arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
+	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -22,12 +22,12 @@ Robot {
 		if(File.exists(path).not) {systemCmd("mkdir" + path)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
-		s = Server.default;
+		Server.default = s = Server(name,NetAddr("localhost",57564), Server.default.options);
 
 		s = Server.default;
 		s.options.memSize = 2**20;
-		s.options.inDevice = devIn;
-		s.options.outDevice = devOut;
+		s.options.inDevice_(devIn);
+		s.options.outDevice_(devOut);
 		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
 		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
@@ -54,6 +54,7 @@ Robot {
 		Safety(s);
 		//Safety(s).enabled;
 		//Safety.setLimit(1.neg.dbamp);
+		s.makeGui;
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
@@ -324,7 +325,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~listenodeeffetsPostsynth=~listenodeeffetsPostsynth.add(0);
 				~lasteffetsPreindex=~lasteffetsPreindex.add(0);
 				~lasteffetsPostindex=~lasteffetsPostindex.add(0);
-				~dataseffetsPres=[];~fxPre.size.do({arg i;var datas;datas=[0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25];~dataseffetsPres=~dataseffetsPres.add(datas)});
+				~dataseffetsPres=[];~fxPre.size.do({arg i;var datas;datas=[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];~dataseffetsPres=~dataseffetsPres.add(datas)});
 				~synthcontrolvieweffetsPredatas=~synthcontrolvieweffetsPredatas.add(~dataseffetsPres);
 				~datasonoff=[];~fxPre.size.do({arg i;var datas=0;~datasonoff=~datasonoff.add(datas)});
 				~synthonoffeffetsPredatas=~synthonoffeffetsPredatas.add(~datasonoff);
@@ -337,7 +338,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~randomValueEffetPre=~randomValueEffetPre.add(x);
 				~randomValueEffetPanPre=~randomValueEffetPanPre.add(x.copy);
 				~dataseffetsPosts=[];x=[];
-				~fxPost.size.do({arg i;var datas;datas=[0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25];~dataseffetsPosts=~dataseffetsPosts.add(datas);
+				~fxPost.size.do({arg i;var datas;datas=[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];~dataseffetsPosts=~dataseffetsPosts.add(datas);
 					x=x.add(0)});
 				~synthcontrolvieweffetsPostdatas=~synthcontrolvieweffetsPostdatas.add(~dataseffetsPosts);
 				~randomValueEffetPost=~randomValueEffetPost.add(x);
@@ -1394,7 +1395,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~flagoutneuroneamp=~flagoutneuroneamp.add(0);
 				~flagoutneuroneduree=~flagoutneuroneduree.add(0);
 				~neuronemode=~neuronemode.add('off');
-				~neuroneapprentissage=~neuroneapprentissage.add(0.33);
+				~neuroneapprentissage=~neuroneapprentissage.add(0.5);
 				~neuronetemperature=~neuronetemperature.add(0.5);
 				~flagalgoinstrneuronefreq=~flagalgoinstrneuronefreq.add("NeuroneAlgo1");
 				~flagalgoinstrneuroneamp=~flagalgoinstrneuroneamp.add("NeuroneAlgo1");
@@ -1408,7 +1409,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~flaggenetiqueduree=~flaggenetiqueduree.add(0);
 				~differenceparents=~differenceparents.add(0.0);
 				~datassaveloadinstrument=~datassaveloadinstrument.add([]);
-				~dataseffetsPres=[];~fxPre.size.do({arg i;var datas;datas=[0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25];~dataseffetsPres=~dataseffetsPres.add(datas)});
+				~dataseffetsPres=[];~fxPre.size.do({arg i;var datas;datas=[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];~dataseffetsPres=~dataseffetsPres.add(datas)});
 				~synthcontrolvieweffetsPredatas=~synthcontrolvieweffetsPredatas.add(~dataseffetsPres);
 				~datasonoff=[];~fxPre.size.do({arg i;var datas=0;~datasonoff=~datasonoff.add(datas)});
 				~synthonoffeffetsPredatas=~synthonoffeffetsPredatas.add(~datasonoff);
@@ -1421,7 +1422,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~randomValueEffetPre=~randomValueEffetPre.add(x);
 				~randomValueEffetPanPre=~randomValueEffetPanPre.add(x.copy);
 				~dataseffetsPosts=[];x=[];
-				~fxPost.size.do({arg i;var datas;datas=[0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25];~dataseffetsPosts=~dataseffetsPosts.add(datas);
+				~fxPost.size.do({arg i;var datas;datas=[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];~dataseffetsPosts=~dataseffetsPosts.add(datas);
 					x=x.add(0)});
 				~synthcontrolvieweffetsPostdatas=~synthcontrolvieweffetsPostdatas.add(~dataseffetsPosts);
 				~randomValueEffetPost=~randomValueEffetPost.add(x);
@@ -2895,7 +2896,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// neurone apprentissage
 			~neuroneviewapprentissage=~neuroneviewapprentissage.add(EZSlider(w, 275 @ 18, "Neuron Learning", ControlSpec(0 , 1, \lin,0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~neuroneviewapprentissage",ez.value);~neuroneapprentissage.wrapPut(i,ez.value)},
-				0.33,labelWidth: 130,numberWidth: 40));
+				0.5,labelWidth: 130,numberWidth: 40));
 			// neurone temperature
 			~neuroneviewtemperature=~neuroneviewtemperature.add(EZSlider(w, 250 @ 18, "Neuron Temperature", ControlSpec(0.1 , 1, \lin,0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~neuroneviewtemperature",ez.value);~neuronetemperature.wrapPut(i,ez.value)},
@@ -3223,7 +3224,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~synthcontrolvieweffetsPredatas.wrapPut(i,~dataseffetsPres.value);
 				~lasteffetsPreindex.wrapPut(i,control.index);~syntheffetsPrenumber.wrapAt(i).value=control.currentvalue;
 			};
-			~synthcontrolvieweffetsPre.wrapAt(i).value_([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25]);
+			~synthcontrolvieweffetsPre.wrapAt(i).value_([0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]);
 			~synthcontrolvieweffetsPre.wrapAt(i).xOffset_(4);
 			~synthcontrolvieweffetsPre.wrapAt(i).thumbSize_(21);
 			~synthcontrolvieweffetsPre.wrapAt(i).strokeColor_(Color.cyan);
@@ -3248,7 +3249,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~dataseffetsPosts.wrapPut(~listenodeeffetsPostsynth.wrapAt(i).value,~synthcontrolvieweffetsPost.wrapAt(i).value);
 				~synthcontrolvieweffetsPostdatas.wrapPut(i,~dataseffetsPosts.value);
 				~lasteffetsPostindex.wrapPut(i,control.index);~syntheffetsPostnumber.wrapAt(i).value=control.currentvalue};
-			~synthcontrolvieweffetsPost.wrapAt(i).value_([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25]);
+			~synthcontrolvieweffetsPost.wrapAt(i).value_([0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]);
 			~synthcontrolvieweffetsPost.wrapAt(i).xOffset_(4);
 			~synthcontrolvieweffetsPost.wrapAt(i).thumbSize_(21);
 			~synthcontrolvieweffetsPost.wrapAt(i).strokeColor_(Color.cyan);
@@ -5544,7 +5545,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			tampon=datas.wrapAt(34);while({tampon.size < ~fxPre.size} , {tampon=tampon.add(-12)});
 			~synthampeffetsPrestepdatas.wrapPut(i,tampon.value);
 			tampon=datas.wrapAt(35);
-			while({tampon.size < ~fxPre.size} , {tampon=tampon.add([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25])});
+			while({tampon.size < ~fxPre.size} , {tampon=tampon.add([0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5])});
 			~synthcontrolvieweffetsPredatas.wrapPut(i,tampon);
 
 			//~synthcontrolvieweffetsPre.wrapAt(i).value_(tampon.value);
@@ -5577,7 +5578,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~synthpaneffetsPoststepdatas.wrapPut(i,tampon.value);
 			tampon=datas.wrapAt(42);while({tampon.size < ~fxPost.size} , {tampon=tampon.add(-12)});
 			~synthampeffetsPoststepdatas.wrapPut(i,tampon.value);
-			tampon=datas.wrapAt(43);while({tampon.size < ~fxPost.size} , {tampon=tampon.add([0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25])});
+			tampon=datas.wrapAt(43);while({tampon.size < ~fxPost.size} , {tampon=tampon.add([0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5])});
 			~synthcontrolvieweffetsPostdatas.wrapPut(i,tampon);
 			~syntheffetsPostcontrol.wrapAt(i).value_(datas.wrapAt(44).value);~listenodeeffetsPostsynth.wrapPut(i,datas.wrapAt(44).value);
 			~synthonoffeffetsPost.wrapAt(i).valueAction=datas.wrapAt(45).value;
