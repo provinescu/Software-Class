@@ -25,7 +25,7 @@ Time {
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
 		// Setup Server Options
-		Server.default = s = Server(name,NetAddr("localhost",57567), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",57567), Server.default.options);
 		s = Server.default;
 		s.options.memSize = 2 ** 20;
 		s.options.inDevice_(devIn);
@@ -55,7 +55,7 @@ Time {
 		Safety(s);
 		//Safety(s).enabled;
 		//Safety.setLimit(1.neg.dbamp);
-		s.makeGui;
+		//s.makeGui;
 
 		// Run the Soft
 		this.run;

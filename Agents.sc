@@ -28,9 +28,10 @@ Agents {
 		~recChannels = r;
 		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
-		Server.default = s = Server(name,NetAddr("localhost",57565), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",57565), Server.default.options);
 
 		s = Server.default;
+
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);
 		s.options.outDevice_(devOut);
@@ -52,7 +53,7 @@ Agents {
 		Safety(s);
 		//Safety(s).enabled;
 		//Safety.setLimit(1.neg.dbamp);
-		s.makeGui;
+		//s.makeGui;
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];

@@ -22,7 +22,7 @@ Robot {
 		if(File.exists(path).not) {systemCmd("mkdir" + path)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
-		Server.default = s = Server(name,NetAddr("localhost",57564), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",57564), Server.default.options);
 
 		s = Server.default;
 		s.options.memSize = 2**20;
@@ -54,7 +54,7 @@ Robot {
 		Safety(s);
 		//Safety(s).enabled;
 		//Safety.setLimit(1.neg.dbamp);
-		s.makeGui;
+		//s.makeGui;
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
