@@ -1303,7 +1303,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~synthcontrolviewlevelsdatas=~synthcontrolviewlevelsdatas.add([1,0])});
 			~numeroSynth=[];
 			// Par Instruments
-			~nombreinstrument.do({arg i;var x,y,z,w,n1,n2,g;
+			~nombreinstrument.do({arg i;
+				var x,y,z,w,n1,n2,g, b=[];
 				//init les variables de jeux indispensables
 				~differencefreq=~differencefreq.add(0.5);// intervalle minimum entre 2 freq (1 ton)
 				~differenceamp=~differenceamp.add((1));// intervalle maximum entre 2 amp (4db)
@@ -1465,7 +1466,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~rangeSynthBand = ~rangeSynthBand.add([1, 2, 3]); // 3 bands
 				~flagBandSynth = ~flagBandSynth.add([0,1,1,1,0,0,0,0,0,0,0,0,0]);
 				~flagSynthBand = ~flagSynthBand.add('off');
-				~bandFHZ = ~bandFHZ.add([0.0, 52.0, 80.0, 108.0, 127.0]);
+				//~bandFHZ = ~bandFHZ.add([0.0, 52.0, 80.0, 108.0, 127.0]);
+				//Array.fill(~numFhzBand, {arg i; 127 / ~numFhzBand * i + (127 / ~numFhzBand )});
+				~bandFHZ = ~bandFHZ.add([0.0, 42.333333333333, 84.666666666667, 127.0 ]);
 				~lastTimeBand = ~lastTimeBand.add([Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
 				// Tuning
 				~tuning = ~tuning.add(Tuning.et12);
@@ -2417,99 +2420,99 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					//New synth environment
 					"No Operate".postln;
 					/*Dialog.openPanel({ arg paths;
-						var p, file="List Synth.scd";
-						p = PathName.new(paths);
-						file = p.fileName;
-						p = p.pathOnly;
-						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
-							~initAllSynth.value(p, file);
-							s.sync;
-							~nombreinstrument.do({arg w; ~synthcontrol.wrapAt(w).items_(~listSynth)});
-							s.sync;
-							~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
-							s.sync;
-							//Document.listener.string="";
-							s.sync;
-							s.queryAllNodes;
-							s.sync;
-							Tdef.all.reset;
-							s.sync;
-						};
-				});*/
+					var p, file="List Synth.scd";
+					p = PathName.new(paths);
+					file = p.fileName;
+					p = p.pathOnly;
+					s.bind{
+					if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
+					~initAllSynth.value(p, file);
+					s.sync;
+					~nombreinstrument.do({arg w; ~synthcontrol.wrapAt(w).items_(~listSynth)});
+					s.sync;
+					~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
+					s.sync;
+					//Document.listener.string="";
+					s.sync;
+					s.queryAllNodes;
+					s.sync;
+					Tdef.all.reset;
+					s.sync;
+					};
+					});*/
 				},
 				{20}, {
 					//New sound environment
-					"No Operate".postln;
+					"Not Operate".postln;
 					/*Dialog.openPanel({ arg paths;
-						var p, file="List Sounds.scd";
-						p = PathName.new(paths);
-						file = p.fileName;
-						p = p.pathOnly;
-						s.bind{
-							if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
-							~nombrebuffer.do({arg i;
-								~listebuffer.wrapAt(i).free;
-								~busreclevel.wrapAt(i).free;
-							});
-							s.sync;
-							~nombreinstrument.do({arg i;
-								~bufferTampon.wrapAt(i).free;
-								~bufferAddTampon.wrapAt(i).free;
-								~nombrebuffer.do({arg b;
-									~listebufferTampon.wrapAt(i).wrapAt(b).free;
-								});
-							});
-							s.sync;
-							~groupeBuffer.deepFree;
-							s.sync;
-							~initAllSound.value(p, file);
-							s.sync;
-							~initAllBuffer.value;
-							s.sync;
-							~nombreinstrument.do({arg w; ~soncontrol.wrapAt(w).items_(~displaySons1); ~soncontrolfft.wrapAt(w).items_(~displaySons2)});
-							s.sync;
-							if(~flagEntreeMode == 'Audio IN', {~listesamplein = ~listesampleinAudio;
-								~audioIn.run(true);~audioFile.run(false);~synthPlayFile.run(false);
-								~nombrebuffer.do({arg i;
-									~listesampleinFile.wrapAt(i).set(\triggerRec, 0);
-									~listesampleinFile.wrapAt(i).run(false);
-									~listesampleinAudio.wrapAt(i).run(true);
-									~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value)});
-							},
-							{if(~flagEntreeMode == 'File IN',{~listesamplein = ~listesampleinFile;
-								~audioIn.run(false);~audioFile.run(true);~synthPlayFile.run(true);
-								~nombrebuffer.do({arg i;
-									~listesampleinAudio.wrapAt(i).run(false);
-									~listesampleinFile.wrapAt(i).run(true);
-									~listesampleinFile.wrapAt(i).set(\triggerRec, 1);
-									~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value)});
-							},
-							{~audioIn.run(false);~audioFile.run(false);~synthPlayFile.run(false);
-								~nombrebuffer.do({arg i;
-									~listesampleinAudio.wrapAt(i).run(false);//Init sampler
-									~listesampleinFile.wrapAt(i).set(\triggerRec, 0);
-									~listesampleinFile.wrapAt(i).run(false);//Init sampler
-							})})});
-							s.sync;
-							~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
-							s.sync;
-							//Document.listener.string="";
-							s.sync;
-							s.queryAllNodes;
-							s.sync;
-							Tdef.all.reset;
-							s.sync;
-						};
-				});*/
+					var p, file="List Sounds.scd";
+					p = PathName.new(paths);
+					file = p.fileName;
+					p = p.pathOnly;
+					s.bind{
+					if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
+					~nombrebuffer.do({arg i;
+					~listebuffer.wrapAt(i).free;
+					~busreclevel.wrapAt(i).free;
+					});
+					s.sync;
+					~nombreinstrument.do({arg i;
+					~bufferTampon.wrapAt(i).free;
+					~bufferAddTampon.wrapAt(i).free;
+					~nombrebuffer.do({arg b;
+					~listebufferTampon.wrapAt(i).wrapAt(b).free;
+					});
+					});
+					s.sync;
+					~groupeBuffer.deepFree;
+					s.sync;
+					~initAllSound.value(p, file);
+					s.sync;
+					~initAllBuffer.value;
+					s.sync;
+					~nombreinstrument.do({arg w; ~soncontrol.wrapAt(w).items_(~displaySons1); ~soncontrolfft.wrapAt(w).items_(~displaySons2)});
+					s.sync;
+					if(~flagEntreeMode == 'Audio IN', {~listesamplein = ~listesampleinAudio;
+					~audioIn.run(true);~audioFile.run(false);~synthPlayFile.run(false);
+					~nombrebuffer.do({arg i;
+					~listesampleinFile.wrapAt(i).set(\triggerRec, 0);
+					~listesampleinFile.wrapAt(i).run(false);
+					~listesampleinAudio.wrapAt(i).run(true);
+					~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value)});
+					},
+					{if(~flagEntreeMode == 'File IN',{~listesamplein = ~listesampleinFile;
+					~audioIn.run(false);~audioFile.run(true);~synthPlayFile.run(true);
+					~nombrebuffer.do({arg i;
+					~listesampleinAudio.wrapAt(i).run(false);
+					~listesampleinFile.wrapAt(i).run(true);
+					~listesampleinFile.wrapAt(i).set(\triggerRec, 1);
+					~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value)});
+					},
+					{~audioIn.run(false);~audioFile.run(false);~synthPlayFile.run(false);
+					~nombrebuffer.do({arg i;
+					~listesampleinAudio.wrapAt(i).run(false);//Init sampler
+					~listesampleinFile.wrapAt(i).set(\triggerRec, 0);
+					~listesampleinFile.wrapAt(i).run(false);//Init sampler
+					})})});
+					s.sync;
+					~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
+					s.sync;
+					//Document.listener.string="";
+					s.sync;
+					s.queryAllNodes;
+					s.sync;
+					Tdef.all.reset;
+					s.sync;
+					};
+					});*/
 				},
 				{21}, {
 					// New all environment
 					"No Operate".postln;
 					/*FileDialog.new({ arg path;
-						var p;
-						p = path.at(0).asString ++"/";
-						~nompathdata=PathName.new(p).pathOnly;
+					var p;
+					p = path.at(0).asString ++"/";
+					~nompathdata=PathName.new(p).pathOnly;
 					}, fileMode: 2);*/
 				},
 				// OSC Off
@@ -2947,7 +2950,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// Algo amp
 			~choixalgoviewamp=~choixalgoviewamp.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~algorithmesmusicauxamp);
 			~choixalgoviewamp.wrapAt(i).action = {arg algo;
-	~writepartitions.value(i,'normal','off',"~choixalgoviewamp",algo.value);~algoinstrumentamp.wrapPut(i,~algorithmesmusicauxamp.wrapAt(algo.value));
+				~writepartitions.value(i,'normal','off',"~choixalgoviewamp",algo.value);~algoinstrumentamp.wrapPut(i,~algorithmesmusicauxamp.wrapAt(algo.value));
 				if(algo.value == 1, {~flagalgoinstrneuroneamp.wrapPut(i,"NeuroneAlgo1")});
 				if(algo.value == 2, {~flagalgoinstrneuroneamp.wrapPut(i,"NeuroneAlgo2")})};
 			// Algo duree
@@ -3439,8 +3442,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~writepartitions.value(i,'normal','off',"~numberBand", ez.value);
 					band = ez.value;
 					~numFhzBand.put(i, band);
-					array = Array.fill(band, {arg i; 84 / band * i + 24 + (84 / band )});
-					array = array.add(127);
+					//array = Array.fill(band, {arg i; 84 / band * i + 24 + (84 / band )});
+					array = Array.fill(band, {arg i; 127 / band * i + (127 / band )});
+					//array = array.add(127);
 					array = array.reverse;
 					array = array.add(0);
 					array = array.reverse;
@@ -4929,9 +4933,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			});
 			// next F A D input
 			if(~commande == 'fadinnext' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
-			var index;
+				var index;
 				i=i-1;
-			index = ~choixdatasinfreqview.wrapAt(i).value;
+				index = ~choixdatasinfreqview.wrapAt(i).value;
 				if(index >= 7, {index = -1});
 				~choixdatasinfreqview.wrapAt(i).valueAction=index+1;
 				index = ~choixdatasinampview.wrapAt(i).value;
@@ -4946,7 +4950,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			if(~commande == 'fadinprevious' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
 				var index;
 				i=i-1;
-			index = ~choixdatasinfreqview.wrapAt(i).value;
+				index = ~choixdatasinfreqview.wrapAt(i).value;
 				if(index <= 0, {index = 8});
 				~choixdatasinfreqview.wrapAt(i).valueAction=index-1;
 				index = ~choixdatasinampview.wrapAt(i).value;

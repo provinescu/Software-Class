@@ -1122,8 +1122,9 @@ G                       Init Genome Agent (solo).
 			//FHZ Band System
 			~numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
 			// ~bandFHZ pour test dans OSC analyze 108-24 = 84 -->> range piano
-			~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
-			~bandFHZ = ~bandFHZ.add(127);
+			//~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
+			//~bandFHZ = ~bandFHZ.add(127);
+			~bandFHZ = Array.fill(~numFhzBand, {arg i; 127 / ~numFhzBand * i + (127 / ~numFhzBand )});
 			~bandFHZ = ~bandFHZ.reverse;
 			~bandFHZ = ~bandFHZ.add(0);
 			~bandFHZ = ~bandFHZ.reverse;
@@ -5065,8 +5066,9 @@ G                       Init Genome Agent (solo).
 			{|ez|
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~numberBand", ez.value)});
 				~numFhzBand = ez.value;
-				~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
-				~bandFHZ = ~bandFHZ.add(127);
+				//~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
+				//~bandFHZ = ~bandFHZ.add(127);
+				~bandFHZ = Array.fill(~numFhzBand, {arg i; 127 / ~numFhzBand * i + (127 / ~numFhzBand )});
 				~bandFHZ = ~bandFHZ.reverse;
 				~bandFHZ = ~bandFHZ.add(0);
 				~bandFHZ = ~bandFHZ.reverse;

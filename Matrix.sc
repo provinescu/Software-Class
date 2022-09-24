@@ -137,8 +137,9 @@ Matrix {
 		flagMemory = 'off';
 		numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
 		// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
-		bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-		bandFHZ = bandFHZ.add(127.midicps);
+		//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
+		//bandFHZ = bandFHZ.add(127.midicps);
+		bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
 		bandFHZ = bandFHZ.reverse;
 		bandFHZ = bandFHZ.add(0.midicps);
 		bandFHZ = bandFHZ.reverse;
@@ -1107,8 +1108,9 @@ y ... -					Musical keys.
 
 		fonctionInitBand = {arg band;
 			// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
-			bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-			bandFHZ = bandFHZ.add(127.midicps);
+			//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
+			//bandFHZ = bandFHZ.add(127.midicps);
+			bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
 			bandFHZ = bandFHZ.reverse;
 			bandFHZ = bandFHZ.add(0.midicps);
 			bandFHZ = bandFHZ.reverse;

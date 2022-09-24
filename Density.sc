@@ -158,8 +158,9 @@ Density {
 		flagFhzBand = 'off';
 		numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
 		// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
-		bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-		bandFHZ = bandFHZ.add(127.midicps);
+		//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
+		//bandFHZ = bandFHZ.add(127.midicps);
+		bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
 		bandFHZ = bandFHZ.reverse;
 		bandFHZ = bandFHZ.add(0.midicps);
 		bandFHZ = bandFHZ.reverse;
@@ -380,28 +381,28 @@ Density {
 			],
 			/*// FFT Pre
 			[
-				"FFTpvcollectPreBuf",
-				"FFTpvcalcPreBuf",
+			"FFTpvcollectPreBuf",
+			"FFTpvcalcPreBuf",
 			],
 			// FFT Pre Stream
 			[
-				"FFTpvcollectStreamPreBuf",
-				"FFTpvcalcStreamPreBuf",
+			"FFTpvcollectStreamPreBuf",
+			"FFTpvcalcStreamPreBuf",
 			],
 			// FFT Post
 			[
-				"FFTpvcollectPostBuf",
-				"FFTpvcalcPostBuf",
+			"FFTpvcollectPostBuf",
+			"FFTpvcalcPostBuf",
 			],
 			// FFT Post Stream
 			[
-				"FFTpvcollectStreamPostBuf",
-				"FFTpvcalcStreamPostBuf",
+			"FFTpvcollectStreamPostBuf",
+			"FFTpvcalcStreamPostBuf",
 			],
 			// FFT pvcalc2 2 buffer Pre Post
 			[
-				"FFTpvcalc2",
-				"FFTpvcalc2Stream",
+			"FFTpvcalc2",
+			"FFTpvcalc2Stream",
 			],*/
 			// Special
 			[
@@ -4239,8 +4240,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				memoryDataAmp = [];
 				memoryDataDuree = [];
 				lastTime = [];
-				bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-				bandFHZ = bandFHZ.add(127.midicps);
+				//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
+				//bandFHZ = bandFHZ.add(127.midicps);
+				bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
 				bandFHZ = bandFHZ.reverse;
 				bandFHZ = bandFHZ.add(0.midicps);
 				bandFHZ = bandFHZ.reverse;
@@ -7704,344 +7706,344 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// FFT Synth PreBuf
 
 		/*SynthDef("FFTpvcollectPreBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
-				freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, rate, envelope, fft;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
-				// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcollect(1024, {|mag, phase, bin, index|
-					//[mag, phase];
-					[mag, phase] / pi;
-					//[mag, phase].sqrt;
-					//[mag, 3.14.rand];
-					//[mag, LFNoise0.kr.range(0, 3.14)];
-					//[mag * Dseq([1, 0, 0, 1, 0, 1, 1, 0], 999999999999)]; // Can even use Demand ugens! One val demanded each frame
-					//[mag.sqrt, 3.14.rand];
-					if(index % [1,3,5,7].choose == 0, mag, 0); // Comb filter
-					//if(LFNoise0.kr(pi) > 0.5, mag, 0);
-					//mag + DelayN.kr(mag, flux * 100, LFPar.kr(pi).range(0.1, 1)); // Spectral delay
-					//if((index - LFPar.kr(0.1).range(2, 1024/20)).abs < 10, mag, 0); // Swept bandpass
-					//[mag * [1,0,0,0,1,0,0,1,0,1].wrapAt(index)];
-					//[mag * rrand(0,1), FSinOsc.kr(pi, 0, 1, pi)];
-					//[mag, FSinOsc.kr(pi, flatness, pi, pi)];
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
+		freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, rate, envelope, fft;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Envelope
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+		// Play Buffer
+		chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
+		// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcollect(1024, {|mag, phase, bin, index|
+		//[mag, phase];
+		[mag, phase] / pi;
+		//[mag, phase].sqrt;
+		//[mag, 3.14.rand];
+		//[mag, LFNoise0.kr.range(0, 3.14)];
+		//[mag * Dseq([1, 0, 0, 1, 0, 1, 1, 0], 999999999999)]; // Can even use Demand ugens! One val demanded each frame
+		//[mag.sqrt, 3.14.rand];
+		if(index % [1,3,5,7].choose == 0, mag, 0); // Comb filter
+		//if(LFNoise0.kr(pi) > 0.5, mag, 0);
+		//mag + DelayN.kr(mag, flux * 100, LFPar.kr(pi).range(0.1, 1)); // Spectral delay
+		//if((index - LFPar.kr(0.1).range(2, 1024/20)).abs < 10, mag, 0); // Swept bandpass
+		//[mag * [1,0,0,0,1,0,0,1,0,1].wrapAt(index)];
+		//[mag * rrand(0,1), FSinOsc.kr(pi, 0, 1, pi)];
+		//[mag, FSinOsc.kr(pi, flatness, pi, pi)];
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcalcPreBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
-				freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, rate, envelope, fft;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
-				// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcalc(1024, {|mags, phases|
-					//[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
-					//[mags.reverse, phases.reverse]; // Upside-down!
-					//[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
-					[mags[30..] ++ mags[..30], phases[30..] ++ phases[..30]]; // ".rotate" doesn't work directly, but this is equivalent
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=0, offset=0, reverse=1,
+		freq=440, amp=0, dur = 1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, rate, envelope, fft;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Envelope
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+		// Play Buffer
+		chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
+		// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcalc(1024, {|mags, phases|
+		//[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
+		//[mags.reverse, phases.reverse]; // Upside-down!
+		//[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
+		[mags[30..] ++ mags[..30], phases[30..] ++ phases[..30]]; // ".rotate" doesn't work directly, but this is equivalent
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcollectStreamPreBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, rate, envelope, fft, v;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Envelope
-				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
-				// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcollect(1024, {|mag, phase, bin, index|
-					//[mag, phase];
-					//[mag, phase] / 3;
-					  [mag, phase].tanh * pi;
-					//[mag, 3.14.rand];
-					//[mag, LFNoise0.kr.range(0, 3.14)];
-					//[mag * Dseq([1, 0, 0, 1, 1, 0, 1, 0].dupEach(8), 999999999999)]; // Can even use Demand ugens! One val demanded each frame
-					//[mag.sqrt, 3.14.rand];
-					//if(index % 7 == 0, mag, 0); // Comb filter
-					//if(LFNoise0.kr(flux * 100) > 0.5, mag, 0);
-					//mag + DelayN.kr(mag, 1, LFPar.kr(flux).range(0.1, 1)); // Spectral delay
-					//if((index - LFPar.kr(0.1).range(2, 1024/20)).abs < 10, mag, 0); // Swept bandpass
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, rate, envelope, fft, v;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Envelope
+		//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+		// Play Buffer
+		chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+		// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcollect(1024, {|mag, phase, bin, index|
+		//[mag, phase];
+		//[mag, phase] / 3;
+		[mag, phase].tanh * pi;
+		//[mag, 3.14.rand];
+		//[mag, LFNoise0.kr.range(0, 3.14)];
+		//[mag * Dseq([1, 0, 0, 1, 1, 0, 1, 0].dupEach(8), 999999999999)]; // Can even use Demand ugens! One val demanded each frame
+		//[mag.sqrt, 3.14.rand];
+		//if(index % 7 == 0, mag, 0); // Comb filter
+		//if(LFNoise0.kr(flux * 100) > 0.5, mag, 0);
+		//mag + DelayN.kr(mag, 1, LFPar.kr(flux).range(0.1, 1)); // Spectral delay
+		//if((index - LFPar.kr(0.1).range(2, 1024/20)).abs < 10, mag, 0); // Swept bandpass
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcalcStreamPreBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, rate, envelope, fft;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Envelope
-				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
-				// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcalc(1024, {|mags, phases|
-					//////// Try uncommenting each of these lines in turn and re-running the synth:
-					//[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
-					//[mags.reverse, phases.reverse]; // Upside-down!
-					[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
-					//[mags[30..] ++ mags[..30], phases[30..] ++ phases[..30]]; // ".rotate" doesn't work directly, but this is
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, ctrlHP1=0.5, ctrlHP2=0.5,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, rate, envelope, fft;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Envelope
+		//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+		// Play Buffer
+		chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+		// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcalc(1024, {|mags, phases|
+		//////// Try uncommenting each of these lines in turn and re-running the synth:
+		//[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
+		//[mags.reverse, phases.reverse]; // Upside-down!
+		[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
+		//[mags[30..] ++ mags[..30], phases[30..] ++ phases[..30]]; // ".rotate" doesn't work directly, but this is
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		// FFT Postbuf
 
 		SynthDef("FFTpvcollectPostBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead, fft;
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-				////BufWr.ar(inputSig, buffer, recHead, loop: 1);
-				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				//// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcollect(1024, {|mag, phase, index|
-					//////// Try uncommenting each of these lines in turn and re-running the synth:
-					//mag;
-					//[mag, phase];
-					//[mag, phase] / 3;
-					//[mag, phase].sqrt;
-					//[mag, 3.14.rand];
-					//[mag, LFNoise0.kr.range(0, 3.14)];
-					//[mag * Dseq([1, 0, 0, 1, 1, 0, 1, 0].dupEach(8), 999999999999)]; // Can even use Demand ugens! One val demanded each frame
-					//[mag.sqrt, 3.14.rand];
-					if(index % [1,3,5,7].choose == 0, mag, 0); // Comb filter
-					//if(LFNoise0.kr(10) > flux, mag, 0);
-					//mag + DelayN.kr(mag, 1, LFPar.kr(0.5).range(0.1, 1);); // Spectral delay
-					//if((index - LFPar.kr(flux).range(2, 1024/20)).abs < 7, mag, 0); // Swept bandpass
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, inputSig, rate, envelope, recHead, fft;
+		// Buffer
+		buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+		inputSig = In.ar(in);
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+		////BufWr.ar(inputSig, buffer, recHead, loop: 1);
+		RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+		// Envelope
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+		// Play Buffer
+		chain = HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
+		//// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcollect(1024, {|mag, phase, index|
+		//////// Try uncommenting each of these lines in turn and re-running the synth:
+		//mag;
+		//[mag, phase];
+		//[mag, phase] / 3;
+		//[mag, phase].sqrt;
+		//[mag, 3.14.rand];
+		//[mag, LFNoise0.kr.range(0, 3.14)];
+		//[mag * Dseq([1, 0, 0, 1, 1, 0, 1, 0].dupEach(8), 999999999999)]; // Can even use Demand ugens! One val demanded each frame
+		//[mag.sqrt, 3.14.rand];
+		if(index % [1,3,5,7].choose == 0, mag, 0); // Comb filter
+		//if(LFNoise0.kr(10) > flux, mag, 0);
+		//mag + DelayN.kr(mag, 1, LFPar.kr(0.5).range(0.1, 1);); // Spectral delay
+		//if((index - LFPar.kr(flux).range(2, 1024/20)).abs < 7, mag, 0); // Swept bandpass
 
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft) * envelope;
-				// Out
-				Out.ar(out, chain);
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft) * envelope;
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcalcPostBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead, fft;
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-				////BufWr.ar(inputSig, buffer, recHead, loop: 1);
-				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
-				//// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcalc(1024, {|mags, phases|
-					//////// Try uncommenting each of these lines in turn and re-running the synth:
-					[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
-					//[mags.reverse, phases.reverse]; // Upside-down!
-					//[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
-					//[mags[32..] ++ mags[..32], phases[15..] ++ phases[..15]]; // ".rotate" doesn't work directly, but this is equivalent
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, inputSig, rate, envelope, recHead, fft;
+		// Buffer
+		buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+		inputSig = In.ar(in);
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+		////BufWr.ar(inputSig, buffer, recHead, loop: 1);
+		RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+		// Envelope
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+		// Play Buffer
+		chain = HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
+		//// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcalc(1024, {|mags, phases|
+		//////// Try uncommenting each of these lines in turn and re-running the synth:
+		[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
+		//[mags.reverse, phases.reverse]; // Upside-down!
+		//[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
+		//[mags[32..] ++ mags[..32], phases[15..] ++ phases[..15]]; // ".rotate" doesn't work directly, but this is equivalent
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcollectStreamPostBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, fft;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
-				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-				//BufWr.ar(inputSig, buffer, recHead, loop: 1);
-				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
-				// Envelope
-				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
-				// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcollect(1024, {|mag, phase, index|
-					//////// Try uncommenting each of these lines in turn and re-running the synth:
-					//mag;
-					//[mag, phase];
-					//[mag, phase] / 3;
-					//[mag, phase].sqrt;
-					[mag, 3.14.rand];
-					//[mag, LFNoise0.kr.range(0, 3.14)];
-					//[mag * Dseq([1, 0, 0, 1, 1, 0, 1, 0].dupEach(8), 999999999999)]; // Can even use Demand ugens! One val demanded each frame
-					//[mag.sqrt, 3.14.rand];
-					//if(index % 7 == 0, mag, 0); // Comb filter
-					//if(LFNoise0.kr(10) > 0.5, mag, 0);
-					//mag + DelayN.kr(mag, 1, v); // Spectral delay
-					//if((index - LFPar.kr(0.1).range(2, 1024/20)).abs < 10, mag, 0); // Swept bandpass
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, inputSig, rate, recHead=0, playHead=0, envelope, fft;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Buffer
+		buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+		inputSig = In.ar(in);
+		playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
+		recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+		//BufWr.ar(inputSig, buffer, recHead, loop: 1);
+		RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+		// Envelope
+		//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+		// Play Buffer
+		chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+		// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcollect(1024, {|mag, phase, index|
+		//////// Try uncommenting each of these lines in turn and re-running the synth:
+		//mag;
+		//[mag, phase];
+		//[mag, phase] / 3;
+		//[mag, phase].sqrt;
+		[mag, 3.14.rand];
+		//[mag, LFNoise0.kr.range(0, 3.14)];
+		//[mag * Dseq([1, 0, 0, 1, 1, 0, 1, 0].dupEach(8), 999999999999)]; // Can even use Demand ugens! One val demanded each frame
+		//[mag.sqrt, 3.14.rand];
+		//if(index % 7 == 0, mag, 0); // Comb filter
+		//if(LFNoise0.kr(10) > 0.5, mag, 0);
+		//mag + DelayN.kr(mag, 1, v); // Spectral delay
+		//if((index - LFPar.kr(0.1).range(2, 1024/20)).abs < 10, mag, 0); // Swept bandpass
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcalcStreamPostBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, fft;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
-				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-				//BufWr.ar(inputSig, buffer, recHead, loop: 1);
-				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
-				// Envelope
-				//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
-				// FFT
-				fft = FFT(LocalBuf(1024), chain);
-				fft = fft.pvcalc(1024, {|mags, phases|
-					//////// Try uncommenting each of these lines in turn and re-running the synth:
-					[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
-					//[mags.reverse, phases.reverse]; // Upside-down!
-					//[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
-					//[mags[30..] ++ mags[..30], phases[30..] ++ phases[..30]]; // ".rotate" doesn't work directly, but this is equivalent
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(fft);
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, inputSig, rate, recHead=0, playHead=0, envelope, fft;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Buffer
+		buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+		inputSig = In.ar(in);
+		playHead = Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset);
+		recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
+		//BufWr.ar(inputSig, buffer, recHead, loop: 1);
+		RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+		// Envelope
+		//envelope = EnvGen.kr(Env.adsr(0.01, 0.3, 0.6, 1, 1, -4, 0), gate, 1, 0, durSynth.max(1), 2);
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+		// Play Buffer
+		chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+		// FFT
+		fft = FFT(LocalBuf(1024), chain);
+		fft = fft.pvcalc(1024, {|mags, phases|
+		//////// Try uncommenting each of these lines in turn and re-running the synth:
+		[mags * {1.5.rand}.dup(mags.size), phases + {pi.rand}.dup(phases.size)]; // Arbitrary filter, arbitrary phase shift
+		//[mags.reverse, phases.reverse]; // Upside-down!
+		//[mags.differentiate, phases.differentiate]; // Differentiate along frequency axis
+		//[mags[30..] ++ mags[..30], phases[30..] ++ phases[..30]]; // ".rotate" doesn't work directly, but this is equivalent
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(fft);
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		// FFT pvcalc 2 buffer
 
 		SynthDef("FFTpvcalc2",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
-				// Normalize
-				flux = flux.clip(0.01, 1.0).lag(durSynth);
-				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				// Buffer
-				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				// FFT
-				fft1 = FFT(LocalBuf(1024, 1), in1);
-				fft2 = FFT(LocalBuf(1024, 1), in2);
-				chain = fft1.pvcalc2(fft2, 1024, { |mags, phases, mags2, phases2|
-					[
-						mags,
-						phases2
-					]
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(chain) * envelope * amp;
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
+		// Normalize
+		flux = flux.clip(0.01, 1.0).lag(durSynth);
+		flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+		// Buffer
+		postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+		inputSig = In.ar(in);
+		recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
+		BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Envelope
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+		// Play Buffer
+		in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
+		in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
+		// FFT
+		fft1 = FFT(LocalBuf(1024, 1), in1);
+		fft2 = FFT(LocalBuf(1024, 1), in2);
+		chain = fft1.pvcalc2(fft2, 1024, { |mags, phases, mags2, phases2|
+		[
+		mags,
+		phases2
+		]
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(chain) * envelope * amp;
+		// Out
+		Out.ar(out, chain);
 		}).add;
 
 		SynthDef("FFTpvcalc2Stream",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
-				// Buffer
-				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
-				//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
-				RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				// FFT
-				fft1 = FFT(LocalBuf(1024, 1), in1);
-				fft2 = FFT(LocalBuf(1024, 1), in2);
-				chain = fft1.pvcalc2(fft2, 1024, { |mags, phases, mags2, phases2|
-					[
-						(mags - mags2).abs,
-						(phases2 - phases).abs
-					]
-				}, frombin: 0, tobin: 256, zeroothers: 0);
-				chain = IFFT(chain) * envelope * amp;
-				// Out
-				Out.ar(out, chain);
+		{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+		freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+		flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, postBuffer, inputSig, rate, envelope, recHead, in1, in2, fft1, fft2;
+		// Buffer
+		postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+		inputSig = In.ar(in);
+		recHead = Phasor.ar(0, BufRateScale.kr(postBuffer), 0, BufFrames.kr(postBuffer));
+		//BufWr.ar(inputSig, postBuffer, recHead, loop: 1);
+		RecordBuf.ar(inputSig, postBuffer, offset: 0, recLevel: level1, preLevel:level2, run: 1, loop: 1, trigger: 1);
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+		// Envelope
+		envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+		// Play Buffer
+		in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+		in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
+		// FFT
+		fft1 = FFT(LocalBuf(1024, 1), in1);
+		fft2 = FFT(LocalBuf(1024, 1), in2);
+		chain = fft1.pvcalc2(fft2, 1024, { |mags, phases, mags2, phases2|
+		[
+		(mags - mags2).abs,
+		(phases2 - phases).abs
+		]
+		}, frombin: 0, tobin: 256, zeroothers: 0);
+		chain = IFFT(chain) * envelope * amp;
+		// Out
+		Out.ar(out, chain);
 		}).add;*/
 
 		//////////////////////////// FX //////////////////////////////////////
