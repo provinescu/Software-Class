@@ -3464,6 +3464,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					~lastTimeBand.put(i, [Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
 					~listeaudiofreq.wrapPut(i,[]);~listeaudioamp.wrapPut(i,[]);~listeaudioduree.wrapPut(i,[]);~freqtampon.wrapPut(i,nil);~amptampon.wrapPut(i,nil);~freqbefore.wrapPut(i,0);~ampbefore.wrapPut(i,0);~dureebefore.wrapPut(i,0);~lastTimeAudio = Main.elapsedTime;~lastDureeInstrAudio.wrapPut(i, Main.elapsedTime);
+					~rangeBand.at(i).value = array.round(2);
 			}, 12, layout: \horz);
 			);
 			// SynthBand 88 to 98
@@ -3597,6 +3598,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							});
 					});
 				};
+			);
+			//Range Band
+			~rangeBand = ~rangeBand.add(EZText(w, Rect(0, 0, 260, 20), "Range Band",
+			{arg range; ~bandFHZ.put(i, range.value)},
+			[0.0, 42.33, 84.66, 127.0 ], true, 60);
 			);
 			w.view.decorator.nextLine;
 			StaticText(w, Rect(0,0, 50, 18)).string_("Tuning").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 10));
@@ -5662,11 +5668,11 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~midibutton.wrapAt(i).value = (datas.wrapAt(90).value);
 			// Band
 			~numFhzBand.wrapPut(i,datas.wrapAt(91).value);
+			~numberBand.wrapAt(i).valueAction_(datas.wrapAt(91).value);
 			~bandFHZ.wrapPut(i,datas.wrapAt(92).value);
 			~flagSynthBand.wrapPut(i,datas.wrapAt(93).value);
 			~flagBandSynth.wrapPut(i,datas.wrapAt(94).value);
 			~rangeSynthBand.wrapPut(i,datas.wrapAt(95).value);
-			~numberBand.wrapAt(i).valueAction_(datas.wrapAt(91).value);
 			if(datas.wrapAt(93).value == 'on', {~buttonSynthBand.wrapAt(i).valueAction_(1)},
 				{~buttonSynthBand.wrapAt(i).valueAction_(0)});
 			for(0, ~numFhzBand.at(i), {arg index;

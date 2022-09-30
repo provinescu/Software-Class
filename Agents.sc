@@ -5,7 +5,7 @@ Agents {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand;
 
 	*new	{arg path="~/Documents/Agents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Agents";
 
@@ -4308,6 +4308,7 @@ G                       Init Genome Agent (solo).
 					});
 				},
 				{~flagGeneBand = 'on';
+					~buttonSynthBand.valueAction = 0;
 					for(0, ~numFhzBand,
 						{arg index;
 							~wg.view.children.wrapAt(58 + index).enabled_(true);
@@ -5088,6 +5089,7 @@ G                       Init Genome Agent (solo).
 							~wg.view.children.wrapAt(58 + index).valueAction_(0);// gene
 					});
 				});
+				rangeBand.value = ~bandFHZ.round(2);
 		}, 12, layout: \horz);
 		// SynthBand
 		// Band 0 to 12
@@ -5180,6 +5182,7 @@ G                       Init Genome Agent (solo).
 					~synthBand12.enabled_(false);
 				},
 				{~flagSynthBand = 'on';
+					~buttonGeneBand.valueAction = 0;
 					//~numberBand.enabled_(true);
 					for(0, ~numFhzBand,
 						{arg index;
@@ -5404,7 +5407,7 @@ G                       Init Genome Agent (solo).
 		StaticText(~wp, Rect(10,10, 150, 20)).string_("Tuning").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
 		~wp.view.decorator.nextLine;
 		// Tuning Analyze
-		~listTuning = PopUpMenu(~wp, Rect(0, 0, 130, 20)).
+		~listTuning = PopUpMenu(~wp, Rect(0, 0, 110, 20)).
 		items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
 		action = {arg item;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~listTuning", item.value)});
@@ -5519,11 +5522,15 @@ G                       Init Genome Agent (solo).
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~rootChoice", ez.value)});
 				~root = ez.value; ~scale=Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning)}, 0, layout: \horz, labelWidth: 30);
 		// Degrees
-		~displayDegrees = EZText(~wp, Rect(0, 0, 475, 20), "Degrees",
+		~displayDegrees = EZText(~wp, Rect(0, 0, 415, 20), "Degrees",
 			{arg string;
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~displayDegrees", string.value)});
 				~degrees = string.value; ~scale=Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning)},
 			~degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
+		//Range Band
+		rangeBand = EZText(~wp, Rect(0, 0, 400, 20), "Range Band",
+			{arg range; ~bandFHZ = range.value},
+			[0.0, 42.33, 84.66, 127.0 ], true, 70);
 		~wp.view.decorator.nextLine;
 
 		StaticText(~wp, Rect(10,10, 150, 20)).string_("Mean State System").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
@@ -6487,6 +6494,12 @@ G                       Init Genome Agent (solo).
 				if(number == 22, {
 					if(~flagGeneChordDur=='on', {~geneChordDurButton.valueAction_(0)},{~geneChordDurButton.valueAction_(1)});
 				});
+				if(number == 23, {
+					if(~flagGeneChordDur=='on', {~geneChordDurButton.valueAction_(0)},{~geneChordDurButton.valueAction_(1)});
+				});
+				if(number == 24, {
+					if(~flagGeneChordDur=='on', {~geneChordDurButton.valueAction_(0)},{~geneChordDurButton.valueAction_(1)});
+				});
 			});
 			// Switch SynthDef
 			if(commande=='switch synthDef', {
@@ -7084,10 +7097,12 @@ G                       Init Genome Agent (solo).
 			datafile=datafile.add(~speedVerb.value);//207
 			datafile=datafile.add(~automationSpeedVerb);//208
 			datafile=datafile.add(~flagRootAutomation);//209
+			// Range Band
+			datafile=datafile.add(rangeBand.value);//210
 			// + Genome
-			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//210
+			if(flagGenome == 'on', {datafile=datafile.add(~genomes)});//211
 			// + Sequence
-			if(flagSequence == 'on', {datafile=datafile.add([~listeagentfreq,~listeagentamp,~listeagentduree])});//211
+			if(flagSequence == 'on', {datafile=datafile.add([~listeagentfreq,~listeagentamp,~listeagentduree])});//212
 			datafile.value;
 		};
 
@@ -7463,13 +7478,14 @@ G                       Init Genome Agent (solo).
 			~speedEffets.valueAction_(datafile.wrapAt(205));
 			~speedVerb.valueAction_(datafile.wrapAt(207));
 			~flagRootAutomation=datafile.wrapAt(209);if(~flagRootAutomation=='on',{~rootAutomation.valueAction_(1)},{~rootAutomation.valueAction_(0)});
-			// + Genome (210) + Sequence (211)
-			if(flagGenome == 'on' and: {datafile.wrapAt(210).size != 0}, {
-				~genomes=datafile.wrapAt(210);// Load Genomes
+			rangeBand.valueAction = datafile.wrapAt(210);
+			// + Genome (211) + Sequence (212)
+			if(flagGenome == 'on' and: {datafile.wrapAt(211).size != 0}, {
+				~genomes=datafile.wrapAt(211);// Load Genomes
 				~startpopulation = ~agents = ~genomes.size;
 				~foncInitAgents.value;
-				~genomes=datafile.wrapAt(210); // Load Genomes again for INIT
-				if(flagSequence == 'on' and: {datafile.wrapAt(211).wrapAt(0).size != 0}, {sequence=datafile.wrapAt(211);~listeagentfreq=sequence.wrapAt(0);~listeagentamp=sequence.wrapAt(1);~listeagentduree=sequence.wrapAt(2)}, {flagSequence='off'})},
+				~genomes=datafile.wrapAt(211); // Load Genomes again for INIT
+				if(flagSequence == 'on' and: {datafile.wrapAt(211).wrapAt(0).size != 0}, {sequence=datafile.wrapAt(212);~listeagentfreq=sequence.wrapAt(0);~listeagentamp=sequence.wrapAt(1);~listeagentduree=sequence.wrapAt(2)}, {flagSequence='off'})},
 			{~foncInitAgents.value});
 		};
 
