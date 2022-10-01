@@ -1387,7 +1387,7 @@ y ... -					Musical keys.
 									// Setup Automation Preset
 									fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroid, flatness, energy, flux);
 									// Display Data on Control Panel
-									displayOSC.setString("Fhz:" + freq.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
+									displayOSC.setString("Fhz:" + freq.cpsmidi.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
 								}.defer;
 						});
 						dureeOSCdata = Main.elapsedTime;
@@ -1484,7 +1484,7 @@ y ... -					Musical keys.
 							// Setup Automation Preset
 							fonctionAutomationPreset.value(listeDataOSC.at(0), freqCentroid, flatness, energy, flux);
 							// Display Data on Control Panel
-							displayOSC.setString("Fhz:" + freq.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
+							displayOSC.setString("Fhz:" + freq.cpsmidi.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (tempo * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + freqCentroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
 						}.defer;
 						dureeOSCdata = Main.elapsedTime;
 					},
@@ -1510,7 +1510,7 @@ y ... -					Musical keys.
 						if(flagSystemBPM == 3, {tempoMIDI = oscTempoMaster});
 						{
 							// Display Data on Control Panel
-							displayOSC.setString("Fhz:" + freqMIDI.asString + "\n" ++ "Amp:" + ampMIDI.asString + "\n" ++ "Dur:" + dureeMIDI.asString + "\n" ++ "Bpm:" + (tempoMIDI * 60).asString + "\n" ++ "Flx:" + fluxMIDI.asString + "\n" ++ "Fla:" +  flatnessMIDI.asString + "\n" ++ "Fhc:" + freqCentroidMIDI.asString + "\n" ++ "Fhe:" + energyMIDI.asString + "\n", 0, 500);
+							displayOSC.setString("Fhz:" + freqMIDI.cpsmidi.asString + "\n" ++ "Amp:" + ampMIDI.asString + "\n" ++ "Dur:" + dureeMIDI.asString + "\n" ++ "Bpm:" + (tempoMIDI * 60).asString + "\n" ++ "Flx:" + fluxMIDI.asString + "\n" ++ "Fla:" +  flatnessMIDI.asString + "\n" ++ "Fhc:" + freqCentroidMIDI.asString + "\n" ++ "Fhe:" + energyMIDI.asString + "\n", 0, 500);
 						}.defer;
 						dureeOSCdata = Main.elapsedTime;
 					},
