@@ -7648,7 +7648,7 @@ G                       Init Genome Agent (solo).
 					input= SoundIn.ar(in);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -7741,7 +7741,7 @@ G                       Init Genome Agent (solo).
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(2048, 1), input);
 					centroid = SpecCentroid.kr(fft);

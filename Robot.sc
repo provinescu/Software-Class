@@ -5934,7 +5934,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5995,7 +5995,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter,filtre, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Convertir hertz en midi puis entre (0 et 1) !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
