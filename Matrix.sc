@@ -999,7 +999,7 @@ y ... -					Musical keys.
 		fonctionSaveControl = {arg window;
 			var data=[];
 			window.view.children.do({arg view, item;
-				var arrayData=[], subArrayData=[], subType;
+				var arrayData=[], subArrayData=[];
 				// StaticText + TextView
 				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 29} or: {item == 31} or: {item == 32},
 					{data = data.add(view.string)});
@@ -1013,17 +1013,21 @@ y ... -					Musical keys.
 				// All others Sliders
 				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 8} or: {item == 11} or: {item == 12} or: {item == 13} or: {item == 14} or: {item == 15} or: {item == 30} or: {item == 33} or: {item == 34},
 					{data = data.add(view.value)});
-				// Range Band
-				if(item == 36, {data = data.add(rangeBand.value);
-				});
 			});
 			// Sortie Fonction Save Control
 			data.value;
 		};
 
 		fonctionLoadControl = {arg window, data=[];
+			var bpm;
 			windowControl.view.children.do({arg view, item;
-				var arrayData=[], subArrayData=[], fhzBand;
+				var arrayData=[], subArrayData=[];
+				// BPM
+				if(item == 7, {
+					view.children.do({arg subView, subItem;
+						if(subItem == 0, {nil},
+							{bpm = data.at(item).at(subItem).value})});
+				});
 				// StaticText
 				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 29} or: {item == 31} or: {item == 32}, // or: {item == 30} or: {item == 33} or: {item == 34},
 					{nil});
@@ -1040,9 +1044,9 @@ y ... -					Musical keys.
 				// No Action
 				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33},
 					{nil});
-				// Range Band
-				if(item == 36, {rangeBand.value_(data.at(item).value)});
 			});
+			// Set BPM
+			bpmSlider.valueAction = bpm;
 		};
 
 		fonctionSaveControlSynth = {arg window;
