@@ -4945,7 +4945,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				input = In.ar(busIn);
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);
-				# freqIn, hasfreqIn = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+				# freqIn, hasfreqIn = Tartini.kr(inputFilter);//, filtre, 2048, 1024, 512, 0.5);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
