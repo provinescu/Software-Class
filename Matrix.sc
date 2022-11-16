@@ -4,7 +4,7 @@ Matrix {
 
 	classvar  < s;
 
-	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreqTrans, previousDureeTrans, previousDureeQuanta, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, previousRoot, controlRootSlider;
+	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider;
 
 	*new	{arg path="~/Documents/Matrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Matrix";
 
@@ -1053,61 +1053,50 @@ y ... -					Musical keys.
 			bpmSlider.valueAction = bpm;
 		};
 
-		fonctionSaveControl = {arg window;
+		fonctionSaveControlSynth = {arg window;
 			var data=[];
 			window.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
-				// StaticText + TextView
-				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 29} or: {item == 31} or: {item == 32},
-					{data = data.add(view.string)});
 				// EZSlider
 				arrayData=[];
-				if(item == 7 or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 27} or: {item == 28} or: {item == 35},
+				if(item == 2 or: {item == 5} or: {item == 6} or: {item == 7},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)},
 							{arrayData=arrayData.add(subView.value)})});
 					data = data.add(arrayData)});
-				// All others Sliders
-				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 8} or: {item == 11} or: {item == 12} or: {item == 13} or: {item == 14} or: {item == 15} or: {item == 30} or: {item == 33} or: {item == 34},
-					{data = data.add(view.value)});
-				// Range Band
-				if(item == 36, {data = data.add(rangeBand.value)});
+				// EZRanger
+				arrayData=[];
+				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4},
+					{view.children.do({arg subView, subItem;
+						if(subItem == 0, {arrayData=arrayData.add(subView.string)});
+						if(subItem == 1 or: {subItem == 3}, {arrayData=arrayData.add(subView.value)});
+						if(subItem == 2, {subArrayData=subArrayData.add		(subView.lo);subArrayData=subArrayData.add(subView.hi);
+							arrayData=arrayData.add(subArrayData)})});
+					data = data.add(arrayData)});
 			});
 			// Sortie Fonction Save Control
 			data.value;
 		};
 
-		fonctionLoadControl = {arg window, data=[];
-			var bpm;
-			windowControl.view.children.do({arg view, item;
+		fonctionLoadControlSynth = {arg window, data=[];
+			window.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
-				// BPM
-				if(item == 7, {
-					view.children.do({arg subView, subItem;
-						if(subItem == 0, {nil},
-							{bpm = data.at(item).at(subItem).value})});
-				});
-				// StaticText
-				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 29} or: {item == 31} or: {item == 32}, // or: {item == 30} or: {item == 33} or: {item == 34},
-					{nil});
 				// EZSlider
 				arrayData=[];
-				if(item == 21 or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 27} or: {item == 28}  or: {item == 35} or: {item == 7} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 34},
+				if(item == 2 or: {item == 5} or: {item == 6} or: {item == 7},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
 				});
-				// All others Sliders
-				if(item == 13 or: {item == 8} or: {item == 14} or: {item == 15},
-					{view.valueAction_(data.at(item).value)});
-				// No Action
-				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33},
-					{nil});
-				// Range Band
-				if(item == 36, {rangeBand.valueAction = data.at(item).value});
+				// EZRanger
+				arrayData=[];
+				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4},
+					{view.children.do({arg subView, subItem;
+						if(subItem == 0, {nil});
+						if(subItem == 1 or: {subItem == 3}, {subView.valueAction_(data.at(item).at(subItem).value)});
+						if(subItem == 2, {subView.range(data.at(item).at(subItem).value)})});
+				});
 			});
-			// Set BPM
-			bpmSlider.valueAction = bpm;
 		};
 
 		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2;
@@ -1927,19 +1916,15 @@ y ... -					Musical keys.
 					controlFreqSlider.valueAction_([0, 127]);
 					previousFreq = [0, 127];
 					controlFreqTranSlider.valueAction_(0);
-					previousFreqTrans = 0;
 					controlDureeSlider.valueAction_([0, 1]);
 					previousDuree = [0, 1];
 					controlDureeTranSlider.valueAction_(1);
-					previousDureeTrans = 1;
 					controlQuantaSlider.valueAction_(0);
-					previousDureeQuanta = 0;
 					previousPan = [-1, 1];
 					controlPanSlider.valueAction_([-1, 1]);
 					previousAmp = [-inf, 0];
 					controlAmpSlider.valueAction_([-inf, 0]);
 					controlRootSlider.valueAction_(0);
-					previousRoot = 0;
 				});
 				// key alt + i -> Clear musical data
 				if(modifiers==524288 and: {unicode==108} and: {keycode==37},{
@@ -2603,13 +2588,10 @@ y ... -					Musical keys.
 			});
 		},[0, 127],labelWidth: 85, numberWidth: 50);
 		// Freq T
-		previousFreqTrans = 0;
-		controlFreqTranSlider=EZSlider(windowControlSynth, 390 @ 20, "FreqTranspose", ControlSpec(-127, 127, \lin, 0), {|ez| var val;
-			val = (ez.value - previousFreqTrans / 127).clip(-1, 1);
-			previousFreqTrans = ez.value;
+		controlFreqTranSlider=EZSlider(windowControlSynth, 390 @ 20, "FreqTranspose", ControlSpec(-127, 127, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(40).children.do({arg subView, subItem;
-					if(subItem == 1, {subView.valueAction_(subView.value + (val / 2))});
+					if(subItem == 2, {subView.valueAction_(subView.value + ez.value)});
 				});
 			});
 		}, 0, labelWidth: 85, numberWidth: 50);
@@ -2640,36 +2622,27 @@ y ... -					Musical keys.
 				});
 		},[0, 1],labelWidth: 85, numberWidth: 50);
 		// Duree T
-		previousDureeTrans = 1;
-		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 390 @ 20, "Dur Stretch", ControlSpec(-100, 100, \lin, 0), {|ez| var val;
-			val = (ez.value - previousDureeTrans / 100).clip(-1, 1);
-			previousDureeTrans = ez.value;
+		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 390 @ 20, "Dur Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(43).children.do({arg subView, subItem;
-					if(subItem == 1, {subView.valueAction_(subView.value + (val / 2))});
+					if(subItem == 2, {subView.valueAction_(subView.value + ez.value)});
 				});
 			});
 		}, 1, labelWidth: 85, numberWidth: 50);
 		// Quantization
-		previousDureeQuanta = 0;
-		controlQuantaSlider=EZSlider(windowControlSynth, 390 @ 20, "Quant",ControlSpec(-100, 100, \lin, 0), {|ez| var val;
-			val = (ez.value - previousDureeQuanta / 100).clip(-1, 1);
-			previousDureeQuanta = ez.value;
+		controlQuantaSlider=EZSlider(windowControlSynth, 390 @ 20, "Quant",ControlSpec(-100, 100, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(44).children.do({arg subView, subItem;
-					if(subItem == 1, {subView.valueAction_(subView.value + (val / 2))});
+					if(subItem == 2, {subView.valueAction_((subView.value + ez.value).mod(100))});
 				});
 			});
 		}, 0, labelWidth: 85, numberWidth: 50);
 		windowControlSynth.view.decorator.nextLine;
 		// Root
-		previousRoot = 0;
-		controlRootSlider=EZSlider(windowControlSynth, 390 @ 20, "Root",ControlSpec(-21, 21, \lin, 0), {|ez| var val;
-			val = (ez.value - previousDureeQuanta / 21).clip(-1, 1);
-			previousRoot = ez.value;
+		controlRootSlider=EZSlider(windowControlSynth, 390 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(80).children.do({arg subView, subItem;
-					if(subItem == 1, {subView.valueAction_(subView.value + (val / 2))});
+					if(subItem == 2, {subView.valueAction_((subView.value + ez.value).mod(21))});
 				});
 			});
 		}, 0, labelWidth: 85, numberWidth: 50);
