@@ -683,12 +683,12 @@ f						Switch File for Analyze.
 					s.sync;
 					d = d.unlace(2).sum / 2;
 					s.sync;
-					b = Buffer.loadCollection(s, d, 1);
+					b = Buffer.loadCollection(s, d, 1, {"Loaded".postln});
 					s.sync;
 				});
 				f.close;
 				s.sync;
-				b2 = Buffer.alloc(s, f.numFrames, 1);
+				b2 = Buffer.alloc(s, f.numFrames, 1, {"Finisch".postln});
 				s.sync;
 			};
 			[b, f, b2] ;// sortie buffer et SoundFile
@@ -979,6 +979,35 @@ f						Switch File for Analyze.
 
 						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTime) >= durFilter} and: {duree >= durFilter}, {
 
+							// Set Ambitus Freq
+							freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+							freq = freq.midicps;
+
+							// Setup Freq with Scaling and Tuning
+							if(flagScaling != 'off', {
+								pos = 0;
+								oct = freq.cpsoct.round(0.001);
+								ratio = oct.frac;
+								oct = oct.floor;
+								degre = (ratio * tuning.size + 0.5).floor;
+								(scale.degrees.size - 1).do({arg i;
+									difL=abs(degre - scale.degrees.at(i));
+									difH=abs(degre - scale.degrees.at(i+1));
+									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+										{if(difL <= difH, {pos = i},{pos = i+1})});
+								});
+								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+							});
+
+							octave = (freq.cpsmidi / 12).floor;
+							demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+							cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+							// Set Bus OSC
+							busOSCfreq.set(freq);
+							busOSCamp.set(amp);
+							busOSCduree.set(duree);
+
 							// Dispatch Band FHZ
 							for(1, numFhzBand, {arg i;
 
@@ -986,35 +1015,6 @@ f						Switch File for Analyze.
 									// Add Data
 									if(numberSynth > listeDataBand.at(i).size,
 										{
-											// Set Ambitus Freq
-											freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-											freq = freq.midicps;
-
-											// Setup Freq with Scaling and Tuning
-											if(flagScaling != 'off', {
-												pos = 0;
-												oct = freq.cpsoct.round(0.001);
-												ratio = oct.frac;
-												oct = oct.floor;
-												degre = (ratio * tuning.size + 0.5).floor;
-												(scale.degrees.size - 1).do({arg i;
-													difL=abs(degre - scale.degrees.at(i));
-													difH=abs(degre - scale.degrees.at(i+1));
-													if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-														{if(difL <= difH, {pos = i},{pos = i+1})});
-												});
-												freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-											});
-
-											octave = (freq.cpsmidi / 12).floor;
-											demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-											cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
-											// Set Bus OSC
-											busOSCfreq.set(freq);
-											busOSCamp.set(amp);
-											busOSCduree.set(duree);
-
 											if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 												{
 													listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
@@ -1118,6 +1118,35 @@ f						Switch File for Analyze.
 						ampMIDIOSC = amp.ampdb;
 						duree = msg.at(5).clip(0.01, maxDureeOSC);
 
+						// Set Ambitus Freq
+						freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+						freq = freq.midicps;
+
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling != 'off', {
+							pos = 0;
+							oct = freq.cpsoct.round(0.001);
+							ratio = oct.frac;
+							oct = oct.floor;
+							degre = (ratio * tuning.size + 0.5).floor;
+							(scale.degrees.size - 1).do({arg i;
+								difL=abs(degre - scale.degrees.at(i));
+								difH=abs(degre - scale.degrees.at(i+1));
+								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+									{if(difL <= difH, {pos = i},{pos = i+1})});
+							});
+							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+						});
+
+						octave = (freq.cpsmidi / 12).floor;
+						demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+						cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+						// Set Bus OSC
+						busOSCfreq.set(freq);
+						busOSCamp.set(amp);
+						busOSCduree.set(duree);
+
 						// Dispatch Band FHZ
 						for(1, numFhzBand, {arg i;
 
@@ -1125,35 +1154,6 @@ f						Switch File for Analyze.
 								// Add Data
 								if(numberSynth > listeDataBand.at(i).size,
 									{
-										// Set Ambitus Freq
-										freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-										freq = freq.midicps;
-
-										// Setup Freq with Scaling and Tuning
-										if(flagScaling != 'off', {
-											pos = 0;
-											oct = freq.cpsoct.round(0.001);
-											ratio = oct.frac;
-											oct = oct.floor;
-											degre = (ratio * tuning.size + 0.5).floor;
-											(scale.degrees.size - 1).do({arg i;
-												difL=abs(degre - scale.degrees.at(i));
-												difH=abs(degre - scale.degrees.at(i+1));
-												if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-													{if(difL <= difH, {pos = i},{pos = i+1})});
-											});
-											freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-										});
-
-										octave = (freq.cpsmidi / 12).floor;
-										demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-										cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
-										// Set Bus OSC
-										busOSCfreq.set(freq);
-										busOSCamp.set(amp);
-										busOSCduree.set(duree);
-
 										if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 											{
 												listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
@@ -1248,6 +1248,17 @@ f						Switch File for Analyze.
 					ampMIDIOSC = amp.ampdb;
 					duree = (time - lastDureeMIDI).clip(0.01, maxDureeOSC);
 
+					// Set Ambitus Freq
+					freq = freq / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+					octave = (freq / 12).floor;
+					demiTon = ((freq / 12).frac * 12 + 0.5).floor;
+					cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+					// Set Bus OSC
+					busOSCfreq.set(freq);
+					busOSCamp.set(amp);
+					busOSCduree.set(duree);
+
 					// Dispatch Band FHZ
 					for(1, numFhzBand, {arg i;
 
@@ -1255,17 +1266,6 @@ f						Switch File for Analyze.
 							// Add Data
 							if(numberSynth > listeDataBand.at(i).size,
 								{
-									// Set Ambitus Freq
-									freq = freq / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-									octave = (freq / 12).floor;
-									demiTon = ((freq / 12).frac * 12 + 0.5).floor;
-									cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
-									// Set Bus OSC
-									busOSCfreq.set(freq);
-									busOSCamp.set(amp);
-									busOSCduree.set(duree);
-
 									if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 										{
 											listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));

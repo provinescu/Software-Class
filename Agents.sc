@@ -19,8 +19,10 @@ Agents {
 		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
 
+		~nompathdata=PathName.new(path).pathOnly;
+
 		// Verify path
-		if(File.exists(path).not) {systemCmd("mkdir" + path)};
+		if(File.exists(~nompathdata).not) {systemCmd("mkdir" + ~nompathdata)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
 		numberAudioIn = ni;
@@ -58,8 +60,6 @@ Agents {
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
 		~listeNameSamplePourAnalyse = [];
-
-		~nompathdata=PathName.new(path).pathOnly;
 
 		// MIDI
 		MIDIClient.init;
