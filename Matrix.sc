@@ -1106,7 +1106,7 @@ y ... -					Musical keys.
 			// New Window
 			listeWindowSynth=listeWindowSynth.add(fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2));
 			// Init Band for Synth
-			fonctionInitBand.value(numFhzBand);
+			//fonctionInitBand.value(numFhzBand);
 			//Document.listener.string="";
 			// Setup Font View Synth
 			listeWindowSynth.do({arg window;
@@ -1688,7 +1688,7 @@ y ... -					Musical keys.
 											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)}, {fonctionLoadSynthesizer.value(file.readAllString.interpret);
 												// Init Band for Synth
-												fonctionInitBand.value(numFhzBand);
+												//fonctionInitBand.value(numFhzBand);
 											});
 											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
 								});
@@ -1709,7 +1709,7 @@ y ... -					Musical keys.
 											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)}, {fonctionLoadSynthesizer.value(file.readAllString.interpret);
 												// Init Band for Synth
-												fonctionInitBand.value(numFhzBand);
+												//fonctionInitBand.value(numFhzBand);
 											});
 											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
 								});
@@ -2046,7 +2046,7 @@ y ... -					Musical keys.
 							fonctionLoadSynthesizer.value(file.readAllString.interpret);
 							file.close;listeWindows.at(3).front;indexWindows=3;
 							// Init Band for Synth
-							fonctionInitBand.value(numFhzBand);
+							//fonctionInitBand.value(numFhzBand);
 					}, {"cancelled".postln});
 				});
 				// Key h -> Switch source In.
