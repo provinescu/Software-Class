@@ -3599,7 +3599,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 				};
 			);
-			//Range Band
+			//Range Band 100
 			~rangeBand = ~rangeBand.add(EZText(w, Rect(0, 0, 260, 20), "Range Band",
 			{arg range; ~bandFHZ.put(i, range.value)},
 			[0.0, 42.33, 84.66, 127.0 ], true, 60);
@@ -3613,14 +3613,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~writepartitions.value(i,'normal','off',"~listTuning",item.value);
 					~tuningIndex.put(i, item.value);
 					// Setup GUI Value
-					w.view.children.at(104).enabled_(true);
 					w.view.children.at(105).enabled_(true);
+					w.view.children.at(106).enabled_(true);
 					switch(item.value,
 						// No Scale
 						0, {~flagScaling.put(i, 'off');
 							// Setup GUI Value
-							w.view.children.at(104).enabled_(false);
 							w.view.children.at(105).enabled_(false);
+							w.view.children.at(106).enabled_(false);
 						},
 						// Tempered
 						1, {nil},
@@ -3706,12 +3706,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					if(item.value > 1 and: {item.value < 28}, {~tuning.put(i, Tuning.et12); ~scale.put(i, Scale.new(((~degrees.at(i) + ~root.at(i))%~tuning.at(i).size).sort, ~tuning.at(i).size, ~tuning.at(i)));
 						~flagScaling.put(i,'on');
 						// Setup GUI Value
-						w.view.children.at(105).children.at(1).valueAction = ~degrees.at(i);
+						w.view.children.at(106).children.at(1).valueAction = ~degrees.at(i);
 					});
 					if(item.value > 28, {~tuning.put(i, Tuning.sruti); ~scale.put(i, Scale.new(((~degrees.at(i) + ~root.at(i))%~tuning.at(i).size).sort, ~tuning.at(i).size, ~tuning.at(i)));
 						~flagScaling.put(i, 'on');
 						// Setup GUI Value
-						w.view.children.at(105).children.at(1).valueAction = ~degrees.at(i);
+						w.view.children.at(106).children.at(1).valueAction = ~degrees.at(i);
 					});
 				};
 			);
@@ -5669,7 +5669,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			// Band
 			~numFhzBand.wrapPut(i,datas.wrapAt(91).value);
 			~numberBand.wrapAt(i).valueAction_(datas.wrapAt(91).value);
-			~bandFHZ.wrapPut(i,datas.wrapAt(92).value);
+			//~bandFHZ.wrapPut(i,datas.wrapAt(92).value);
 			~flagSynthBand.wrapPut(i,datas.wrapAt(93).value);
 			~flagBandSynth.wrapPut(i,datas.wrapAt(94).value);
 			~rangeSynthBand.wrapPut(i,datas.wrapAt(95).value);
@@ -5703,6 +5703,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				if(index == 12, {if(~flagBandSynth.at(i).at(index) == 0, {~synthBand12.at(i).value = 0},
 					{~synthBand12.at(i).value = 1})});
 			});
+			~bandFHZ.wrapPut(i,datas.wrapAt(92).value);
+			~rangeBand.wrapAt(i).valueAction_(datas.wrapAt(92).value);
 			~lastTimeBand.put(i, [Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
 			~listeaudiofreq.wrapPut(i,[]);~listeaudioamp.wrapPut(i,[]);~listeaudioduree.wrapPut(i,[]);~freqtampon.wrapPut(i,nil);~amptampon.wrapPut(i,nil);~freqbefore.wrapPut(i,0);~ampbefore.wrapPut(i,0);~dureebefore.wrapPut(i,0);~lastTimeAudio = Main.elapsedTime;~lastDureeInstrAudio.wrapPut(i, Main.elapsedTime);
 			// Tuning
