@@ -7112,7 +7112,7 @@ G                       Init Genome Agent (solo).
 			datafile=file.readAllString.interpret;file.close;
 			//~groupeSynthAgents.freeAll;
 			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0);
-			//~tempoSlider.valueAction=~tempoMusic=datafile.wrapAt(2);
+			~tempoSlider.valueAction=~tempoMusic=datafile.wrapAt(2);
 			~audioFreqSlider.value=~differencefreq=datafile.wrapAt(3);
 			~audioAmpSlider.value=~differenceamp=datafile.wrapAt(4);
 			~audiodureeSlider.value=~differenceduree=datafile.wrapAt(5);
@@ -7169,7 +7169,7 @@ G                       Init Genome Agent (solo).
 			var datafile=nil, sequence, loVal, hiVal, allVal;
 			datafile=file.readAllString.interpret;file.close;
 			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0);
-			//~tempoSlider.valueAction=~tempoMusic=datafile.wrapAt(2);
+			~tempoSlider.valueAction=~tempoMusic=datafile.wrapAt(2);
 			~audioFreqSlider.value=~differencefreq=datafile.wrapAt(3);
 			~audioAmpSlider.value=~differenceamp=datafile.wrapAt(4);
 			~audiodureeSlider.value=~differenceduree=datafile.wrapAt(5);
