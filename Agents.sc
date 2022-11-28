@@ -6877,7 +6877,7 @@ G                       Init Genome Agent (solo).
 
 		// Save Monde
 		~foncSaveMonde={arg datafile=[];
-			datafile=datafile.add(~tempoagents);//0
+			datafile=datafile.add([~tempoButton.value, ~tempoagents]);//0
 			datafile=datafile.add(~algoAnalyse.value);//1
 			datafile=datafile.add(~tempoMusic);//2
 			datafile=datafile.add(~differencefreq);//3
@@ -7111,7 +7111,8 @@ G                       Init Genome Agent (solo).
 			var datafile=nil;
 			datafile=file.readAllString.interpret;file.close;
 			//~groupeSynthAgents.freeAll;
-			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0);
+			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0).wrapAt(1);
+			~tempoButton.valueAction=datafile.wrapAt(0).wrapAt(0);
 			~tempoSlider.valueAction=~tempoMusic=datafile.wrapAt(2);
 			~audioFreqSlider.value=~differencefreq=datafile.wrapAt(3);
 			~audioAmpSlider.value=~differenceamp=datafile.wrapAt(4);
@@ -7168,7 +7169,8 @@ G                       Init Genome Agent (solo).
 		~loadUnivers={arg file, flagGenome='on', flagSequence='on';
 			var datafile=nil, sequence, loVal, hiVal, allVal;
 			datafile=file.readAllString.interpret;file.close;
-			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0);
+			~tempoAgentsSlider.valueAction=~tempoagents=datafile.wrapAt(0).wrapAt(1);
+			~tempoButton.valueAction=datafile.wrapAt(0).wrapAt(0);
 			~tempoSlider.valueAction=~tempoMusic=datafile.wrapAt(2);
 			~audioFreqSlider.value=~differencefreq=datafile.wrapAt(3);
 			~audioAmpSlider.value=~differenceamp=datafile.wrapAt(4);
@@ -7338,16 +7340,16 @@ G                       Init Genome Agent (solo).
 			~randomPanEffets.value_(~automationPanEffets.wrapAt(datafile.wrapAt(99)));
 			~randomControlsEffets.value_(~automationControlsEffets.wrapAt(datafile.wrapAt(99)));
 			~speedEffets.valueAction_(datafile.wrapAt(205));
-			//~startAutomation.valueAction_(datafile.wrapAt(104));
-			//~flagInitAutomation=datafile.wrapAt(103);if(~flagInitAutomation=='on',{~initAutomation.valueAction_(1)},{~initAutomation.valueAction_(0)});
-			//~flagUniversAutomation=datafile.wrapAt(106);if(~flagUniversAutomation=='on',{~universAutomation.valueAction_(1)},{~universAutomation.valueAction_(0)});
+			~startAutomation.valueAction_(datafile.wrapAt(104));
+			~flagInitAutomation=datafile.wrapAt(103);if(~flagInitAutomation=='on',{~initAutomation.valueAction_(1)},{~initAutomation.valueAction_(0)});
+			~flagUniversAutomation=datafile.wrapAt(106);if(~flagUniversAutomation=='on',{~universAutomation.valueAction_(1)},{~universAutomation.valueAction_(0)});
 			~flagMondesAgentsAutomation=datafile.wrapAt(107);if(~flagMondesAgentsAutomation=='on',{~mondesAgentsAutomation.valueAction_(1)},{~mondesAgentsAutomation.valueAction_(0)});
 			~flagMondesMusiqueAutomation=datafile.wrapAt(108);if(~flagMondesMusiqueAutomation=='on',{~mondesMusiqueAutomation.valueAction_(1)},{~mondesMusiqueAutomation.valueAction_(0)});
 			~flagGenesMAutomation=datafile.wrapAt(109);if(~flagGenesMAutomation=='on',{~genesMAutomation.valueAction_(1)},{~genesMAutomation.valueAction_(0)});
 			~flagGenesSAutomation=datafile.wrapAt(110);if(~flagGenesSAutomation=='on',{~genesSAutomation.valueAction_(1)},{~genesSAutomation.valueAction_(0)});
 			~flagSynthMusiqueAutomation=datafile.wrapAt(111);if(~flagSynthMusiqueAutomation=='on',{~synthMusiqueAutomation.valueAction_(1)},{~synthMusiqueAutomation.valueAction_(0)});
 			~flagSynthAgentsAutomation=datafile.wrapAt(112);if(~flagSynthAgentsAutomation=='on',{~synthAgentsAutomation.valueAction_(1)},{~synthAgentsAutomation.valueAction_(0)});
-			//~densite.valueAction_(datafile.wrapAt(113));
+			~densite.valueAction_(datafile.wrapAt(113));
 			~controlsSynth=datafile.wrapAt(114);
 			~controlsSynthMenu.valueAction_(~controlsSynth.wrapAt(datafile.wrapAt(79)));
 			~antiClick=datafile.wrapAt(115);
@@ -7355,9 +7357,9 @@ G                       Init Genome Agent (solo).
 			~flagGeneControl=datafile.wrapAt(116);
 			if(~flagGeneControl=='on', {~geneControlsButton.valueAction_(1)},{~geneControlsButton.valueAction_(0)});
 			~quantaMusicSlider.valueAction=~quantaMusic=datafile.wrapAt(117);
-			//~automationPanEffets=datafile.wrapAt(118);
-			//~automationControlsEffets=datafile.wrapAt(119);
-			//~automationControlsSynth=datafile.wrapAt(120);
+			~automationPanEffets=datafile.wrapAt(118);
+			~automationControlsEffets=datafile.wrapAt(119);
+			~automationControlsSynth=datafile.wrapAt(120);
 			~geneFreqRanger.valueAction=datafile.wrapAt(121);
 			~geneTransFreqRanger.valueAction=datafile.wrapAt(122);
 			~geneAmpRanger.valueAction=datafile.wrapAt(123);
@@ -7393,7 +7395,7 @@ G                       Init Genome Agent (solo).
 			hiVal = datafile.wrapAt(138).wrapAt(1);
 			if(hiVal >= ~audioInLR.size, {hiVal = ~audioInLR.size - 1});
 			~geneInputRangerHigh.valueAction_(hiVal);
-			//~geneInputRangerLow.valueAction=datafile.wrapAt(138).wrapAt(0);
+			~geneInputRangerLow.valueAction=datafile.wrapAt(138).wrapAt(0);
 			//~geneInputRangerHigh.valueAction=datafile.wrapAt(138).wrapAt(1);
 			~geneLoopMusicRanger.valueAction=datafile.wrapAt(139);
 			~geneBufferMusicRanger.valueAction=datafile.wrapAt(140);
