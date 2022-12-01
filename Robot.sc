@@ -11577,7 +11577,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
-					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
+					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -11602,13 +11602,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					arg out=0, in, buseffetsPost, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0.60, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, tempo, beat, duree;
-					tempo = (control7*100).floor;
-					beat=(control8*100).floor;
+					tempo = (control7*60).floor;
+					beat=(control8*4).floor;
 					duree = 60/tempo*beat;
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
-					effet=Mix(DelayC.ar(ineffet, 10.0, [control1*duree,control2*duree,control3*duree,control4*duree,control5*duree,control6*duree], amp/6));
+					effet=Mix(DelayC.ar(ineffet, 10.0, [control1*duree,control2*duree,control3*duree,control4*duree,control5*duree,control6*duree], amp));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -12319,7 +12319,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
-					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
+					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -12343,13 +12343,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					arg out=0, in, control1=0.3, control2=0, control3=0, control4=0, control5=0, control6=0, control7=0.60, control8=0.1, pan=0, amp=0, ampPre=0, ampPost=0;
 					// liste des variables (identique pour chaque effet !!!!)
 					var ineffet, effet, ambisonic, tempo, beat, duree;
-					tempo = (control7*100).floor;
-					beat=(control8*100).floor;
+					tempo = (control7*60).floor;
+					beat=(control8*4).floor;
 					duree = 60/tempo*beat;
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
-					effet=Mix(DelayC.ar(ineffet, 10.0, [control1*duree,control2*duree,control3*duree,control4*duree,control5*duree,control6*duree], amp/6));
+					effet=Mix(DelayC.ar(ineffet, 10.0, [control1*duree,control2*duree,control3*duree,control4*duree,control5*duree,control6*duree], amp));
 					effet = Limiter.ar(effet, 1.0, 0.01);
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
