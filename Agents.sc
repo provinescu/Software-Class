@@ -7658,7 +7658,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// New Analyse Audio  2
@@ -7677,7 +7677,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// New Analyse Audio  3
@@ -7700,7 +7700,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// New Analyse Audio  4
@@ -7718,7 +7718,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// Keyboard
@@ -7732,7 +7732,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					note = note.cpsmidi / 127;
-					SendReply.kr(trigger, '/Agents_Analyse_Audio', values: [note, amp, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(trigger, '/Agents_Analyse_Audio', values: [note, amp, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).add;
 
 			// New Analyse File
@@ -7751,7 +7751,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// New Analyse File version 2
@@ -7770,7 +7770,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// New Analyse File version 3
@@ -7793,7 +7793,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// New Analyse File version 4
@@ -7811,7 +7811,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(detect, '/Agents_Analyse_Audio', values: [freqin, ampin, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).send(s);
 
 			// Keyboard file
@@ -7825,7 +7825,7 @@ G                       Init Genome Agent (solo).
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					note = note.cpsmidi / 127;
-					SendReply.kr(trigger, '/Agents_Analyse_Audio', values: [note, amp, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6]);
+					SendReply.kr(trigger, '/Agents_Analyse_Audio', values: [note, amp, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6]);
 			}).add;
 
 			// Synth pour records samples

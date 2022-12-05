@@ -5517,7 +5517,7 @@ f						Switch File for Analyze.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));
-				SendReply.kr(Impulse.kr(speed), '/Time_FFT_Data', values: [centroid.clip(20, 12544), flatness.max(0.001), energy.clip(20, 12544), flux.max(0.001), tempo], replyID: [1, 2, 3, 4, 5]);
+				SendReply.kr(Impulse.kr(speed), '/Time_FFT_Data', values: [centroid.clip(20, 12544), flatness.clip(0.0001, 1), energy.clip(20, 12544), flux.clip(0.0001, 1), tempo], replyID: [1, 2, 3, 4, 5]);
 		}).add;
 
 		// Synth AudioIn

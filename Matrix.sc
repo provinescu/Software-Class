@@ -4833,7 +4833,7 @@ y ... -					Musical keys.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
 		}).add;
 
 		// Matrix Audio Analyze Pitch
@@ -4853,7 +4853,7 @@ y ... -					Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
 		}).add;
 
 		// Matrix Audio Analyze Pitch2
@@ -4876,7 +4876,7 @@ y ... -					Musical keys.
 				flux =  FFTFlux.kr(fft2);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
 		}).add;
 
 		// Matrix Audio Analyze KeyTrack
@@ -4895,7 +4895,7 @@ y ... -					Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
 		}).add;
 
 		// Matrix Keyboard
@@ -4910,7 +4910,7 @@ y ... -					Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
-				SendReply.kr(trigger, '/Matrix_Keyboard_Data', values: [note, amp, timeIn, tempo, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(trigger, '/Matrix_Keyboard_Data', values: [note, amp, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
 		}).add;
 
 		// Matrix MIDI
@@ -4924,7 +4924,7 @@ y ... -					Musical keys.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(trigger, '/Matrix_MIDI_Data', values: [tempo, centroid, flatness.max(-100), energy, flux.max(-100)], replyID: [1, 2, 3, 4, 5]);
+				SendReply.kr(trigger, '/Matrix_MIDI_Data', values: [tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5]);
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
