@@ -2877,6 +2877,8 @@ G                       Init Genome Agent (solo).
 					~flagCompteurPlayingAgents.wrapPut(agent, 0);~flagplayagent.wrapPut(agent, 'new')})});
 			// Choose Algo (Default / Probabilite / Kohonen / ...)
 			if(~flagGeneAlgorithm == 'on', {numAlgo = (~genomes.wrapAt(agent).wrapAt(45).value * 4).floor; sourceAlgorithm = ~listeAlgorithm.wrapAt(numAlgo)},{sourceAlgorithm = ~algoMusic.value});
+			if(~listeagentfreq.wrapAt(agent) != [] and: ~listeagentamp.wrapAt(agent) != [] and: ~listeagentduree.wrapAt(agent) != [],
+				{
 			switch(sourceAlgorithm,
 				"Default", {nil}, // Do nothing
 				"Probability", {
@@ -3276,6 +3278,7 @@ G                       Init Genome Agent (solo).
 				});
 				// Synth
 				Synth.new(synth, ['out', audioOut + ~startChannelAudioOut, 'buseffets', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index,'freq', freq.wrapAt(index), 'rate', freqRate.wrapAt(index), 'amp', a, 'ampreal', ar, 'duree', duree, 'panLo', pan.wrapAt(0), 'panHi', pan.wrapAt(1), 'offset', offset, 'loop', loopSample, 'reverse', reverseSample,  'buffer', bufferSon.bufnum,  'buffer2', bufferSon2.bufnum, 'controlF', controlF, 'controlA', controlA, 'controlD', controlD, 'antiClick1', ~antiClick.wrapAt(0), 'antiClick2', ~antiClick.wrapAt(1),'controlenvlevel1', envLevel.wrapAt(0), 'controlenvlevel2', envLevel.wrapAt(1), 'controlenvlevel3', envLevel.wrapAt(2), 'controlenvlevel4', envLevel.wrapAt(3), 'controlenvlevel5', envLevel.wrapAt(4),  'controlenvlevel6', envLevel.wrapAt(5),  'controlenvlevel7', envLevel.wrapAt(6),  'controlenvlevel8', envLevel.wrapAt(7), 'controlenvtime1', envDuree.wrapAt(0), 'controlenvtime2', envDuree.wrapAt(1), 'controlenvtime3', envDuree.wrapAt(2), 'controlenvtime4', envDuree.wrapAt(3), 'controlenvtime5', envDuree.wrapAt(4), 'controlenvtime6', envDuree.wrapAt(5), 'controlenvtime7', envDuree.wrapAt(6), 'in', sourceInAgent, 'flag', flagInput], ~groupeSynthAgents, \addToTail);//play
+			});
 			});
 		};
 
