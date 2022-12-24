@@ -3969,7 +3969,7 @@ G                       Init Genome Agent (solo).
 		// Music
 		StaticText(~wg, Rect(0, 0, 300, 15)).string_("Musical Genome").stringColor_(Color.white).font_(Font("Georgia", 12));
 		~wg.view.decorator.nextLine;
-		~geneFreqRanger=EZRanger(~wg, 300 @ 18, "Frequency", ControlSpec(0, 127, \lin, 0), {|view| if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneFreqRanger", view.value)})}, [21, 108], false, 125, 40);
+		~geneFreqRanger=EZRanger(~wg, 300 @ 18, "Frequency", ControlSpec(0, 127, \lin, 0), {|view| if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneFreqRanger", view.value)})}, [24, 108], false, 125, 40);
 		~geneFreqButton=Button(~wg,Rect(0, 0, 25, 18)).states=[["On", Color.black, Color.green(0.8, 0.25)],["Off", Color.black, Color.red(0.8, 0.25)]];
 		~geneFreqButton.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneFreqButton", action.value)});
@@ -8584,7 +8584,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					if(rate.abs >= 1.0 , main=Resonz.ar(osc, XLine.ar(127.midicps*controlF+21.midicps, 55*controlA + 21.midicps, duree*controlD)), main=Resonz.ar(osc, XLine.ar(55*controlF+21.midicps, 127.midicps*controlA + 21.midicps, duree*controlD)));
+					if(rate.abs >= 1.0 , main=Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), main=Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
@@ -11091,7 +11091,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
-					main = if(rate.abs >= 1.0 , Resonz.ar(osc, XLine.ar(127.midicps*controlF+21.midicps, 55*controlA + 21.midicps, duree*controlD)), Resonz.ar(osc, XLine.ar(55*controlF+21.midicps, 127.midicps*controlA + 21.midicps, duree*controlD)));
+					main = if(rate.abs >= 1.0 , Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
 					// main = Limiter.ar(main, 1.0, 0.01);
 					//ampreal = if(amp <= 0, ampreal, amp);
 					// Switch Audio Out
