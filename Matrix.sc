@@ -2642,7 +2642,7 @@ y ... -					Musical keys.
 		controlRootSlider=EZSlider(windowControlSynth, 390 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(80).children.do({arg subView, subItem;
-					if(subItem == 2, {subView.valueAction_((subView.value + ez.value).mod(21))});
+					if(subItem == 2, {subView.valueAction_((ez.value).mod(21))});
 				});
 			});
 		}, 0, labelWidth: 85, numberWidth: 50);

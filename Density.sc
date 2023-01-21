@@ -3963,7 +3963,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					synthAnalyzeAudioIn.run(false);
 					synthRecAudioIn.run(false);
 					// Setup GUI Value
-					windowEar.view.children.at(2).enabled_(false);
+					//windowEar.view.children.at(2).enabled_(false);
 					playInstruments.stop;
 					watchSilence.stop;
 					memoryMusic.stop;
@@ -4032,7 +4032,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					switchAnalyze.valueAction_(typeAlgoAnalyze);
 					synthAnalyseFFT.run(true);
 					// Setup GUI Value
-					windowEar.view.children.at(2).enabled_(true);
+					//windowEar.view.children.at(2).enabled_(true);
 					playInstruments.play;
 					watchSilence.play;
 					memoryMusic.play;
@@ -7581,10 +7581,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envS = EnvGen.kr(Env.new([0, 0, 1, 1, 0, 0],[0.05, 0.15, 0.2, 0.4, 0.2], 'sine'), gate, 1, 0, durSynth, 0);
 				envR = EnvGen.kr(Env.new([0, 1, 1, 0],[0.5, 0.25, 0.25], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
-				/*chain = Mix(RHPF.ar(Saw.ar(freq, 0.25), energy.lag(durSynth), flux.lag(durSynth)) + RLPF.ar(Saw.ar(freq, 0.25), centroid.lag(durSynth), flatness.lag(durSynth))) * envA * amp;
+				chain = Mix(RHPF.ar(Saw.ar(freq, 0.25), energy.lag(durSynth), flux.lag(durSynth)) + RLPF.ar(Saw.ar(freq, 0.25), centroid.lag(durSynth), flatness.lag(durSynth))) * envA * amp;
 				chain = chain + (HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envS * amp);
-				chain = chain + (HPbufRd.ar(1, localBuf, Phasor.ar(LFNoise0.kr(flux), BufRateScale.kr(localBuf) * rate, BufFrames.kr(localBuf) * offset, recHead, BufFrames.kr(localBuf) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envR * amp);*/
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(LFNoise0.kr(flux), BufRateScale.kr(localBuf) * rate, BufFrames.kr(localBuf) * flatness, 1, BufFrames.kr(localBuf) * flatness), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf) * amp;
+				chain = chain + (HPbufRd.ar(1, localBuf, Phasor.ar(0, BufRateScale.kr(localBuf) * rate, BufFrames.kr(localBuf) * offset, recHead, BufFrames.kr(localBuf) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envR * amp);
 				// Out
 				Out.ar(out, Mix(chain));
 		}).add;
