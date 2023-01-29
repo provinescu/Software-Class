@@ -2043,7 +2043,13 @@ y ... -					Musical keys.
 						{listeWindowSynth.do({arg window; window.close});
 							file=File(pathMatrix ++ foldersToScanSynthesizer.at(number),"r");
 							windowControl.name="Matrix Control" + " | " + foldersToScanSynthesizer.at(number);
-							fonctionLoadSynthesizer.value(file.readAllString.interpret);
+							tampon = file.readAllString.interpret;
+							tampon.remove(tampon.last);// Remove OSCmusicData
+							fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
+							tampon.remove(tampon.last);// Remove control panel
+							fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
+							tampon.remove(tampon.last);// Remove controlSynth panel
+							fonctionLoadSynthesizer.value(tampon);
 							file.close;listeWindows.at(3).front;indexWindows=3;
 							// Init Band for Synth
 							//fonctionInitBand.value(numFhzBand);
