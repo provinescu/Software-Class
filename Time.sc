@@ -2820,10 +2820,10 @@ f						Switch File for Analyze.
 		// HP Records Flatness
 		StaticText(windowExternalControlGUI, Rect(0, 0, 150, 20)).string_("HPplayBuf Rec Controls");
 
-		NumberBox(windowExternalControlGUI, Rect(0, 0, 50, 20)).background_(Color.red).typingColor_(Color.white).clipLo_(0).clipHi_(1).
+		NumberBox(windowExternalControlGUI, Rect(0, 0, 50, 20)).background_(Color.red).typingColor_(Color.white).clipLo_(0).clipHi_(1).decimals_(4).
 		action = {arg num; hprec1 = num.value; listeGroupSynth.do({arg group; group.set(\hp1, num.value)})};
 
-		NumberBox(windowExternalControlGUI, Rect(0, 0, 50, 20)).background_(Color.red).typingColor_(Color.white).clipLo_(0).clipHi_(1).
+		NumberBox(windowExternalControlGUI, Rect(0, 0, 50, 20)).background_(Color.red).typingColor_(Color.white).clipLo_(0).clipHi_(1).decimals_(4).
 		action = {arg num; hprec2 = num.value; listeGroupSynth.do({arg group; group.set(\hp2, num.value)})};
 
 		windowExternalControlGUI.onClose_({nil});
