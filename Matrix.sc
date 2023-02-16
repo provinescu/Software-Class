@@ -943,7 +943,7 @@ y ... -					Musical keys.
 					//view.valueAction_(data.at(item).value);
 				});
 				//Bus In no evaluation
-				if(item == 4, {view.value_(data.at(item))});
+				if(item == 4, {view.valueAction_(data.at(item))});
 				// All others Sliders
 				if(item == 0 or: {item == 3} or: {item == 5} or: {item == 6} or: {item == 7}
 					or: {item == 17} or: {item == 19} or: {item == 21} or: {item == 26}
