@@ -1665,7 +1665,7 @@ y ... -					Musical keys.
 			// Flatness > 0 | Flux <= 1
 
 			fonctionAutomationPreset = {arg dataMusicFFT, freqCentroid, flatness, energy, flux;
-				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0;
+				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0, tampon;
 				newTime = Main.elapsedTime;
 				musicData = dataMusicFFT.flop;// Setup Array
 				if(musicData.size >= 1 and: {musicData != [ [  ] ]}, {
@@ -1686,9 +1686,17 @@ y ... -					Musical keys.
 										{listeWindowSynth.do({arg window; window.close});
 											file=File(pathMatrix ++ foldersToScanAll.wrapAt(number),"r");
 											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
-											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)}, {fonctionLoadSynthesizer.value(file.readAllString.interpret);
-												// Init Band for Synth
-												//fonctionInitBand.value(numFhzBand);
+											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
+												{
+													tampon = file.readAllString.interpret;
+													tampon.remove(tampon.last);// Remove OSCmusicData
+													fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
+													tampon.remove(tampon.last);// Remove control panel
+													fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
+													tampon.remove(tampon.last);// Remove controlSynth panel
+													fonctionLoadSynthesizer.value(tampon);
+													// Init Band for Synth
+													//fonctionInitBand.value(numFhzBand);
 											});
 											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
 								});
@@ -1707,9 +1715,17 @@ y ... -					Musical keys.
 										{listeWindowSynth.do({arg window; window.close});
 											file=File(pathMatrix ++ foldersToScanAll.wrapAt(number),"r");
 											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
-											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)}, {fonctionLoadSynthesizer.value(file.readAllString.interpret);
-												// Init Band for Synth
-												//fonctionInitBand.value(numFhzBand);
+											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
+												{
+													tampon = file.readAllString.interpret;
+													tampon.remove(tampon.last);// Remove OSCmusicData
+													fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
+													tampon.remove(tampon.last);// Remove control panel
+													fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
+													tampon.remove(tampon.last);// Remove controlSynth panel
+													fonctionLoadSynthesizer.value(tampon);
+													// Init Band for Synth
+													//fonctionInitBand.value(numFhzBand);
 											});
 											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
 								});

@@ -26,6 +26,12 @@ Time {
 		if(File.exists(~pathTime).not) {systemCmd("mkdir" + ~pathTime)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
+		numberAudioOut = numberOut;
+		recChannels = numberRec;
+		numberAudioIn = ni;
+		widthMC = wid;
+		orientationMC = ori;
+
 		// Setup Server Options
 		//Server.default = s = Server(name,NetAddr("localhost",57567), Server.default.options);
 		s = Server.default;
@@ -35,10 +41,8 @@ Time {
 		//s.options.device = "JackRouter";// use a specific soundcard
 		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware*/
 		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		numberAudioOut = numberOut;
 		recChannels = numberRec;
 		s.recChannels_(numberRec);
-		numberAudioIn = ni;
 		s.options.numInputBusChannels_(numberAudioIn);
 		s.options.numOutputBusChannels_(numberOut);
 		s.options.hardwareBufferSize_(size);
@@ -49,8 +53,6 @@ Time {
 			3, {"Ambisonic"},
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
-		widthMC = wid;
-		orientationMC = ori;
 
 		// Safety Limiter
 		//s.options.safetyClipThreshold = 1.26; // Testing
@@ -414,8 +416,8 @@ f						Switch File for Analyze.
 			if(flagRecording == 'off', {
 				flagRecording = 'on';
 				s.bind{
-					s.recChannels_(recChannels);
-					s.sync;
+					/*s.recChannels_(recChannels);
+					s.sync;*/
 					/*s.recHeaderFormat_(headerFormat);
 					s.sync;
 					s.recSampleFormat_(sampleFormat);
@@ -1610,12 +1612,9 @@ f						Switch File for Analyze.
 			file.close;
 
 			cmdperiodfunc = {
-				menuTime.remove;
 				s.bind{
 					if(flagRecording == 'on', {
-						s.stopRecording;
-						bufferRecording.close;
-						bufferRecording.free;
+						fonctionRecOff.value;
 					});
 					windowExternalControlGUI.close;
 					windowControlGUI.close;
@@ -1628,6 +1627,7 @@ f						Switch File for Analyze.
 					MIDIdef.freeAll;
 					//s.freeAll;
 				};
+				menuTime.remove;
 				//s.quit;
 			};
 
