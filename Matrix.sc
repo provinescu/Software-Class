@@ -4251,7 +4251,7 @@ y ... -					Musical keys.
 					},
 					"Kohonen", {
 						// Training Kohonen Freq
-						maxTraining = newFreq.size * 10;
+						maxTraining = newFreq.size * 3;
 						maxTraining = maxTraining.clip(64, 128);
 						newFreq = newFreq * 127;
 						maxTraining.do({arg i; kohonenF.training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});

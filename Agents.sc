@@ -3024,7 +3024,7 @@ G                       Init Genome Agent (solo).
 					newAmp = ~listeagentamp.wrapAt(agent) * 127;
 					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax * 127;
 					// Training Kohonen Freq
-					maxTraining = newFreq.size * 10;
+					maxTraining = newFreq.size * 3;
 					maxTraining = maxTraining.clip(64, 128);
 					maxTraining.do({arg i; ~kohonenF.wrapAt(agent).training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
 					// Calculate Kohonen Freq
@@ -13035,52 +13035,40 @@ G                       Init Genome Agent (solo).
 			SynthDef("SynthOnFly",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
-					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125, in=0, flag;
-					var dureesample, envelope, ambisonic, main, inputSig, recHead, playHead, playRate, playHeadGreaterOne, playHeadMinusOne, recHeadGreaterOne, recHeadMinusOne, trigger;
-					// Set Data
-					buffer = LocalBuf(s.sampleRate * BufDur.kr(buffer), 1).clear;
-					inputSig = if(flag < 1, Mix(SoundIn.ar(in)), In.ar(in));
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var dureesample, envelope, ambisonic, main, local = 0, source = 0;
 					// Set Rate Freq
 					rate=2**rate.cpsoct;
-					//rate = rate * reverse;
-					trigger = Impulse.kr(BufDur.kr(buffer).reciprocal);
+					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					rate=rate * reverse;
+					// envelope
+					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
+					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
-					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7],'sine'), trigger, 1, 0, BufDur.kr(buffer), 2);
-					// Set Minus
-					recHeadMinusOne = Phasor.ar(trigger, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-					playHeadMinusOne = Phasor.ar(trigger, BufRateScale.kr(buffer) * rate, 0, recHeadMinusOne);
-					// Set Greater
-					recHeadGreaterOne = Phasor.ar(trigger, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-					playHeadGreaterOne = Phasor.ar(trigger, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer), recHeadGreaterOne);
-					// Choose recHead + playHead
-					recHead = if(rate < 1, recHeadMinusOne, recHeadGreaterOne);
-					playHead = if(rate < 1, playHeadMinusOne, recHeadGreaterOne);
-					// Rec Buffer
-					BufWr.ar(inputSig, buffer, recHead, 0);
-					// Play Buffer
-					if( rate < 1,  main = BufRd.ar(1, buffer, playHead, 1,  1),  main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, 1));
-					main = main * envelope;
-					main = Median.ar(3, main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+					source = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 0.0, BufDur.kr(buffer)*offset, loop, antiClick1, antiClick2);
+					local = Mix(LocalIn.ar(1) + source);
+					local = DelayN.ar(local, 1.0, controlD);
+					LocalOut.ar(local);
+					main = local;
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
 							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), 1),
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
 							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
 						if(~switchAudioOut == 2,
 							if(~flagMC == 0,
 								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, ~widthMC, ~orientationMC),
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
 								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, ~widthMC, ~orientationMC)),
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
 							if(~switchAudioOut == 1,
 								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
 								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1);
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
 									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
 					// Out
 					Out.ar(buseffets, Mix(main) * amp);

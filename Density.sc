@@ -1666,7 +1666,7 @@ Density {
 						# flux, flatness, centroid, energy, bpm = data.at(0);*/
 						// Freq Transformation
 						// Training Kohonen Freq
-						maxTraining = freq.size * 10;
+						maxTraining = freq.size * 3;
 						maxTraining = maxTraining.clip(64, 128);
 						maxTraining.do({arg i; kohonenF.training(freq.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Freq
