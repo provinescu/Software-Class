@@ -1,3 +1,3 @@
 # Software-Class
 SuperCollider Software Class
-Made with SuperCollider 3.11
+Made with SuperCollider 3.12
