@@ -37,9 +37,6 @@ Agents {
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);
 		s.options.outDevice_(devOut);
-		//s.options.device = "JackRouter";// use a specific soundcard
-		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
 		s.options.numInputBusChannels_(numberAudioIn);
 		s.options.numOutputBusChannels_(~numberAudioOut);
 		s.options.hardwareBufferSize_(size);
@@ -50,11 +47,7 @@ Agents {
 		~widthMC = wid;
 		~orientationMC = ori;
 
-		// Safety Limiter
-		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
-		//Safety(s).enabled;
-		//Safety.setLimit(1.neg.dbamp);
 		//s.makeGui;
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
@@ -80,17 +73,6 @@ Agents {
 			if(file.find("preset ") == 0 or: {file.find("Preset ") == 0}, {file});
 		};
 		~foldersToScanPreset = ~foldersToScanPreset.reject({arg item; item == nil});
-
-		/*// Collect preset+genome
-		~foldersToScanPresetGenome = ~foldersToScanAll.collect{ |file|
-		if(file.find("preset+genome ") == 0 or: {file.find("Preset+Genome ") == 0}, {file});
-		};
-		~foldersToScanPresetGenome = ~foldersToScanPresetGenome.reject({arg item; item == nil});
-		// Collect preset+genome+sequence
-		~foldersToScanPresetGenomeSequence = ~foldersToScanAll.collect{ |file|
-		if(file.find("preset+genome+sequence ") == 0 or: {file.find("Preset+Genome+Sequence ") == 0}, {file});
-		};
-		~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
 
 		~nomFenetre = "Control Panel"+~nompathdata.asString;
 
@@ -326,33 +308,6 @@ G                       Init Genome Agent (solo).
 		MainMenu.register(~menuRecording.title_("Recording"), "AgentsTools");
 
 		~menuAudio = Menu(
-			/*MenuAction("Recording Channels Setup", {SCRequestString("2", "Channels", {arg strg; ~recChannels = strg.asInteger;
-			this.initSynthDef;
-			})};
-			),
-			MenuAction("Number Audio Out Channels", {SCRequestString("2", "Channels", {arg strg; ~numberAudioOut = strg.asInteger;
-			s.options.numOutputBusChannels_(~numberAudioOut);
-			//~sourceOutAgents=[];
-			//~numberAudioOut.do({arg i;var x;
-			//i=i+1;x="Out"+i.asString;~sourceOutAgents=~sourceOutAgents.add(x.asSymbol);
-			//});
-			//~sourceOutAgents = ~sourceOutAgents.add("Off");
-			//~audioInLR=[];
-			//~numberAudioOut.do({arg i;var x;
-			//i=i+1;x=[i,i];~audioInLR=~audioInLR.add(x.asString);if(i != ~numberAudioOut, {x=[i, i+1];~audioInLR=~audioInLR.add(x.asString)});
-			//});
-			//~geneAudioOutRanger.controlSpec.minval_(1);
-			//~geneAudioOutRanger.controlSpec.maxval_(~numberAudioOut);
-			//~sourceOutSlider.items_(~sourceOutAgents);
-			//~sourceOutEffets.items_(~sourceOutAgents);
-			// Creation MasterFX
-			~masterFX = Synth.new("MasterFX", [\limit, 0.8], ~groupeMasterFX, \addToTail);
-			this.initSynthDef;
-			})};
-			),
-			MenuAction("Start Channel Audio Out", {SCRequestString("0", "Channel", {arg strg; ~startChannelAudioOut = strg.asInteger});
-			};
-			),*/
 			//Menu(
 			MenuAction("Stereo", {~switchAudioOut=0; this.initSynthDef}
 			),
@@ -700,9 +655,6 @@ G                       Init Genome Agent (solo).
 				})},
 				// New all environment
 				17, {
-					//// Create Last Work
-					//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
-					//Post << "Writing File Last Work" << Char.nl;
 					//Init Path
 					FileDialog.new({arg path;
 						var p, fileSynth="List Synth.scd",  fileSound="List Sounds.scd", fileFX="List FX.scd";
@@ -782,21 +734,6 @@ G                       Init Genome Agent (solo).
 							s.sync;
 							if(File.exists(~nompathdata++"List SynthDefFX.scd"),{file=File(~nompathdata++"List SynthDefFX.scd", "r");file.readAllString.interpret;file.close;"Adding File SynthDefFX !".postln},{"No Adding File SynthDefFX !".postln});
 							s.sync;
-							//// Load last Work
-							//if(File.exists(~nompathdata++"last work.scd"),
-							//{file=File(~nompathdata++"last work.scd","r");
-							//~wp.name=~nomFenetre+"last work.scd";
-							//~loadUnivers.value(file, 'on', 'on');
-							//Post << "Loading File Last Work" << Char.nl;
-							//file.close},
-							//// Init
-							//{if(File.exists(~nompathdata++"init preset.scd"),
-							//{file=File(~nompathdata++"init preset.scd","r");
-							//~wp.name=~nomFenetre+"init preset.scd";
-							//~loadUnivers.value(file);
-							//Post << "Init Preset" << Char.nl;
-							//file.close})});
-							//s.sync;
 						};
 						// Collect all Preset
 						~foldersToScanAll = PathName.new(~nompathdata).files.collect{ |path| var file;
@@ -809,16 +746,6 @@ G                       Init Genome Agent (solo).
 							if(file.find("preset ") == 0, {file});
 						};
 						~foldersToScanPreset = ~foldersToScanPreset.reject({arg item; item == nil});
-						/*// Collect preset+genome
-						~foldersToScanPresetGenome = ~foldersToScanAll.collect{ |file|
-						if(file.find("preset+genome ") == 0, {file});
-						};
-						~foldersToScanPresetGenome = ~foldersToScanPresetGenome.reject({arg item; item == nil});
-						// Collect preset+genome+sequence
-						~foldersToScanPresetGenomeSequence = ~foldersToScanAll.collect{ |file|
-						if(file.find("preset+genome+sequence ") == 0, {file});
-						};
-						~foldersToScanPresetGenomeSequence = ~foldersToScanPresetGenomeSequence.reject({arg item; item == nil});*/
 				}, fileMode: 2)},
 				// OSC Off
 				18, {~oscStateFlag='off';~stateOSC.string = "OSC Off"},
@@ -963,14 +890,6 @@ G                       Init Genome Agent (solo).
 			~flagEntreeMode='Audio';
 			~listemodeentree=['Audio','File','Midi', 'Off'];
 			~sourceOutAgents=[];
-			//~numberAudioOut.do({arg i;var x;
-			//i=i+1;x="Out"+i.asString;~sourceOutAgents=~sourceOutAgents.add(x.asSymbol);
-			//});
-			//~sourceOutAgents = ~sourceOutAgents.add("Off");
-			//~audioInLR=[];
-			//~numberAudioOut.do({arg i;var x;
-			//i=i+1;x=[i,i];~audioInLR=~audioInLR.add(x.asString);if(i != ~numberAudioOut, {x=[i, i+1];~audioInLR=~audioInLR.add(x.asString)});
-			//});
 			32.do({arg i;var x;
 				i=i+1;x="Out"+i.asString;~sourceOutAgents=~sourceOutAgents.add(x.asSymbol);
 			});
@@ -1121,12 +1040,9 @@ G                       Init Genome Agent (solo).
 			~agentsBand = [];
 			//FHZ Band System
 			~numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
-			// ~bandFHZ pour test dans OSC analyze 108-24 = 84 -->> range piano
-			//~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
-			//~bandFHZ = ~bandFHZ.add(127);
-			~bandFHZ = Array.fill(~numFhzBand, {arg i; 127 / ~numFhzBand * i + (127 / ~numFhzBand )});
+			~bandFHZ = Array.fill(~numFhzBand, {arg i; [127 / ~numFhzBand * i, 127 / ~numFhzBand * i + (127 / ~numFhzBand )]});
 			~bandFHZ = ~bandFHZ.reverse;
-			~bandFHZ = ~bandFHZ.add(0);
+			~bandFHZ = ~bandFHZ.add([0, 127]);
 			~bandFHZ = ~bandFHZ.reverse;
 			~flagGeneBand = 'off';
 			~flagSynthBand = 'off';
@@ -2054,8 +1970,6 @@ G                       Init Genome Agent (solo).
 						~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})});
 						~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;
 				});
-				//if(abs(freq*127 - (~freqBefore*127)) >= ~differencefreq and: {abs(amp.ampdb - ~ampBefore.ampdb) >= ~differenceamp} and: {abs(duree - ~lastTimeAnalyse) >= ~differenceduree} and: {duree >= ~differenceduree},
-				//{
 				if(~freqTampon !=nil and: {~ampTampon != nil},
 					{if(~listefreq.size < ~listedatasizein,
 						{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
@@ -2065,18 +1979,14 @@ G                       Init Genome Agent (solo).
 							if(~compteurAnalyse >= ~listedatasizein, {~compteurAnalyse=0;
 								~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})});
 							});
-							//if(~compteurAnalyse < ~listefreq.size,
-							//{
 							~listefreq.wrapPut(~compteurAnalyse,~freqTampon);
 							~listeamp.wrapPut(~compteurAnalyse,~ampTampon);
 							~listeduree.wrapPut(~compteurAnalyse,duree);
 							~listeID.wrapPut(~compteurAnalyse, 1.0.rand);
 							~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
-							//});
 							~compteurAnalyse=~compteurAnalyse+1});
 				});
 				~freqTampon=freq;~ampTampon=amp;~lastTimeAnalyse=time;
-				//});
 				if(duree > ~tempsmaxsignal , // ici duree silence
 					{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[]; ~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;~compteurAnalyse=0;
 						~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})}); ~lastTimeAnalyse=time});
@@ -2134,8 +2044,6 @@ G                       Init Genome Agent (solo).
 						~limitTemps = variableTemps.log2.abs * 6 + 6;
 						// Choice type Preset
 						flagPreset = flagPreset.add(~foldersToScanPreset.size);
-						/*flagPreset = flagPreset.add(~foldersToScanPresetGenome.size);
-						flagPreset = flagPreset.add(~foldersToScanPresetGenomeSequence.size);*/
 						flagPreset = flagPreset.normalizeSum;
 						flag = flagPreset.windex;
 						// Load Preset
@@ -2143,12 +2051,6 @@ G                       Init Genome Agent (solo).
 							if(flag == 0, {if(File.exists(~nompathdata++~foldersToScanPreset.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPreset.wrapAt(number),"r");
 								~wp.name=~nomFenetre + ~foldersToScanPreset.wrapAt(number);
 								~loadUnivers.value(file);file.close}, {"cancelled".postln})});
-							/*if(flag == 1, {if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(number),"r");
-							~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(number);
-							~loadUnivers.value(file, 'on');file.close}, {"cancelled".postln})});
-							if(flag == 2, {if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number),"r");
-							~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(number);
-							~loadUnivers.value(file, 'on', 'on');file.close}, {"cancelled".postln})});*/
 						});
 				});
 			},
@@ -2173,8 +2075,6 @@ G                       Init Genome Agent (solo).
 						~limitTemps = variableTemps.log2.abs * 6 + 6;
 						// Choice type Preset
 						flagPreset = flagPreset.add(~foldersToScanPreset.size);
-						/*flagPreset = flagPreset.add(~foldersToScanPresetGenome.size);
-						flagPreset = flagPreset.add(~foldersToScanPresetGenomeSequence.size);*/
 						flagPreset = flagPreset.normalizeSum;
 						flag = flagPreset.windex;
 						// Load Preset
@@ -2182,12 +2082,6 @@ G                       Init Genome Agent (solo).
 							if(flag == 0, {if(File.exists(~nompathdata++~foldersToScanPreset.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPreset.wrapAt(number),"r");
 								~wp.name=~nomFenetre + ~foldersToScanPreset.wrapAt(number);
 								~loadUnivers.value(file);file.close}, {"cancelled".postln})});
-							/*if(flag == 1, {if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(number),"r");
-							~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(number);
-							~loadUnivers.value(file, 'on');file.close}, {"cancelled".postln})});
-							if(flag == 2, {if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(number),"r");
-							~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(number);
-							~loadUnivers.value(file, 'on', 'on');file.close}, {"cancelled".postln})});*/
 						});
 				});
 			});
@@ -2534,7 +2428,7 @@ G                       Init Genome Agent (solo).
 							if(~flagGeneBand == 'on', {geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 							//
 							for(1, ~numFhzBand, {arg i;
-								if(fhz > ~bandFHZ.wrapAt(i-1) and: {fhz < ~bandFHZ.wrapAt(i)} and: {geneFHZ.wrapAt(i) == 1}, {
+								if(fhz > ~bandFHZ.wrapAt(i).at(0) and: {fhz < ~bandFHZ.wrapAt(i).at(1)} and: {geneFHZ.wrapAt(i) == 1}, {
 									// Add Data en fonction des bandes activent chez l'agent
 									if(~listeagentID.wrapAt(agent).includes(~listeID.wrapAt(signal)).not,
 										{~listeagentID.wrapPut(agent,~listeagentID.wrapAt(agent).add(~listeID.wrapAt(signal)));
@@ -2591,7 +2485,7 @@ G                       Init Genome Agent (solo).
 								if(~flagGeneBand == 'on',
 									{geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 								for(1, ~numFhzBand, {arg i;
-									if(fhz > ~bandFHZ.wrapAt(i-1) and: {fhz < ~bandFHZ.wrapAt(i)} and: {geneFHZ.wrapAt(i) == 1}, {
+									if(fhz > ~bandFHZ.wrapAt(i).at(0) and: {fhz < ~bandFHZ.wrapAt(i).at(1)} and: {geneFHZ.wrapAt(i) == 1}, {
 										signaux=signaux.add(signal);
 										if(~listeagentID.wrapAt(agent).includes(~listeID.wrapAt(signal)).not,
 											{~listeagentID.wrapPut(agent,~listeagentID.wrapAt(agent).add(~listeID.wrapAt(signal)));
@@ -2686,8 +2580,6 @@ G                       Init Genome Agent (solo).
 					longueur.do({arg i;i=i+positionLow;
 						if(~mutation > 1.0.rand, {
 							~listeagentfreq.wrapPut(agent, ~listeagentfreq.wrapAt(agent).add(1.0.rand))},{~listeagentfreq.wrapPut(agent, ~listeagentfreq.wrapAt(agent).add(~listeagentfreq.wrapAt(voisin).wrapAt(i)))});
-						//if(~mutation > 1.0.rand, {
-						//~listeagentamp.wrapPut(agent, ~listeagentamp.wrapAt(agent).add(1.0.rand))},{~listeagentamp.wrapPut(agent, ~listeagentamp.wrapAt(agent).add(~listeagentamp.wrapAt(voisin).wrapAt(i)))});
 						// No mutation sur amplitude
 						~listeagentamp.wrapPut(agent, ~listeagentamp.wrapAt(agent).add(~listeagentamp.wrapAt(voisin).wrapAt(i)));
 						if(~mutation > 1.0.rand, {
@@ -3574,10 +3466,6 @@ G                       Init Genome Agent (solo).
 						if(~signauxAffichage.mediane <= 0.5 and: {lastSignauxAffichage <= 0.5}, {~distanceSignauxSlider.valueAction=~distanceSignauxSlider.value+rrand(0, ~distanceSignauxSlider.value)}, {~distanceSignauxSlider.valueAction=rrand(0.015625, 0.5)});
 						// Deviance agents vs agents
 						if(voisinsAffichage >= valueTierAgents and: {lastVoisinsAffichage >= valueTierAgents}, {~devianceSlider.valueAction=~devianceSlider.value+rrand(0, ~devianceSlider.value)}, {~devianceSlider.valueAction=rrand(0.015625, 0.125)});
-						//// Shared genes agents vs agents
-						//if(actifsAgents >= valueTierAgents and: {fitness >= 0.85} and: {lastFitness >= 0.85}, {~learningAgentsSlider.valueAction=~learningAgentsSlider.value+rrand(0, ~learningAgentsSlider.value)}, {~learningAgentsSlider.valueAction=rrand(0, 0.125)});
-						//// Mutation agents
-						//if(actifsAgents >= valueTierAgents and: {fitness >= 0.85} and: {lastFitness >= 0.85}, {~mutationAgentsSlider.valueAction=~mutationAgentsSlider.value+rrand(0, ~mutationAgentsSlider.value)}, {~mutationAgentsSlider.valueAction=rrand(0.01, 0.1)});
 					});
 					//////////////////// Monde Musique sliders
 					if(~mondesMusiqueAutomation.value == 1, {
@@ -3598,12 +3486,6 @@ G                       Init Genome Agent (solo).
 						if(abs(ecartsemiqFreq - lastecartsemiqFreq) >= 0.0025, {
 							~freqTransposeInstr.valueAction_((ecartsemiqFreq*60)*[dissymetrieFreq, lastdissymetrieFreq].mean.sign);
 						});
-						//// Amp Synth
-						//if(abs(ecartqAmp - lastecartqAmp) >= 0.0025, {
-						//x=[q1Amp, lastq1Amp].mediane;
-						//y=[q3Amp, lastq3Amp].mediane;
-						//~ampInstr.valueAction_([x, y].ampdb);
-						//});
 						// Duree Synth
 						if(abs(ecartqDuree - lastecartqDuree) >= 0.0025, {
 							x=[q1Duree, lastq1Duree].mediane * ~dureeanalysemax;
@@ -3629,12 +3511,6 @@ G                       Init Genome Agent (solo).
 					if(~initAutomation.value == 1, {
 						// Agents mort -->> Init agents
 						if(~agents <= 1  and: {0.5.coin}, {~initsysteme.valueAction_(1)});
-						//// Agents solo ??? -> new add  2 agent
-						//if(~agents == 1 and: {~agents < ~maximumagents} and: {0.5.coin}, {
-						//~initagents.value(~agents, nil, nil, nil, 'init', [], [], [], 0, 0, 0);
-						//~agents=~agents + 1;
-						//~initagents.value(~agents, nil, nil, nil, 'init', [], [], [], 0, 0, 0);
-						//~agents=~agents + 1});
 						////////////////////// Zero music agents
 						if(actifsAgents <= 0 and: {lastActifsAgents == 0}, {~initsysteme.valueAction_(1);lastActifsAgents=9999},{lastActifsAgents = actifsAgents});
 					}, {lastActifsAgents = actifsAgents});
@@ -3664,9 +3540,6 @@ G                       Init Genome Agent (solo).
 		~cmdperiodfunc = {arg file;
 			if(~flagRecording == 'on', {
 				s.stopRecording;~bufferRecording.close;~bufferRecording.free});
-			//// Create Last Work
-			//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on','on').value.asCompileString);file.close;
-			//Post << "Writing File Last Work" <<  Char.nl;
 			~wp.close;~wm.close;~wcm.close;~wi.close;~we.close;~wg.close;~wad.close;~wv.close;~windowMasterFX.close; windowKeyboard.close;
 			if(~flagHPgenomeEditor == 'on', {~wEditor.close;~routineGenome.remove});
 			if(~flagHPsequenceEditor == 'on', {~wSequence.close;~routineSequence.remove});
@@ -3714,30 +3587,6 @@ G                       Init Genome Agent (solo).
 			file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
 			s.sync;
 			~initsysteme.valueAction_(1);
-			//if(File.exists(~nompathdata++"init preset.scd"),
-			//{Post << "Load Init Preset" <<  Char.nl;
-			//file=File(~nompathdata++"init preset.scd","r");
-			//~wp.name=~nomFenetre+"init preset.scd";
-			//~loadUnivers.value(file);file.close;
-			//s.sync;
-			//});
-			//if(File.exists(~nompathdata++"last work.scd"),
-			//{Post << "Loading File Last Work" <<  Char.nl;
-			//file=File(~nompathdata++"last work.scd","r");
-			//~wp.name=~nomFenetre+"last work.scd";
-			//~loadUnivers.value(file, 'on', 'on');file.close;
-			//s.sync},
-			//{if(File.exists(~nompathdata++"init preset.scd"),
-			//{Post << "Init Preset" <<  Char.nl;
-			//file=File(~nompathdata++"init preset.scd","r");
-			//~wp.name=~nomFenetre+"init preset.scd";
-			//~loadUnivers.value(file);file.close;
-			//s.sync;
-			//// Create Last Work
-			//Post << "Writing File Last Work" <<  Char.nl;
-			//file=File(~nompathdata++"last work.scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
-			//s.sync;
-			//})});
 		};
 
 		s.queryAllNodes;
@@ -5070,11 +4919,9 @@ G                       Init Genome Agent (solo).
 			{|ez|
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~numberBand", ez.value)});
 				~numFhzBand = ez.value;
-				//~bandFHZ = Array.fill(~numFhzBand, {arg i; 84 / ~numFhzBand * i + 24 + (84 / ~numFhzBand )});
-				//~bandFHZ = ~bandFHZ.add(127);
-				~bandFHZ = Array.fill(~numFhzBand, {arg i; 127 / ~numFhzBand * i + (127 / ~numFhzBand )});
+				~bandFHZ = Array.fill(~numFhzBand, {arg i; [127 / ~numFhzBand * i, 127 / ~numFhzBand * i + (127 / ~numFhzBand )]});
 				~bandFHZ = ~bandFHZ.reverse;
-				~bandFHZ = ~bandFHZ.add(0);
+				~bandFHZ = ~bandFHZ.add([0, 127]);
 				~bandFHZ = ~bandFHZ.reverse;
 				~rangeSynthBand =[];
 				for(0, ~numFhzBand,
@@ -5533,7 +5380,7 @@ G                       Init Genome Agent (solo).
 		//Range Band
 		rangeBand = EZText(~wp, Rect(0, 0, 400, 20), "Range Band",
 			{arg range; ~bandFHZ = range.value},
-			[0.0, 42.33, 84.66, 127.0 ], true, 70);
+			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true, 70);
 		~wp.view.decorator.nextLine;
 
 		StaticText(~wp, Rect(10,10, 150, 20)).string_("Mean State System").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
@@ -5882,27 +5729,9 @@ G                       Init Genome Agent (solo).
 				// key s -> save Preset
 				if(modifiers==0 and: {unicode==115} and: {keycode==1},
 					{~commandeExecute='save Preset'});
-				/*// Key alt l  -> load Preset + genomes
-				if(modifiers==524288 and: {unicode==108} and: {keycode==37},
-				{~commandeExecute='load Preset+Genome'});
-				// Key alt L  -> load Preset + genomes + sequences
-				if(modifiers==655360 and: {unicode==76} and: {keycode==37},
-				{~commandeExecute='load Preset+Genome+Sequence'});*/
 				// Key ctrl L  -> load Preset synchro on grid
 				if(modifiers==393216 and: {unicode==12} and: {keycode==37},
 					{~commandeExecute='load Preset synchro'});
-				/*// Key ctrl alt l  -> load Preset + genomes synchro on grid
-				if(modifiers==786432 and: {unicode==12} and: {keycode==37},
-				{~commandeExecute='load Preset+Genome synchro'});
-				// Key ctrl alt L  -> load Preset + genomes synchro on grid
-				if(modifiers==917504 and: {unicode==12} and: {keycode==37},
-				{~commandeExecute='load Preset+Genome+Sequence synchro'});*/
-				/*// Key alt s  -> save Preset + genomes
-				if(modifiers==524288 and: {unicode==115} and: {keycode==1},
-				{~commandeExecute='save Preset+Genome'});
-				// Key alt S  -> save Preset + genomes + sequences
-				if(modifiers==655360 and: {unicode==83} and: {keycode==1},
-				{~commandeExecute='save Preset+Genome+Sequence'});*/
 				// key b -> switch loopmusic on/off
 				if(modifiers==0 and: {unicode==98} and: {keycode==11}, {if(~loopseq.value == 1,{~loopseq.valueAction_(0)},{~loopseq.valueAction_(1)})});
 				// key f -> load audio file pour fileIn analyse
@@ -6064,52 +5893,8 @@ G                       Init Genome Agent (solo).
 				});
 				// key alt e -> Kill groupe des Verb
 				if(modifiers==524288 and: unicode==101 and: {keycode== 14}, {
-					/*// Effets
-					~groupeEffets.freeAll;
-					/*~busEffetsAudio.free;
-					~busEffetsAudio=Bus.audio(s, 1);*/
-					~listSynthEffets=[];
-					~audioOutEffets=[];
-					~playSynthEffets=[];
-					~controlsSynthEffets=[];
-					~panSynthEffets=[];
-					~jitterPanSynthEffets=[];
-					~jitterControlsSynthEffets=[];
-					~ampSynthEffets=[];
-					~automationPanEffets=[];
-					~automationControlsEffets=[];
-					~automationSpeedEffets = [];
-					~listEffets.size.do({arg i;
-					~listSynthEffets=~listSynthEffets.add(Synth.newPaused(~listEffets.wrapAt(i).asString,['in', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index, 'amp', 12.neg.dbamp, 'pan', 0.0, 'control1', 0.25,  'control2', 0.25,  'control3', 0.25,  'control4', 0.25,  'control5', 0.25,  'control6', 0.25,  'control7', 0.25,  'control8', 0.25], ~groupeEffets, \addToTail));
-					~audioOutEffets=~audioOutEffets.add(0);
-					~controlsSynthEffets=~controlsSynthEffets.add([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
-					~playSynthEffets=~playSynthEffets.add(0);
-					~panSynthEffets=~panSynthEffets.add(0.0);
-					~jitterPanSynthEffets=~jitterPanSynthEffets.add(0.1);
-					~jitterControlsSynthEffets=~jitterControlsSynthEffets.add(0.1);
-					~ampSynthEffets=~ampSynthEffets.add(-3);
-					~automationPanEffets=~automationPanEffets.add(0);
-					~automationControlsEffets=~automationControlsEffets.add(0);
-					~automationSpeedEffets = ~automationSpeedEffets.add(24);
-					~listeFXTime = ~listeFXTime.add(24.reciprocal);
-					});
-					~listSynthEffets.size.do({arg effet;
-					~listSynthEffets.wrapAt(effet).set('out', ~audioOutEffets.wrapAt(effet) + ~startChannelAudioOut, 'amp', ~ampSynthEffets.wrapAt(effet).dbamp, 'pan', ~panSynthEffets.wrapAt(effet), 'control1', ~controlsSynthEffets.wrapAt(effet).wrapAt(0),  'control2', ~controlsSynthEffets.wrapAt(effet).wrapAt(1),  'control3', ~controlsSynthEffets.wrapAt(effet).wrapAt(2),  'control4', ~controlsSynthEffets.wrapAt(effet).wrapAt(3),  'control5', ~controlsSynthEffets.wrapAt(effet).wrapAt(4),  'control6', ~controlsSynthEffets.wrapAt(effet).wrapAt(5),  'control7', ~controlsSynthEffets.wrapAt(effet).wrapAt(6),  'control8', ~controlsSynthEffets.wrapAt(effet).wrapAt(7));
-					});
-					~sourceOutEffets.valueAction=0;
-					~effetsInstrMenu.valueAction_(0);
-					~playEffetsButton.valueAction_(0);
-					~controlsEffetsMenu.valueAction_([0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]);
-					~panEffets.valueAction_(0);
-					~jitterPanEffets.valueAction_(0.1);
-					~ampEffets.valueAction_(-3);
-					~randomPanEffets.value_(0);
-					~randomControlsEffets.value_(0);
-					~speedEffets.valueAction_(24)*/
 					// Verb
 					~groupeVerb.freeAll;
-					/*~busVerbAudio.free;
-					~busVerbAudio=Bus.audio(s, 1);*/
 					~listSynthVerb=[];
 					~audioOutVerb=[];
 					~playSynthVerb=[];
@@ -6214,22 +5999,6 @@ G                       Init Genome Agent (solo).
 							~foldersToScanPreset.removeAt(numberFile);
 					})});
 				});
-				/*// Key alt + z -> load Preset+Genome aleatoire
-				if(modifiers==524288 and: {unicode==122} and: {keycode==16}, {
-				while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
-				numberFile=rrand(0, ~foldersToScanPresetGenome.size - 1);compteurEssai=compteurEssai+1;
-				if(File.exists(~nompathdata++~foldersToScanPresetGenome.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPresetGenome.wrapAt(numberFile),"r");
-				~wp.name=~nomFenetre + ~foldersToScanPresetGenome.wrapAt(numberFile);
-				~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
-				});
-				// Key alt + Z -> load Preset+Genome+sequence aleatoire
-				if(modifiers==655360 and: {unicode==90} and: {keycode==16}, {
-				while({flagFile=='off' and: {compteurEssai <= (~choixChangeConfig.wrapAt(1)-~choixChangeConfig.wrapAt(0)+1)}}, {
-				numberFile=rrand(0, ~foldersToScanPresetGenomeSequence.size - 1);compteurEssai=compteurEssai+1;
-				if(File.exists(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(numberFile)), {file=File(~nompathdata++~foldersToScanPresetGenomeSequence.wrapAt(numberFile),"r");
-				~wp.name=~nomFenetre + ~foldersToScanPresetGenomeSequence.wrapAt(numberFile);
-				~loadUnivers.value(file, 'on', 'on');file.close;flagFile='on'})});
-				});*/
 				// key q -> Switch Algo Analyse
 				if(modifiers==0 and: {unicode==113} and: {keycode==12}, {
 					if(~algoAnalyse.value == 0, {~algoAnalyse.valueAction_(1)}, {
@@ -6383,47 +6152,6 @@ G                       Init Genome Agent (solo).
 				~wp.name=~nomFenetre+"control panel"+~algoMusic+number.value.asString++".scd";
 				file=File(~nompathdata++"control panel"+number.value.asString++".scd","w");file.write(~foncSaveMonde.value.asCompileString);file.close;
 			});
-			/*//load Preset + Genome
-			if(commande=='load Preset+Genome',{
-			if(File.exists(~nompathdata++"preset+genome"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","r");
-			~loadUnivers.value(file, 'on', 'on');
-			~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd";
-			file.close});
-			});
-			//load Preset + Genome synchro
-			if(commande=='load Preset+Genome synchro',{
-			if(File.exists(~nompathdata++"preset+genome"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","r");
-			~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd";
-			~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';~loadUnivers.value(file, 'on', 'on'); ~wp.name=~nomFenetre+~algoMusic+"preset+genome"+number.value.asString++".scd"; file.close;~flagScoreRecordGUI = 'on'}.defer;nil})});
-			});
-			//load Preset + Genome + Sequence
-			if(commande=='load Preset+Genome+Sequence',{
-			if(File.exists(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","r");
-			~loadUnivers.value(file, 'on', 'on');
-			~wp.name=~nomFenetre+~algoMusic+"preset+genome+sequence"+number.value.asString++".scd";
-			file.close});
-			});
-			//load Preset + Genome + Sequence synchro
-			if(commande=='load Preset+Genome+Sequence synchro',{
-			if(File.exists(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd"),{file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","r");
-			~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar - 0.1, {{~flagScoreRecordGUI = 'off';~loadUnivers.value(file, 'on', 'on'); ~wp.name=~nomFenetre+~algoMusic+"preset+genome+sequence"+number.value.asString++".scd"; file.close;~flagScoreRecordGUI = 'on'}.defer;nil})});
-			});*/
-			////load Preset en cascade
-			//if(commande=='load Preset en cascade',{
-			//if(File.exists(~nompathdata++"preset"+number.value.asString++".scd"),{file=File(~nompathdata++"preset"+number.value.asString++".scd","r");
-			//~wp.name=~nomFenetre+"preset"+number.value.asString++".scd";
-			//~loadUnivers.value(file, 'on', 'on');file.close});
-			//});
-			/*//save preset + genomes
-			if(commande=='save Preset+Genome',{
-			~wp.name=~nomFenetre+"preset+genome"+number.value.asString++".scd";
-			file=File(~nompathdata++"preset+genome"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
-			});
-			//save preset + genomes + sequences
-			if(commande=='save Preset+Genome+Sequence',{
-			~wp.name=~nomFenetre+"preset+genome+sequence"+number.value.asString++".scd";
-			file=File(~nompathdata++"preset+genome+sequence"+number.value.asString++".scd","w");file.write(~foncSaveUnivers.value(~foncSaveMonde.value, 'on', 'on').value.asCompileString);file.close;
-			});*/
 			//save Preset
 			if(commande=='save Preset',{
 				~wp.name=~nomFenetre+"preset"+number.value.asString++".scd";
@@ -6650,10 +6378,6 @@ G                       Init Genome Agent (solo).
 					~textFileAnalyze.string_(~listeNameSamplePourAnalyse.wrapAt(number - 1));
 				}, {"cancelled".postln});
 			});
-			//// evite problemes avec les views
-			//if(flagScore == 'on', {if(commande != 'load Preset en cascade', {~commandeScore='nil';~commandeExecute='nil'})},
-			//{if(commande != 'load Preset en cascade', {~commande='nil';~commandeExecute='nil'});
-			//});
 			~commande='nil';~commandeExecute='nil';
 		};
 
@@ -7224,21 +6948,6 @@ G                       Init Genome Agent (solo).
 			// startpopup
 			// Data 40 -> info
 			~algoAnalyse.valueAction=datafile.wrapAt(1);
-			//~matrix=datafile.wrapAt(41);
-			//	~zoomXSlider.valueAction=~matrix.wrapAt(0);
-			//	~zoomYSlider.valueAction=~matrix.wrapAt(3);
-			//	~translateXSlider.valueAction=~matrix.wrapAt(4);
-			//	~translateYSlider.valueAction=~matrix.wrapAt(5).neg;
-			//	~shearingXSlider.valueAction=~matrix.wrapAt(1);
-			//	~shearingYSlider.valueAction=~matrix.wrapAt(2);
-			//~angleX=datafile.wrapAt(42);
-			//~angleY=datafile.wrapAt(43);
-			//~angleZ=datafile.wrapAt(44);
-			//~focalDistance=datafile.wrapAt(45);
-			//	~angleXSlider.valueAction=datafile.wrapAt(42)*360/2pi;
-			//	~angleYSlider.valueAction=datafile.wrapAt(43)*360/2pi;
-			//	~angleZSlider.valueAction=datafile.wrapAt(44)*360/2pi;
-			//	~focalDistanceSlider.valueAction=datafile.wrapAt(45);
 			~flagGeneFreq=datafile.wrapAt(46);
 			~flagGeneTransFreq=datafile.wrapAt(47);
 			~flagGeneAmp=datafile.wrapAt(48);
@@ -7523,7 +7232,6 @@ G                       Init Genome Agent (solo).
 
 		~routinePlayingScore = {arg score, number, pos, flagLoop;
 			var time=0.04167 / ~tempoMusicPlay.tempo.reciprocal, cmd, val;
-			//("Play Step Score"+number.asString++"."++pos.asString+"(Loop"+flagLoop.asString++")").postln;
 			Tdef(("score"+number.asString+Date.localtime.asString).asSymbol,
 				{Routine{arg inval;
 					score.do({arg item;
@@ -7548,7 +7256,6 @@ G                       Init Genome Agent (solo).
 								("Loop score"+number.asString++"."++pos.asString).postln;
 								time.yieldAndReset},
 							{
-								//("Stop Score"+number.asString++"."++pos.asString).postln;
 								~listeRoutinePlayingScore.wrapAt(number-1).wrapAt(pos-1).stop;
 								~listeRoutinePlayingScore.wrapAt(number-1).wrapAt(pos-1).remove;
 							})});
@@ -7567,7 +7274,6 @@ G                       Init Genome Agent (solo).
 					});
 					~listeRoutinePlayingScore.wrapPut(number-1, []);
 					~listeFlagRoutinePlayingScore.wrapPut(number-1, []);
-					//Post << "Warning push key ctrl+p and " << number.asString << " for delete Tdef" << Char.nl;
 				}.play;
 				};
 			);
@@ -7874,13 +7580,6 @@ G                       Init Genome Agent (solo).
 					Out.ar(busFileIn, Mix(input)); // Pour recordings buffers agents
 			}).send(s);
 
-			//// Synth pour record music
-			//SynthDef("Recording",
-			//{arg out, limit=0.8, vol=1.0;
-			////DiskOut.ar(out, Limiter.ar(LeakDC.ar(In.ar(0, ~numberAudioOut), 0.995), limit) * vol);// All input recording
-			//DiskOut.ar(out, Limiter.ar(LeakDC.ar(In.ar(0, ~recChannels), 0.995), limit) * vol);// Stereo recording
-			//}).send(s);
-
 			// Synth MasterFX
 			SynthDef("MasterFX",
 				{arg out=0, limit=0.8, postAmp=1.0;
@@ -7943,13 +7642,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -7985,13 +7684,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=PlayBuf.ar(1, buffer,  BufRateScale.kr(buffer) * rate, Impulse.kr(controlF * 100), BufFrames.kr(buffer)*offset, loop);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8027,13 +7726,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=Mix(TGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8069,13 +7768,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=BufRd.ar(1,buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), loop);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8111,15 +7810,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
 					// Main Synth
 					offset2 = (controlF+controlA).clip(0, 1);
 					main=BufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8155,13 +7854,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(offset <= 0, Logistic.kr(controlD*4, 1, Rand(0, 1)), offset);
 					main=GrainBuf.ar(1, Dust.kr(100*controlF), controlA*0.1, buffer, BufRateScale.kr(buffer) * rate, offset, 4, 0, -1, 512);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8197,12 +7896,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate,  1, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlF, BufFrames.kr(buffer)*controlA);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8228,53 +7927,6 @@ G                       Init Genome Agent (solo).
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
-			//SynthDef("SamplerSynth",
-			//{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
-			//antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
-			//controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125, in=0, flag;
-			//var dureesample, envelope, ambisonic, main, inputSig, recHead;
-			//inputSig = if(flag < 1, Mix(SoundIn.ar(in)), In.ar(in));
-			//// Set Rate Freq
-			//rate=2**rate.cpsoct;
-			//dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-			//rate=rate * reverse;
-			//buffer = LocalBuf(s.sampleRate * BufDur.kr(buffer), 1);
-			//// envelope
-			////controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
-			//// Rec Buffer
-			//recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
-			//BufWr.ar(inputSig, buffer, recHead, 1);
-			//// Play Buffer
-			//main = BufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, offset, recHead, offset), 1, loop) * envelope;
-			//main = Median.ar(3, main);
-			//// main = Limiter.ar(main, 1.0, 0.01);
-			////ampreal = if(amp <= 0, ampreal, amp);
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(~flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), 1),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(~flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, ~widthMC, ~orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, ~widthMC, ~orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffets, Mix(main) * amp);
-			//Out.ar(busverb, Mix(main) * amp * ampreal);
-			//Out.ar(out, main * amp * ampreal);
-			//}).send(s);
-
 			SynthDef("HPplayBuf",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
@@ -8285,13 +7937,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8327,13 +7979,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = LeakDC.ar(Median.ar(controlF * 30 + 1, HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2)), controlA);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8369,13 +8021,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, SinOsc.kr(controlA*dureesample.reciprocal*10, mul: controlD, add: rate), 0, BufFrames.kr(buffer)*offset,loop, antiClick1, antiClick2);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8411,13 +8063,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=Mix(HPtGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp, antiClick1, antiClick2));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8453,13 +8105,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPbufRd.ar(1, buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8495,13 +8147,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, Impulse.kr(controlF*100), BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8537,14 +8189,14 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
 					main = HPbufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8580,13 +8232,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(rate.abs >= 1.0 , main=Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), main=Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8623,14 +8275,14 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20, 12544);
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+27.5, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+27.5, freq, duree*controlD), 0.333));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8666,12 +8318,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Squiz.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 10, controlA * 10);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8707,12 +8359,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=WaveLoss.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 40, 40, abs(controlA*2-1));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8748,12 +8400,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(FreqShift.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 1024 - 512, controlA * 2pi));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8789,12 +8441,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(PitchShift.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), 0.2, controlF*4, controlA, controlD, 1));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8830,15 +8482,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					//pointer = if(reverse > 0, Line.kr(offset, controlF, dureesample), Line.kr(controlF, offset, dureesample));
 					//main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer), 1);
 					//RecordBuf.ar(main, buffer);
 					main = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, controlF + 0.01, -1, controlA * 15 + 1, controlD);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8874,13 +8526,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					//main = Warp0.ar(1, buffer, 1, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 7 + 1);
 					main = Warp1.ar(1, buffer, controlD, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 15 + 1);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8918,15 +8570,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -8952,50 +8604,6 @@ G                       Init Genome Agent (solo).
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
-			//SynthDef("PV_HPecartType",
-			//{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer,  buffer2,
-			//antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
-			//controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
-			//var dureesample, envelope, ambisonic, main;
-			//// Set Rate Freq
-			//rate=2**rate.cpsoct;
-			//dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-			//rate=rate * reverse;
-			//// envelope
-			////controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
-			//// Main Synth
-			//main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-			//main = FFT(LocalBuf(2048, 1), main);
-			//main = PV_HPecartType(main, controlF*10);
-			//main= IFFT(main);
-			//// main = Limiter.ar(main, 1.0, 0.01);
-			////ampreal = if(amp <= 0, ampreal, amp);
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(~flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(~flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffets, Mix(main) * amp);
-			//Out.ar(busverb, Mix(main) * amp * ampreal);
-			//Out.ar(out, main * amp * ampreal);
-			//}).send(s);
-
 			SynthDef("PV_MagShift",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
@@ -9006,15 +8614,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9050,15 +8658,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9094,15 +8702,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9138,15 +8746,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9182,15 +8790,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9226,15 +8834,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9270,15 +8878,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9314,15 +8922,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9358,15 +8966,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9402,15 +9010,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9446,15 +9054,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9490,15 +9098,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9534,15 +9142,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9578,15 +9186,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.01;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9622,15 +9230,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9666,15 +9274,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9710,15 +9318,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9754,15 +9362,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_SpectralEnhance(main, (controlF*8+0.5).floor, controlA*4+1, controlD);
 					main= IFFT(main) * 0.125;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9798,15 +9406,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4));
 					main= IFFT(main) * 0.125;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9842,15 +9450,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4), controlA - 0.5 * 128);
 					main= IFFT(main) * 0.125;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9886,15 +9494,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Cutoff(main, controlF * 2 - 1);
 					main= IFFT(main) * 0.125;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9930,7 +9538,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9939,8 +9547,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -9976,7 +9584,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9985,8 +9593,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10022,7 +9630,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10031,8 +9639,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10068,7 +9676,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10077,8 +9685,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.1;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10114,7 +9722,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10123,8 +9731,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Div(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10160,7 +9768,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10169,8 +9777,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10206,7 +9814,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10215,8 +9823,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10252,7 +9860,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10261,8 +9869,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10298,7 +9906,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10307,8 +9915,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10344,7 +9952,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10353,8 +9961,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10390,7 +9998,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10399,8 +10007,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10436,15 +10044,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
 					main=Convolution.ar(in1, in2, 2048) * 0.1;
 					//main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10478,12 +10086,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main= SinOsc.ar(freq, 0, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10514,12 +10122,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = SinOsc.ar(freq+SinOsc.ar(500*controlF, mul:1000*controlA), 0, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10551,14 +10159,14 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20,12544);
 					main = Saw.ar(freq, 0.5);
 					main = RHPF.ar(main, Line.kr(controlF*4000, freq, duree*controlD), controlA, 0.5, RLPF.ar(main, Line.kr(controlF*2000, freq, duree*controlD), controlA));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10590,12 +10198,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = SinOsc.ar(SinOsc.kr(controlF*16, mul: Line.kr(0, controlA*100, controlD*duree), add: freq), 0, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10627,7 +10235,7 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, dureesamplein, fft, in, dureesample, delay, filtreFreq=[], ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					main = Formant.ar(freq, LFNoise0.kr(controlD.reciprocal)*(controlA*127).midicps, LFNoise0.kr(duree.reciprocal)*(controlF*127).midicps, 0.5);
 					// main = Limiter.ar(main, 0.33, 0.01);
@@ -10662,13 +10270,13 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
 					pluck = BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*controlF*24)), controlA));
 					main = CombL.ar(pluck, freq.reciprocal, freq.reciprocal, duree);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10700,12 +10308,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
 					main = Klang.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], freq);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10737,12 +10345,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = DynKlank.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], Dust2.ar(duree.reciprocal * 100), freq);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10774,12 +10382,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = DynKlank.ar(`[[Rand(32.7, 4186), Rand(32.7, 4186), Rand(32.7, 4186)] * controlF, [amp / 3, amp / 3, amp / 3], nil], Impulse.ar(duree.reciprocal * controlD * 64), freq);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10811,12 +10419,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Blip.ar(freq, Line.kr(50 * controlF + 1,50 * controlA + 1, duree * controlD), 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10848,12 +10456,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Pulse.ar(freq, controlF, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10885,12 +10493,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = VarSaw.ar(freq, controlF, controlA, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10922,12 +10530,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Gendy3.ar(controlF * 6, 4, controlA * 0.1, controlD * 0.1, freq, controlA * 0.1, controlD * 0.1, mul: 0.25);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -10959,7 +10567,7 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic, k, d, inforce, outforce;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					//main = PMOsc.ar(freq, Spring.ar(LFPulse.ar(controlF * duree), duree / 10 / controlD, controlA * duree / 10) * controlF * 1000 + freq, 0.5);
@@ -10970,8 +10578,8 @@ G                       Init Genome Agent (solo).
 					outforce = outforce * freq + freq;
 					//main = SinOsc.ar(freq, 0, 0.5);
 					main = PMOsc.ar(freq, outforce, Line.kr(0, duree * 2pi), 0, 0.25);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11005,12 +10613,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var ambisonic, main, envelope, pluck;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Piano
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11045,14 +10653,14 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20,12544);
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+55, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+55, freq, duree*controlD), 0.333));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11087,13 +10695,13 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
 					main = if(rate.abs >= 1.0 , Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11128,12 +10736,12 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controlF * 10, controlA * 10);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11168,12 +10776,12 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controlF* 40, 40, abs(controlF*2-1));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11208,12 +10816,12 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controlF * 1024 - 512, controlA * 2pi));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11248,12 +10856,12 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), 0.2, controlF*4, controlA, controlD, 1));
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11290,7 +10898,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11300,8 +10908,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11327,52 +10935,6 @@ G                       Init Genome Agent (solo).
 					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
-			//SynthDef("Piano PV_HPecartType",
-			//{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer,  buffer2,
-			//antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
-			//controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
-			//var ambisonic, dureesample, envelope, main, recBuf;
-			//// Set Rate Freq
-			//rate=2**rate.cpsoct;
-			//rate=rate * reverse;
-			//// envelope
-			////controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
-			//// Synth
-			//main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
-			//// RecordBuf
-			//recBuf=RecordBuf.ar(main, buffer);
-			//// Main Synth
-			//main = FFT(LocalBuf(2048, 1), main);
-			//main = PV_HPecartType(main, controlF*10);
-			//main= IFFT(main);
-			//// main = Limiter.ar(main, 1.0, 0.01);
-			////ampreal = if(amp <= 0, ampreal, amp);
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(~flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(~flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffets, Mix(main) * amp);
-			//Out.ar(busverb, Mix(main) * amp * ampreal);
-			//Out.ar(out, main * amp * ampreal);
-			//}).send(s);
-
 			SynthDef("Piano PV_MagShift",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
@@ -11382,7 +10944,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11392,8 +10954,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11428,7 +10990,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11438,8 +11000,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11474,7 +11036,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11484,8 +11046,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11520,7 +11082,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11530,8 +11092,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11566,7 +11128,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11576,8 +11138,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11612,7 +11174,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11622,8 +11184,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11658,7 +11220,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11668,8 +11230,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11704,7 +11266,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11714,8 +11276,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11750,7 +11312,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11760,8 +11322,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11796,7 +11358,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11806,8 +11368,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11842,7 +11404,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11852,8 +11414,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11888,7 +11450,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11898,8 +11460,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11934,7 +11496,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11944,8 +11506,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -11980,7 +11542,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -11990,8 +11552,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.1;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12026,7 +11588,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12036,8 +11598,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12072,7 +11634,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12082,8 +11644,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12118,7 +11680,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12128,8 +11690,8 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12164,7 +11726,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12176,8 +11738,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12212,7 +11774,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12224,8 +11786,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12260,7 +11822,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12272,8 +11834,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12308,7 +11870,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12320,8 +11882,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12356,7 +11918,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12368,8 +11930,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12404,7 +11966,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12416,8 +11978,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12452,7 +12014,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12464,8 +12026,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12501,7 +12063,7 @@ G                       Init Genome Agent (solo).
 					rate=rate * reverse;
 					// enveloperate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12513,8 +12075,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12549,7 +12111,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12561,8 +12123,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12597,7 +12159,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12609,8 +12171,8 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(2048, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12645,7 +12207,7 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -12654,8 +12216,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
 					main=Convolution.ar(in1, in2, 2048) * 0.5;
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12692,7 +12254,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(Rand(3, 4), 1, Rand(0, 1)));
@@ -12700,7 +12262,7 @@ G                       Init Genome Agent (solo).
 					main = BufRd.ar(1, local, Phasor.ar(0, controlF+1, 0, BufFrames.kr(local)), 1);
 					BufWr.ar(DelayC.ar(in1, 1.0, controlD/100), local, Phasor.ar(0, controlA+0.001, 0, BufFrames.kr(local)), 1);
 					// main = Limiter.ar(main+in1, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12737,15 +12299,15 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					main = BufRd.ar(1, local, Phasor.ar(0, controlA.neg, 0, BufFrames.kr(local)), 1);
 					BufWr.ar(in1 + main * 0.5, local, Phasor.ar(0, controlD, 0, BufFrames.kr(local)), 1);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12782,7 +12344,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
@@ -12790,8 +12352,8 @@ G                       Init Genome Agent (solo).
 					in2 = BufRd.ar(1, local, Phasor.ar(0, controlA+1, 0, BufFrames.kr(local)), 1);
 					main = in1 + in2 * 0.5;
 					BufWr.ar(main, local, Phasor.ar(0, controlD+0.001, 0, BufFrames.kr(local)), 1);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12827,13 +12389,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = CombC.ar(main, 0.1, Line.kr(controlF.clip(0.01, 0.99)/100, controlA.clip(0.01, 0.99)/100, controlD.clip(0.01, 1.0)*dureesample), 1, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12869,13 +12431,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = CombC.ar(main, 0.1, Line.kr(Rand(controlF.clip(0.01, 0.99), controlA.clip(0.01, 0.99))/100, Rand(controlF.clip(0.01, 0.99), controlA.clip(0.01, 0.99))/100, controlD.clip(0.01, 1.0)*dureesample), 1, 0.5);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12911,13 +12473,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], main, controlF, controlD, controlA);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12953,12 +12515,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = BufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureesample.reciprocal), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)* controlF, BufFrames.kr(buffer)* controlA ).lag(controlD)*LFNoise2.kr(controlD).sign, 1);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -12999,14 +12561,14 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					source = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					effet= Mix(RHPF.ar(source,  formantfreqs*freq*controlF.clip(0.01, 1), formantbandwidths/(formantfreqs*freq*controlF.clip(0.01, 1.0)), 0.5));
 					main = BBandPass.ar(effet, LFNoise2.kr(controlA)+1*4186, controlD.clip(0.1, 1.0), 1);
-					// main = Limiter.ar(main, 1.0, 0.01);
-					//ampreal = if(amp <= 0, ampreal, amp);
+
+
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -13042,7 +12604,7 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
@@ -13087,7 +12649,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*4,control6*4,control7*4,control8*4], amp/4 * 0.6));
-					////effet = Limiter.ar(effet, 1.0, 0.01);
+					//
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13114,7 +12676,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13141,7 +12703,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(BPF.ar(ineffet, [control1*1000+27.5,control2*1000+500,control3*1000+1000,control4*1000+1500], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13168,7 +12730,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(BRF.ar(ineffet,[control1*1000+27.5,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13195,7 +12757,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+320.24370022528, control2*4186+320.24370022528, control3*4186+320.24370022528, control4*4186+320.24370022528], [control5, control6, control7, control8], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13222,7 +12784,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(RLPF.ar(ineffet, [control1*320.24370022528+27.5, control2*320.24370022528+27.5, control3*320.24370022528+27.5, control4*320.24370022528+27.5], [control5, control6, control7, control8], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13249,7 +12811,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(PitchShift.ar(ineffet, 0.1,[control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13276,7 +12838,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13303,7 +12865,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Formlet.ar(ineffet, [control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13330,7 +12892,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Resonz.ar(ineffet, [control1*500,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6, control7, control8], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13357,7 +12919,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13384,7 +12946,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13411,7 +12973,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13439,7 +13001,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=LeakDC.ar(ineffet, control1, amp);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13465,7 +13027,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13492,7 +13054,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(MidEQ.ar(ineffet, [control1, control2, control3, control4]*4186+27.5, 0.5, [control5, control6, control7, control8]*48-24, amp/2));
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					effet = effet * amp;
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13520,7 +13082,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(DynKlank.ar(`[[control1, control2, control3, control4]*4186+37, [amp / 4, amp /4, amp /4, amp / 4] / 4, [control5, control6, control7, control8]], ineffet));
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13557,7 +13119,7 @@ G                       Init Genome Agent (solo).
 					LocalOut.ar(effet);
 					//LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13591,7 +13153,7 @@ G                       Init Genome Agent (solo).
 					effet = effet * EnvGen.kr(Env.sine(1,1), Impulse.kr(control2*64+0.0625), levelScale: amp);
 					//effet = effet * EnvGen.kr(Env.perc(0.05, 1, 1, -5), Impulse.kr(control2*64+0.0625));
 					effet = Mix(effet);
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					LocalOut.ar(effet);
 					//LocalOut.ar(DelayC.ar(effet, 4, control4, amp));
 					// Switch Audio Out
@@ -13649,7 +13211,7 @@ G                       Init Genome Agent (solo).
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2.reciprocal) + (control3*4), Dust.kr(control4.reciprocal), Logistic.kr(control5 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(localBuf), 1, 0.333, 0.5) + local * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					LocalOut.ar(DelayC.ar(effet, 4, control6, control7));
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -13680,7 +13242,7 @@ G                       Init Genome Agent (solo).
 					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_MagFreeze(effet, SinOsc.kr(control2 * control4.reciprocal));
 					effet= IFFT(effet);
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13710,7 +13272,7 @@ G                       Init Genome Agent (solo).
 					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_PlayBuf(effet, localBuf, control2, control3 * BufFrames.kr(localBuf), 1, 1);
 					effet= IFFT(effet);
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13740,7 +13302,7 @@ G                       Init Genome Agent (solo).
 					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_BinPlayBuf(effet, localBuf, control2, control6 * BufFrames.kr(localBuf), control3 * 16, control4 * 8 + 1, control5 * 63 + 1, 1, 1);
 					effet= IFFT(effet);
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13769,7 +13331,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_HPshiftDown(effet, control1*32);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13788,35 +13350,6 @@ G                       Init Genome Agent (solo).
 					Out.ar(out, effet);
 			}).send(s);
 
-			//SynthDef("PV_HPecartTypeFX",
-			//{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
-			//var ineffet, effet, ambisonic;
-			//// Input
-			//ineffet=Mix(In.ar(in, 2));
-			//// effet
-			//effet = FFT(LocalBuf(2048, 1), ineffet);
-			//effet = PV_HPecartType(effet, control1*10+1);
-			//effet = IFFT(effet);
-			//effet = effet * amp;
-			////effet = Limiter.ar(effet, 1.0, 0.01);
-			//// Switch Audio Out
-			//effet = if(~switchAudioOut == 0,
-			//// Pan
-			//Pan2.ar(effet, pan),
-			//if(~switchAudioOut == 2,
-			//// PanAz
-			//PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-			//if(~switchAudioOut == 1,
-			//// Rotate2 v1
-			//Rotate2.ar(effet, effet, pan),
-			//// Ambisonic v1
-			//(ambisonic = PanB2.ar(effet, pan);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(busverb, Mix(effet));
-			//Out.ar(out, effet);
-			//}).send(s);
-
 			SynthDef("PV_HPfiltreFX",
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic;
@@ -13827,7 +13360,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_HPfiltre(effet, control1 * 32 + 1, control2 * 32 + 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13856,7 +13389,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagNoise(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13885,7 +13418,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagClip(effet, control1 * 16);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13914,7 +13447,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagSmooth(effet, control1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13943,7 +13476,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagSmear(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -13972,7 +13505,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_Diffuser(effet, Trig1.kr(LFNoise2.kr(control1*100), (control2*100).reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14001,7 +13534,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_BrickWall(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14030,7 +13563,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_LocalMax(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14059,7 +13592,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagSquared(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14088,7 +13621,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagBelow(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14117,7 +13650,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagAbove(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14146,7 +13679,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_RandComb(effet, control1*64, LFNoise2.kr(control2 * 64));
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14175,7 +13708,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, control1 * 4, control2 * 128 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14204,7 +13737,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_BinScramble(effet, control1, control2, LFNoise2.kr(control2.reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14233,7 +13766,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_BinShift(effet, control1 * 4, control2 * 256 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14262,7 +13795,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_RectComb(effet, control1*32, control2, control3);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14291,7 +13824,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_ConformalMap(effet, control1 * 2 - 1, control2 * 2 -1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14320,7 +13853,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_Compander(effet, control1 * 64, control2 * 10, control3 * 10);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14349,7 +13882,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4));
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14378,7 +13911,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4), control2 - 0.5 * 128);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14407,7 +13940,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_Cutoff(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14436,7 +13969,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4));
 					effet = IFFT(effet);
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14466,7 +13999,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(Convolution2L.ar(ineffet, buffer, trig * control3, 2048));
 					effet = effet * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -14496,7 +14029,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2)+(BufRateScale.kr(buffer) * rate), Dust.kr(control3), Logistic.kr(control4/2+3.5, 100, Rand(0, 1))* BufFrames.kr(localBuf), 1, 0.05, 0.1) + local * amp / 2;
 					effet = Mix(effet) * amp;
-					//effet = Limiter.ar(effet, 1.0, 0.01);
+
 					LocalOut.ar(DelayC.ar(effet, 4, control5/1000, control6));
 					// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
@@ -14527,7 +14060,7 @@ G                       Init Genome Agent (solo).
 					inverb=Mix(In.ar(in, 1));
 					// verb
 					verb=Mix(AllpassC.ar(inverb, 0.2, [control1,control2/2,control3/3,control4/4], [control5, control6, control7, control8]*30));
-					//verb = Limiter.ar(verb, 1.0, 0.01);
+
 					// Switch Audio Out
 					verb = if(~switchAudioOut == 0,
 						// Pan
@@ -14552,7 +14085,7 @@ G                       Init Genome Agent (solo).
 					inverb=Mix(In.ar(in, 1));
 					// verb
 					verb = FreeVerb.ar(inverb, control1, control2, control3);
-					//verb = Limiter.ar(verb, 1.0, 0.01);
+
 					// Switch Audio Out
 					verb = if(~switchAudioOut == 0,
 						// Pan
@@ -14578,7 +14111,7 @@ G                       Init Genome Agent (solo).
 					// verb
 					#left, right = GVerb.ar(inverb, (control1*300).clip(1, 300), (control5*100).clip(0.01, 100), control6, control7, 15, control2, control3, control4, 300);
 					verb = Mix(left,right);
-					//verb = Limiter.ar(verb, 1.0, 0.01);
+
 					// Switch Audio Out
 					verb = if(~switchAudioOut == 0,
 						// Pan
@@ -14603,7 +14136,7 @@ G                       Init Genome Agent (solo).
 					inverb=Mix(In.ar(in, 1));
 					// verb
 					verb = Mix(JPverb.ar(inverb, control1 * 60, control2, control3 * 5, control4, control5, control6, control7 *5900 + 100, control8 * 9000 + 1000));
-					//verb = Limiter.ar(verb, 1.0, 0.01);
+
 					// Switch Audio Out
 					verb = if(~switchAudioOut == 0,
 						// Pan
@@ -14629,7 +14162,7 @@ G                       Init Genome Agent (solo).
 					// verb
 					#left, right = GVerb.ar(inverb, 300 - (control1*300), control5*100, control6, control7, 15, control2, control3, control4, 300);
 					verb = Mix(left,right);
-					//verb = Limiter.ar(verb, 1.0, 0.01);
+
 					pan = LFSaw.kr(control8, mul: pan.sign);
 					// Switch Audio Out
 					verb = if(~switchAudioOut == 0,

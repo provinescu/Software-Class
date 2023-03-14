@@ -4,7 +4,7 @@ Matrix {
 
 	classvar  < s;
 
-	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider;
+	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot;
 
 	*new	{arg path="~/Documents/Matrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Matrix";
 
@@ -36,12 +36,6 @@ Matrix {
 		s.options.numWireBufs = 128;
 		s.options.inDevice_(devIn);
 		s.options.outDevice_(devOut);
-		/*s.options.numBuffers = 1024 * 256; // increase this if you need to load more samples
-		s.options.memSize = 8192 * 32; // increase this if you get “alloc failed” messages
-		s.options.maxNodes = 1024 * 32; // increase this if you are getting drop outs and the message “too many nodes”*/
-		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		//s.options.device = "JackRouter";// use Jack if is available
-		//s.options.sampleRate = nil;// use the currently selected samplerate of the select hardware
 		s.options.numInputBusChannels_(numberAudioIn);
 		s.recChannels_(recChannels);
 		s.options.numOutputBusChannels_(numberAudioOut);
@@ -55,10 +49,8 @@ Matrix {
 		orientationMC = ori;
 
 		// Safety Limiter
-		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
-		//Safety(s).enabled;
-		//Safety.setLimit(1.neg.dbamp);
+		//s.makeGui;
 
 		// MIDI INIT
 		// Connect first device by default
@@ -136,12 +128,9 @@ Matrix {
 		listeAlgorithm = ["Default", "Probability", "Euclide", "Genetic", "Kohonen", "Neural"];
 		flagMemory = 'off';
 		numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
-		// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
-		//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-		//bandFHZ = bandFHZ.add(127.midicps);
-		bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
+		bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
 		bandFHZ = bandFHZ.reverse;
-		bandFHZ = bandFHZ.add(0.midicps);
+		bandFHZ = bandFHZ.add([0, 127].midicps);
 		bandFHZ = bandFHZ.reverse;
 		listeDataOSC=[];
 		indexDataMusic = [];
@@ -1059,20 +1048,29 @@ y ... -					Musical keys.
 				var arrayData=[], subArrayData=[];
 				// EZSlider
 				arrayData=[];
-				if(item == 2 or: {item == 5} or: {item == 6} or: {item == 7},
+				if(item == 4 or: {item == 10} or: {item == 12} or: {item == 14},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)},
 							{arrayData=arrayData.add(subView.value)})});
 					data = data.add(arrayData)});
 				// EZRanger
 				arrayData=[];
-				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4},
+				if(item == 0 or: {item == 2} or: {item == 6} or: {item == 8},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)});
 						if(subItem == 1 or: {subItem == 3}, {arrayData=arrayData.add(subView.value)});
 						if(subItem == 2, {subArrayData=subArrayData.add		(subView.lo);subArrayData=subArrayData.add(subView.hi);
 							arrayData=arrayData.add(subArrayData)})});
 					data = data.add(arrayData)});
+				// EZKnob
+				arrayData=[];
+				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15},
+					{view.children.do({arg subView, subItem;
+						if(subItem == 0, {arrayData=arrayData.add(subView.string)});
+						if(subItem == 1, {arrayData=arrayData.add("A Knob")});
+						if(subItem == 2, {arrayData=arrayData.add(subView.value)})});
+					data = data.add(arrayData);
+					});
 			});
 			// Sortie Fonction Save Control
 			data.value;
@@ -1080,21 +1078,25 @@ y ... -					Musical keys.
 
 		fonctionLoadControlSynth = {arg window, data=[];
 			window.view.children.do({arg view, item;
-				var arrayData=[], subArrayData=[];
 				// EZSlider
-				arrayData=[];
-				if(item == 2 or: {item == 5} or: {item == 6} or: {item == 7},
+				if(item == 4 or: {item == 10} or: {item == 12} or: {item == 14},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
 				});
 				// EZRanger
-				arrayData=[];
-				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4},
+				if(item == 0 or: {item == 2} or: {item == 6} or: {item == 8},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil});
 						if(subItem == 1 or: {subItem == 3}, {subView.valueAction_(data.at(item).at(subItem).value)});
 						if(subItem == 2, {subView.range(data.at(item).at(subItem).value)})});
+				});
+				// EZKnob
+				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15},
+					{view.children.do({arg subView, subItem;
+						if(subItem == 0 or: {subItem == 1}, {nil});
+						if(subItem == 2, {subView.valueAction = data.at(item).at(subItem).value});
+					});
 				});
 			});
 		};
@@ -1123,9 +1125,9 @@ y ... -					Musical keys.
 			// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
 			//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
 			//bandFHZ = bandFHZ.add(127.midicps);
-			bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
+			bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
 			bandFHZ = bandFHZ.reverse;
-			bandFHZ = bandFHZ.add(0.midicps);
+			bandFHZ = bandFHZ.add([0, 127].midicps);
 			bandFHZ = bandFHZ.reverse;
 			listeDataOSC=[];
 			indexDataMusic = [];
@@ -1158,7 +1160,6 @@ y ... -					Musical keys.
 
 			this.initSynthDef;// Init SynthDef
 			this.createGUI;// Create GUI windows
-			//s.makeGui;
 
 			systemBPM = TempoClock.default;
 
@@ -1221,7 +1222,6 @@ y ... -					Musical keys.
 					//s.sync;
 					synthFileIn.set(\trigger, 1);
 					s.sync;
-					//textFileAnalyze.string_(PathName.new(p).fileName);
 					textFileAnalyze.string_(p);
 				};
 				bufferFile.value;
@@ -1235,11 +1235,6 @@ y ... -					Musical keys.
 				synthAnalyzeIn=Synth.newPaused("Matrix AnalyzeIn",
 					[\in, 0, 'busAnalyze', busAnalyze.index], groupeAnalyse, \addToTail);
 				s.sync;
-
-				//// Synth AudioIn
-				//synthAudioIn=Synth.new("Matrix AudioIn",
-				// [\in, 0, 'busIn', listeBusInOut.at(0)], groupeAnalyse, \addToTail);
-				//s.sync;
 
 				// Synth play file
 				synthFileIn=Synth.newPaused("Matrix Play File",
@@ -1285,12 +1280,6 @@ y ... -					Musical keys.
 				~fxVST = VSTPluginController(~synthVST);
 				s.sync
 			};
-
-			//// Init Audio In
-			//startSystem.valueAction_(1);
-			//switchAudioIn.valueAction_(1);
-			//switchAudioIn.valueAction_(0);
-			//startSystem.valueAction_(0);
 
 			// OSC Setting
 			serverAdresse = s.addr; // Adresse Server -> NetAddr(0.0.0.0, 0)
@@ -1360,7 +1349,7 @@ y ... -					Musical keys.
 											// Dispatch Band FHZ
 											//
 											for(1, numFhzBand, {arg i;
-												if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+												if(musicData.at(0) >= bandFHZ.at(i).at(0) and: {musicData.at(0) <= bandFHZ.at(i).at(1)}, {
 													// Buses
 													busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
 													// Add Data
@@ -1457,7 +1446,7 @@ y ... -					Musical keys.
 									// Dispatch Band FHZ
 									//
 									for(1, numFhzBand, {arg i;
-										if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+										if(musicData.at(0) >= bandFHZ.at(i).at(0) and: {musicData.at(0) <= bandFHZ.at(i).at(1)}, {
 											// Buses
 											busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
 											// Add Data
@@ -1573,7 +1562,7 @@ y ... -					Musical keys.
 								// Dispatch Band FHZ
 								//
 								for(1, numFhzBand, {arg i;
-									if(musicData.at(0) > bandFHZ.at(i-1) and: {musicData.at(0) < bandFHZ.at(i)}, {
+									if(musicData.at(0) >= bandFHZ.at(i).at(0) and: {musicData.at(0) <= bandFHZ.at(i).at(1)}, {
 										// Buses
 										busOSC.at(i).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
 										// Add Data
@@ -1665,7 +1654,7 @@ y ... -					Musical keys.
 			// Flatness > 0 | Flux <= 1
 
 			fonctionAutomationPreset = {arg dataMusicFFT, freqCentroid, flatness, energy, flux;
-				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0, tampon;
+				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0, tampon, data, dissymetrie;
 				newTime = Main.elapsedTime;
 				musicData = dataMusicFFT.flop;// Setup Array
 				if(musicData.size >= 1 and: {musicData != [ [  ] ]}, {
@@ -1731,6 +1720,31 @@ y ... -					Musical keys.
 								});
 						});
 					});
+					// Automation master slider
+					// musicData = freq, amp, duree, tempo,Centroid, flatness, energy, flux;
+					// Pan
+					if(rrand(0.0, 100.0) < pourcentPan.value, {controlPanSlider.valueAction_([rrand(-1.0, 0.0), rrand(0.0, 1.0)])});
+					// Freq
+					data = musicData.at(0).soloArray;
+					# q1A, medianeA, q3A, ecartqA, ecartsemiqA = data.quartiles;
+					dissymetrie = data.dissymetrie;
+					if(rrand(0.0, 100.0) < pourcentFreq.value, {controlFreqSlider.valueAction_([q1A, q3A].cpsmidi)});
+					// Transpose
+					if(rrand(0.0, 100.0) < pourcentFreqT.value, {controlFreqTranSlider.valueAction_(dissymetrie)});
+					// Amp
+					if(rrand(0.0, 100.0) < pourcentAmp.value, {controlAmpSlider.valueAction_([rrand(-12.0, -6.0), rrand(-6.0, 0.0)])});
+					// Dur
+					data = musicData.at(2).soloArray;
+					# q1A, medianeA, q3A, ecartqA, ecartsemiqA = data.quartiles;
+					dissymetrie = data.dissymetrie;
+					if(rrand(0.0, 100.0) < pourcentDur.value, {controlDureeSlider.valueAction_([q1A, q3A] / timeMaximum)});
+					// Stretch
+					if(rrand(0.0, 100.0) < pourcentDurT.value, {controlDureeTranSlider.valueAction_(dissymetrie)});
+					// Quant
+					if(rrand(0.0, 100.0) < pourcentQuant.value, {controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor) * dissymetrie.sign)});
+					// Root
+					if(rrand(0.0, 100.0) < pourcentRoot.value, {controlRootSlider.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor)});
+					//
 					lastMeanProbaPresetFlux = meanProbaPresetFlux;
 					lastMeanProbaPresetFlatness = meanProbaPresetFlatness;
 				});
@@ -1941,6 +1955,14 @@ y ... -					Musical keys.
 					previousAmp = [-inf, 0];
 					controlAmpSlider.valueAction_([-inf, 0]);
 					controlRootSlider.valueAction_(0);
+					pourcentPan.value = 0;
+					pourcentFreq.value = 0;
+					pourcentFreqT.value = 0;
+					pourcentAmp.value = 0;
+					pourcentDur.value = 0;
+					pourcentDurT.value = 0;
+					pourcentQuant.value = 0;
+					pourcentRoot.value = 0;
 				});
 				// key alt + i -> Clear musical data
 				if(modifiers==524288 and: {unicode==108} and: {keycode==37},{
@@ -2581,13 +2603,13 @@ y ... -					Musical keys.
 		fonctionShortCut.value(windowMasterFX);
 
 		////// Fonction Window for controling all sliders windows instruments /////
-		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 500, 400, 200), scroll: true);
+		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 550, 400, 200), scroll: true);
 		windowControlSynth.alpha=1.0;
 		windowControlSynth.front;
 		windowControlSynth.view.decorator = FlowLayout(windowControlSynth.view.bounds);
 		// Pan
 		previousPan = [-1, 1];
-		controlPanSlider = EZRanger(windowControlSynth, 390 @ 20, "Pan", \bipolar, {|ez| var valLo, valHi;
+		controlPanSlider = EZRanger(windowControlSynth, 250 @ 20, "Pan", \bipolar, {|ez| var valLo, valHi;
 			valLo = (ez.value.at(0) - previousPan.at(0));
 			valHi = (ez.value.at(1) - previousPan.at(1));
 			previousPan = ez.value;
@@ -2596,10 +2618,11 @@ y ... -					Musical keys.
 					if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
 				});
 			});
-		},[-1, 1],labelWidth: 85, numberWidth: 50);
+		},[-1, 1],labelWidth: 50, numberWidth: 35);
+		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
 		previousFreq = [0, 127];
-		controlFreqSlider = EZRanger(windowControlSynth, 390 @ 20, "Freq", ControlSpec(0, 127, \lin, 0), {|ez| var valLo, valHi;
+		controlFreqSlider = EZRanger(windowControlSynth, 250 @ 20, "Freq", ControlSpec(0, 127, \lin, 0), {|ez| var valLo, valHi;
 			valLo = (ez.value.at(0) - previousFreq.at(0) / 127).clip(-1, 1);
 			valHi = (ez.value.at(1) - previousFreq.at(1) / 127).clip(-1, 1);
 			previousFreq = ez.value;
@@ -2608,19 +2631,20 @@ y ... -					Musical keys.
 					if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
 				});
 			});
-		},[0, 127],labelWidth: 85, numberWidth: 50);
+		},[0, 127],labelWidth: 50, numberWidth: 35);
+		pourcentFreq = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq T
-		controlFreqTranSlider=EZSlider(windowControlSynth, 390 @ 20, "FreqTranspose", ControlSpec(-127, 127, \lin, 0), {|ez|
+		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(40).children.do({arg subView, subItem;
 					if(subItem == 2, {subView.valueAction_(subView.value + ez.value)});
 				});
 			});
-		}, 0, labelWidth: 85, numberWidth: 50);
-		windowControlSynth.view.decorator.nextLine;
+		}, 0, labelWidth: 50, numberWidth: 35);
+		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Amp
 		previousAmp = [-inf, 0];
-		controlAmpSlider = EZRanger(windowControlSynth, 390 @ 20, "Amp", \db, {|ez| var valLo, valHi;
+		controlAmpSlider = EZRanger(windowControlSynth, 250 @ 20, "Amp", \db, {|ez| var valLo, valHi;
 			valLo = (ez.value.at(0).dbamp - previousAmp.at(0).dbamp);
 			valHi = (ez.value.at(1).dbamp - previousAmp.at(1).dbamp);
 			previousAmp = ez.value;
@@ -2629,10 +2653,11 @@ y ... -					Musical keys.
 					if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
 				});
 			});
-		},[-inf, 0],labelWidth: 85, numberWidth: 50);
+		},[-inf, 0],labelWidth: 50, numberWidth: 35);
+		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
 		previousDuree = [0, 1];
-		controlDureeSlider = EZRanger(windowControlSynth, 390 @ 20, "Dur", \unipolar,
+		controlDureeSlider = EZRanger(windowControlSynth, 250 @ 20, "Dur", \unipolar,
 			{|ez| var valLo, valHi;
 				valLo = (ez.value.at(0) - previousDuree.at(0)).clip(-1, 1);
 				valHi = (ez.value.at(1) - previousDuree.at(1)).clip(-1, 1);
@@ -2642,32 +2667,35 @@ y ... -					Musical keys.
 						if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
 					});
 				});
-		},[0, 1],labelWidth: 85, numberWidth: 50);
+		},[0, 1],labelWidth: 50, numberWidth: 35);
+		pourcentDur = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree T
-		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 390 @ 20, "Dur Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
+		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(43).children.do({arg subView, subItem;
 					if(subItem == 2, {subView.valueAction_(subView.value + ez.value)});
 				});
 			});
-		}, 1, labelWidth: 85, numberWidth: 50);
+		}, 1, labelWidth: 50, numberWidth: 35);
+		pourcentDurT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Quantization
-		controlQuantaSlider=EZSlider(windowControlSynth, 390 @ 20, "Quant",ControlSpec(-100, 100, \lin, 1), {|ez|
+		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(-100, 100, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(44).children.do({arg subView, subItem;
 					if(subItem == 2, {subView.valueAction_((subView.value + ez.value).mod(100))});
 				});
 			});
-		}, 0, labelWidth: 85, numberWidth: 50);
-		windowControlSynth.view.decorator.nextLine;
+		}, 0, labelWidth: 50, numberWidth: 35);
+		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
-		controlRootSlider=EZSlider(windowControlSynth, 390 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
+		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				window.value.view.children.at(80).children.do({arg subView, subItem;
 					if(subItem == 2, {subView.valueAction_((ez.value).mod(21))});
 				});
 			});
-		}, 0, labelWidth: 85, numberWidth: 50);
+		}, 0, labelWidth: 50, numberWidth: 35);
+		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 
 		windowControlSynth.onClose_({
 			listeWindows.remove(windowControlSynth);
@@ -3093,7 +3121,7 @@ y ... -					Musical keys.
 		// Set Range FHZband
 		rangeBand = EZText(windowControl, Rect(0, 0, 390, 20), "Range Band",
 			{arg range; bandFHZ = range.value.midicps},
-			[0.0, 42.33, 84.66, 127.0 ], true);
+			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true);
 		// On Close
 		windowControl.onClose_({
 			s.bind{
@@ -4621,7 +4649,7 @@ y ... -					Musical keys.
 										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Set FHZ Band
 										for(1, numFhzBand, {arg i;
-											if(freq > bandFHZ.at(i-1) and: {freq < bandFHZ.at(i)}, {
+											if(freq >= bandFHZ.at(i).at(0) and: {freq <= bandFHZ.at(i).at(1)}, {
 												if(i == indexNumFhzBand or: {indexNumFhzBand == 0}, {
 													// Calcul new music
 													if(listeDataOSC.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
@@ -6446,62 +6474,6 @@ y ... -					Musical keys.
 				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
-
-		//SynthDef('PV_HPecartType',
-		//{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
-		//freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-		//levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-		//switchBuffer1=0, switchBuffer2=0,
-		//panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-		//ctrlHP1=0.33, ctrlHP2=0.5,
-		//ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-		//envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-		//envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-		//var chain, rate, buffer, envelope, ambisonic, dureeSample;
-		//// Set FHZ
-		//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-		//// Set AMP
-		//amp = amp * (ampHi - ampLo) + ampLo;
-		//// Set DUREE
-		//dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
-		//dureeSample = dureeSample + (loopOne * (duree - dureeSample));
-		//dureeSample = clip2(duree, dureeSample);
-		//// Envelope
-		////envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
-		//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
-		////// Set offset
-		////ctrl2 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2*4, 1, Rand(0, 1)));
-		//buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-		//// Synth
-		//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-		//chain = FFT(LocalBuf(2048, 1), chain);
-		//chain = PV_HPecartType(chain, ctrl1 * 10 + 1);
-		//chain= IFFT(chain) * 3;
-		//// chain = Limiter.ar(chain, 1.0, 0.01);
-		//// Switch Audio Out
-		//chain = if(switchAudioOut == 0,
-		//if(flagMC == 0,
-		//// Pan v1
-		//Pan2.ar(chain, Rand(panLo, panHi), envelope),
-		//// Pan v2
-		//Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-		//if(switchAudioOut == 2,
-		//if(flagMC == 0,
-		//// PanAz v1
-		//PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-		//// PanAz v2
-		//PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
-		//if(switchAudioOut == 1,
-		//// Rotate2 v1
-		//Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-		//// Ambisonic v1
-		//(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-		//DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-		//// Out
-		//Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-		//Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-		//Out.ar(out, chain * flagAmpOnOff);
-		//}).add;
 
 		SynthDef('PV_HPfiltre',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
@@ -8835,56 +8807,6 @@ y ... -					Musical keys.
 				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
-
-		//SynthDef('Piano PV_HPecartType',
-		//{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-		//freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-		//levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-		//switchBuffer1=0, switchBuffer2=0,
-		//panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-		//ctrlHP1=0.33, ctrlHP2=0.5,
-		//ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-		//envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-		//envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-		//var chain, envelope, ambisonic;
-		//// Set Music Data
-		////freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
-		////rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-		//amp = amp * (ampHi - ampLo) + ampLo;
-		//// Envelope
-		////envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
-		//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
-		//// Synth
-		//chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
-		//RecordBuf.ar(chain, bufferOne);
-		//chain = FFT(LocalBuf(2048, 1), chain);
-		//chain = PV_HPecartType(chain, ctrl1 * 10);
-		//chain = IFFT(chain) * 3;
-		//// chain = Limiter.ar(chain, 1.0, 0.01);
-		//// Switch Audio Out
-		//chain = if(switchAudioOut == 0,
-		//if(flagMC == 0,
-		//// Pan v1
-		//Pan2.ar(chain, Rand(panLo, panHi), envelope),
-		//// Pan v2
-		//Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-		//if(switchAudioOut == 2,
-		//if(flagMC == 0,
-		//// PanAz v1
-		//PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-		//// PanAz v2
-		//PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
-		//if(switchAudioOut == 1,
-		//// Rotate2 v1
-		//Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-		//// Ambisonic v1
-		//(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-		//DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-		//// Out
-		//Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-		//Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-		//Out.ar(out, chain * flagAmpOnOff);
-		//}).add;
 
 		SynthDef('Piano PV_MagShift',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
@@ -12151,45 +12073,6 @@ y ... -					Musical keys.
 				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
-
-		//SynthDef('PV_HPecartTypeFX',
-		//{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-		//freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-		//levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-		//switchBuffer1=0, switchBuffer2=0,
-		//panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-		//ctrlHP1=0.33, ctrlHP2=0.5,
-		//ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-		//envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-		//envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-		//var chain, in, ambisonic;
-		//// Set AMP
-		//amp = amp * (ampHi - ampLo) + ampLo;
-		//// Set inFX + Direct AudioIn (levelLocalIn)
-		//in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-		////FX
-		//chain = FFT(LocalBuf(2048, 1), in);
-		//chain = PV_HPecartType(chain, ctrl1 * 10 + 1);
-		//chain= IFFT(chain) * 3;
-		//chain = chain * amp;
-		//// Switch Audio Out
-		//chain = if(switchAudioOut == 0,
-		//// Pan
-		//Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal))),
-		//if(switchAudioOut == 2,
-		//// PanAz
-		//PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC),
-		//if(switchAudioOut == 1,
-		//// Rotate2
-		//Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)),
-		//// Ambisonic
-		//(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo));
-		//DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-		//// Out
-		//Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-		//Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-		//Out.ar(out, chain * flagAmpOnOff);
-		//}).add;
 
 		SynthDef('PV_HPfiltreFX',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,

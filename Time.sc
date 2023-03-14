@@ -38,9 +38,6 @@ Time {
 		s.options.memSize = 2 ** 20;
 		s.options.inDevice_(devIn);
 		s.options.outDevice_(devOut);
-		//s.options.device = "JackRouter";// use a specific soundcard
-		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware*/
-		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
 		recChannels = numberRec;
 		s.recChannels_(numberRec);
 		s.options.numInputBusChannels_(numberAudioIn);
@@ -54,11 +51,7 @@ Time {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		// Safety Limiter
-		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
-		//Safety(s).enabled;
-		//Safety.setLimit(1.neg.dbamp);
 		//s.makeGui;
 
 		// Run the Soft
@@ -263,12 +256,9 @@ f						Switch File for Analyze.
 		tempoOSC = 1;
 		flagTempo = 0;
 		numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
-		// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
-		//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-		//bandFHZ = bandFHZ.add(127.midicps);
-		bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
+		bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
 		bandFHZ = bandFHZ.reverse;
-		bandFHZ = bandFHZ.add(0.midicps);
+		bandFHZ = bandFHZ.add([0, 127].midicps);
 		bandFHZ = bandFHZ.reverse;
 		listeDataBand =[];
 		lastTimeBand = [];
@@ -416,12 +406,6 @@ f						Switch File for Analyze.
 			if(flagRecording == 'off', {
 				flagRecording = 'on';
 				s.bind{
-					/*s.recChannels_(recChannels);
-					s.sync;*/
-					/*s.recHeaderFormat_(headerFormat);
-					s.sync;
-					s.recSampleFormat_(sampleFormat);
-					s.sync;*/
 					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "Time_" ++ Date.localtime.stamp ++ ".aiff");
 					s.sync;
 					s.record;
@@ -518,8 +502,6 @@ f						Switch File for Analyze.
 		// Fonction Load Preset
 		fonctionLoadPreset = {arg data, window, flag;
 			var a, b, c, d, e, f, control;
-			// Midi Off
-			//if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
 			// load Buffer Synth and Setup Sliders Sample
 			numberSynth.do({arg synth;
 				var item1, item2;
@@ -597,6 +579,7 @@ f						Switch File for Analyze.
 			// Rand Band
 			bandFHZ = control.at(16);
 			rangeBand.value = bandFHZ;
+			bandFHZ = bandFHZ.midicps;
 			// HP Controls
 			hprec1 = control.at(17).at(0);
 			windowExternalControlGUI.view.children.at(30).valueAction = hprec1;
@@ -661,7 +644,7 @@ f						Switch File for Analyze.
 			range = range.add(windowExternalControlGUI.view.children.at(27).children.at(2).lo);
 			range = range.add(windowExternalControlGUI.view.children.at(27).children.at(2).hi);
 			control = control.add(range);
-			control = control.add(bandFHZ.cpsmidi);
+			control = control.add(bandFHZ.cpsmidi.round(2));
 			control = control.add([hprec1, hprec2]);
 			data = data.add(control);
 			// Sortie Data
@@ -740,11 +723,9 @@ f						Switch File for Analyze.
 
 		// Init numFhzBand
 		fonctionInitBand = {arg band;
-			//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
-			//bandFHZ = bandFHZ.add(127.midicps);
-			bandFHZ = Array.fill(numFhzBand, {arg i; 127 / numFhzBand * i + (127 / numFhzBand )}).midicps;
-			bandFHZ = bandFHZ.reverse;
-			bandFHZ = bandFHZ.add(0.midicps);
+			bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
+		bandFHZ = bandFHZ.reverse;
+		bandFHZ = bandFHZ.add([0, 127].midicps);
 			bandFHZ = bandFHZ.reverse;
 			// Init Array
 			lastTimeBand = [];
@@ -964,8 +945,6 @@ f						Switch File for Analyze.
 							// Setup GUI Value
 							{windowControlGUI.view.children.at(7).children.at(2).valueAction_(newRoot)}.defer;
 						});
-						//// Send Synchro Tempo
-						//slaveAppAddr.sendMsg('/HPtempo', tempo);
 						// Set Bus Flux
 						busOSCtempo.set(bpm);
 						busOSCflux.set(flux);
@@ -1022,7 +1001,7 @@ f						Switch File for Analyze.
 							// Dispatch Band FHZ
 							for(1, numFhzBand, {arg i;
 
-								if(freq > bandFHZ.at(i-1) and: {freq < bandFHZ.at(i)}, {
+								if(freq > bandFHZ.at(i).at(0) and: {freq < bandFHZ.at(i).at(1)}, {
 									// Add Data
 									if(numberSynth > listeDataBand.at(i).size,
 										{
@@ -1161,7 +1140,7 @@ f						Switch File for Analyze.
 						// Dispatch Band FHZ
 						for(1, numFhzBand, {arg i;
 
-							if(freq > bandFHZ.at(i-1) and: {freq < bandFHZ.at(i)}, {
+							if(freq > bandFHZ.at(i).at(0) and: {freq < bandFHZ.at(i).at(1)}, {
 								// Add Data
 								if(numberSynth > listeDataBand.at(i).size,
 									{
@@ -1273,7 +1252,7 @@ f						Switch File for Analyze.
 					// Dispatch Band FHZ
 					for(1, numFhzBand, {arg i;
 
-						if(freq.midicps > bandFHZ.at(i-1) and: {freq.midicps < bandFHZ.at(i)}, {
+						if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
 							// Add Data
 							if(numberSynth > listeDataBand.at(i).size,
 								{
@@ -1366,7 +1345,7 @@ f						Switch File for Analyze.
 
 				if(canal == canalMIDI and: {flagMIDI == 1}, {
 					for(1, numFhzBand, {arg i;
-						if(freq.midicps > bandFHZ.at(i-1) and: {freq.midicps < bandFHZ.at(i)}, {
+						if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
 							listeDataBand.put(i, []);
 							lastTimeBand.put(i, Main.elapsedTime);
 						});
@@ -1428,7 +1407,6 @@ f						Switch File for Analyze.
 									// New Band
 									indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
 									if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-									//if(listeDataBand.at(indexNumFhzBand) != [], {
 									if(listeActiveAudioRec.at(synth) == 0, {buffer = listeBuffer.at(synth)}, {buffer = listeBufferAudioRec.at(synth)});
 									// Frame Grain
 									startPos =  listeStartPos.at(synth) / buffer.numFrames;
@@ -1678,12 +1656,6 @@ f						Switch File for Analyze.
 			}),
 			MenuAction("Stereo",
 				{
-					/*recChannels = 2;
-					numberAudioOut = 2;
-					s.recChannels_(recChannels.asInteger);
-					s.options.numInputBusChannels_(numberAudioIn);
-					s.options.numOutputBusChannels_(2);*/
-					//this.initSynthDef;
 					groupeLimiter.freeAll;
 					~synthVST = Synth.newPaused("VST Stereo", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 					~fxVST = VSTPluginController(~synthVST);
@@ -1698,12 +1670,6 @@ f						Switch File for Analyze.
 			}),
 			MenuAction("Dolby5.1",
 				{
-					/*recChannels = 6;
-					numberAudioOut = 6;
-					s.recChannels_(recChannels.asInteger);
-					s.options.numInputBusChannels_(numberAudioIn);
-					s.options.numOutputBusChannels_(6);*/
-					//this.initSynthDef;
 					groupeLimiter.freeAll;
 					~synthVST = Synth.newPaused("VST Dolby5.1", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 					~fxVST = VSTPluginController(~synthVST);
@@ -1722,9 +1688,7 @@ f						Switch File for Analyze.
 						SCRequestString("2", "Channels", {arg recChannels;
 							numberAudioOut = recChannels.asInteger;
 							s.recChannels_(recChannels.asInteger);
-							/*s.options.numInputBusChannels_(numberAudioIn);*/
 							s.options.numOutputBusChannels_(recChannels.asInteger);
-							//this.initSynthDef;
 							groupeLimiter.freeAll;
 							~synthVST = Synth.newPaused("VST MultiSpeaker", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 							~fxVST = VSTPluginController(~synthVST);
@@ -1741,12 +1705,6 @@ f						Switch File for Analyze.
 			).title_("MultiSpeaker"),
 			MenuAction("Rotate2",
 				{
-					/*recChannels = 2;
-					numberAudioOut = 2;
-					s.recChannels_(recChannels.asInteger);
-					s.options.numInputBusChannels_(numberAudioIn);
-					s.options.numOutputBusChannels_(2);*/
-					//this.initSynthDef;
 					groupeLimiter.freeAll;
 					~synthVST = Synth.newPaused("VST Rotate2", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 					~fxVST = VSTPluginController(~synthVST);
@@ -1765,9 +1723,7 @@ f						Switch File for Analyze.
 						SCRequestString("2", "Channels", {arg recChannels;
 							numberAudioOut = recChannels.asInteger;
 							s.recChannels_(recChannels.asInteger);
-							/*s.options.numInputBusChannels_(numberAudioIn);*/
 							s.options.numOutputBusChannels_(recChannels.asInteger);
-							//this.initSynthDef;
 							~synthVST = Synth.newPaused("VST Ambisonic", [\xFade, 0.5, \gainIn, 0.5], groupeLimiter, \addToTail).map(\bpm, busOSCtempo);
 							~fxVST = VSTPluginController(~synthVST);
 							synthLimiter= Synth.new("MasterFX", [\thresh, 0.1, \slopeBelow, 1, \slopAbove, 0.5, \limiter, 0.8], groupeLimiter, \addToTail);
@@ -1841,7 +1797,6 @@ f						Switch File for Analyze.
 					// Connect first device by default
 					MIDIIn.connect(0, 0);
 					midiOut = MIDIOut(0);
-					//midiOut.connect(0);
 					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 				}, {"Warning no MIDI Devices Connected".postln});
 			}),
@@ -1856,7 +1811,6 @@ f						Switch File for Analyze.
 					SCRequestString("0", "Device", {arg index, port;
 						port = index.asInteger;
 						midiOut = MIDIOut(port);
-						//midiOut.connect(port);
 						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})});
 					});
 				});
@@ -2070,8 +2024,6 @@ f						Switch File for Analyze.
 				if(char == $k, {
 					FileDialog.new({arg path;
 						~pathTime  = path.at(0).asString ++"/";
-						/*~pathTime = PathName.new(paths);
-						~pathTime = ~pathTime.pathOnly;*/
 						windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  ~pathTime.asString;
 						fonctionCollectFolders.value;
 					}, fileMode: 2);
@@ -2782,7 +2734,7 @@ f						Switch File for Analyze.
 				// Init Band for each synth
 				fonctionInitBand.value(numFhzBand);
 				rangeBand.value = bandFHZ.cpsmidi.round(2);
-		}, numFhzBand);
+		}, numFhzBand).setColors(knobColor: Color.new(0.582, 0, 0), sliderBackground: Color.grey, stringColor: Color.new(0.985, 0.701, 0));
 
 		// MIDI OOU on / off
 		Button(windowExternalControlGUI,Rect(0, 0, 75, 20)).states_([["MIDI Out Off", Color.new(0.1, 0.8, 0.9, 1),  Color.grey(0.75, 0.25)],["MIDI Out On", Color.new(0.1, 0.8, 0.9, 1), Color.red]]).action = {|view|
@@ -2811,15 +2763,15 @@ f						Switch File for Analyze.
 
 		//Normalize FFT
 		EZRanger(windowExternalControlGUI , 490 @ 15, "Range FFT", \unipolar,
-			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 64);
+			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 64).setColors(knobColor: Color.new(0.582, 0, 0), sliderColor: Color.grey, stringColor: Color.new(0.985, 0.701, 0));
 
 		// Set Range FHZband
 		rangeBand = EZText(windowExternalControlGUI, Rect(0, 0, 490, 20), "Range Band",
 			{arg range; bandFHZ = range.value.midicps},
-			[0.0, 42.33, 84.66, 127.0 ], true);
+			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true).setColors(textBackground: Color.grey, stringColor: Color.new(0.985, 0.701, 0));
 
 		// HP Records Flatness
-		StaticText(windowExternalControlGUI, Rect(0, 0, 150, 20)).string_("HPplayBuf Rec Controls");
+		StaticText(windowExternalControlGUI, Rect(0, 0, 150, 20)).string_("HPplayBuf Rec Controls").stringColor_(Color.new(0.985, 0.701, 0));
 
 		NumberBox(windowExternalControlGUI, Rect(0, 0, 50, 20)).background_(Color.red).typingColor_(Color.white).clipLo_(0).clipHi_(1).decimals_(4).
 		action = {arg num; hprec1 = num.value; listeGroupSynth.do({arg group; group.set(\hp1, num.value)})};
@@ -2985,11 +2937,11 @@ f						Switch File for Analyze.
 		};
 		// Root
 		EZKnob(windowControlGUI, Rect(860, 5, 80, 20), "Root", ControlSpec(0, 21, \lin, 1),
-			{|ez| root = ez.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, layout: \horz, labelWidth: 30);
+			{|ez| root = ez.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, layout: \horz, labelWidth: 30).setColors(stringColor: Color.red(0.8, 0.8));
 		// Degrees
 		EZText(windowControlGUI, Rect(945, 5, 340, 20), "Degrees",
 			{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
-			degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
+			degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true).setColors(stringColor: Color.red(0.8, 0.8));
 
 		// Init No Scale
 		windowControlGUI.view.children.at(7).children.at(1).valueAction_(12);
@@ -3900,10 +3852,6 @@ f						Switch File for Analyze.
 					// QPopUpMenu + QButton
 					if(data.at(index).at(0)  == "a QPopUpMenu" or: {data.at(index).at(0) == "a QEnvelopeView"} or: 	{data.at(index).at(0) == "a QButton"} or: {data.at(index).at(0)  == "a SCPopUpMenu"} or: {data.at(index).at(0) == "a SCEnvelopeView"} or: {data.at(index).at(0) == "a SCButton"} or: {data.at(index).at(0)  == "a PopUpMenu"} or: {data.at(index).at(0) == "an EnvelopeView"} or: {data.at(index).at(0) == "a Button"},
 						{view.valueAction_(data.at(index).at(1))});
-					//// QSoundFileView
-					//if(data.at(index).at(0)  == "a QSoundFileView" or: {data.at(index).at(0)  == "a SCSoundFileView"},
-					//	{view.setSelection(0, data.at(index).at(1).at(0));
-					//});
 					// QSlider2D (special case)
 					if(data.at(index).at(0)  == "a QSlider2D" or: {data.at(index).at(0)  == "a SCSlider2D"} or: {data.at(index).at(0)  == "a Slider2D"},
 						{view.setXYActive(data.at(index).at(1), data.at(index).at(2))});
@@ -4617,8 +4565,6 @@ f						Switch File for Analyze.
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
 				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
 				var envelope, chain, env, env2, env3, pch, osc, noise;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				env = EnvGen.kr(Env.perc(0, 0.20, 1, -4), doneAction:2);
 				env2 = EnvGen.kr(Env.new([60,3,0],[0.08,0.16],[-18,-5]));
@@ -4636,8 +4582,6 @@ f						Switch File for Analyze.
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
 				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
 				var envelope, chain, env, env2, env3, pch, osc, noise;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				env = EnvGen.kr(Env.perc(0, 0.05, 1, -5));
 				env2 = EnvGen.kr(Env.new([56,3,0],[0.08,0.1],[-20,-5]));
@@ -4655,8 +4599,6 @@ f						Switch File for Analyze.
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
 				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid;
 				var envelope, chain, env,  pch, osc, noise, decay=0.05;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				env = EnvGen.kr(Env.perc(0, decay, 1, -6), doneAction:2);
 				pch = (freq+SinOsc.ar(320, 0, 2000));
@@ -4678,8 +4620,6 @@ f						Switch File for Analyze.
 				var pitch_contour, drum_osc, drum_lpf, drum_env;
 				var beater_source, beater_hpf, beater_lpf, lpf_cutoff_contour, beater_env;
 				var chain;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				pitch_contour = Line.kr(freq*2, freq, 0.02);
 				drum_osc = PMOsc.ar(pitch_contour,
@@ -4711,8 +4651,6 @@ f						Switch File for Analyze.
 				snare_reson;
 				var snare_env;
 				var chain;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				drum_mode_env = EnvGen.ar(Env.perc(0.005, decay), 1.0, doneAction: 2);
 				drum_mode_sin_1 = SinOsc.ar(freq*0.53, 0, drum_mode_env * 0.5);
@@ -4749,8 +4687,6 @@ f						Switch File for Analyze.
 				var body_hpf, body_env;
 				var cymbal_mix;
 				var chain;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				root_cymbal_square = Pulse.ar(freq, 0.5, mul: 1);
 				root_cymbal_pmosc = PMOsc.ar(root_cymbal_square,
@@ -4783,8 +4719,6 @@ f						Switch File for Analyze.
 				var stick_noise, stick_env;
 				var drum_reson, tom_mix;
 				var chain;
-				//// Envelope
-				//envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				drum_mode_env = EnvGen.ar(Env.perc(0.005, decay), 1.0, doneAction: 2);
 				drum_mode_sin_1 = SinOsc.ar(freq*0.8, 0, drum_mode_env * 0.5);
@@ -4936,18 +4870,6 @@ f						Switch File for Analyze.
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				Out.ar(out, chain);
 		}).add;
-
-		//// PV_HPshiftDown
-		//SynthDef('PV_HPshiftDown',
-		//{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
-		//var chain, signal=In.ar(in, 1);
-		//chain = FFT(LocalBuf(2048, 1), signal);
-		//chain = PV_HPshiftDown(chain, ctrl1 / 12544 * 64);
-		//chain= IFFT(chain);
-		//chain = Mix(chain * vol + (signal * (1 - vol)));
-		//chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-		//Out.ar(out, chain);
-		//}).add;
 
 		// PV_MagNoise
 		SynthDef('PV_MagNoise',
@@ -5399,17 +5321,6 @@ f						Switch File for Analyze.
 				Out.ar(out, chain);
 		}).add;
 
-		/*// Ambisonic
-		SynthDef("Ambisonic",
-		{arg out=0, in, panX, panY;
-		var signal, chain, ambisonic, azimuth = [], elevation = [];
-		numberAudioOut.do({arg i; azimuth = azimuth.add(pi * (i / numberAudioOut - (numberAudioOut.reciprocal * (numberAudioOut / 2).floor))); elevation = elevation.add(0)});
-		signal = In.ar(in, 1);
-		ambisonic = BFEncode1.ar(signal, panX * 2pi - pi, panY * 2pi - pi);
-		chain = BFDecode1.ar( ambisonic[0], ambisonic[1], ambisonic[2], ambisonic[3], azimuth, elevation);
-		Out.ar(out, chain);
-		}).add;*/
-
 		////////////////////////////// Pre + Post Production //////////////////////
 
 		// Synth OSC Onset
@@ -5422,12 +5333,6 @@ f						Switch File for Analyze.
 				detect = Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);
 				# freqIn, hasFreq = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
 				ampIn = A2K.kr(Amplitude.ar(input));
-				/*fft = FFT(LocalBuf(2048, 1), input);
-				centroid = SpecCentroid.kr(fft);
-				flatness =  SpecFlatness.kr(fft);
-				energy =  SpecPcile.kr(fft);
-				flux =  FFTFlux.kr(fft);
-				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));*/
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Time_OSC_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
@@ -5442,12 +5347,6 @@ f						Switch File for Analyze.
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);// \complex
 				# freqIn, hasFreq = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
-				/*fft = FFT(LocalBuf(2048, 1), input);
-				centroid = SpecCentroid.kr(fft);
-				flatness =  SpecFlatness.kr(fft);
-				energy =  SpecPcile.kr(fft);
-				flux =  FFTFlux.kr(fft);
-				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));*/
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Time_OSC_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
@@ -5466,12 +5365,6 @@ f						Switch File for Analyze.
 				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
-				/*fft2 = FFT(LocalBuf(2048, 1), input);
-				centroid = SpecCentroid.kr(fft);
-				flatness =  SpecFlatness.kr(fft);
-				energy =  SpecPcile.kr(fft);
-				flux =  FFTFlux.kr(fft);
-				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));*/
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Time_OSC_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
@@ -5485,12 +5378,6 @@ f						Switch File for Analyze.
 				key = KeyTrack.kr(FFT(LocalBuf(4096, 1), input), (filtre * 4).clip(0, 4));
 				if(key < 12, freqIn = (key + 60).midicps, freqIn = (key - 12 + 60).midicps);
 				ampIn = A2K.kr(Amplitude.ar(input));
-				/*fft = FFT(LocalBuf(2048, 1), input);
-				centroid = SpecCentroid.kr(fft);
-				flatness =  SpecFlatness.kr(fft);
-				energy =  SpecPcile.kr(fft);
-				flux =  FFTFlux.kr(fft);
-				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));*/
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Time_OSC_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
@@ -5499,13 +5386,6 @@ f						Switch File for Analyze.
 		SynthDef("Time Keyboard",
 			{arg busIn, seuil=0, filtre=0, freq=0, amp=0, trigger=0;
 				var input, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0;
-				/*input = In.ar(busIn);
-				fft = FFT(LocalBuf(2048, 1), input);
-				centroid = SpecCentroid.kr(fft);
-				flatness =  SpecFlatness.kr(fft);
-				energy =  SpecPcile.kr(fft);
-				flux =  FFTFlux.kr(fft);
-				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input));*/
 				timeIn = Timer.kr(trigger);
 				SendReply.kr(trigger, '/Time_Keyboard_Data', values: [freq, amp, timeIn], replyID: [1, 2, 3]);
 		}).add;

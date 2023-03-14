@@ -30,9 +30,6 @@ Robot {
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);
 		s.options.outDevice_(devOut);
-		//s.options.device = "JackRouter";// use a specific soundcard
-		//s.options.device = "StreamDrums LoopBack";// use a specific soundcard
-		//s.options.sampleRate = nil;//use the currently selected samplerate of the select hardware
 		numberAudioIn = ni;
 		s.options.numInputBusChannels_(numberAudioIn);
 		s.options.numOutputBusChannels_(o);
@@ -51,11 +48,7 @@ Robot {
 		widthMC = wid;
 		orientationMC = ori;
 
-		// Safety Limiter
-		//s.options.safetyClipThreshold = 1.26; // Testing
 		Safety(s);
-		//Safety(s).enabled;
-		//Safety.setLimit(1.neg.dbamp);
 		//s.makeGui;
 
 		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
@@ -917,8 +910,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"DjScratch",
 					"LiquidFilter",
 					"Centroid",
-					//"PV_HPshiftDown",
-					//"PV_HPecartType",
 					"PV_MagNoise",
 					"PV_MagClip",
 					"PV_MagSmooth",
@@ -955,8 +946,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"Piano FreqShift",
 					"Piano Squiz",
 					"Piano WaveLoss",
-					//"Piano HPshiftDown",
-					//"Piano HPecartType",
 					"Piano LocalMax",
 					"Piano MagSmear",
 					"Piano RandComb",
@@ -987,7 +976,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"Piano Convolution",
 
 					"PlayBufAdd",
-					//"SampleAG",
 					"KlankPlayBuf",
 					"Spring*Buf",
 					"Piano+Sample",
@@ -1012,9 +1000,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					"BowedString",
 					"StruckString",
 					"PianoPrepare",
-
-					//"KitDrums",
-					//"KitDrumsSample",
 				];
 				file=File(~nompathdata++"List Synth.scd","w");file.write("~listSynth="++~listSynth.asCompileString);file.close});
 			};
@@ -1466,9 +1451,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~rangeSynthBand = ~rangeSynthBand.add([1, 2, 3]); // 3 bands
 				~flagBandSynth = ~flagBandSynth.add([0,1,1,1,0,0,0,0,0,0,0,0,0]);
 				~flagSynthBand = ~flagSynthBand.add('off');
-				//~bandFHZ = ~bandFHZ.add([0.0, 52.0, 80.0, 108.0, 127.0]);
-				//Array.fill(~numFhzBand, {arg i; 127 / ~numFhzBand * i + (127 / ~numFhzBand )});
-				~bandFHZ = ~bandFHZ.add([0.0, 42.333333333333, 84.666666666667, 127.0 ]);
+				~bandFHZ = ~bandFHZ.add([[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ]);
 				~lastTimeBand = ~lastTimeBand.add([Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime, Main.elapsedTime]);// 12 band total
 				// Tuning
 				~tuning = ~tuning.add(Tuning.et12);
@@ -1708,7 +1691,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 															{
 																if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
 																	{
-																		if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)},
+																		if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b).at(0) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b).at(1)},
 																			{~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 																				~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 																				~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
@@ -1752,7 +1735,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 													{
 														if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
 															{
-																if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)},
+																if((~freqtampon.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b).at(0) and: {(~freqtampon.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b).at(1)},
 																	{~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 																		~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 																		~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
@@ -1834,7 +1817,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 														{
 															if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
 																{
-																	if((~freqtamponMidi.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b-1) and: {(~freqtamponMidi.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b)},
+																	if((~freqtamponMidi.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b).at(0) and: {(~freqtamponMidi.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b).at(1)},
 																		{
 																			~listemidifreq.wrapPut(instr, ~listemidifreq.wrapAt(instr).add(~freqtamponMidi.wrapAt(instr)));
 																			~listemidiamp.wrapPut(instr, ~listemidiamp.wrapAt(instr).add(~amptamponMidi.wrapAt(instr)));
@@ -2419,101 +2402,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{19}, {
 					//New synth environment
 					"No Operate".postln;
-					/*Dialog.openPanel({ arg paths;
-					var p, file="List Synth.scd";
-					p = PathName.new(paths);
-					file = p.fileName;
-					p = p.pathOnly;
-					s.bind{
-					if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
-					~initAllSynth.value(p, file);
-					s.sync;
-					~nombreinstrument.do({arg w; ~synthcontrol.wrapAt(w).items_(~listSynth)});
-					s.sync;
-					~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
-					s.sync;
-					//Document.listener.string="";
-					s.sync;
-					s.queryAllNodes;
-					s.sync;
-					Tdef.all.reset;
-					s.sync;
-					};
-					});*/
 				},
 				{20}, {
 					//New sound environment
 					"Not Operate".postln;
-					/*Dialog.openPanel({ arg paths;
-					var p, file="List Sounds.scd";
-					p = PathName.new(paths);
-					file = p.fileName;
-					p = p.pathOnly;
-					s.bind{
-					if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
-					~nombrebuffer.do({arg i;
-					~listebuffer.wrapAt(i).free;
-					~busreclevel.wrapAt(i).free;
-					});
-					s.sync;
-					~nombreinstrument.do({arg i;
-					~bufferTampon.wrapAt(i).free;
-					~bufferAddTampon.wrapAt(i).free;
-					~nombrebuffer.do({arg b;
-					~listebufferTampon.wrapAt(i).wrapAt(b).free;
-					});
-					});
-					s.sync;
-					~groupeBuffer.deepFree;
-					s.sync;
-					~initAllSound.value(p, file);
-					s.sync;
-					~initAllBuffer.value;
-					s.sync;
-					~nombreinstrument.do({arg w; ~soncontrol.wrapAt(w).items_(~displaySons1); ~soncontrolfft.wrapAt(w).items_(~displaySons2)});
-					s.sync;
-					if(~flagEntreeMode == 'Audio IN', {~listesamplein = ~listesampleinAudio;
-					~audioIn.run(true);~audioFile.run(false);~synthPlayFile.run(false);
-					~nombrebuffer.do({arg i;
-					~listesampleinFile.wrapAt(i).set(\triggerRec, 0);
-					~listesampleinFile.wrapAt(i).run(false);
-					~listesampleinAudio.wrapAt(i).run(true);
-					~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value)});
-					},
-					{if(~flagEntreeMode == 'File IN',{~listesamplein = ~listesampleinFile;
-					~audioIn.run(false);~audioFile.run(true);~synthPlayFile.run(true);
-					~nombrebuffer.do({arg i;
-					~listesampleinAudio.wrapAt(i).run(false);
-					~listesampleinFile.wrapAt(i).run(true);
-					~listesampleinFile.wrapAt(i).set(\triggerRec, 1);
-					~listesamplein.wrapAt(i).set(\run, ~recsamplebuttondatas.wrapAt(i).value, \loop,  ~looprecsamplebuttondatas.wrapAt(i).value.value)});
-					},
-					{~audioIn.run(false);~audioFile.run(false);~synthPlayFile.run(false);
-					~nombrebuffer.do({arg i;
-					~listesampleinAudio.wrapAt(i).run(false);//Init sampler
-					~listesampleinFile.wrapAt(i).set(\triggerRec, 0);
-					~listesampleinFile.wrapAt(i).run(false);//Init sampler
-					})})});
-					s.sync;
-					~nombreinstrument.do({arg w; ~listewindow.wrapAt(w).do({arg v; v.refresh})});
-					s.sync;
-					//Document.listener.string="";
-					s.sync;
-					s.queryAllNodes;
-					s.sync;
-					Tdef.all.reset;
-					s.sync;
-					};
-					});*/
 				},
 				{21}, {
 					// New all environment
 					"No Operate".postln;
-					/*FileDialog.new({ arg path;
-					var p;
-					p = path.at(0).asString ++"/";
-					~nompathdata=PathName.new(p).pathOnly;
-					}, fileMode: 2);*/
 				},
 				// OSC Off
 				{22}, {~oscStateFlag='off';~stateOSCdisplay.string = "OSC Off"},
@@ -2628,10 +2524,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(~flagrecpart.wrapAt(i)==1,{p=~listerecpart.wrapAt(i);p=p.add(~dureerecpart.wrapAt(i));p=p.add(""++$\r);p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');p=p.add('end');~listerecpart.wrapPut(i ,p);~listeplaypart.wrapPut(i,p)});if(~listeplaypart.wrapAt(i).size >= 1, {file=File(~nompathdata++"score"+(i+1).asString++".scd","w");file.write(~listeplaypart.wrapAt(i).value.asCompileString);file.close});
 		});
 		//// Save last work
-		//for(0, ~nombreinstrument-1, {arg i;
-		//datasfile=datasfile.add(~fonctionsavedatasinstrument.value(i))});
-		//datasfile=datasfile.add([~savecontrolpanel.value]);
-		//file=File(~nompathdata++"last work.scd","w");file.write(datasfile.value.asCompileString);file.close;
 		~menuRobot.remove;
 		~nombreinstrument.do({arg i; ~listewindow.wrapAt(i).close});
 		~wg.close;~wp.close;~windowMasterFX.close;windowKeyboard.close;
@@ -2925,8 +2817,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~genetiqueviewmutation",ez.value);~genetiquemutation.wrapPut(i,ez.value)},
 				0.05,labelWidth: 100,numberWidth: 40));
 			w.view.decorator.nextLine;
-			//StaticText(w, Rect(0, 0, 900, 12)).string_("						ALGORITHM INPUT	  	                                                                                        ALGORITHM OUTPUT").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
-			//w.view.decorator.nextLine;
 			// SET FHZ IN
 			~choixdatasinfreqview=~choixdatasinfreqview.add(PopUpMenu(w,Rect(0,0,140,18)).items = ~choixdatasinfreq);
 			~choixdatasinfreqview.wrapAt(i).action = {arg in;
@@ -3442,11 +3332,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~writepartitions.value(i,'normal','off',"~numberBand", ez.value);
 					band = ez.value;
 					~numFhzBand.put(i, band);
-					//array = Array.fill(band, {arg i; 84 / band * i + 24 + (84 / band )});
-					array = Array.fill(band, {arg i; 127 / band * i + (127 / band )});
-					//array = array.add(127);
+					array = Array.fill(band, {arg i; [127 / band * i, 127 / band * i + (127 / band )]});
 					array = array.reverse;
-					array = array.add(0);
+					array = array.add([0, 127]);
 					array = array.reverse;
 					~bandFHZ.put(i, array);
 					range = [];
@@ -3602,7 +3490,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			//Range Band 100
 			~rangeBand = ~rangeBand.add(EZText(w, Rect(0, 0, 260, 20), "Range Band",
 			{arg range; ~bandFHZ.put(i, range.value)},
-			[0.0, 42.33, 84.66, 127.0 ], true, 60);
+			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true, 60);
 			);
 			w.view.decorator.nextLine;
 			StaticText(w, Rect(0,0, 50, 18)).string_("Tuning").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 10));
@@ -3900,13 +3788,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~listesampleinAudio.wrapAt(i).run(false);//Init sampler
 					~listesampleinFile.wrapAt(i).run(false);//Init sampler
 				});
-				//~calculationaudio.valueAction_(0);
-				//~calculationmidi.valueAction_(0);
-				//~calculationchaos.valueAction_(0);
-				//~calculationneurone.valueAction_(0);
-				//~calculationgenetique.valueAction_(0);
-				//~calculationalgorithmes.valueAction_(0);
-				//~calculationautomation.valueAction_(0);
 				~routinepartitions.stop;
 				~nombreinstrument.do({arg i;
 					~routineinstrument.wrapAt(i).stop;~duree.wrapPut(i, 0)});
@@ -3917,16 +3798,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~routinegenetiquein.stop;
 				~routinealgorithmes.stop;
 				~metronomeGUI.value_(0);
-				// Pause Recording
-				/*if(~flagRecording == 'on', {s.pauseRecording;nil});*/
 				~tempoSystem.clear;
-				//~volumeFileIn.enabled_(false);
-				//~offsetFileIn.enabled_(false);
-				//~tempoprocesschaos.enabled_(false);
-				//~tempoprocessneurone.enabled_(false);
-				//~tempoprocessgenetique.enabled_(false);
-				//~tempoprocessalgorithmes.enabled_(false);
-				//~tempoprocessautomation.enabled_(false);
 				if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
 		})};
 		~startsysteme.focus;
@@ -5745,11 +5617,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 		// Read Datas Control Panel
 		~readcontrolpanel={arg d;
-			//~algoAnalyse.valueAction=d.wrapAt(0);
 			~seuilanalyse.value=d.wrapAt(1);
 			~filtreanalyse.value=d.wrapAt(2);
-			//~amplitudegeneraleinstrument=d.wrapAt(3);
-			//~amplitudegenerale.value=d.wrapAt(3);
 			~canalmidiin=d.wrapAt(4);
 			~tempoprocesschaos.value=d.wrapAt(5);
 			~tempoprocessneurone.value=d.wrapAt(6);
@@ -5758,21 +5627,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~tempoprocessalgorithmes.value=d.wrapAt(9);
 			~tempoprocessinstrument.valueAction=d.wrapAt(10);
 			~nombreBeats.valueAction=d.wrapAt(11);
-			//~volumeFileIn.valueAction=d.wrapAt(12);
-			//~offsetFileIn.valueAction=d.wrapAt(13);
 			~tempochaos=d.wrapAt(5);
 			~temponeurone=d.wrapAt(6);
 			~tempogenetique=d.wrapAt(7);
 			~tempoautomation=d.wrapAt(8);
 			~tempoalgorithmes=d.wrapAt(9);
-			//~synthPlayFile.set(\volume,d.wrapAt(12).value.dbamp);
-			//~synthPlayFile.set(\offset,d.wrapAt(13).value);
 			~choiceFilter.valueAction=d.wrapAt(14);
 			~hzFilter.valueAction=d.wrapAt(15);
-			/*~setAudioInSoft.valueAction = d.wrapAt(16);
-			~canalAudioIn = d.wrapAt(16);
-			~groupeAnalyse.set(\in, d.wrapAt(16).value);
-			~groupeBuffer.set(\in, d.wrapAt(16).value);*/
 		};
 
 		// Save Control Panel
@@ -5815,7 +5676,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 							if(~listeplaypart.wrapAt(i).size != 0, {
 								instr=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)).asInteger;commande=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+1);numero=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+2);code=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+3);valeur=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+4);
 								duree=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+5);
-								//[instr,commande,numero,code,valeur, duree].postln;// datas partition
 								if(code=='end',{if(~flaglooppart.wrapAt(i)==0,{~flagplaypart.wrapPut(i,0);~playpartbutton.wrapAt(i).valueAction=0},{~pointeurplaypart.wrapPut(i,0);
 									instr=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)).asInteger;commande=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+1);numero=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+2);code=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+3);valeur=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+4);
 									duree=~listeplaypart.wrapAt(i).wrapAt(~pointeurplaypart.wrapAt(i)+5);
@@ -6138,7 +5998,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -6176,7 +6035,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=SinOsc.ar(freq);
@@ -6213,7 +6072,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6250,7 +6109,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, dureesample, osc, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6291,7 +6150,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6332,7 +6190,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controls.at(0) * 10, controls.at(1) * 10);
@@ -6372,7 +6230,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controls.at(0) * 40, 40, abs(controls.at(0)*2-1));
@@ -6412,7 +6270,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controls.at(0) * 512, controls.at(1) * 2pi));
@@ -6443,98 +6301,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
-			//SynthDef("Piano HPshiftDown",
-			//{// listes de arguments (identique pour chaque synth !!!!!)
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//// liste des variables (identique pour chaque synth !!!!!)
-			//var main, envelope, dureesample, osc, recBuf, ambisonic;
-			//// Set Rate Freq
-			//freqRate=2**freqRate.cpsoct;
-			//freqRate=freqRate * reverse;
-			//// envelope (identique pour chaque synth !!!!!)
-			////controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
-			//// Synth
-			//main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
-			//// RecordBuf
-			//recBuf=RecordBuf.ar(main, buffer);
-			//// Main Synth
-			//main = FFT(LocalBuf(2048, 1), main);
-			//main = PV_HPshiftDown(main, controls.at(0)*64);
-			//main= IFFT(main);
-			////main = Limiter.ar(main, 1.0, 0.01);
-			////
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-
-			//SynthDef("Piano HPecartType",
-			//{// listes de arguments (identique pour chaque synth !!!!!)
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//// liste des variables (identique pour chaque synth !!!!!)
-			//var main, envelope, dureesample, osc, recBuf, ambisonic;
-			//// Set Rate Freq
-			//freqRate=2**freqRate.cpsoct;
-			//freqRate=freqRate * reverse;
-			//// envelope (identique pour chaque synth !!!!!)
-			////controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
-			//// Synth
-			//main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
-			//// RecordBuf
-			//recBuf=RecordBuf.ar(main, buffer);
-			//// Main Synth
-			//main = FFT(LocalBuf(2048, 1), main);
-			//main = PV_HPecartType(main, controls.at(0)*64);
-			//main= IFFT(main);
-			////main = Limiter.ar(main, 1.0, 0.01);
-			////
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-
 			SynthDef("Piano MagShift",
 				{// listes de arguments (identique pour chaque synth !!!!!)
 					arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -6544,7 +6310,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6590,7 +6356,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6636,7 +6402,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6682,7 +6448,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6728,7 +6494,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6774,7 +6540,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6820,7 +6586,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6866,7 +6632,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6912,7 +6678,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -6958,7 +6724,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7004,7 +6770,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7050,7 +6816,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7096,7 +6862,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7142,7 +6908,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7188,7 +6954,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7234,7 +7000,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7280,7 +7046,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7326,7 +7092,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					freqRate=2**freqRate.cpsoct;
 					freqRate=freqRate * reverse;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7373,7 +7139,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7424,7 +7190,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7475,7 +7241,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7526,7 +7292,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7577,7 +7343,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7628,7 +7394,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7679,7 +7445,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7730,7 +7496,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7781,7 +7547,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7832,7 +7598,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7883,7 +7649,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
@@ -7930,7 +7696,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque sample !!!!!)
 					var main, envelope, pluck, ambisonic;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: duree, levelScale: 1, doneAction: 2);
 					// Sample
 					pluck = BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(controls.at(0)*1000))), controls.at(1));
@@ -7968,7 +7734,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=VarSaw.ar(freq, Rand(0,1), controls.at(0));
@@ -8005,7 +7771,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Pulse.ar(freq,controls.at(0));
@@ -8042,7 +7808,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Osc.ar(wavetable,freq);
@@ -8079,7 +7845,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=VOsc.ar(wavetable2+(controls.at(0)*6.999),freq);// bufnum=0+controls.at(0)*6.999
@@ -8116,7 +7882,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1/3, doneAction: 2);
 					// Synth
 					main=VOsc3.ar(wavetable2+(controls.at(0)*6.999),freq,freq+(freq*controls.at(1)),freq-(freq*controls.at(2)));// bufnum=0+controls.at(0)*6.999
@@ -8156,7 +7922,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=Mix(TGrains.ar(2, Impulse.kr(controls.at(0)*100), buffer, BufRateScale.kr(buffer)*rate, BufDur.kr(buffer)*pos, (controls.at(1)*duree)/(controls.at(0)*100), 0.0, 1, controls.at(2)*4));
@@ -8193,7 +7959,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, arrayf, arraya, arrayd, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					arrayf=[freq,freq*controls.at(0),freq*controls.at(1)*2,freq*controls.at(2)*3,freq*controls.at(3)*4,freq*controls.at(4)*5,freq*controls.at(5)*6,freq*controls.at(6)*7,freq*controls.at(7)*8,freq*controls.at(8)*9,freq*controls.at(9)*10];
@@ -8236,7 +8002,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=BufRd.ar(1,buffer,Phasor.ar(trigger,BufRateScale.kr(buffer)*rate,BufFrames.kr(buffer)*pos,BufFrames.kr(buffer)*controls.at(0),BufFrames.kr(buffer)*controls.at(1)), loop, 2);
@@ -8273,7 +8039,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, inforce, k, d, outforce, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1/6, doneAction: 2);
 					// Synth
 					inforce = LFPulse.ar(controls.at(0) * duree);
@@ -8316,7 +8082,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Formant.ar(freq,(controls.at(0)*127).midicps,(controls.at(1)*127).midicps);
@@ -8353,7 +8119,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Blip.ar(freq, Line.kr(50*controls.at(0)+1,50*controls.at(1)+1,duree*controls.at(2)));
@@ -8390,7 +8156,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main = Gendy3.ar(controls.at(0) * 6, controls.at(1) * 6, controls.at(2) * 0.1, controls.at(3) * 0.1, freq, controls.at(4) * 0.1, controls.at(5) * 0.1);
@@ -8427,7 +8193,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1/10, doneAction: 2);
 					// Synth
 					main=DynKlank.ar(`[[1,controls.at(1),controls.at(2)*2,controls.at(3)*3,controls.at(4)*4,controls.at(5)*5,controls.at(6)*6,controls.at(7)*7,controls.at(8)*8,controls.at(9)*9], nil,[1,1,1,1,1,1,1,1,1,1]],Dust2.ar(controls.at(0)*100), freq);
@@ -8464,7 +8230,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, ambisonic, envelope;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1/10, doneAction: 2);
 					// Synth
 					main=DynKlank.ar(`[[1,controls.at(1),controls.at(2)*2,controls.at(3)*3,controls.at(4)*4,controls.at(5)*5,controls.at(6)*6,controls.at(7)*7,controls.at(8)*8,controls.at(9)*9], nil, [1,1,1,1,1,1,1,1,1,1]],ClipNoise.ar(controls.at(0)*0.1), freq);
@@ -8503,7 +8269,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					rate=2**(freq.cpsmidi+(controls.at(5)*8-4*12)).midicps.cpsoct*reverse;
 					dureesample=(1/rate)*BufDur.kr(buffer);dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -8552,7 +8318,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope1=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1 + controls.at(8), doneAction: 2);
 					envelope2=EnvGen.ar(Env.perc(controls.at(5),1,1,controls.at(6)*8-4),timeScale: dureesample, levelScale: controls.at(7), doneAction: 0);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
@@ -8594,7 +8360,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					rate=2**(freq.cpsmidi+(controls.at(0)*8-4*12)).midicps.cpsoct*reverse;
 					dureesample=(1/rate)*BufDur.kr(buffer);dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: dureesample, levelScale: 1/10, doneAction: 2);
 					// Synth
 					in = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Dust2.kr(0*100), BufFrames.kr(buffer)*pos, loop, 0.33, 0.5);
@@ -8632,7 +8398,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, rate, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Klank.ar(`[[controls.at(4)+1, controls.at(5)/2+1, controls.at(6)/3+1,1-controls.at(7),1-(controls.at(8)/2),1-(controls.at(9)/3)]],Decay2.ar(Impulse.ar(duree/1000,0,0.025),controls.at(1)/10,controls.at(2),LFNoise2.ar(12000*controls.at(0))),freq,0,controls.at(3));
@@ -8667,7 +8433,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, rate, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Klank.ar(`[Array.series(12, freq, freq),Array.geom(12,1,rrand(controls.at(0),controls.at(1))),Array.fill(12, {rrand(1,3)})], BrownNoise.ar(0.007) * LFNoise1.kr(duree/16));
@@ -8702,7 +8468,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, rate, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					main=Klank.ar(`[Array.series(16, freq, freq),Array.geom(16,1,rrand(controls.at(3),controls.at(4))),Array.fill(16, {rrand(0.1,2.5)})],Decay2.ar(Impulse.ar(duree/1000),controls.at(1)/100,controls.at(2)/100,BrownNoise.ar(controls.at(0)/2)));
@@ -8738,7 +8504,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope,listefreq, delaytime, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					listefreq=listefreq.add(1/freq);listefreq=listefreq.add(1/(freq-(controls.at(3)*8)));listefreq=listefreq.add(1/(freq+(controls.at(4)*8)));
@@ -8775,7 +8541,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope,listefreq, delaytime, pp, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					listefreq=listefreq.add(1/freq);listefreq=listefreq.add(1/(freq-(controls.at(5)*8)));listefreq=listefreq.add(1/(freq+(controls.at(6)*8)));
@@ -8819,7 +8585,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					rate=2**(freq.cpsmidi+(controls.at(6)*8-4*12)).midicps.cpsoct*reverse2;
 					dureesample=(1/rate)*BufDur.kr(buffer);dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope1=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: duree, levelScale: controls.at(5), doneAction: 2);
 					envelope2=EnvGen.ar(Env.linen(controls.at(7),controls.at(8),controls.at(9),1,4),timeScale: dureesample, levelScale: 1, doneAction: 0);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
@@ -8863,7 +8629,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					rate=2**(freq.cpsmidi+(controls.at(6)*8-4*12)).midicps.cpsoct*reverse2;
 					dureesample=(1/rate)*BufDur.kr(buffer);dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope1=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: controls.at(5), doneAction: 2);
 					envelope2=EnvGen.ar(Env.linen(controls.at(7),controls.at(8),controls.at(9),1,4),timeScale: dureesample, levelScale: 1, doneAction: 0);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
@@ -8904,7 +8670,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// liste des variables (identique pour chaque synth !!!!!)
 					var main, envelope, fc, osc, ambisonic;
 					// envelope (identique pour chaque synth !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > duree, 1.0, controlenvtime1*duree.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
 					fc = LinExp.kr(LFNoise1.kr(Rand(0.015625, duree)), -1,1,500,2000);
@@ -8937,47 +8703,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
-			//SynthDef("SampleAG",
-			//{// listes des arguments
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//// liste des variables
-			//var main, envelope, rate, dureesample, pitch, localK, ambisonic;
-			//localK=LocalIn.kr(1) + (freq.cpsmidi/127);
-			//pitch=HPgenetiques.kr(controls.at(1) * 100, localK, croisement: controls.at(2), mutation: controls.at(3));
-			//rate=(2**((pitch*127).midicps.cpsoct)*reverse);
-			//dureesample=(1/rate)*BufDur.kr(buffer);dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-			//// envelope
-			////controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: dureesample, levelScale: 1, doneAction: 2);
-			//// Synth
-			//main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*pos, loop);
-			////main = Limiter.ar(main, 1.0, 0.01);
-			//
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-
 			SynthDef("LoopBuf",
 				{// listes de arguments (identique pour chaque sample !!!!!)
 					arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -8987,7 +8712,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, BufFrames.kr(buffer)*controls.at(0), BufFrames.kr(buffer)*controls.at(1));
@@ -9027,7 +8752,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1));
@@ -9068,7 +8793,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)), controls.at(2) * 10, controls.at(3) * 10);
@@ -9108,7 +8833,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)), controls.at(2) * 40, 40, abs(controls.at(3) * 2 - 1));
@@ -9148,7 +8873,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=Mix(FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop, controls.at(0), controls.at(1)), controls.at(2) * 512, controls.at(3) * 2pi));
@@ -9188,7 +8913,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -9231,7 +8956,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					//pointer = if(reverse > 0, Line.kr(0, pos, dureesample), Line.kr(1, pos, dureesample));
@@ -9272,7 +8997,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -9314,7 +9039,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -9356,7 +9081,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -9398,7 +9123,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=Squiz.ar(PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop), controls.at(0)* 10, controls.at(1) * 10);
@@ -9438,7 +9163,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=Mix(TGrains.ar(2, Impulse.kr(controls.at(0)*100), buffer, BufRateScale.kr(buffer)*rate, BufDur.kr(buffer)*pos, (controls.at(1)*duree)/(controls.at(2)*100), 0.0, 1));
@@ -9478,7 +9203,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=BufRd.ar(1,buffer,Phasor.ar(trigger,BufRateScale.kr(buffer)*rate,BufFrames.kr(buffer)*pos,BufFrames.kr(buffer)*controls.at(0),BufFrames.kr(buffer)*controls.at(1)), rate, loop);
@@ -9509,245 +9234,6 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					Out.ar(out, main * amp * byPass);
 			}).send(s);
 
-			//SynthDef("KitDrums",
-			//{// listes de arguments (identique pour chaque synth !!!!!)
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//var main, synthB, synthS, synthH, ambisonic;
-			//// var bassdrum
-			//var mod_freq = 5, mod_index = 5,decaySynthB = 0.4,
-			//beater_noise_level = 0.025;
-			//var pitch_contour, drum_osc, drum_lpf, drum_env;
-			//var beater_source, beater_hpf, beater_lpf, lpf_cutoff_contour, beater_env;
-			//var freqSynthB = 55; // amp = 0.8;
-			//// var snaredrum
-			//var decaySynthS = 0.1, drum_mode_level = 0.25,
-			//	snare_level = 40, snare_tightness = 1000;
-			//	var drum_mode_sin_1, drum_mode_sin_2, drum_mode_pmosc, drum_mode_mix,
-			//drum_mode_env;
-			//	var snare_noise, snare_brf_1, snare_brf_2, snare_brf_3, snare_brf_4,
-			//snare_reson;
-			//	var snare_env;
-			//var freqSynthS = 405;// amp = 0.8;
-			//// var hi-hat
-			//var dur = 0.1;
-			//	var root_cymbal, root_cymbal_square, root_cymbal_pmosc;
-			//	var initial_bpf_contour, initial_bpf, initial_env;
-			//	var body_hpf, body_env;
-			//var freqSynthH = 6000;// amp = 0.8;
-			////BasseDrum
-			//pitch_contour = Line.kr(freqSynthB*2, freqSynthB, 0.02);
-			//drum_osc = PMOsc.ar(	pitch_contour,
-			//			mod_freq,
-			//			mod_index/1.3,
-			//			mul: 1,
-			//			add: 0);
-			//drum_lpf = LPF.ar(in: drum_osc, freq: 1000, mul: 1, add: 0);
-			//drum_env = drum_lpf * EnvGen.ar(Env.perc(0.005, decaySynthB), 1.0, doneAction: 2);
-			//beater_source = WhiteNoise.ar(beater_noise_level);
-			//beater_hpf = HPF.ar(in: beater_source, freq: 500, mul: 1, add: 0);
-			//lpf_cutoff_contour = Line.kr(6000, 500, 0.03);
-			//beater_lpf = LPF.ar(in: beater_hpf, freq: lpf_cutoff_contour, mul: 1, add: 0);
-			//beater_env = beater_lpf * EnvGen.ar(Env.perc, 1.0, doneAction: 2);
-			//synthB = Mix.new([drum_env, beater_env]) * 2 * amp;
-			//// Snare
-			//drum_mode_env = EnvGen.ar(Env.perc(0.005, decaySynthS), 1.0, doneAction: 2);
-			//	drum_mode_sin_1 = SinOsc.ar(freqSynthS*0.53, 0, drum_mode_env * 0.5);
-			//	drum_mode_sin_2 = SinOsc.ar(freqSynthS, 0, drum_mode_env * 0.5);
-			//	drum_mode_pmosc = PMOsc.ar(	Saw.ar(freqSynthS*0.85),
-			//					184,
-			//					0.5/1.3,
-			//					mul: drum_mode_env*5,
-			//					add: 0);
-			//	drum_mode_mix = Mix.new([drum_mode_sin_1, drum_mode_sin_2,
-			//drum_mode_pmosc]) * drum_mode_level;
-			//
-			//// choose either noise source below
-			////	snare_noise = Crackle.ar(2.01, 1);
-			//	snare_noise = LFNoise0.ar(12544, 0.1);
-			//	snare_env = EnvGen.ar(Env.perc(0.005, decaySynthS), 1.0, doneAction: 2);
-			//	snare_brf_1 = BRF.ar(in: snare_noise, freq: 8000, mul: 0.5, rq: 0.1);
-			//	snare_brf_2 = BRF.ar(in: snare_brf_1, freq: 5000, mul: 0.5, rq: 0.1);
-			//	snare_brf_3 = BRF.ar(in: snare_brf_2, freq: 3600, mul: 0.5, rq: 0.1);
-			//	snare_brf_4 = BRF.ar(in: snare_brf_3, freq: 2000, mul: snare_env, rq: 0.0001);
-			//	snare_reson = Resonz.ar(snare_brf_4, snare_tightness, mul: snare_level) ;
-			//	synthS = Mix.new([drum_mode_mix, snare_reson]) * 5 * amp;
-			//// hi-hat
-			//	root_cymbal_square = Pulse.ar(freqSynthH, 0.5, mul: 1);
-			//	root_cymbal_pmosc = PMOsc.ar(root_cymbal_square,
-			//					[freqSynthH*1.34, freqSynthH*2.405, freqSynthH*3.09, freqSynthH*1.309],
-			//					[310/1.3, 26/0.5, 11/3.4, 0.72772],
-			//					mul: 1,
-			//					add: 0);
-			//	root_cymbal = Mix.new(root_cymbal_pmosc);
-			//
-			//	initial_bpf_contour = Line.kr(15000, 9000, 0.1);
-			//	initial_env = EnvGen.ar(Env.perc(0.005, 0.1), 1.0);
-			//	initial_bpf = BPF.ar(root_cymbal, initial_bpf_contour, mul:initial_env);
-			//
-			//	body_env = EnvGen.ar(Env.perc(0.005, dur, 1, -2), 1.0, doneAction: 2);
-			//	body_hpf = HPF.ar(in: root_cymbal, freq: Line.kr(9000, 12000, dur),
-			//mul: body_env, add: 0);
-			//
-			//	synthH = Mix.new([initial_bpf, body_hpf]) * amp;
-			//
-			//// sortie kitdrum
-			//main = if(freq <= 42.midicps, synthB, if(freq <= 84.midicps, synthS, synthH));
-			////main = Limiter.ar(main, 1.0, 0.01);
-			//
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), 1),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * 1,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), 1);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-
-			//SynthDef("KitDrumsSample",
-			//{// listes de arguments (identique pour chaque synth !!!!!)
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//var main, rate, dureesample, synthB, synthS, synthH, ambisonic;
-			////rate=2**freqRate.cpsoct;
-			//rate=2**(12+(controls.at(9)*8-4*12)).midicps.cpsoct*reverse;
-			//dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-			//// SynthB
-			//synthB=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*controls.at(1), loop);
-			//synthB=Pan2.ar(synthB, 0.0) * EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample*controls.at(2), levelScale: 1, doneAction: 2);
-			//// SynthS
-			//synthS=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(3)*100), BufFrames.kr(buffer)*controls.at(4), loop);
-			//synthS=Pan2.ar(synthS, 0.0) * EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample*controls.at(5), levelScale: 1, doneAction: 2);
-			//// SynthH
-			//synthH=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(6)*100), BufFrames.kr(buffer)*controls.at(7), loop);
-			//synthH=Pan2.ar(synthH, 0.0) * EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample*controls.at(8), levelScale: 1, doneAction: 2);
-			//// sortie kitdrumsample
-			//main = if(freq <= 42.midicps, synthB, if(freq <= 84.midicps, synthS, synthH));
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), 1),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), 1, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * 1,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), 1);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-
-			// SYNTH PV
-
-			//SynthDef("PV_HPshiftDown",
-			//{// listes de arguments (identique pour chaque sample !!!!!)
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//// liste des variables (identique pour chaque sample !!!!!)
-			//var main, envelope, rate, in, fft, dureesample, ambisonic;
-			//rate=2**freqRate.cpsoct;
-			//dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-			//// envelope (identique pour chaque sample !!!!!)
-			////controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
-			//// Sample
-			//in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*pos, loop);
-			//main=FFT(LocalBuf(2048, 1), in);
-			//main=PV_HPshiftDown(main,controls.at(1)*64);
-			//main=IFFT(main);
-			////main = Limiter.ar(main, 1.0, 0.01);
-			//
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-			//
-			//SynthDef("PV_HPecartType",
-			//{// listes de arguments (identique pour chaque sample !!!!!)
-			//arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-			//// liste des variables (identique pour chaque sample !!!!!)
-			//var main, envelope, rate, in, fft, dureesample, ambisonic;
-			//rate=2**freqRate.cpsoct;
-			//dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-			//// envelope (identique pour chaque sample !!!!!)
-			////controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
-			//envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
-			//// Sample
-			//in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*pos, loop);
-			//main=FFT(LocalBuf(2048, 1), in);
-			//main=PV_HPecartType(main, controls.at(1)*10+1);
-			//main=IFFT(main);
-			////main = Limiter.ar(main, 1.0, 0.01);
-			//
-			//// Switch Audio Out
-			//main = if(~switchAudioOut == 0,
-			//if(flagMC == 0,
-			//// Pan 1
-			//Pan2.ar(main, Rand(panLo, panHi), envelope),
-			//// Pan 2
-			//Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-			//if(~switchAudioOut == 2,
-			//if(flagMC == 0,
-			//// PanAz 1
-			//PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-			//// PanAz 2
-			//PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, widthMC, orientationMC)),
-			//if(~switchAudioOut == 1,
-			//// Rotate2
-			//Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-			//// Ambisonic
-			//(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-			//DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-			//// Out
-			//Out.ar(buseffetsPre, Mix(main) * amp * ampPre);
-			//Out.ar(buseffetsPost, Mix(main) * amp * ampPost * byPass);
-			//Out.ar(out, main * amp * byPass);
-			//}).send(s);
-
 			SynthDef("PV_BinScramble",
 				{// listes de arguments (identique pour chaque sample !!!!!)
 					arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -9757,7 +9243,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -9800,7 +9286,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -9843,7 +9329,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -9886,7 +9372,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -9929,7 +9415,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -9972,7 +9458,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10015,7 +9501,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10058,7 +9544,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10101,7 +9587,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10144,7 +9630,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10187,7 +9673,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10230,7 +9716,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10273,7 +9759,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10316,7 +9802,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10359,7 +9845,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10402,7 +9888,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10445,7 +9931,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10488,7 +9974,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10533,7 +10019,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10580,7 +10066,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10624,7 +10110,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10671,7 +10157,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10718,7 +10204,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10765,7 +10251,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10812,7 +10298,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10859,7 +10345,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10906,7 +10392,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -10953,7 +10439,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -11000,7 +10486,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample2=BufDur.kr(buffer2)/rate2.abs;dureesample2=dureesample2+(loop2*(duree-dureesample2));dureesample2=clip2(duree,dureesample2);
 					dureesample=clip2(dureesample1,dureesample2);
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -11046,7 +10532,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -11091,7 +10577,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
@@ -11136,7 +10622,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*pos, loop);
@@ -11177,7 +10663,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*pos, loop);
@@ -11218,7 +10704,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, Impulse.kr(controls.at(0)*100), BufFrames.kr(buffer)*pos, loop);
@@ -11259,7 +10745,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					main = BufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureesample.reciprocal), rate, BufFrames.kr(buffer)* controls.at(0), BufFrames.kr(buffer)* controls.at(1) ).lag(controls.at(2))*LFNoise2.kr(controls.at(3)).sign, 1);
@@ -11304,7 +10790,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					source=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
@@ -11346,7 +10832,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
@@ -11392,7 +10878,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					dureesample=BufDur.kr(buffer)/rate.abs;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate = rate * reverse;
 					// envelope (identique pour chaque sample !!!!!)
-					//controlenvtime1 = if(controlenvtime1 > dureesample, 1.0, controlenvtime1*dureesample.reciprocal);
+
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
