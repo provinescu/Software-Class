@@ -13,12 +13,12 @@ Launcher {
 
 	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
 
-		// Load Provinescu Software
+		// Load Provinescu Software HP All In One avec adr Server 57569
 
 		// Init
 		QtGUI.palette = QPalette.dark;// light / system
 		//Server.default = Server.internal;
-		ni = 26;
+		ni = 2;
 		o = 2;
 		r = 2;
 		f = 0;
@@ -26,7 +26,7 @@ Launcher {
 		listDevOut = ServerOptions.outDevices;
 		devIn = listDevIn.at(0);
 		devOut = listDevOut.at(0);
-		driverBlock = 256;
+		driverBlock = 512;
 		widthMC = 2.0;
 		orientationMC = 0.5;
 		flagMC = 0;
@@ -56,12 +56,14 @@ Launcher {
 		//Text Driver Block
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Driver's Block Size").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		EZText(w, Rect(0, 0, 200, 20), "Size", {arg string; driverBlock = string.value}, 256, true);
+		//EZText(w, Rect(0, 0, 200, 20), "Size", {arg string; driverBlock = string.value}, driverBlock, true);
+		NumberBox(w, 200@20).value_(driverBlock).action_{arg ez; driverBlock = ez.value.asInteger};
 
 		//Text Input Number
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Channels Input").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		EZText(w, Rect(0, 0, 200, 20), "Channels", {arg string; ni = string.value}, 26, true);
+		//EZText(w, Rect(0, 0, 200, 20), "Channels", {arg string; ni = string.value}, ni, true);
+		NumberBox(w, 200@20).value_(ni).action_{arg ez; ni = ez.value.asInteger};
 
 		//Format
 		//Text File In
@@ -102,7 +104,8 @@ Launcher {
 		//Text Output Number
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Channels Output").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		EZText(w, Rect(0, 0, 200, 20), "Channels", {arg string; o = string.value; r = string.value}, o, true);
+		//EZText(w, Rect(0, 0, 200, 20), "Channels", {arg string; o = string.value; r = string.value}, o, true);
+		NumberBox(w, 200@20).value_(o).action_{arg ez; o = ez.value.asInteger};
 
 		//name = "Robot";
 		nameSoft = "Robot";
@@ -135,6 +138,8 @@ Launcher {
 				}
 			);
 		};
+
+		//w.view.children.at(6).view.children.dump;
 
 		//Text File In
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Working Folder").stringColor_(Color.yellow);
