@@ -3227,6 +3227,7 @@ y ... -					Musical keys.
 						indexMusicData = 9999; if(flagModeSynth == 'Tdef', {tdefSynthesizer.play});
 						if(startAutomationSynthControls.value == 1, {tdefControls.play});
 						if(startAutomationSynthMusicData.value == 1, {tdefMusicData.play});
+						if(synthAndFX != nil, {synthAndFX.run(true)});
 					},
 					{
 						if(flagModeSynth == 'Tdef', {tdefSynthesizer.reset; tdefSynthesizer.stop}); indexMusicData = 9999;
@@ -3244,6 +3245,7 @@ y ... -					Musical keys.
 					midiOut.allNotesOff(canalMIDIinstr);
 					if(flagVST == 'on', {
 						~fxVST.midi.noteOff(canalMIDIinstr)});
+					if(synthAndFX != nil, {synthAndFX.run(false)});
 				});
 				onOff = view.value;
 			};
