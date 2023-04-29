@@ -368,14 +368,16 @@ esc	or SpaceBar			System on/off.
 b						Switch recording buffer data OSC on/off.
 alt + c					Copy Preset.
 C						Copy Synthesizer.
-d				 		Temporal Synchronizing Synthesizer.
-f				 		Load sound file for analyser.
-F				 		Sound file analyser  Loop On.
+d						Temporal Synchronizing Synthesizer.
+f						Load sound file for analyser.
+F						Sound file analyser  Loop On.
 alt + f					Sound file analyse Loop Off.
-ctrl + f		 		Load and Add sound file for analyse.
+ctrl + f					Load and Add sound file for analyse.
 h						Switch Source In.
 i						Close all synthesizer.
 alt + i					Clear musical data (OSC data).
+I						Init Algo All Synth.
+alt + I					Init Algo Synth on front.
 k						New Environment.
 m						Switch Algo Tempo.
 N						Add a New Synthesizer (SinOsc by default).
@@ -385,10 +387,10 @@ alt + P					Stop all Synthesizer.
 p						Play Synthesizer on front.
 alt + p					Stop Synthesizer on front.
 q						Switch Algo Analyze.
-ctrl + alt + r			Start Recording.
+ctrl + alt + r				Start Recording.
 R						Switch Pause Recording on/off.
-ctrl + alt + r			Stop Recording.
-w / ctrl + w			Windows navigation.
+ctrl + alt + r				Stop Recording.
+w / ctrl + w				Windows navigation.
 alt + w					Window Control Panel.
 y						Display NodesTree.
 z						Load Random Preset.
@@ -397,8 +399,8 @@ Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shi
 
 l			 			Load Preset.
 L						Load Synthesizer.
-ctrl + l		     	Load preset without close others synthesizer.
-ctrl + L			    Load Synthesizer without close others synthesizer.
+ctrl + l					Load preset without close others synthesizer.
+ctrl + L					Load Synthesizer without close others synthesizer.
 J						Save OSCmusicData.
 j						Load OSCmusicData.
 s				 		Save preset.
@@ -408,7 +410,7 @@ f						Switch Sound File for Analyze.
 
 Keyboard Commandes:
 
-y ... -					Musical keys.
+y ... -						Musical keys.
 /  *						Keyboard transpose down / up.
 ";
 
@@ -1070,7 +1072,7 @@ y ... -					Musical keys.
 						if(subItem == 1, {arrayData=arrayData.add("A Knob")});
 						if(subItem == 2, {arrayData=arrayData.add(subView.value)})});
 					data = data.add(arrayData);
-					});
+				});
 			});
 			// Sortie Fonction Save Control
 			data.value;
@@ -1965,7 +1967,7 @@ y ... -					Musical keys.
 					pourcentRoot.value = 0;
 				});
 				// key alt + i -> Clear musical data
-				if(modifiers==524288 and: {unicode==108} and: {keycode==37},{
+				if(modifiers==524288 and: {unicode==108} and: {keycode==34},{
 					// Init Array
 					listeDataOSC=[];
 					indexDataMusic = [];
@@ -1976,6 +1978,14 @@ y ... -					Musical keys.
 						indexDataMusic = indexDataMusic.add(0);
 						lastTimeBand = lastTimeBand.add(Main.elapsedTime);
 					});
+				});
+				// key I -> Init Algo all Synth
+				if(modifiers==131072 and: {unicode==73} and: {keycode==34},{
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(83).valueAction_(1)});
+				});
+				// Key alt + I -> Init Algo Synth on front
+				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "Matrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
+					window.view.children.at(83).valueAction_(1);
 				});
 				// key f -> Switch File for Analyze
 				if(modifiers==0 and: {unicode==102} and: {keycode==3}, {
@@ -3797,11 +3807,25 @@ y ... -					Musical keys.
 				if(view.value == 0, {/*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/});
 			});
 			// Degrees
-			EZText(windowSynth, Rect(0, 0, 390, 20), "Degrees",
+			EZText(windowSynth, Rect(0, 0, 360, 20), "Degrees",
 				{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
 				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
 			windowSynth.view.children.at(80).enabled_(false);
 			windowSynth.view.children.at(82).enabled_(false);
+
+			// Init Algo
+			Button(windowSynth, Rect(0, 0, 35, 20)).states_([["InitAlgo", Color.yellow]]).action_({
+				// For Kohonen
+				kohonenF = HPclassKohonen.new(1,127,1);
+				kohonenA = HPclassKohonen.new(1,127,1);
+				kohonenD = HPclassKohonen.new(1,127,1);
+				// For Genetic
+				geneticF = HPclassGenetiques.new(1, 64);
+				geneticA = HPclassGenetiques.new(1, 64);
+				geneticD = HPclassGenetiques.new(1, 64);
+				// For Neural
+				neuralFAD = HPNeuralNet.new(3, 1, [5], 3);
+			});
 
 			for(0, numFhzBand,
 				{arg index;
@@ -8453,7 +8477,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -8500,7 +8524,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				freq = freq.clip(20,12544);
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(63.5.midicps*ctrl1+27.5, freq, duree*ctrl3), 0.333), RHPF.ar(chain, XLine.ar(127.midicps*ctrl2+27.5, freq, duree*ctrl3), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -8547,7 +8571,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				chain = if(freq >= 60.midicps , Resonz.ar(chain, XLine.ar(127.midicps*ctrl1+21.midicps, 55*ctrl2 + 21.midicps, duree*ctrl3)), Resonz.ar(chain, XLine.ar(55*ctrl1+21.midicps, 127.midicps*ctrl2 + 21.midicps, duree*ctrl3)));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -8594,7 +8618,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), ctrl1 * 10, ctrl2 *10);
+				chain = Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 10, ctrl2 *10);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -8640,7 +8664,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), ctrl1 * 40, 40, abs(ctrl2 * 2 - 1));
+				chain = WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 40, 40, abs(ctrl2 * 2 - 1));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -8686,7 +8710,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), ctrl1 * 1024 - 512, ctrl2 * 2pi);
+				chain = FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 1024 - 512, ctrl2 * 2pi);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -8732,7 +8756,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)), 0.2, ctrl1.clip(0.01, 1) * 8, ctrl2, ctrl3, 1);
+				chain = PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 0.2, ctrl1.clip(0.01, 1) * 8, ctrl2, ctrl3, 1);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -8780,7 +8804,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_HPshiftDown(chain, ctrl1 * 64);
@@ -8830,7 +8854,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagShift(chain, ctrl1 * 4, ctrl2 * 128 - 64);
@@ -8880,7 +8904,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_LocalMax(chain, ctrl1 * 64);
@@ -8930,7 +8954,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagSmear(chain, ctrl1 * 64);
@@ -8980,7 +9004,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_RandComb(chain, ctrl1, LFNoise2.kr(ctrl2 * 64));
@@ -9030,7 +9054,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_BinShift(chain, ctrl1 * 4, ctrl2 * 256 - 128);
@@ -9080,7 +9104,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_BinScramble(chain, ctrl1, ctrl2,  LFNoise2.kr(ctrl3.reciprocal));
@@ -9130,7 +9154,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_BrickWall(chain, ctrl1 * 2 - 1);
@@ -9180,7 +9204,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_ConformalMap(chain, ctrl1 * 2 - 1, ctrl2 * 2 - 1);
@@ -9230,7 +9254,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1*100), (ctrl2*100).reciprocal));
@@ -9280,7 +9304,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagAbove(chain, ctrl1 * 64);
@@ -9330,7 +9354,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagBelow(chain, ctrl1 * 64);
@@ -9380,7 +9404,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagClip(chain, ctrl1 * 16);
@@ -9430,7 +9454,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagNoise(chain);
@@ -9480,7 +9504,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagSquared(chain);
@@ -9530,7 +9554,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_RectComb(chain, ctrl1 * 32, ctrl2, ctrl3);
@@ -9580,7 +9604,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagSmooth(chain, ctrl1);
@@ -9630,7 +9654,7 @@ y ... -					Musical keys.
 				//envTime1 = if(envTime1 > duree, 1.0, envTime1 * duree.reciprocal);
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_Compander(chain, 80*ctrl1.clip(0.1, 1), (ctrl2*5).clip(2, 5), ctrl3);
@@ -9688,7 +9712,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -9746,7 +9770,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -9804,7 +9828,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -9862,7 +9886,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -9920,7 +9944,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -9978,7 +10002,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -10036,7 +10060,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -10094,7 +10118,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -10152,7 +10176,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -10210,7 +10234,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(2048, 1), in1);
@@ -10268,7 +10292,7 @@ y ... -					Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, dureeSample, 2);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				chain = Convolution(in1, in2, 2048) * 0.1;
