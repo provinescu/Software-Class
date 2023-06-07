@@ -1,3 +1,4 @@
+
 // A Software by Herve Provini
 
 Matrix {
@@ -365,6 +366,8 @@ Matrix {
 Single commandes:
 
 esc	or SpaceBar			System on/off.
+a                       FreezeDataOSC for Synth on Front.
+A                       FreezeDataOSC for All Synth.
 b						Switch recording buffer data OSC on/off.
 alt + c					Copy Preset.
 C						Copy Synthesizer.
@@ -851,9 +854,9 @@ y ... -						Musical keys.
 				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7} or: {item == 11}
 					or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 28} or: {item == 29} or: {item == 30} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81} or:{item == 83} or:{item == 84},
 					{data = data.add(view.value)});
-				// Composite View (Degress)
+				// Composite View (Degrees)
 				if(item == 82,
 					{
 						view.children.do({arg subView;
@@ -939,7 +942,7 @@ y ... -						Musical keys.
 				if(item == 0 or: {item == 3} or: {item == 5} or: {item == 6} or: {item == 7}
 					or: {item == 17} or: {item == 19} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 29} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81} or:{item == 83} or:{item == 84},
 					{view.valueAction_(data.at(item))});
 				// MIDI
 				if(item == 63, {view.valueAction_(0); view.valueAction_(data.at(item))});
@@ -2052,6 +2055,14 @@ y ... -						Musical keys.
 				// Key alt + p -> Stop Synth on front
 				if(modifiers==524288 and: {unicode==112} and: {keycode==35} and: {window.name.containsStringAt(0, "Matrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(0).valueAction_(0);
+				});
+				// Key a -> switch freezeDataOSC for synth on front
+				if(char == $a, {
+					window.view.children.at(84).valueAction_((window.view.children.at(84).value - 1).abs);
+				});
+				// Key a -> switch freezeDataOSC for all synth
+				if(char == $A, {
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_((listeWindowSynth.at(index).view.children.at(84).value - 1).abs)});
 				});
 				// Key y -> Display NodesTree
 				if(char == $y, {
@@ -3183,7 +3194,7 @@ y ... -						Musical keys.
 			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
 			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off';
 			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand;
-			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand;
+			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC= [ ];
 
 			flagBand = 'on';
 			flagIndexBand = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -3807,14 +3818,14 @@ y ... -						Musical keys.
 				if(view.value == 0, {/*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/});
 			});
 			// Degrees
-			EZText(windowSynth, Rect(0, 0, 360, 20), "Degrees",
+			EZText(windowSynth, Rect(0, 0, 335, 20), "Degrees",
 				{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
-				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
+				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 33, 295);
 			windowSynth.view.children.at(80).enabled_(false);
 			windowSynth.view.children.at(82).enabled_(false);
 
 			// Init Algo
-			Button(windowSynth, Rect(0, 0, 35, 20)).states_([["InitAlgo", Color.yellow]]).action_({
+			Button(windowSynth, Rect(0, 0, 25, 20)).states_([["IniA", Color.yellow]]).action_({
 				// For Kohonen
 				kohonenF = HPclassKohonen.new(1,127,1);
 				kohonenA = HPclassKohonen.new(1,127,1);
@@ -3838,6 +3849,11 @@ y ... -						Musical keys.
 						windowSynth.view.children.at(66 + index).enabled_(false);
 						windowSynth.view.children.at(66 + index).valueAction_(0);
 				});
+			});
+
+			// Freeze Data OSC Button
+			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FrzM@", Color.green], ["FrzM!", Color.red]]).action_({arg flag;
+				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]},{flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy});
 			});
 
 			// Fonction AutoControls
@@ -4366,6 +4382,9 @@ y ... -						Musical keys.
 
 			// New Tdef or FX
 			fonctionSynthTdefFX = {
+
+				var musicData;
+
 				if(synthNumber > choiceSynth.indexOf('FX ('), {
 					// FX Synth (special treatment)
 					//// Set Music Data
@@ -4407,23 +4426,27 @@ y ... -						Musical keys.
 							tdefSynthesizer = Tdef((name ++ groupe.nodeID.asString).asSymbol, {
 								loop({
 									// Setup Data Music
-									if(listeDataOSC.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-										if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (listeDataOSC.at(indexNumFhzBand).size - 1)} ,
+									if(flagFreezeDataOSC == 'off',
+										{musicData = listeDataOSC},
+										{musicData = freezeDataOSC};
+									);
+									if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
+										if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
 											{
 												// Calcul new music
 												// New Band
 												indexNumFhzBand = rangeNumFhzBand.choose;
 												if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-												if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+												if(musicData.at(indexNumFhzBand).size != 0, {
 													flagBand = 'on';
-													#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+													#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 												},
 												{
 													flagBand = 'off';
 												});
 										});
 										if(flagBand == 'on', {
-											#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = listeDataOSC.at(indexNumFhzBand).at(indexMusicData);
+											#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
 											listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 											listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 											duree = newDuree.at(indexMusicData);
@@ -4521,9 +4544,9 @@ y ... -						Musical keys.
 										// New Band
 										indexNumFhzBand = rangeNumFhzBand.choose;
 										if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-										if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+										if(musicData.at(indexNumFhzBand).size != 0, {
 											flagBand = 'on';
-											#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+											#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 										},
 										{
 											flagBand = 'off';
@@ -4539,6 +4562,11 @@ y ... -						Musical keys.
 								tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 									var music;
 									if(onOff == 1, {
+										/*// Setup Data Music
+										if(flagFreezeDataOSC == 'off',
+										{musicData = music = msg[1].asString.interpret},
+										{musicData = freezeDataOSC};
+										);*/
 										music = msg[1].asString.interpret;
 										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Calcul new music
@@ -4672,6 +4700,11 @@ y ... -						Musical keys.
 								tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 									var music;
 									if(onOff == 1, {
+										/*// Setup Data Music
+										if(flagFreezeDataOSC == 'off',
+										{musicData = music = msg[1].asString.interpret},
+										{musicData = freezeDataOSC};
+										);*/
 										music = msg[1].asString.interpret;
 										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Set FHZ Band
