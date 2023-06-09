@@ -5,7 +5,7 @@ Matrix {
 
 	classvar  < s;
 
-	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot;
+	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze;
 
 	*new	{arg path="~/Documents/Matrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Matrix";
 
@@ -134,6 +134,7 @@ Matrix {
 		bandFHZ = bandFHZ.add([0, 127].midicps);
 		bandFHZ = bandFHZ.reverse;
 		listeDataOSC=[];
+		listeWindowFreeze = [];
 		indexDataMusic = [];
 		lastTimeBand = [];
 		// Init Array
@@ -368,6 +369,8 @@ Single commandes:
 esc	or SpaceBar			System on/off.
 a                       FreezeDataOSC for Synth on Front.
 A                       FreezeDataOSC for All Synth.
+ctrl + a FrezzeDataOSC on for all synth.
+ctrl + A FrezzeDataOSC off for all synth.
 b						Switch recording buffer data OSC on/off.
 alt + c					Copy Preset.
 C						Copy Synthesizer.
@@ -573,13 +576,12 @@ y ... -						Musical keys.
 		MainMenu.register(menuHelp, "MatrixTools");
 
 		fonctionUserOperatingSystem = {arg item, window;
-			var data, tampon, dataControlSynth;
+			var f, data, tampon, dataControlSynth, tampon2, name, pathonly, fileName;
 			item.value.switch(
 				0, {nil},
 				// Load Synthesizer and add
 				1, {
 					Dialog.openPanel({ arg paths;
-						var f, tampon;
 						tampon = listeDataOSC;
 						f=File(paths,"r");
 						data = f.readAllString.interpret;
@@ -588,6 +590,8 @@ y ... -						Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
+						tampon2 = data.last;// Load OSCfreeze
+						data.remove(data.last);// remove OSCFreeze
 						tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
 						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
@@ -595,7 +599,7 @@ y ... -						Musical keys.
 						dataControlSynth = data.last; // ControlSynth Panel
 						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data);
+						fonctionLoadSynthesizer.value(data, tampon2);
 						listeDataOSC = tampon;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
@@ -605,7 +609,6 @@ y ... -						Musical keys.
 				// Load Synthesizer and Close Others
 				2, {
 					Dialog.openPanel({ arg paths;
-						var f, tampon, data, dataControlSynth;
 						tampon = listeDataOSC;
 						fonctionUserOperatingSystem.value(9);
 						f=File(paths,"r");
@@ -615,6 +618,8 @@ y ... -						Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
+						tampon2 = data.last;// Load OSCfreeze
+						data.remove(data.last);// remove OSCFreeze
 						tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
 						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
@@ -622,7 +627,7 @@ y ... -						Musical keys.
 						dataControlSynth = data.last; // ControlSynth Panel
 						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data);
+						fonctionLoadSynthesizer.value(data, tampon2);
 						listeDataOSC = tampon;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
@@ -632,16 +637,18 @@ y ... -						Musical keys.
 				// Load Preset and add
 				3, {
 					Dialog.openPanel({ arg paths;
-						var f, tampon;
 						tampon = listeDataOSC;
 						f=File(paths,"r");
-						fonctionLoadPreset.value(f.readAllString.interpret);
+						data = f.readAllString.interpret;
+						fonctionLoadPreset.value(data);
 						f.close;
 						windowControl.name="Matrix Control" + " | "+ PathName.new(paths).fileName;
 						//Document.listener.string="";
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
+						tampon2 = data.last;// Load OSCfreeze
+						data.remove(data.last);// remove OSCFreeze
 						tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
 						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
@@ -649,24 +656,26 @@ y ... -						Musical keys.
 						dataControlSynth = data.last; // ControlSynth Panel
 						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data);
+						fonctionLoadSynthesizer.value(data, tampon2);
 						listeDataOSC = tampon;
 					}, {"cancelled".postln});
 				},
 				// Load Preset and Close Others
 				4, {
 					Dialog.openPanel({ arg paths;
-						var f, tampon;
 						tampon = listeDataOSC;
 						fonctionUserOperatingSystem.value(9);
 						f=File(paths,"r");
-						fonctionLoadPreset.value(f.readAllString.interpret);
+						data = f.readAllString.interpret;
+						fonctionLoadPreset.value(data);
 						f.close;
 						windowControl.name="Matrix Control" + " | " + PathName.new(paths).fileName;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).
-						front;indexWindows=3;
+						listeWindows.at(3).front;
+						indexWindows=3;
+						tampon2 = data.last;// Load OSCfreeze
+						data.remove(data.last);// remove OSCFreeze
 						tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
 						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
@@ -674,7 +683,7 @@ y ... -						Musical keys.
 						dataControlSynth = data.last; // ControlSynth Panel
 						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data);
+						fonctionLoadSynthesizer.value(data, tampon2);
 						listeDataOSC = tampon;
 					},
 					{"cancelled".postln});
@@ -684,7 +693,6 @@ y ... -						Musical keys.
 					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
 							Dialog.savePanel({arg path;
-								var name, pathonly, fileName, f;
 								path = PathName.new(path);
 								pathonly = path.pathOnly;
 								name = path.fileName;
@@ -706,7 +714,6 @@ y ... -						Musical keys.
 				// Save Preset
 				6, {
 					Dialog.savePanel({arg path;
-						var name, pathonly, fileName, f;
 						path = PathName.new(path);
 						pathonly = path.pathOnly;
 						name = path.fileName;
@@ -726,7 +733,7 @@ y ... -						Musical keys.
 						{
 							tampon = listeDataOSC;
 							data = fonctionSaveSynthesizer.value(window);
-							fonctionLoadSynthesizer.value(data);
+							fonctionLoadSynthesizer.value(data, tampon);
 							//Document.listener.string="";
 							s.queryAllNodes;
 							listeDataOSC = tampon;
@@ -752,6 +759,7 @@ y ... -						Musical keys.
 				// Close All Windows
 				9, {
 					listeWindowSynth.do({arg window; window.close});
+					listeWindowFreeze = [];
 				}
 			)
 		};
@@ -877,7 +885,7 @@ y ... -						Musical keys.
 			data.value;
 		};
 
-		fonctionLoadSynthesizer = {arg data;
+		fonctionLoadSynthesizer = {arg data, freezeOSC;
 			var name, index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2;
 			// Set name Synthesizer or FX
 			name = data.last.split($[).at(0);
@@ -888,7 +896,7 @@ y ... -						Musical keys.
 			canalIn = data.at(4);
 			timeBuf1 = data.at(20);
 			timeBuf2 = data.at(30);
-			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2);
+			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC);
 			listeWindowSynth.last.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
 				// StaticText
@@ -942,12 +950,17 @@ y ... -						Musical keys.
 				if(item == 0 or: {item == 3} or: {item == 5} or: {item == 6} or: {item == 7}
 					or: {item == 17} or: {item == 19} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 29} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81} or:{item == 83} or:{item == 84},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81},
 					{view.valueAction_(data.at(item))});
 				// MIDI
 				if(item == 63, {view.valueAction_(0); view.valueAction_(data.at(item))});
 				// Degrees
 				if(item == 82, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
+				// Freeze
+				if(item == 84, {
+					view.value_(data.at(item));
+					if(data.at(item).value == 1,{view.valueAction_(2)},{view.valueAction_(data.at(item))});// Special Freeze
+				});
 			});
 			// Setup Font View Synth
 			listeWindowSynth.do({arg window;
@@ -960,7 +973,7 @@ y ... -						Musical keys.
 		};
 
 		fonctionSavePreset = {arg listeWindow;
-			var data=[], orderListeWindow=[];
+			var data=[], orderListeWindow=[], listeFreeze=[];
 			// Trier les synth dans le bon ordre
 			listeGroupeSynthID.do({arg id;
 				listeGroupeSynth.do({arg synth, item;
@@ -972,11 +985,17 @@ y ... -						Musical keys.
 			data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
 			data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
 			data = data.add(listeDataOSC.value);//Save OSCmusicData
+			listeWindowFreeze.do({arg freeze;
+				listeFreeze = listeFreeze.add(freeze.value);
+			});
+			data = data.add(listeFreeze);// Save freezeDataOSC
 			// Sortie Fonction Save Preset
 			data.value;
 		};
 
-		fonctionLoadPreset = {arg preset, dataControlSynth, tampon;
+		fonctionLoadPreset = {arg preset, dataControlSynth, tampon, tampon2;
+			tampon2 = preset.last;// Load freezeDataOSC
+			preset.remove(preset.last);// Remove FreezeDataOSC
 			tampon = preset.last;// Load OSCmusicData
 			preset.remove(preset.last);// Remove OSCmusicData
 			fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
@@ -984,7 +1003,7 @@ y ... -						Musical keys.
 			dataControlSynth = preset.last; // ControlSynth Panel
 			fonctionLoadControlSynth.value(windowControlSynth, preset.last);//Load ControlSynth Panel
 			preset.remove(preset.last);// Remove controlSynth panel
-			preset.do({arg data; fonctionLoadSynthesizer.value(data)});// Load Synthesizer
+			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
 			listeDataOSC = tampon;
 			/*// Init Band for Synth
 			fonctionInitBand.value(numFhzBand);*/
@@ -1106,12 +1125,15 @@ y ... -						Musical keys.
 			});
 		};
 
-		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2;
+		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC;
+			var window, freeze;
 			// New Group
 			listeGroupeSynth=listeGroupeSynth.add(Group.new(groupeSynth, \addToTail));
 			listeGroupeSynthID = listeGroupeSynthID.add(listeGroupeSynth.at(listeGroupeSynth.size - 1).nodeID);
 			// New Window
-			listeWindowSynth=listeWindowSynth.add(fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2));
+			# window, freeze = fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC);
+			listeWindowSynth=listeWindowSynth.add(window);
+			listeWindowFreeze = listeWindowFreeze.add(freeze);
 			// Init Band for Synth
 			//fonctionInitBand.value(numFhzBand);
 			//Document.listener.string="";
@@ -1135,6 +1157,7 @@ y ... -						Musical keys.
 			bandFHZ = bandFHZ.add([0, 127].midicps);
 			bandFHZ = bandFHZ.reverse;
 			listeDataOSC=[];
+			listeWindowFreeze = [];
 			indexDataMusic = [];
 			lastTimeBand = [];
 			// Init Array
@@ -1659,7 +1682,7 @@ y ... -						Musical keys.
 			// Flatness > 0 | Flux <= 1
 
 			fonctionAutomationPreset = {arg dataMusicFFT, freqCentroid, flatness, energy, flux;
-				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0, tampon, data, dissymetrie;
+				var meanProbaPresetFlux=0, meanProbaPresetFlatness=0, file, number=lastNumberChoiceConfig, newTime, compteur=0, musicData, q1A, medianeA, q3A, ecartqA, ecartsemiqA, q1U, medianeU, q3U, ecartqU, ecartsemiqU, valuesFlux=0, valuesFlatness=0, seuil, variableTemps=0, tampon, data, dissymetrie, tampon2;
 				newTime = Main.elapsedTime;
 				musicData = dataMusicFFT.flop;// Setup Array
 				if(musicData.size >= 1 and: {musicData != [ [  ] ]}, {
@@ -1683,12 +1706,14 @@ y ... -						Musical keys.
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
+													tampon2 = tampon.last;
+													tampon.remove(tampon.last);// remove freezeDataOSC
 													tampon.remove(tampon.last);// Remove OSCmusicData
 													fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
 													tampon.remove(tampon.last);// Remove control panel
 													fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 													tampon.remove(tampon.last);// Remove controlSynth panel
-													fonctionLoadSynthesizer.value(tampon);
+													fonctionLoadSynthesizer.value(tampon, tampon2);
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
@@ -1712,12 +1737,14 @@ y ... -						Musical keys.
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
+													tampon2 = tampon.last;
+													tampon.remove(tampon.last);// remove freezeDataOSC
 													tampon.remove(tampon.last);// Remove OSCmusicData
 													fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
 													tampon.remove(tampon.last);// Remove control panel
 													fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 													tampon.remove(tampon.last);// Remove controlSynth panel
-													fonctionLoadSynthesizer.value(tampon);
+													fonctionLoadSynthesizer.value(tampon, tampon2);
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
@@ -1795,7 +1822,7 @@ y ... -						Musical keys.
 		// Fonction ShortCut
 		fonctionShortCut = {arg window;
 			window.view.keyDownAction = {arg view,char,modifiers,unicode, keycode;
-				var file, number, tampon;
+				var file, number, tampon, tampon2;
 				// [char,modifiers,unicode,keycode].postln;
 				// Touches pave numerique
 				if(modifiers==2097152 and: {unicode==49} and: {keycode==83},{fonctionCommandes.value(window, commande, 1)});
@@ -1968,11 +1995,13 @@ y ... -						Musical keys.
 					pourcentDurT.value = 0;
 					pourcentQuant.value = 0;
 					pourcentRoot.value = 0;
+					listeWindowFreeze = [];
 				});
 				// key alt + i -> Clear musical data
 				if(modifiers==524288 and: {unicode==108} and: {keycode==34},{
 					// Init Array
 					listeDataOSC=[];
+					listeWindowFreeze = [];
 					indexDataMusic = [];
 					lastTimeBand = [];
 					// Init Array
@@ -2060,9 +2089,20 @@ y ... -						Musical keys.
 				if(char == $a, {
 					window.view.children.at(84).valueAction_((window.view.children.at(84).value - 1).abs);
 				});
-				// Key a -> switch freezeDataOSC for all synth
+				// Key A -> switch freezeDataOSC for all synth
 				if(char == $A, {
-					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_((listeWindowSynth.at(index).view.children.at(84).value - 1).abs)});
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_((listeWindowSynth.at(index).view.children.at(84).value - 1).abs);
+					});
+				});
+				// Key ctrl+a -> switch freezeDataOSC on for all synth
+				if(modifiers==262144 and: {unicode==1} and: {keycode==0}, {
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_(1);
+					});
+				});
+				// Key ctrl+A -> switch freezeDataOSC off for all synth
+				if(modifiers==393216 and: {unicode==1} and: {keycode==0}, {
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_(0);
+					});
 				});
 				// Key y -> Display NodesTree
 				if(char == $y, {
@@ -2072,7 +2112,7 @@ y ... -						Musical keys.
 				// key N -> Add a new synth or fx
 				if(char == $N, {
 					tampon = listeDataOSC;
-					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0);// Fonction Add SinOsc by default
+					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0, tampon);// Fonction Add SinOsc by default
 					listeDataOSC = tampon;
 				});
 				// Key b -> switch recording buffer data OSC on/off
@@ -2103,12 +2143,14 @@ y ... -						Musical keys.
 							file=File(pathMatrix ++ foldersToScanSynthesizer.at(number),"r");
 							windowControl.name="Matrix Control" + " | " + foldersToScanSynthesizer.at(number);
 							tampon = file.readAllString.interpret;
+							tampon2 = tampon.last;
+							tampon.remove(tampon.last);// remove freezeDataOSC
 							tampon.remove(tampon.last);// Remove OSCmusicData
 							fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
 							tampon.remove(tampon.last);// Remove control panel
 							fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 							tampon.remove(tampon.last);// Remove controlSynth panel
-							fonctionLoadSynthesizer.value(tampon);
+							fonctionLoadSynthesizer.value(tampon, tampon2);
 							file.close;listeWindows.at(3).front;indexWindows=3;
 							// Init Band for Synth
 							//fonctionInitBand.value(numFhzBand);
@@ -2123,7 +2165,7 @@ y ... -						Musical keys.
 
 		// Fonction Commandes
 		fonctionCommandes = {arg window, commandeExecute, number;
-			var file, data, dataControlSynth, tampon;
+			var file, data, dataControlSynth, tampon, tampon2;
 			// Save Preset
 			if(commandeExecute == 'Save Preset',{
 				windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
@@ -2168,6 +2210,9 @@ y ... -						Musical keys.
 						file=File(pathMatrix ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
 						data = file.readAllString.interpret;
 						file.close;
+						tampon = data.last;
+						tampon2 = data.last;// Load OSCfreeze
+						data.remove(data.last);// remove OSCFreeze
 						tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
 						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
@@ -2175,7 +2220,7 @@ y ... -						Musical keys.
 						dataControlSynth = data.last; // ControlSynth Panel
 						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data);
+						fonctionLoadSynthesizer.value(data, tampon2);
 						listeDataOSC = tampon;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
@@ -2188,6 +2233,8 @@ y ... -						Musical keys.
 						file=File(pathMatrix ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
 						data = file.readAllString.interpret;
 						file.close;
+						tampon2 = data.last;// Load OSCfreeze
+						data.remove(data.last);// remove OSCFreeze
 						tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
 						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
@@ -2195,7 +2242,7 @@ y ... -						Musical keys.
 						dataControlSynth = data.last; // ControlSynth Panel
 						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data);
+						fonctionLoadSynthesizer.value(data, tampon2);
 						listeDataOSC = tampon;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
@@ -3113,7 +3160,7 @@ y ... -						Musical keys.
 		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = choiceSynth;
 		addNewSynth.action = {arg item, tampon;
 			tampon = listeDataOSC;
-			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0)});// Fonction Add Synth or FX
+			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon)});// Fonction Add Synth or FX
 			s.bind{
 				listeWindowSynth.last.view.children.at(0).valueAction_(1);// Synth Play On
 				s.sync;
@@ -3187,15 +3234,16 @@ y ... -						Musical keys.
 		////// Fonction Window for controling Synth + FX (listeGroupeSynth) ///////
 		///////////////////
 
-		fonctionWindowSynth={arg name, groupe, synthNumber, bufferOne, bufferTwo, canalIn, timeBuf1, timeBuf2;
+		fonctionWindowSynth={arg name, groupe, synthNumber, bufferOne, bufferTwo, canalIn, timeBuf1, timeBuf2, freezeOSC;
 			var windowSynth, startStop, sourceOut, sendBusOut, sendBusFX, sendLocalBuf, panSlider, freqSlider, freqTranSlider, ampSlider, dureeSlider, dureeTranSlider, quantaSlider, moveNodeAfter, moveNodeBefore, controlsAntiClick, controlsNode, startAutomationSynthControls, jitterAutomationSynthControls, tempoAutomationSynthControls, startAutomationSynthMusicData, tempoAutomationSynthMusicData, jitterAutomationMusicData, tdefControls, tdefMusicData, switchBufferOne, textBufferOne, switchBufferTwo, textBufferTwo, loopBufferOne, loopBufferTwo, switchBufferOneAction, reverseBufferOneAction, reverseBufferTwoAction, knobPreLevel1, knobPostLevel1, knobRecOn1, knobOffset1, knobPreLevel2, knobPostLevel2, knobRecOn2, knobOffset2,
 			switchBufferTwoAction, sourceBusIn, sourceBusOut, sourceFXin, sourceFXout, synthRec, userOperatingSystemSynth, windowView=[], envelopeSynth, tdefSynthesizer, bufferRecording1, bufferRecording2, changeSynth, fonctionEnabledSlider, fonctionEnabledControls, fonctionSynthTdefFX, synthAndFX=nil, recBuffer1, recBuffer2, automationSliderFreq, automationSliderDur, automationSliderSynth, automationNumberSynth, automationSliderBuffer, durSampleOneSlider, durSampleTwoSlider,
 			freq=0, amp=0, duree=0.01, dureeTdef=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0, indexMusicData=9999, compteurChord=0, listeFreq=[], listeAmp=[],
 			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
 			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off';
 			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand;
-			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC= [ ];
+			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ];
 
+			freezeDataOSC = freezeOSC;
 			flagBand = 'on';
 			flagIndexBand = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 			rangeNumFhzBand = [];
@@ -3852,8 +3900,10 @@ y ... -						Musical keys.
 			});
 
 			// Freeze Data OSC Button
-			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FrzM@", Color.green], ["FrzM!", Color.red]]).action_({arg flag;
-				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]},{flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy});
+			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FrzM@", Color.green], ["FrzM!", Color.red], ["Frz!", Color.blue]]).action_({arg flag;
+				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]});
+				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy});
+				if(flag.value == 2, {flagFreezeDataOSC = 'on'});
 			});
 
 			// Fonction AutoControls
@@ -4560,32 +4610,35 @@ y ... -						Musical keys.
 						{
 							if(flagModeSynth == 'OnFly1', {
 								tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-									var music;
+									var music, musicData;
 									if(onOff == 1, {
-										/*// Setup Data Music
+										// Setup Data Music
 										if(flagFreezeDataOSC == 'off',
-										{musicData = music = msg[1].asString.interpret},
-										{musicData = freezeDataOSC};
-										);*/
-										music = msg[1].asString.interpret;
+											{music = msg[1].asString.interpret;
+												musicData = listeDataOSC;
+											},
+											{music = freezeDataOSC.at(0).at(0);
+												musicData = freezeDataOSC;
+											};
+										);
 										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Calcul new music
-										if(listeDataOSC.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-											if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (listeDataOSC.at(indexNumFhzBand).size - 1)} ,
+										if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
+											if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
 												{// Calcul new music
 													// New Band
 													indexNumFhzBand = rangeNumFhzBand.choose;
 													if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-													if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+													if(musicData.at(indexNumFhzBand).size != 0, {
 														flagBand = 'on';
-														#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+														#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 													},
 													{
 														flagBand = 'off';
 													});
 											});
 											if(flagBand == 'on', {
-												#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = listeDataOSC.at(indexNumFhzBand).at(indexMusicData);
+												#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
 												listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 												listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 												duree = newDuree.at(indexMusicData);
@@ -4684,9 +4737,9 @@ y ... -						Musical keys.
 											// New Band
 											indexNumFhzBand = rangeNumFhzBand.choose;
 											if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-											if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+											if(musicData.at(indexNumFhzBand).size != 0, {
 												flagBand = 'on';
-												#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+												#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 											},
 											{
 												flagBand = 'off';
@@ -4698,36 +4751,39 @@ y ... -						Musical keys.
 							// Mode OnFly2
 							{
 								tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-									var music;
+									var music, musicData;
 									if(onOff == 1, {
-										/*// Setup Data Music
+										// Setup Data Music
 										if(flagFreezeDataOSC == 'off',
-										{musicData = music = msg[1].asString.interpret},
-										{musicData = freezeDataOSC};
-										);*/
-										music = msg[1].asString.interpret;
+											{music = msg[1].asString.interpret;
+												musicData = listeDataOSC;
+											},
+											{music = freezeDataOSC.at(0).at(0);
+												musicData = freezeDataOSC;
+											};
+										);
 										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Set FHZ Band
 										for(1, numFhzBand, {arg i;
 											if(freq >= bandFHZ.at(i).at(0) and: {freq <= bandFHZ.at(i).at(1)}, {
 												if(i == indexNumFhzBand or: {indexNumFhzBand == 0}, {
 													// Calcul new music
-													if(listeDataOSC.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-														if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (listeDataOSC.at(indexNumFhzBand).size - 1)} ,
+													if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
+														if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
 															{// Calcul new music
 																// New Band
 																indexNumFhzBand = rangeNumFhzBand.choose;
 																if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-																if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+																if(musicData.at(indexNumFhzBand).size != 0, {
 																	flagBand = 'on';
-																	#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+																	#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 																},
 																{
 																	flagBand = 'off';
 																});
 														});
 														if(flagBand == 'on', {
-															#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = listeDataOSC.at(indexNumFhzBand).at(indexMusicData);
+															#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
 															listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 															listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 															duree = newDuree.at(indexMusicData);
@@ -4827,9 +4883,9 @@ y ... -						Musical keys.
 														// New Band
 														indexNumFhzBand = rangeNumFhzBand.choose;
 														if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-														if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+														if(musicData.at(indexNumFhzBand).size != 0, {
 															flagBand = 'on';
-															#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+															#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 														},
 														{
 															flagBand = 'off';
@@ -4839,9 +4895,9 @@ y ... -						Musical keys.
 												{// New Band
 													indexNumFhzBand = rangeNumFhzBand.choose;
 													if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-													if(listeDataOSC.at(indexNumFhzBand).size != 0, {
+													if(musicData.at(indexNumFhzBand).size != 0, {
 														flagBand = 'on';
-														#newFreq, newAmp, newDuree = calculNewMusic.value(listeDataOSC.at(indexNumFhzBand).flop);
+														#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
 													},
 													{
 														flagBand = 'off';
@@ -4915,7 +4971,7 @@ y ... -						Musical keys.
 			fonctionShortCut.value(windowSynth);
 
 			// Sortie Fonction Window
-			windowSynth;
+			[windowSynth, {freezeDataOSC}];
 		};
 
 		windowControl.front;
