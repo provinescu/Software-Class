@@ -959,7 +959,7 @@ y ... -						Musical keys.
 				// Freeze
 				if(item == 84, {
 					view.value_(data.at(item));
-					if(data.at(item).value == 1,{view.valueAction_(2)},{view.valueAction_(data.at(item))});// Special Freeze
+					if(data.at(item).value == 1,{view.valueAction_(2)},{view.valueAction_(data.at(item))});// Action Special Freeze
 				});
 			});
 			// Setup Font View Synth
@@ -3240,7 +3240,7 @@ y ... -						Musical keys.
 			freq=0, amp=0, duree=0.01, dureeTdef=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0, indexMusicData=9999, compteurChord=0, listeFreq=[], listeAmp=[],
 			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
 			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off';
-			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand;
+			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand, loopRec1=0, loopRec2=0;
 			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ];
 
 			freezeDataOSC = freezeOSC;
@@ -3346,9 +3346,9 @@ y ... -						Musical keys.
 					synthRec = Synth.new("Matrix AudioIn",
 						[\in, busIn.value, 'busIn', listeBusInOut.at(busIn.value)], groupe, \addToTail);
 					s.sync;
-					bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run, ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToTail);
+					bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run, ctrlBuffer.at(2), \loop, LoopRec1, \trigger, 0], groupe, \addToTail);
 					s.sync;
-					bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToTail);
+					bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loopRec2, \trigger, 0], groupe, \addToTail);
 					s.sync;
 					groupe.set(\busIn, listeBusInOut.at(in.value));
 					s.sync;
@@ -3482,7 +3482,7 @@ y ... -						Musical keys.
 					s.sync;
 					/*bufferRecording1.free;
 					s.sync;
-					bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run,  ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToHead);
+					bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run,  ctrlBuffer.at(2), \loop, loopRec1, \trigger, 0], groupe, \addToHead);
 					s.sync;*/
 				};
 			};
@@ -3498,8 +3498,10 @@ y ... -						Musical keys.
 			knobOffset1 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset1, ez.value); ctrlBuffer.put(3, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
 			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
 			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
-			knobRecOn1 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec", Color.black, Color.red(0.8, 0.25)]];
-			knobRecOn1.action = {|view| bufferRecording1.set(\loop, view.value); ctrlBuffer.put(2, view.value)};
+			knobRecOn1 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)], ["Rec @", Color.black, Color.red(0.8, 0.25)], ["Rec !", Color.black, Color.red(0.4, 0.125)]];
+			knobRecOn1.action = {|view| if(view.value == 2, {bufferRecording1.set(\loop, 0); ctrlBuffer.put(2, 1); loopRec1 = 0},
+				{bufferRecording1.set(\loop, view.value); ctrlBuffer.put(2, view.value); loopRec1 = view.value});
+			};
 			windowSynth.view.decorator.nextLine;
 			// Button BufferTwo Action
 			switchBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["O", Color.black, Color.green(0.8, 0.25)],["X", Color.black, Color.red(0.8, 0.25)]];
@@ -3531,7 +3533,7 @@ y ... -						Musical keys.
 					s.sync;
 					/*bufferRecording2.free;
 					s.sync;
-					bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToHead);
+					bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(busIn.value), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loopRec2, \trigger, 0], groupe, \addToHead);
 					s.sync;*/
 				};
 			};
@@ -3547,8 +3549,10 @@ y ... -						Musical keys.
 			knobOffset2 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset2, ez.value); ctrlBuffer.put(8, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
 			knobPreLevel2 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\preLevel, ez.value); ctrlBuffer.put(5, ez.value)}, 1, labelWidth: 30, numberWidth: 30);
 			knobPostLevel2 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\postLevel, ez.value); ctrlBuffer.put(6, ez.value)}, 0, labelWidth: 30, numberWidth: 30);
-			knobRecOn2 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec", Color.black, Color.red(0.8, 0.25)]];
-			knobRecOn2.action = {|view| bufferRecording2.set(\loop, view.value); ctrlBuffer.put(7, view.value)};
+			knobRecOn2 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec @", Color.black, Color.red(0.8, 0.25)],  ["Rec !", Color.black, Color.red(0.4, 0.125)]];
+			knobRecOn2.action = {|view| if(view.value == 2, {bufferRecording2.set(\loop, 0); ctrlBuffer.put(7, 1); loopRec2 = 0},
+				{bufferRecording2.set(\loop, view.value); ctrlBuffer.put(7, view.value); loopRec2 = view.value});
+			};
 			windowSynth.view.decorator.nextLine;
 
 			// Load and Set Buffer 1 et 2
@@ -3565,9 +3569,9 @@ y ... -						Musical keys.
 				synthRec = Synth.new("Matrix AudioIn",
 					[\in, canalIn, 'busIn', listeBusInOut.at(canalIn)], groupe, \addToTail);
 				s.sync;
-				bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run, ctrlBuffer.at(2), \loop, loop1, \trigger, 0], groupe, \addToTail);
+				bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run, ctrlBuffer.at(2), \loop, loopRec1, \trigger, 0], groupe, \addToTail);
 				s.sync;
-				bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loop2, \trigger, 0], groupe, \addToTail);
+				bufferRecording2 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer2.bufnum, \offset, ctrlBuffer.at(8), \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \run, ctrlBuffer.at(7), \loop, loopRec2, \trigger, 0], groupe, \addToTail);
 				s.sync;
 			};
 
@@ -4455,8 +4459,8 @@ y ... -						Musical keys.
 						freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
 					});
 					//Reset 1 Trigger Recording
-					bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loop1, \run, ctrlBuffer.at(2));
-					bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loop2, \run, ctrlBuffer.at(7));
+					bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
+					bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7));
 					synthAndFX = Synth.new(name,[
 						\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
 						\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
@@ -4475,6 +4479,13 @@ y ... -						Musical keys.
 						{
 							tdefSynthesizer = Tdef((name ++ groupe.nodeID.asString).asSymbol, {
 								loop({
+									//Reset 1 Trigger Recording
+									s.bind(
+										bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
+										s.sync;
+										bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7));
+										s.sync;
+									);
 									// Setup Data Music
 									if(flagFreezeDataOSC == 'off',
 										{musicData = listeDataOSC},
@@ -4514,9 +4525,6 @@ y ... -						Musical keys.
 											duree = if(duree <= 0, quanta.reciprocal, duree);
 											dureeTdef = (duree * durM).max(0.01);
 											duree = (dureeTdef * tempo.reciprocal).max(0.01);
-											//Reset 1 Trigger Recording
-											bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, ctrlBuffer.at(2), \run, 1);
-											bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, ctrlBuffer.at(7), \run, 1);
 											listeFreq = listeFreq.soloArray;
 											listeAmp = listeAmp.soloArray;
 											// MIDI OFF
@@ -4569,8 +4577,12 @@ y ... -						Musical keys.
 											listeFreq = [];
 											listeAmp = [];
 											//Reset 0 Trigger Recording
-											bufferRecording1.set(\trigger, 0);
-											bufferRecording2.set(\trigger, 0);
+											s.bind(
+												bufferRecording1.set(\trigger, 0);
+												s.sync;
+												bufferRecording2.set(\trigger, 0);
+												s.sync;
+											);
 										},
 										{
 											flagBand = 'on';
@@ -4610,22 +4622,36 @@ y ... -						Musical keys.
 						{
 							if(flagModeSynth == 'OnFly1', {
 								tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-									var music, musicData;
+									var music, musicData, r;
+									//Reset Trigger Recording
+									s.bind(
+										r = Routine{
+											bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2)).yield;
+											bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7)).yield;
+											bufferRecording1.set(\trigger, 0).yield;
+											bufferRecording2.set(\trigger, 0).yield;
+										};
+										r.next;
+										r.next;
+										r.next;
+										r.next;
+										r.reset;
+									);
 									if(onOff == 1, {
+										music = msg[1].asString.interpret;
+										musicData = listeDataOSC;
+										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Setup Data Music
-										if(flagFreezeDataOSC == 'off',
-											{music = msg[1].asString.interpret;
-												musicData = listeDataOSC;
-											},
+										if(flagFreezeDataOSC == 'on',
 											{music = freezeDataOSC.at(0).at(0);
 												musicData = freezeDataOSC;
 											};
 										);
-										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Calcul new music
 										if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
 											if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
-												{// Calcul new music
+												{
+													// Calcul new music
 													// New Band
 													indexNumFhzBand = rangeNumFhzBand.choose;
 													if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
@@ -4656,9 +4682,6 @@ y ... -						Musical keys.
 												duree = if(duree <= 0, quanta.reciprocal, duree);
 												dureeTdef = (duree * durM).max(0.01);
 												duree = (dureeTdef * tempo.reciprocal).max(0.01);
-												//Reset 1 Trigger Recording
-												bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, ctrlBuffer.at(2), \run, 1);
-												bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, ctrlBuffer.at(7), \run, 1);
 												listeFreq = listeFreq.soloArray;
 												listeAmp = listeAmp.soloArray;
 												// MIDI OFF
@@ -4712,9 +4735,6 @@ y ... -						Musical keys.
 												// Reset variables
 												listeFreq = [];
 												listeAmp = [];
-												//Reset 0 Trigger Recording
-												bufferRecording1.set(\trigger, 0);
-												bufferRecording2.set(\trigger, 0);
 											},
 											{
 												flagBand = 'on';
@@ -4751,18 +4771,31 @@ y ... -						Musical keys.
 							// Mode OnFly2
 							{
 								tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-									var music, musicData;
+									var music, musicData, r;
+									//Reset Trigger Recording
+									s.bind(
+										r = Routine{
+											bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2)).yield;
+											bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7)).yield;
+											bufferRecording1.set(\trigger, 0).yield;
+											bufferRecording2.set(\trigger, 0).yield;
+										};
+										r.next;
+										r.next;
+										r.next;
+										r.next;
+										r.reset;
+									);
 									if(onOff == 1, {
+										music = msg[1].asString.interpret;
+										musicData = listeDataOSC;
+										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Setup Data Music
-										if(flagFreezeDataOSC == 'off',
-											{music = msg[1].asString.interpret;
-												musicData = listeDataOSC;
-											},
+										if(flagFreezeDataOSC == 'on',
 											{music = freezeDataOSC.at(0).at(0);
 												musicData = freezeDataOSC;
 											};
 										);
-										#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = music;
 										// Set FHZ Band
 										for(1, numFhzBand, {arg i;
 											if(freq >= bandFHZ.at(i).at(0) and: {freq <= bandFHZ.at(i).at(1)}, {
@@ -4801,9 +4834,6 @@ y ... -						Musical keys.
 															duree = if(duree <= 0, quanta.reciprocal, duree);
 															dureeTdef = (duree * durM).max(0.01);
 															duree = (dureeTdef * tempo.reciprocal).max(0.01);
-															//Reset 1 Trigger Recording
-															bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, ctrlBuffer.at(2), \run, 1);
-															bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, ctrlBuffer.at(7), \run, 1);
 															listeFreq = listeFreq.soloArray;
 															listeAmp = listeAmp.soloArray;
 															// MIDI OFF
@@ -4857,9 +4887,6 @@ y ... -						Musical keys.
 															// Reset variables
 															listeFreq = [];
 															listeAmp = [];
-															//Reset 0 Trigger Recording
-															bufferRecording1.set(\trigger, 0);
-															bufferRecording2.set(\trigger, 0);
 														},
 														{
 															flagBand = 'on';

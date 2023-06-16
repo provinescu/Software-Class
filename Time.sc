@@ -724,8 +724,8 @@ f						Switch File for Analyze.
 		// Init numFhzBand
 		fonctionInitBand = {arg band;
 			bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
-		bandFHZ = bandFHZ.reverse;
-		bandFHZ = bandFHZ.add([0, 127].midicps);
+			bandFHZ = bandFHZ.reverse;
+			bandFHZ = bandFHZ.add([0, 127].midicps);
 			bandFHZ = bandFHZ.reverse;
 			// Init Array
 			lastTimeBand = [];
@@ -1402,6 +1402,15 @@ f						Switch File for Analyze.
 						{
 							// Setup MusicData + Filter + FX + Panner + Update Waveform
 							listeSynthActif.do({arg synth;
+								// Set Trigger Recbuf
+								if(listeLoop.at(synth).value == 2, {
+									s.bind(
+										synthAudioRec.at(synth).set(\trigger, 1);
+										s.sync;
+										synthAudioRec.at(synth).set(\trigger, 0);
+										s.sync;
+									)
+								});
 								if(listeBuffer.at(synth).numFrames != nil and: {synth >= 0} and: {synth < numberSynth} and: {flagSolo != 'on' or:{listeSoloSynth.at(synth).value == 1} and:{listeMuteSynth.at(synth).value != 1}}, {
 									// Choose FHZ Band
 									// New Band
@@ -3065,10 +3074,10 @@ f						Switch File for Analyze.
 
 			// Loop Rec
 			Button(windowControlGUI, Rect(synth * 315 + 190, numberSynth * 25 + 150, 10, 20)).
-			states_([ ["l", Color.white, Color.black], ["L", Color.black, Color.red]]).
+			states_([ ["l", Color.white, Color.black], ["L", Color.black, Color.red], ["L", Color.white, Color.blue]]).
 			action_({ arg butt;
 				listeLoop.put(synth, butt.value);
-				synthAudioRec.at(synth).set(\loop, butt.value);
+				if(butt.value == 2, {synthAudioRec.at(synth).set(\loop, 0)}, {synthAudioRec.at(synth).set(\loop, butt.value)});
 			});
 
 			// recLevel
@@ -4415,7 +4424,7 @@ f						Switch File for Analyze.
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5) * envelope;
+				chain = MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)) * envelope;
 				//DetectSilence.ar(chain, 0.01, doneAction:2);
 				Out.ar(out, chain);
 		}).add;
@@ -5421,14 +5430,14 @@ f						Switch File for Analyze.
 
 		// Synth AudioRec
 		SynthDef("AudioRec",
-			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1;
-				RecordBuf.ar(SoundIn.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: 1, doneAction: 0);
+			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1, trigger=1;
+				RecordBuf.ar(SoundIn.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: trigger, doneAction: 0);
 		}).add;
 
 		// Synth FileRec
 		SynthDef("FileRec",
-			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1;
-				RecordBuf.ar(In.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: 1, doneAction: 0);
+			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1, trigger=1;
+				RecordBuf.ar(In.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: trigger, doneAction: 0);
 		}).add;
 
 		// Synth Post Production
