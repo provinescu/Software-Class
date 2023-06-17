@@ -4,7 +4,11 @@ Density {
 
 	classvar <> s;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse, lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec,  gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand, sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand;
+	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse;
+	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
+	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
+	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
+	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand;
 
 	*new {arg path = "~/Documents/Density/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density";
 
@@ -113,6 +117,7 @@ Density {
 		reverseSound = 1;
 		offsetSound = 0;
 		loopRec = 0;
+		flagRec = 0;
 		flagSampler = "Sampler+Sound";
 		memoryTime = 6;
 		dureeAnalyzeOSCMusic = Main.elapsedTime;
@@ -907,7 +912,7 @@ Density {
 
 			// Synth play file
 			synthFileIn = Synth.newPaused("Density FileIn",
-				[\bufferplay, bufferFile, 'busIn', busAnalyzeIn, \busRec, busRecAudioIn, \volume, 0.2], groupeAnalyse, \addToTail);
+				[\bufferplay, bufferFile, 'busIn', busAnalyzeIn, \busRec, busRecAudioIn, \volume, 0], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze FFT
@@ -2090,9 +2095,9 @@ Density {
 						s.sync;
 						recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
 						//busRec = [0,1,2,3,4,5,6,7].scramble.choose;
-						//recBuffer = Synth.new("RecBufferSynth", [\in, busRec, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
-						s.sync;
-						// For testing if playing or notserbpm
+						/*recBuffer = Synth.new("RecBufferSynth", [\in, busRec, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
+						s.sync;*/
+						// For testing if playing or not
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
 						// Normalize
@@ -2114,7 +2119,6 @@ Density {
 							buffer = buffer.at((indexY * (buffer.size - 1) + 0.5).floor).copy.path = "Buffer for Sampler";
 							s.sync;
 							recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
-							s.sync;
 							NodeWatcher.register(recBuffer, true);
 						});
 					};
@@ -2126,8 +2130,8 @@ Density {
 						s.sync;
 						recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
 						//busRec = [0,1,2,3,4,5,6,7].scramble.choose;
-						//recBuffer = Synth.new("RecBufferSynth", [\in, busRec, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
-						s.sync;
+						/*recBuffer = Synth.new("RecBufferSynth", [\in, busRec, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
+						s.sync;*/
 						// For testing if playing or not
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
@@ -2149,7 +2153,6 @@ Density {
 							buffer = Buffer.alloc(s, buffer.numFrames, 1).path = "Buffer for Sampler";
 							s.sync;
 							recBuffer = Synth.new("RecBufferSynth", [\in, busRecAudioIn, \buffer, buffer, \level1, recLevel, \level2, preLevel, \loopRec, loopRec], groupeRecBuffer, \addToTail);
-							s.sync;
 							NodeWatcher.register(recBuffer, true);
 						});
 					};
@@ -2179,7 +2182,6 @@ Density {
 					\durSynth, dureeInstrument
 				], groupeMasterOut, \addToTail).map(
 					\bpm, busOSCbpm.at(indexBandFhz));
-				s.sync;
 				// For testing if playing or not
 				NodeWatcher.register(masterOut, true);
 				// FX
@@ -2199,7 +2201,6 @@ Density {
 					\centroid, busOSCcentroid.at(indexBandFhz),
 					\energy, busOSCenergy.at(indexBandFhz),
 					\bpm, busOSCbpm.at(indexBandFhz));
-				s.sync;
 				// For testing if playing or not
 				NodeWatcher.register(fx, true);
 				// SETUP SYNTH STEPS OR STREAM
@@ -2211,15 +2212,22 @@ Density {
 							\in, busRecAudioIn,
 							\out, busSynthInOut.at(bus),
 							\buffer, buffer,
-							\loop, Pfuncn({loopSound}, inf),
-							\offset, Pfuncn({if(newRevSound == 1.neg, {(1 - offset)}, {offset})}, inf),
+							\loop, Pfuncn({
+								if(flagRec == 1, {
+									recBuffer.set(\trigger, 1);
+									s.sync;
+									recBuffer.set(\trigger, 0);
+									s.sync;
+								});
+								loopSound}, inf),
+							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, inf),
 							\reverse, Pfuncn({newRevSound}, inf),
 							\freq, Pseq(freq, 1),
 							\amp, Pseq(amp, 1),
 							\dur, Pseq(duree, 1),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
-							\legato, 0.5,
+							\legato,  0.5,
 							\ctrlHP1, Pfuncn({ctrlHP1}, inf),
 							\ctrlHP2, Pfuncn({ctrlHP2}, inf),
 							\stretch, Pfuncn({stretchDuree}, inf),
@@ -2276,7 +2284,8 @@ Density {
 								\stretch, Pfuncn({stretchDuree}, inf),
 								//\s, s,
 								\group, groupeSynth,
-								\addAction, 1)});
+								\addAction, 1);
+							});
 						}, {synthMidi = nil; synthMidiVST = nil});
 						//Play Synth next Beat on BPM
 						synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
@@ -2324,7 +2333,6 @@ Density {
 							\centroid, busOSCcentroid.at(indexBandFhz),
 							\energy, busOSCenergy.at(indexBandFhz),
 							\bpm, busOSCbpm.at(indexBandFhz));
-						s.sync;
 						// For testing if playing or not
 						NodeWatcher.register(synth, true);
 						// MIDI
@@ -2349,6 +2357,8 @@ Density {
 
 			// Tdef Player
 			playInstruments = Tdef("Player", {
+				var flag, lastTime;
+				lastTime = Main.elapsedTime;
 				loop({arg time, indexBandFhz;
 					// Time
 					time = Main.elapsedTime;
@@ -2394,19 +2404,19 @@ Density {
 					});
 					// ALGO CHOOSE numFhzBand !!!!! + Choose SynthBand
 					// Build new Instrument
-					if(maximumInstruments > listeDataInstruments.size, {
+					if(maximumInstruments > listeDataInstruments.size and: {(time - lastTime) >= (1 -globalDensity)}, {
 						// With Band
 						if(flagFhzBand == 'on' and: {rangeSynthBand.size != 0}, {
 							if(numIndexSynthBand >= rangeSynthBand.size, {numIndexSynthBand = 0});
 							indexBandFhz = rangeSynthBand.at(numIndexSynthBand);
 							numIndexSynthBand = numIndexSynthBand + 1;
 							if(flagMemory == 'on', {
-								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < (globalDensity * quantizationDuree.reciprocal)},
+								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) >= globalDensity},
 									{
 										buildSynth.value(indexBandFhz)});
 							},
 							{
-								if(dataFreq.at(indexBandFhz) != [] and: {maximumInstruments > listeDataInstruments.size} and: {rrand(0.0, 1.0) < (globalDensity * quantizationDuree.reciprocal)},
+								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) >= globalDensity},
 									{
 										buildSynth.value(indexBandFhz)});
 							});
@@ -2415,14 +2425,15 @@ Density {
 						{
 							indexBandFhz = 0;
 							if(flagMemory == 'on', {
-								if(memoryDataFreq.at(indexBandFhz) != [] and: {maximumInstruments > listeDataInstruments.size} and: {rrand(0.0, 1.0) < (globalDensity * quantizationDuree.reciprocal)},
+								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) >= globalDensity},
 									{buildSynth.value(indexBandFhz)});
 							},
 							{
-								if(dataFreq.at(indexBandFhz) != [] and: {maximumInstruments > listeDataInstruments.size} and: {rrand(0.0, 1.0) < (globalDensity * quantizationDuree.reciprocal)},
+								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
 									{buildSynth.value(indexBandFhz)});
 							});
 						});
+						lastTime = time;
 					});
 					// Waiting Time
 					//(1 - globalDensity + 0.01).wait;
@@ -3999,7 +4010,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		}, 0, layout: \horz);
 		// File DB
 		EZKnob(windowEar, 150 @ 20, "db", \db,
-			{|ez| synthFileIn.set(\volume, ez.value.dbamp)}, -6, layout: \horz);
+			{|ez| synthFileIn.set(\volume, ez.value.dbamp)}, -inf, layout: \horz);
 		windowEar.view.decorator.nextLine;
 
 		// MIDI
@@ -4501,8 +4512,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		});
 		// Loop RecSound
 		Button(windowEar,Rect(0, 0, 70, 20)).
-		states_([["Rloop On", Color.green], ["Rloop Off", Color.red]]).
-		action_({arg loop; if(loop.value == 0, {loopRec = 0}, {loopRec = 1})});
+		states_([["Rloop On", Color.green], ["Rloop Off", Color.red], ["Rloop Off", Color.blue]]).
+		action_({arg loop;
+			if(loop.value == 0, {loopRec = 0; flagRec = 0});
+			if(loop.value == 1, {loopRec = 1; flagRec = 0});
+			if(loop.value == 2, {loopRec = 0; flagRec = 1});
+		});
 		// Reverse Sound
 		Button(windowEar,Rect(0, 0, 80, 20)).
 		states_([["Reverse On", Color.green], ["Reverse Off", Color.red]]).
@@ -4954,8 +4969,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		// Buffer Rec for Synth
 		SynthDef("RecBufferSynth",
-			{arg in=0, buffer, level1=1, level2=0, loopRec=0;
-				RecordBuf.ar(In.ar(in), buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: loopRec, trigger: 1, doneAction: 0);
+			{arg in=0, buffer, level1=1, level2=0, loopRec=0, trigger=1;
+				RecordBuf.ar(In.ar(in), buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: loopRec, trigger: trigger, doneAction: 0);
 		}).add;
 
 		////////////////////////////////////////////////////////////
@@ -4976,7 +4991,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, dur, 2);
 				// Play
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)) * envelope;
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -4995,7 +5010,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				line1 = if(Rand(0, 1) < 0.5, XLine.ar(energy, freq, dur), XLine.ar(freq, energy, dur));
 				line2 = if(Rand(0, 1) < 0.5, XLine.kr(centroid, freq, dur), XLine.kr(freq, centroid, dur));
 				// Play
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, line1, 0.333), RHPF.ar(chain, line2, 0.333));
 				chain = chain * envelope;
 				// Out
@@ -5016,7 +5031,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				line1 = if(Rand(0, 1) < 0.5, XLine.ar(energy, freq, dur), XLine.ar(freq, energy, dur));
 				line2 = if(Rand(0, 1) < 0.5, XLine.kr(centroid, freq, dur), XLine.kr(freq, centroid, dur));
 				// Play
-				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				chain = if(freq >= 60.midicps , Resonz.ar(chain, line1), Resonz.ar(chain, line2));
 				chain = chain * envelope;
 				// Out
@@ -5035,7 +5050,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, dur, 2);
 				// Play
-				chain = FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5)) * envelope, flatness * 1024 - 512, flux * 2pi);
+				chain = FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))) * envelope, flatness * 1024 - 512, flux * 2pi);
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5053,7 +5068,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// MdaPiano
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
@@ -5076,7 +5091,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// MdaPiano
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
@@ -5101,7 +5116,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// MdaPiano
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
@@ -5126,7 +5141,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// MdaPiano
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
@@ -5152,7 +5167,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// MdaPiano
-				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp - 0.5));
+				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
@@ -6191,7 +6206,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
-				chain = Median.ar(5, HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope);
+				chain = Median.ar(5, HPbufRd.ar(1, buffer, Phasor.ar(Impulse.kr(rate), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope);
 				//// Play Buffer
 				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, ctrlHP1, ctrlHP2) * envelope;
 				// Out
