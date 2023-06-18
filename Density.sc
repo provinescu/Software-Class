@@ -2404,19 +2404,19 @@ Density {
 					});
 					// ALGO CHOOSE numFhzBand !!!!! + Choose SynthBand
 					// Build new Instrument
-					if(maximumInstruments > listeDataInstruments.size and: {(time - lastTime) >= (1 -globalDensity)}, {
+					if(maximumInstruments > listeDataInstruments.size and: {(time - lastTime) >= (1 - globalDensity)}, {
 						// With Band
 						if(flagFhzBand == 'on' and: {rangeSynthBand.size != 0}, {
 							if(numIndexSynthBand >= rangeSynthBand.size, {numIndexSynthBand = 0});
 							indexBandFhz = rangeSynthBand.at(numIndexSynthBand);
 							numIndexSynthBand = numIndexSynthBand + 1;
 							if(flagMemory == 'on', {
-								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) >= globalDensity},
+								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
 									{
 										buildSynth.value(indexBandFhz)});
 							},
 							{
-								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) >= globalDensity},
+								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
 									{
 										buildSynth.value(indexBandFhz)});
 							});
@@ -2425,7 +2425,7 @@ Density {
 						{
 							indexBandFhz = 0;
 							if(flagMemory == 'on', {
-								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) >= globalDensity},
+								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
 									{buildSynth.value(indexBandFhz)});
 							},
 							{
