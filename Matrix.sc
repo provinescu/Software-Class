@@ -2091,7 +2091,7 @@ y ... -						Musical keys.
 				});
 				// Key A -> switch freezeDataOSC for all synth
 				if(char == $A, {
-					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_((listeWindowSynth.at(index).view.children.at(84).value - 1).abs);
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_((listeWindowSynth.at(index).view.children.at(84).value.min(1) - 1).abs);
 					});
 				});
 				// Key ctrl+a -> switch freezeDataOSC on for all synth
@@ -3904,7 +3904,7 @@ y ... -						Musical keys.
 			});
 
 			// Freeze Data OSC Button
-			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FrzM@", Color.green], ["FrzM!", Color.red], ["Frz!", Color.blue]]).action_({arg flag;
+			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FAD@", Color.green], ["FAD!", Color.red], ["FAD!", Color.blue]]).action_({arg flag;
 				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]});
 				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy});
 				if(flag.value == 2, {flagFreezeDataOSC = 'on'});
@@ -3979,7 +3979,7 @@ y ... -						Musical keys.
 										// Set Duree Sliders
 										if(window.view.children.at(58).value == 1, {
 											window.view.children.at(42).children.do({arg subView, subItem;
-												if(subItem == 2, {subView.activeLo_(q1Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * timeMaximum / 60); subView.activeHi_(q3Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * timeMaximum / 60)});
+												if(subItem == 2, {subView.activeLo_(q1Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum / 60)); subView.activeHi_(q3Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum / 60))});
 											});
 											/*window.view.children.at(43).children.do({arg subView, subItem;
 											if(subItem == 1, {subView.valueAction_(ecartqDuree + rand(window.view.children.at(56).children.at(1).value) / timeMaximum * dissymetrieDuree.sign / 50 + 0.5)});
