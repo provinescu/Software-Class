@@ -2087,7 +2087,7 @@ y ... -						Musical keys.
 				});
 				// Key a -> switch freezeDataOSC for synth on front
 				if(char == $a, {
-					window.view.children.at(84).valueAction_((window.view.children.at(84).value - 1).abs);
+					window.view.children.at(84).valueAction_((window.view.children.at(84).value.min(1) - 1).abs);
 				});
 				// Key A -> switch freezeDataOSC for all synth
 				if(char == $A, {
