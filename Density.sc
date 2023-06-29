@@ -29,7 +29,7 @@ Density {
 		// Connect first device by default
 		MIDIClient.init;
 		MIDIIn.connect(0, 0);
-		midiOut = MIDIOut(0);
+		midiOut = MIDIOut(0).latency = 0.01;
 		midiOut.connect(0);
 		16.do({arg canal; midiOut.allNotesOff(canal)});
 
@@ -6202,7 +6202,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				recHead = Phasor.ar(0, BufRateScale.kr(buffer), 0, BufFrames.kr(buffer));
 				////BufWr.ar(inputSig, buffer, recHead, loop: 1);
-				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
+				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: loop, trigger: 1);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
