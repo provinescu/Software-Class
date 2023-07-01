@@ -1596,7 +1596,7 @@ G                       Init Genome Agent (solo).
 				s.sync;
 				if(file.numChannels == 1,
 					{Post << "Loading mono sound" << " " << ~sounds.wrapAt(i).standardizePath << Char.nl;
-						~bufferSons=~bufferSons.add(Buffer.read(s, ~sounds.wrapAt(i).standardizePath));
+						~bufferSons=~bufferSons.add(Buffer.read(s, ~sounds.wrapAt(i).standardizePath, action: {Post << "Finished" << Char.nl}));
 						s.sync;
 					},
 					{rawData= FloatArray.newClear(file.numFrames * 2);
@@ -1609,7 +1609,7 @@ G                       Init Genome Agent (solo).
 						s.sync;
 						rawData = rawData.unlace(2).sum / 2;
 						s.sync;
-						~bufferSons=~bufferSons.add(Buffer.loadCollection(s, rawData, 1));
+						~bufferSons=~bufferSons.add(Buffer.loadCollection(s, rawData, 1, {Post << "Finished" << Char.nl}));
 						s.sync;
 				});
 				//~bufferSons.wrapPut(i, ~bufferSons.wrapAt(i).normalize(1.0));
@@ -2916,8 +2916,7 @@ G                       Init Genome Agent (solo).
 					newAmp = ~listeagentamp.wrapAt(agent) * 127;
 					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax * 127;
 					// Training Kohonen Freq
-					maxTraining = newFreq.size * 3;
-					maxTraining = maxTraining.clip(64, 128);
+					maxTraining = newFreq.size;
 					maxTraining.do({arg i; ~kohonenF.wrapAt(agent).training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
 					// Calculate Kohonen Freq
 					newFreq = newFreq.collect({arg item, index, z;
@@ -2949,14 +2948,13 @@ G                       Init Genome Agent (solo).
 					~listeagentduree.wrapPut(agent, newDuree);
 				},
 				"Neural", {
-					maxTraining = ~listeagentfreq.wrapAt(agent).size * 10;
-					maxTraining = maxTraining.clip(64, 128);
+					maxTraining = ~listeagentfreq.wrapAt(agent).size;
 					maxTraining.do({arg i;
-						~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax]);
+						~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 1);
 					});
 					// Calculation algo new musical pattern
 					~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
-						# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax]);
+						# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 0);
 						newFreq = newFreq.add(f);
 						newAmp = newAmp.add(a);
 						newDuree = newDuree.add(d * ~dureeanalysemax);
@@ -10616,7 +10614,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Piano
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 
 
 					// Switch Audio Out
@@ -10657,7 +10655,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20,12544);
-					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+55, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+55, freq, duree*controlD), 0.333));
 
 
@@ -10698,7 +10696,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					main = if(rate.abs >= 1.0 , Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
 
 
@@ -10739,7 +10737,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controlF * 10, controlA * 10);
+					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF * 10, controlA * 10);
 
 
 					// Switch Audio Out
@@ -10779,7 +10777,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controlF* 40, 40, abs(controlF*2-1));
+					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF* 40, 40, abs(controlF*2-1));
 
 
 					// Switch Audio Out
@@ -10819,7 +10817,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controlF * 1024 - 512, controlA * 2pi));
+					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF * 1024 - 512, controlA * 2pi));
 
 
 					// Switch Audio Out
@@ -10859,7 +10857,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main=Mix(PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), 0.2, controlF*4, controlA, controlD, 1));
+					main=Mix(PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 0.2, controlF*4, controlA, controlD, 1));
 
 
 					// Switch Audio Out
@@ -10901,7 +10899,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -10947,7 +10945,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -10993,7 +10991,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11039,7 +11037,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11085,7 +11083,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11131,7 +11129,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11177,7 +11175,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11223,7 +11221,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11269,7 +11267,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11315,7 +11313,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11361,7 +11359,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11407,7 +11405,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11453,7 +11451,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11499,7 +11497,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11545,7 +11543,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11591,7 +11589,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11637,7 +11635,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11683,7 +11681,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer);
 					// Main Synth
@@ -11729,7 +11727,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -11777,7 +11775,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -11825,7 +11823,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -11873,7 +11871,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -11921,7 +11919,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -11969,7 +11967,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -12017,7 +12015,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -12066,7 +12064,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -12114,7 +12112,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -12162,7 +12160,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
@@ -12210,7 +12208,7 @@ G                       Init Genome Agent (solo).
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth

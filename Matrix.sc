@@ -4376,8 +4376,7 @@ y ... -						Musical keys.
 					},
 					"Kohonen", {
 						// Training Kohonen Freq
-						maxTraining = newFreq.size * 3;
-						maxTraining = maxTraining.clip(64, 128);
+						maxTraining = newFreq.size;
 						newFreq = newFreq * 127;
 						maxTraining.do({arg i; kohonenF.training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
 						// Calculate Kohonen Freq
@@ -4410,12 +4409,11 @@ y ... -						Musical keys.
 						ampNeu = [];
 						durNeu = [];
 						// Training Neural
-						maxTraining = newFreq.size * 10;
-						maxTraining = maxTraining.clip(64, 128);
-						maxTraining.do({arg i; neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray])});
+						maxTraining = newFreq.size;
+						maxTraining.do({arg i; neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], mode: 1)});
 						// Calculate Neural
 						newFreq.size.do({arg i, f, a, d;
-							# f, a, d = neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray]);
+							# f, a, d = neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], mode: 0);
 							// Freq
 							freqNeu = freqNeu.add(f.at(0));
 							// Amp

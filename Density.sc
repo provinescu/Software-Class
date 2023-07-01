@@ -1598,8 +1598,7 @@ Density {
 						# flux, flatness, centroid, energy, bpm = data.at(0);*/
 						// Freq Transformation
 						// Training Kohonen Freq
-						maxTraining = freq.size * 3;
-						maxTraining = maxTraining.clip(64, 128);
+						maxTraining = freq.size;
 						maxTraining.do({arg i; kohonenF.training(freq.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Freq
 						freq = freq.collect({arg item, index, z;
@@ -1885,14 +1884,13 @@ Density {
 						# flux, flatness, centroid, energy, bpm = data.at(0);
 						// Freq Transformation
 						// Training Neural
-						maxTraining = freq.size * 10;
-						maxTraining = maxTraining.clip(64, 128);
-						maxTraining.do({arg i; neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray])});
+						maxTraining = freq.size;
+						maxTraining.do({arg i; neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], mode: 1)});
 						// Calculate Neural Freq Amp Duree
 						freq.size.do({arg i, f, a, d;
-							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray]);
+							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], mode: 0);
 							// Freq
-							freqNeu = freqNeu.add(f.at(0));
+							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0)).midicps);
 							// Amp
 							ampNeu = ampNeu.add(a.at(0));
 							// Duree
@@ -1901,11 +1899,11 @@ Density {
 						freq = freqNeu;
 						amp = ampNeu;
 						duree = durNeu;
-						// Setup Range Freq
+						/*// Setup Range Freq
 						freq = freq.collect({arg item, index;
 							item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
 							item.midicps;
-						});
+						});*/
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
 							freq = freq.collect({arg item, index;
