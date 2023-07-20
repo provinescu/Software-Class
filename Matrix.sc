@@ -590,17 +590,17 @@ y ... -						Musical keys.
 						s.queryAllNodes;
 						listeWindows.at(3).front;
 						indexWindows=3;
-						tampon2 = data.last;// Load OSCfreeze
+						//tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
-						tampon = data.last;// Load OSCmusicData
+						//tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
-						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						//fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
 						data.remove(data.last);// Remove control panel
-						dataControlSynth = data.last; // ControlSynth Panel
-						fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
+						//dataControlSynth = data.last; // ControlSynth Panel
+						//fonctionLoadControlSynth.value(windowControlSynth, data.last);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data.at(0), tampon2);
-						listeDataOSC = tampon;
+						fonctionLoadSynthesizer.value(data.at(0));
+						//listeDataOSC = tampon;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
 					},
@@ -706,9 +706,9 @@ y ... -						Musical keys.
 								data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
 								data = data.add(listeDataOSC.value);//Save OSCmusicData
 								listeWindowFreeze.do({arg freeze;
-				listeFreeze = listeFreeze.add(freeze.value);
-			});
-			data = data.add(listeFreeze);// Save freezeDataOSC
+									listeFreeze = listeFreeze.add(freeze.value);
+								});
+								data = data.add(listeFreeze);// Save freezeDataOSC
 								f.write(data.asCompileString);
 								f.close;
 							},
@@ -2205,9 +2205,9 @@ y ... -						Musical keys.
 				data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
 				data = data.add(listeDataOSC.value);//Save OSCmusicData
 				listeWindowFreeze.do({arg freeze;
-				listeFreeze = listeFreeze.add(freeze.value);
-			});
-			data = data.add(listeFreeze);// Save freezeDataOSC
+					listeFreeze = listeFreeze.add(freeze.value);
+				});
+				data = data.add(listeFreeze);// Save freezeDataOSC
 				file=File(pathMatrix ++ "Synthesizer" + number.asString ++ ".scd", "w");
 				file.write(data.asCompileString);
 				file.close;
@@ -2243,18 +2243,18 @@ y ... -						Musical keys.
 						file=File(pathMatrix ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
 						data = file.readAllString.interpret;
 						file.close;
-						tampon2 = data.last;// load OSCfreezeData
+						//tampon2 = data.last;// load OSCfreezeData
 						data.remove(data.last);
-						tampon = data.last;// Load OSCmusicData
+						//tampon = data.last;// Load OSCmusicData
 						data.remove(data.last);// Remove OSCmusicData
-						fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
+						//fonctionLoadControl.value(windowControl, data.last);//Load Control Panel
 						data.remove(data.last);// Remove control panel
-						dataControlSynth = data.last; // ControlSynth Panel
-						fonctionLoadControlSynth.value(windowControlSynth, dataControlSynth);//Load ControlSynth Panel
+						//dataControlSynth = data.last; // ControlSynth Panel
+						//fonctionLoadControlSynth.value(windowControlSynth, dataControlSynth);//Load ControlSynth Panel
 						data.remove(data.last);// Remove controlSynth panel
-						fonctionLoadSynthesizer.value(data.at(0), tampon);
-						listeDataOSC = tampon;
-						listeWindowFreeze = tampon2;
+						fonctionLoadSynthesizer.value(data.at(0));
+						//listeDataOSC = tampon;
+						//listeWindowFreeze = tampon2;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
 				}, {"cancelled".postln});
@@ -2264,9 +2264,9 @@ y ... -						Musical keys.
 				file=File(pathMatrix ++ "OSCmusicData" + number.asString ++ ".scd", "w");
 				data = data.add(listeDataOSC.value);
 				listeWindowFreeze.do({arg freeze;
-				listeFreeze = listeFreeze.add(freeze.value);
-			});
-			data = data.add(listeFreeze);// Save freezeDataOSC
+					listeFreeze = listeFreeze.add(freeze.value);
+				});
+				data = data.add(listeFreeze);// Save freezeDataOSC
 				file.write(data.asCompileString);
 				file.close;
 			});
@@ -3567,7 +3567,7 @@ y ... -						Musical keys.
 			knobOffset2 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset2, ez.value); ctrlBuffer.put(8, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
 			knobPreLevel2 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\preLevel, ez.value); ctrlBuffer.put(5, ez.value)}, 1, labelWidth: 30, numberWidth: 30);
 			knobPostLevel2 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\postLevel, ez.value); ctrlBuffer.put(6, ez.value)}, 0, labelWidth: 30, numberWidth: 30);
-			knobRecOn2 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec @", Color.black, Color.red(0.8, 0.25)],  ["Rec !", Color.black, Color.red(0.4, 0.125)]];
+			knobRecOn2 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec @", Color.black, Color.red(0.8, 0.25)],  ["Rec !", Color.black, Color.blue(0.8, 0.25)]];
 			knobRecOn2.action = {|view| if(view.value == 2, {bufferRecording2.set(\loop, 0); ctrlBuffer.put(7, 1); loopRec2 = 0},
 				{bufferRecording2.set(\loop, view.value); ctrlBuffer.put(7, view.value); loopRec2 = view.value});
 			};
