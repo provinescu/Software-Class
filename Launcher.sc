@@ -5,7 +5,7 @@ Launcher {
 
 	var <> name, ni, o, r, f, w, devIn, devOut, listDevIn, listDevOut, path, nameSoft, driverBlock, widthMC, orientationMC, flagMC;
 
-	*new	{arg path="~/Documents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0;
+	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0;
 
 		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
 
@@ -32,7 +32,7 @@ Launcher {
 		flagMC = 0;
 
 		// Output Panel
-		w = Window("Launcher", Rect(666, 333, 210, 450), scroll: true);
+		w = Window("HP Software", Rect(666, 333, 210, 450), scroll: true);
 		w.alpha=1.0;
 		w.front;
 		w.view.decorator = FlowLayout(w.view.bounds);
