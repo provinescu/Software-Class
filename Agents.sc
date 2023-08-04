@@ -202,12 +202,12 @@ G                       Init Genome Agent (solo).
 								s.sync;
 								~rawData = Array.newFrom(~rawData).stutter(2) / 2;
 								s.sync;
-								~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2);
+								~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2, action: {arg buf; Post << "Finished" << Char.nl});
 								s.sync;
 							},
 							{Post << "Loading sound for analyze" << " " << ~samplePourAnalyse << Char.nl;
 								s.sync;
-								~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse,  channels: [0, 1]);
+								~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse,  channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
 								s.sync;
 						});
 						//~bufferanalysefile = ~bufferanalysefile.normalize(1.0);
@@ -473,12 +473,12 @@ G                       Init Genome Agent (solo).
 								s.sync;
 								~rawData = Array.newFrom(~rawData).stutter(2) / 2;
 								s.sync;
-								~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2);
+								~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2, action: {arg buf; Post << "Finished" << Char.nl});
 								s.sync;
 							},
 							{Post << "Loading sound for analyze " << " " << ~samplePourAnalyse << Char.nl;
 								s.sync;
-								~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse,  channels: [0, 1]);
+								~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse,  channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
 								s.sync;
 						});
 						//~bufferanalysefile = ~bufferanalysefile.normalize(1.0);
@@ -1558,12 +1558,12 @@ G                       Init Genome Agent (solo).
 					s.sync;
 					~rawData = Array.newFrom(~rawData).stutter(2) / 2;
 					s.sync;
-					~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2);
+					~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2, action: {arg buf; Post << "Finished" << Char.nl});
 					s.sync;
 				},
 				{Post << "Loading sound for analyze" << " " << ~samplePourAnalyse << Char.nl;
 					s.sync;
-					~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse, channels: [0, 1]);
+					~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse, channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
 					s.sync;
 			});
 			//~bufferanalysefile = ~bufferanalysefile.normalize(1.0);
@@ -1889,7 +1889,7 @@ G                       Init Genome Agent (solo).
 					~flatness = msg.wrapAt(6);
 					~energy = msg.wrapAt(7);
 					~flux = msg.wrapAt(8);
-					if(~dataFFTanalyze.wrapAt(0).size > ~listedatasizein, {~dataFFTanalyze = [[], []]});
+					if(~dataFFTanalyze.wrapAt(0).size >= ~listedatasizein, {~dataFFTanalyze = [[], []]});
 					~dataFFTanalyze.put(0, ~dataFFTanalyze.wrapAt(0).add(~flux));
 					~dataFFTanalyze.put(1, ~dataFFTanalyze.wrapAt(1).add(~flatness));
 					if(duree > ~dureeanalysemax,
@@ -1904,7 +1904,7 @@ G                       Init Genome Agent (solo).
 					if(~flagAlgoAnalyze.value != 4, {
 						if(abs(freq*127 - (~freqBefore*127)) >= ~differencefreq and: {abs(amp.ampdb - ~ampBefore.ampdb) >= ~differenceamp} and: {abs(duree - ~lastTimeAnalyse) >= ~differenceduree} and: {duree >= ~differenceduree},
 							{if(~freqTampon !=nil and: {~ampTampon != nil},
-								{if(~listefreq.size < ~listedatasizein,
+								{if(~listefreq.size <= ~listedatasizein,
 									{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
 										~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 									},
@@ -1926,7 +1926,7 @@ G                       Init Genome Agent (solo).
 					},
 					{
 						if(~freqTampon !=nil and: {~ampTampon != nil},
-							{if(~listefreq.size < ~listedatasizein,
+							{if(~listefreq.size <= ~listedatasizein,
 								{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
 									~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 								},
@@ -1971,7 +1971,7 @@ G                       Init Genome Agent (solo).
 						~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;
 				});
 				if(~freqTampon !=nil and: {~ampTampon != nil},
-					{if(~listefreq.size < ~listedatasizein,
+					{if(~listefreq.size <= ~listedatasizein,
 						{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
 							~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 						},
@@ -2771,404 +2771,404 @@ G                       Init Genome Agent (solo).
 			if(~flagGeneAlgorithm == 'on', {numAlgo = (~genomes.wrapAt(agent).wrapAt(45).value * 4).floor; sourceAlgorithm = ~listeAlgorithm.wrapAt(numAlgo)},{sourceAlgorithm = ~algoMusic.value});
 			if(~listeagentfreq.wrapAt(agent) != [] and: ~listeagentamp.wrapAt(agent) != [] and: ~listeagentduree.wrapAt(agent) != [],
 				{
-			switch(sourceAlgorithm,
-				"Default", {nil}, // Do nothing
-				"Probability", {
-					// Freq Transformation
-					newFreq = ~listeagentfreq.wrapAt(agent);
-					# q1, mediane, q3, ecartQ, ecartSemiQ = newFreq.quartiles;
-					ecartType = newFreq.ecartType;
-					cv = ecartType / newFreq.mean;
-					dissymetrie = newFreq.dissymetrie;
-					//Change Octave or Transpose
-					if(coin(cv.frac), {
-						newFreq = newFreq + (dissymetrie.floor * (12/127));
-					}, {
-						// Transpose
-						if(coin(cv.frac), {
-							newFreq = newFreq + (ecartType * dissymetrie);
-						});
+					switch(sourceAlgorithm,
+						"Default", {nil}, // Do nothing
+						"Probability", {
+							// Freq Transformation
+							newFreq = ~listeagentfreq.wrapAt(agent);
+							# q1, mediane, q3, ecartQ, ecartSemiQ = newFreq.quartiles;
+							ecartType = newFreq.ecartType;
+							cv = ecartType / newFreq.mean;
+							dissymetrie = newFreq.dissymetrie;
+							//Change Octave or Transpose
+							if(coin(cv.frac), {
+								newFreq = newFreq + (dissymetrie.floor * (12/127));
+							}, {
+								// Transpose
+								if(coin(cv.frac), {
+									newFreq = newFreq + (ecartType * dissymetrie);
+								});
+							});
+							// Compress or Expand
+							if(coin(cv.frac), {
+								newFreq = newFreq * cv;
+							},
+							{
+								// Expand
+								if(coin(cv.frac), {
+									newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
+								});
+							});
+							newFreq = newFreq.mod(1);
+							~listeagentfreq.wrapPut(agent, newFreq);
+							// Amp Transformation
+							newAmp = ~listeagentamp.wrapAt(agent);
+							# q1, mediane, q3, ecartQ, ecartSemiQ = newAmp.quartiles;
+							ecartType = newAmp.ecartType;
+							cv = ecartType / newAmp.mean;
+							dissymetrie = newAmp.dissymetrie;
+							// Transpose
+							if(coin(cv.frac), {newAmp = newAmp + (ecartType * dissymetrie.sign);
+							});
+							// Compress or Expand
+							if(coin(cv.frac), {newAmp = newAmp * cv},
+								{
+									newAmp = newAmp + (ecartSemiQ * dissymetrie.sign);
+							});
+							newAmp = newAmp.mod(1);
+							~listeagentamp.wrapPut(agent, newAmp);
+							// Duree Transformation
+							newDuree = ~listeagentduree.wrapAt(agent);// / ~dureeanalysemax;
+							# q1, mediane, q3, ecartQ, ecartSemiQ = newDuree.quartiles;
+							ecartType = newDuree.ecartType;
+							cv = ecartType / newDuree.mean;
+							dissymetrie = newDuree.dissymetrie;
+							// Transpose
+							if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
+							});
+							// Compress or Expand
+							if(coin(cv.frac), {newDuree = newDuree * cv},
+								{
+									newDuree = newDuree + (ecartSemiQ * dissymetrie.sign);
+							});
+							newDuree = newDuree.mod(~dureeanalysemax);
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+						"Euclide", {
+							newFreq = ~listeagentfreq.wrapAt(agent);
+							newAmp = ~listeagentamp.wrapAt(agent);
+							newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax;
+							// Distances Euclidiennes 3D -> Vecteur 1D
+							distances = sqrt(newFreq.pow(2) + newAmp.pow(2) + newDuree.pow(2));
+							// Probabilite sur Distances
+							# q1, mediane, q3, ecartQ, ecartSemiQ = distances.quartiles;
+							ecartType = distances.ecartType;
+							cv = ecartType / distances.mean;
+							dissymetrie = distances.dissymetrie;
+							// Freq
+							newFreq = distances;
+							//Change Octave or Transpose
+							if(coin(cv.frac), {
+								newFreq = newFreq + (dissymetrie.floor * (12/127));
+							}, {
+								// Transpose
+								if(coin(cv.frac), {
+									newFreq = newFreq + (ecartType * dissymetrie);
+								});
+							});
+							// Compress or Expand
+							if(coin(cv.frac), {
+								newFreq = newFreq * cv;
+							},
+							{
+								// Expand
+								if(coin(cv.frac), {
+									newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
+								});
+							});
+							newFreq = newFreq.mod(1);
+							~listeagentfreq.wrapPut(agent, newFreq);
+							// Amp
+							newAmp = distances;
+							// Transpose
+							if(coin(cv.frac), {newAmp = newAmp + (ecartType * dissymetrie.sign);
+							});
+							// Compress expand
+							if(coin(cv.frac), {
+								newAmp = newAmp * cv;
+							},
+							{
+								newAmp = newAmp + (ecartSemiQ * dissymetrie.sign)
+							});
+							newAmp = newAmp.mod(1);
+							~listeagentamp.wrapPut(agent, newAmp);
+							// Duree
+							newDuree = distances;
+							// Transpose
+							if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
+							});
+							// Compress expand
+							if(coin(cv.frac), {
+								newDuree = newDuree * cv;
+							},
+							{
+								newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
+							});
+							newDuree = newDuree.mod(1) * ~dureeanalysemax;
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+						"Genetic", {
+							// Calculation algo new musical pattern
+							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
+								# f = ~geneticF.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i)], 'rec', 0.5, ~flatness, ~flux);
+								newFreq = newFreq.add(f);
+								# a = ~geneticA.wrapAt(agent).next([~listeagentamp.wrapAt(agent).wrapAt(i)], 'rec', 0.5, ~flatness, ~flux);
+								newAmp = newAmp.add(a);
+								# d = ~geneticD.wrapAt(agent).next([~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], 'rec', 0.5, ~flatness, ~flux);
+								newDuree = newDuree.add(d * ~dureeanalysemax);
+							});
+							~listeagentfreq.wrapPut(agent, newFreq);
+							~listeagentamp.wrapPut(agent, newAmp);
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+						"Kohonen", {
+							newFreq = ~listeagentfreq.wrapAt(agent) * 127;
+							newAmp = ~listeagentamp.wrapAt(agent) * 127;
+							newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax * 127;
+							// Training Kohonen Freq
+							maxTraining = newFreq.size;
+							maxTraining.do({arg i; ~kohonenF.wrapAt(agent).training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
+							// Calculate Kohonen Freq
+							newFreq = newFreq.collect({arg item, index, z;
+								item = ~kohonenF.wrapAt(agent).training(item.asArray, 1, 1, 0);
+								item = item.wrapAt(0).wrapAt(1);// Vecteur
+								//item = item.mod(127);
+								item = item / 127;
+							});
+							~listeagentfreq.wrapPut(agent, newFreq);
+							// Training Kohonen Amp
+							maxTraining.do({arg i; ~kohonenA.wrapAt(agent).training(newAmp.wrapAt(i).asArray, i+1, maxTraining, 1)});
+							// Calculate Kohonen Amp
+							newAmp = newAmp.collect({arg item, index;
+								item = ~kohonenA.wrapAt(agent).training(item.asArray, 1, 1, 0);
+								item = item.wrapAt(0).wrapAt(1);// Vecteur
+								//item = item.mod(127);
+								item = item / 127;
+							});
+							~listeagentamp.wrapPut(agent, newAmp);
+							// Training Kohonen Duree
+							maxTraining.do({arg i; ~kohonenD.wrapAt(agent).training(newDuree.wrapAt(i).asArray, i+1, maxTraining, 1)});
+							// Calculate Kohonen Duree
+							newDuree = newDuree.collect({arg item, index;
+								item = ~kohonenD.wrapAt(agent).training(item.asArray, 1, 1, 0);
+								item = item.wrapAt(0).wrapAt(1);// Vecteur
+								//item = item.mod(127);
+								item = item / 127 * ~dureeanalysemax;
+							});
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+						"Neural", {
+							maxTraining = ~listeagentfreq.wrapAt(agent).size;
+							maxTraining.do({arg i;
+								~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 1);
+							});
+							// Calculation algo new musical pattern
+							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
+								# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 0);
+								newFreq = newFreq.add(f);
+								newAmp = newAmp.add(a);
+								newDuree = newDuree.add(d * ~dureeanalysemax);
+							});
+							~listeagentfreq.wrapPut(agent, newFreq);
+							~listeagentamp.wrapPut(agent, newAmp);
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+					);
+					//playing agent
+					~couleurs.wrapPut(agent,[1, 1, 1]);// blanc
+					while({duree < ~chordDurAgents.wrapAt(agent) and: {~listeagentfreq.wrapAt(agent).size > ~flagCompteurPlayingAgents.wrapAt(agent)} and: {~chordMaxAgents.wrapAt(agent) > compteuraccord}},
+						{freq=freq.add(~listeagentfreq.wrapAt(agent).wrapAt(~flagCompteurPlayingAgents.wrapAt(agent)) * 127);
+							amp=amp.add(~listeagentamp.wrapAt(agent).wrapAt(~flagCompteurPlayingAgents.wrapAt(agent)));
+							duree =~listeagentduree.wrapAt(agent).wrapAt(~flagCompteurPlayingAgents.wrapAt(agent));
+							~flagCompteurPlayingAgents.wrapPut(agent, ~flagCompteurPlayingAgents.wrapAt(agent) + 1);
+							compteuraccord=compteuraccord + 1;
 					});
-					// Compress or Expand
-					if(coin(cv.frac), {
-						newFreq = newFreq * cv;
-					},
-					{
-						// Expand
-						if(coin(cv.frac), {
-							newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
-						});
-					});
-					newFreq = newFreq.mod(1);
-					~listeagentfreq.wrapPut(agent, newFreq);
-					// Amp Transformation
-					newAmp = ~listeagentamp.wrapAt(agent);
-					# q1, mediane, q3, ecartQ, ecartSemiQ = newAmp.quartiles;
-					ecartType = newAmp.ecartType;
-					cv = ecartType / newAmp.mean;
-					dissymetrie = newAmp.dissymetrie;
-					// Transpose
-					if(coin(cv.frac), {newAmp = newAmp + (ecartType * dissymetrie.sign);
-					});
-					// Compress or Expand
-					if(coin(cv.frac), {newAmp = newAmp * cv},
-						{
-							newAmp = newAmp + (ecartSemiQ * dissymetrie.sign);
-					});
-					newAmp = newAmp.mod(1);
-					~listeagentamp.wrapPut(agent, newAmp);
-					// Duree Transformation
-					newDuree = ~listeagentduree.wrapAt(agent);// / ~dureeanalysemax;
-					# q1, mediane, q3, ecartQ, ecartSemiQ = newDuree.quartiles;
-					ecartType = newDuree.ecartType;
-					cv = ecartType / newDuree.mean;
-					dissymetrie = newDuree.dissymetrie;
-					// Transpose
-					if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
-					});
-					// Compress or Expand
-					if(coin(cv.frac), {newDuree = newDuree * cv},
-						{
-							newDuree = newDuree + (ecartSemiQ * dissymetrie.sign);
-					});
-					newDuree = newDuree.mod(~dureeanalysemax);
-					~listeagentduree.wrapPut(agent, newDuree);
-				},
-				"Euclide", {
-					newFreq = ~listeagentfreq.wrapAt(agent);
-					newAmp = ~listeagentamp.wrapAt(agent);
-					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax;
-					// Distances Euclidiennes 3D -> Vecteur 1D
-					distances = sqrt(newFreq.pow(2) + newAmp.pow(2) + newDuree.pow(2));
-					// Probabilite sur Distances
-					# q1, mediane, q3, ecartQ, ecartSemiQ = distances.quartiles;
-					ecartType = distances.ecartType;
-					cv = ecartType / distances.mean;
-					dissymetrie = distances.dissymetrie;
+					// Set parametres genes Synth on/off
 					// Freq
-					newFreq = distances;
-					//Change Octave or Transpose
-					if(coin(cv.frac), {
-						newFreq = newFreq + (dissymetrie.floor * (12/127));
-					}, {
-						// Transpose
-						if(coin(cv.frac), {
-							newFreq = newFreq + (ecartType * dissymetrie);
+					if(~flagGeneFreq == 'off',
+						{freqRange = (~freqInstr.hi - ~freqInstr.lo);
+							freqLow = ~freqInstr.lo},
+						{freqRange = (~genomes.wrapAt(agent).wrapAt(4) - ~genomes.wrapAt(agent).wrapAt(5)).abs * 127;
+							freqLow = if(~genomes.wrapAt(agent).wrapAt(4) < ~genomes.wrapAt(agent).wrapAt(5), {~genomes.wrapAt(agent).wrapAt(4)},{~genomes.wrapAt(agent).wrapAt(5)}) * 127});
+					if(~flagGeneTransFreq == 'off',
+						{freqTrans = ~freqTransposeInstr.value},
+						{freqTrans = ~genomes.wrapAt(agent).wrapAt(6) * 254 - 127});
+					//Amp
+					if(~flagGeneAmp == 'off',
+						{ampRange = (~ampInstr.hi.dbamp - ~ampInstr.lo.dbamp);
+							ampLow = ~ampInstr.lo.dbamp},
+						{ampRange = (~genomes.wrapAt(agent).wrapAt(7) - ~genomes.wrapAt(agent).wrapAt(8)).abs;
+							ampLow = if(~genomes.wrapAt(agent).wrapAt(7) < ~genomes.wrapAt(agent).wrapAt(8), {~genomes.wrapAt(agent).wrapAt(7)},{~genomes.wrapAt(agent).wrapAt(8)})});
+					//Duree
+					if(~flagGeneDuree == 'off',
+						{dureeRange = (~dureeInstr.hi - ~dureeInstr.lo);
+							dureeLow = ~dureeInstr.lo},
+						{dureeRange = (~genomes.wrapAt(agent).wrapAt(9) - ~genomes.wrapAt(agent).wrapAt(10)).abs;
+							dureeLow = if(~genomes.wrapAt(agent).wrapAt(9) < ~genomes.wrapAt(agent).wrapAt(10), {~genomes.wrapAt(agent).wrapAt(9)},{~genomes.wrapAt(agent).wrapAt(10)})});
+					if(~flagGeneMulDuree == 'off',
+						{dureeTempo = ~dureeTempoinstr.value},
+						{dureeTempo = ~genomes.wrapAt(agent).wrapAt(11) * 80 - 16});
+					// Set good number / tempo
+					if(dureeTempo < 1 and: {dureeTempo >= 1.neg}, {dureeTempo = 1});
+					if(dureeTempo < 1.neg, {dureeTempo = dureeTempo.reciprocal.neg});
+					//Pan
+					if(~flagGenePan == 'off',
+						{pan=~panInstr.value},
+						{pan= ~genomes.wrapAt(agent).wrapAt(12) * 2 - 1;pan = [pan, pan]});
+					// Buffer + sample
+					if(~flagGeneBuffer == 'off',
+						{// Sample
+							if(~flagGeneSample == 'off',
+								{bufferSon = ~bufferSonsInstruments;
+									bufferSon2=~bufferSons.wrapAt((~genomes.wrapAt(agent).wrapAt(14)*~sounds.size - 1).ceil.clip(0, ~sounds.size - 1));
+									//Reverse sample
+									if(~flagGeneReverse == 'off',
+										{reverseSample=~reverseSynthSons.wrapAt(~soundsPositions);if(reverseSample == 1, {reverseSample=1.neg},{reverseSample=1})},
+										{reverseSample= (~genomes.wrapAt(agent).wrapAt(15) * 2 - 1).sign});
+									//Loop sample
+									if(~flagGeneLoop == 'off',
+										{loopSample=~loopSynthSons.wrapAt(~soundsPositions)},
+										{loopSample = (~genomes.wrapAt(agent).wrapAt(16) * 2 - 1).sign});
+									//Offset
+									if(~flagGeneOffset == 'off',
+										{offset=~posSamplesSons.wrapAt(~soundsPositions);
+											if(reverseSample == 1.neg, {offset=1 - offset})},
+										{offset=  ~genomes.wrapAt(agent).wrapAt(17);
+											if(reverseSample == 1.neg, {offset=1 - offset})})},
+								{bufferSon =  ~bufferSons.wrapAt((~genomes.wrapAt(agent).wrapAt(14)*~sounds.size-1).ceil.clip(0,~sounds.size-1));
+									bufferSon2= ~bufferSonsInstruments;
+									//Reverse sample
+									if(~flagGeneReverse == 'off',
+										{reverseSample=~reverseSynthSons.wrapAt(~soundsPositions);if(reverseSample == 1, {reverseSample=1.neg},{reverseSample=1})},
+										{reverseSample= (~genomes.wrapAt(agent).wrapAt(15) * 2 - 1).sign});
+									//Loop sample
+									if(~flagGeneLoop == 'off',
+										{loopSample=~loopSynthSons.wrapAt(~soundsPositions)},
+										{loopSample = (~genomes.wrapAt(agent).wrapAt(16) * 2 - 1).sign});
+									//Offset
+									if(~flagGeneOffset == 'off',
+										{offset=~posSamplesSons.wrapAt(~soundsPositions);
+											if(reverseSample == 1.neg, {offset=1 - offset})},
+										{offset=  ~genomes.wrapAt(agent).wrapAt(17);
+											if(reverseSample == 1.neg, {offset=1 - offset})})})},
+						// Buffers
+						{if(~flagEntreeMode=='Audio', {bufferSon =  ~bufferAudioAgents.wrapAt(agent);
+							bufferSon2= ~bufferSonsInstruments},{bufferSon =  ~bufferFileAgents.wrapAt(agent);
+							bufferSon2= ~bufferSonsInstruments});
+						//Reverse sample
+						if(~flagGeneReverse == 'off',
+							{reverseSample=~reverseSynthSons.wrapAt(~soundsPositions);if(reverseSample == 1, {reverseSample=1.neg},{reverseSample=1})},
+							{reverseSample= (~genomes.wrapAt(agent).wrapAt(15) * 2  - 1).sign});
+						//Loop sample
+						if(~flagGeneLoop == 'off',
+							{loopSample=~loopSynthSons.wrapAt(~soundsPositions)},
+							{loopSample = (~genomes.wrapAt(agent).wrapAt(16) * 2 - 1).sign});
+						//Offset
+						if(~flagGeneOffset == 'off',
+							{offset=~posSamplesSons.wrapAt(~soundsPositions);
+								if(reverseSample == 1.neg, {offset=1 - offset})},
+							{offset=  ~genomes.wrapAt(agent).wrapAt(17);
+								if(reverseSample == 1.neg, {offset=1 - offset})})});
+					// Synth
+					if(~flagGeneSynth == 'off',
+						{synth = ~synthInstruments},
+						{synth =  ~listSynth.wrapAt((~genomes.wrapAt(agent).wrapAt(34)*~listSynth.size - 1).ceil.clip(0, ~listSynth.size - 1))});
+					indexSynth = ~listSynth.detectIndex({arg item, i; item==synth});
+					if(indexSynth == nil, {indexSynth=0});
+					// Controls Synth
+					if(~flagGeneControl == 'off',
+						{controlF = ~controlsSynth.wrapAt(indexSynth).wrapAt(0); controlA = ~controlsSynth.wrapAt(indexSynth).wrapAt(1); controlD = ~controlsSynth.wrapAt(indexSynth).wrapAt(2);
+							// Random Controls Synth
+							if(~automationControlsSynth.wrapAt(indexSynth) == 1,
+								{
+									controlF = (controlF + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+									controlA = (controlA + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+									controlD = (controlD + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+							});
+						},
+						{controlF = ~genomes.wrapAt(agent).wrapAt(35); controlA = ~genomes.wrapAt(agent).wrapAt(36); controlD = ~genomes.wrapAt(agent).wrapAt(37);
+							// Random Controls Synth
+							if(~valueRandomControlsSynth == 1,
+								{
+									controlF = (controlF + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+									controlA = (controlA + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+									controlD = (controlD + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
+							});
+					});
+					// sourceOut
+					if(~flagGeneOut == 'off',
+						{indexOut=~listSynth.detectIndex({arg item, i; item==synth});if(indexOut == nil, {indexOut=0});
+							audioOut = ~audioOutSynth.wrapAt(indexOut)},
+						{audioOut =  ~genomes.wrapAt(agent).wrapAt(38)*~sourceOutAgents.size - 1});
+					// source Input
+					if(~flagGeneInput == 'off',
+						{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions)) - 1); sourceInAgent = ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions)) - 1},
+						{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40)) - 1); sourceInAgent = ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40)) - 1});
+					// test if File In
+					if(~flagEntreeMode == 'File', {sourceInAgent = ~busFileIn.index; flagInput = 1});
+					//envelope
+					if(~flagGeneEnvLevel == 'off',
+						{envLevel=~levelenvelope},
+						{envLevel=~genomes.wrapAt(agent).copyRange(18, 25)});
+					if(~flagGeneEnvDuree == 'off',
+						{envDuree = ~timeenvelope},
+						{timeEnv = envDuree = ~genomes.wrapAt(agent).copyRange(26, 33).sort;
+							~timeenvelope.size.do({arg i; envDuree.wrapPut(i, abs(timeEnv.wrapAt(i+1) - timeEnv.wrapAt(i)))});
+					});
+					//Freq
+					freq = freq / 127 * freqRange + freqLow + freqTrans;
+					if(~flagScaling != 'off', {
+						freq = freq.collect({arg item, index;
+							pos = 0;
+							octave = item.midicps.cpsoct.round(0.001);
+							ratio = octave.frac;
+							octave = octave.floor;
+							degre = (ratio * ~tuning.size + 0.5).floor;
+							(~scale.degrees.size - 1).do({arg i;
+								difL=abs(degre - ~scale.degrees.wrapAt(i));
+								difH=abs(degre - ~scale.degrees.wrapAt(i+1));
+								if(degre >= ~scale.degrees.wrapAt(i) and: {degre <= ~scale.degrees.wrapAt(i+1)},
+									{if(difL <= difH, {pos = i},{pos = i+1})});
+							});
+							item = ~scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+							item = item.cpsmidi;
 						});
 					});
-					// Compress or Expand
-					if(coin(cv.frac), {
-						newFreq = newFreq * cv;
-					},
-					{
-						// Expand
-						if(coin(cv.frac), {
-							newFreq = newFreq + (ecartSemiQ * dissymetrie.sign);
-						});
+					freqRate=freq - 48 + ~root;
+					freqRate=freqRate.clip(-127, 136);
+					// Setup Canal Midi Out
+					if(~flagGeneMidi == 'off',
+						{~canalMidiOutAgent.wrapPut(agent, ~canalMidiOut)},
+						{~canalMidiOutAgent.wrapPut(agent, ~genomes.wrapAt(agent).wrapAt(39)* 16 - 1)});
+					// Set MIDI Off
+					if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
+						~freqMidi.wrapAt(agent).size.do({arg index; ~midiOut.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0);
+							if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0)});
+						});// MIDI OFF
+						// Reset MIDI OUT
+						~freqMidi.wrapPut(agent, []);
+						~freqMidi.wrapPut(agent, (freq + 0.5).floor);// Liste freqMidi agents
 					});
-					newFreq = newFreq.mod(1);
-					~listeagentfreq.wrapPut(agent, newFreq);
-					// Amp
-					newAmp = distances;
-					// Transpose
-					if(coin(cv.frac), {newAmp = newAmp + (ecartType * dissymetrie.sign);
-					});
-					// Compress expand
-					if(coin(cv.frac), {
-						newAmp = newAmp * cv;
-					},
-					{
-						newAmp = newAmp + (ecartSemiQ * dissymetrie.sign)
-					});
-					newAmp = newAmp.mod(1);
-					~listeagentamp.wrapPut(agent, newAmp);
+					//Set fhz
+					freq=freq.midicps.flat;
+					freqRate=freqRate.midicps.flat;
+					//Amp
+					amp = amp * ampRange + ampLow;
+					if(~flagAmpSynth == 'off', {ampReal = 1.0}, {ampReal = 0.0});
 					// Duree
-					newDuree = distances;
-					// Transpose
-					if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
+					duree = duree / ~dureeanalysemax * dureeRange + dureeLow;
+					// Quanta Music
+					duree=duree.floor + ((duree.frac*~quantaMusic+0.5).floor / ~quantaMusic);
+					if(duree == 0, {duree = ~quantaMusic.reciprocal});
+					duree = (duree * dureeTempo).max(0.025);
+					~dureesmusique.wrapPut(agent, duree);// Duree pour playing
+					duree = (duree * ~tempoMusicPlay.tempo.reciprocal).max(0.025);// duree pour synth
+					// Set data for playing
+					freq = freq.soloArray;
+					amp = amp.soloArray;
+					// Playing
+					freq.size.do({arg index;var a, ar=0;
+						// Amp
+						a = amp.wrapAt(index);
+						ar = ampReal;
+						// Send MIDI On
+						if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
+							~midiOut.noteOn(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), a*127);// Send note MIDI ON
+							if(flagVST == 'on', {~fxVST.midi.noteOn(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), a*127)});
+						});
+						// Synth
+						Synth.new(synth, ['out', audioOut + ~startChannelAudioOut, 'buseffets', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index,'freq', freq.wrapAt(index), 'rate', freqRate.wrapAt(index), 'amp', a, 'ampreal', ar, 'duree', duree, 'panLo', pan.wrapAt(0), 'panHi', pan.wrapAt(1), 'offset', offset, 'loop', loopSample, 'reverse', reverseSample,  'buffer', bufferSon.bufnum,  'buffer2', bufferSon2.bufnum, 'controlF', controlF, 'controlA', controlA, 'controlD', controlD, 'antiClick1', ~antiClick.wrapAt(0), 'antiClick2', ~antiClick.wrapAt(1),'controlenvlevel1', envLevel.wrapAt(0), 'controlenvlevel2', envLevel.wrapAt(1), 'controlenvlevel3', envLevel.wrapAt(2), 'controlenvlevel4', envLevel.wrapAt(3), 'controlenvlevel5', envLevel.wrapAt(4),  'controlenvlevel6', envLevel.wrapAt(5),  'controlenvlevel7', envLevel.wrapAt(6),  'controlenvlevel8', envLevel.wrapAt(7), 'controlenvtime1', envDuree.wrapAt(0), 'controlenvtime2', envDuree.wrapAt(1), 'controlenvtime3', envDuree.wrapAt(2), 'controlenvtime4', envDuree.wrapAt(3), 'controlenvtime5', envDuree.wrapAt(4), 'controlenvtime6', envDuree.wrapAt(5), 'controlenvtime7', envDuree.wrapAt(6), 'in', sourceInAgent, 'flag', flagInput], ~groupeSynthAgents, \addToTail);//play
 					});
-					// Compress expand
-					if(coin(cv.frac), {
-						newDuree = newDuree * cv;
-					},
-					{
-						newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
-					});
-					newDuree = newDuree.mod(1) * ~dureeanalysemax;
-					~listeagentduree.wrapPut(agent, newDuree);
-				},
-				"Genetic", {
-					// Calculation algo new musical pattern
-					~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
-						# f = ~geneticF.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i)], 'rec', 0.5, ~flatness, ~flux);
-						newFreq = newFreq.add(f);
-						# a = ~geneticA.wrapAt(agent).next([~listeagentamp.wrapAt(agent).wrapAt(i)], 'rec', 0.5, ~flatness, ~flux);
-						newAmp = newAmp.add(a);
-						# d = ~geneticD.wrapAt(agent).next([~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], 'rec', 0.5, ~flatness, ~flux);
-						newDuree = newDuree.add(d * ~dureeanalysemax);
-					});
-					~listeagentfreq.wrapPut(agent, newFreq);
-					~listeagentamp.wrapPut(agent, newAmp);
-					~listeagentduree.wrapPut(agent, newDuree);
-				},
-				"Kohonen", {
-					newFreq = ~listeagentfreq.wrapAt(agent) * 127;
-					newAmp = ~listeagentamp.wrapAt(agent) * 127;
-					newDuree = ~listeagentduree.wrapAt(agent) / ~dureeanalysemax * 127;
-					// Training Kohonen Freq
-					maxTraining = newFreq.size;
-					maxTraining.do({arg i; ~kohonenF.wrapAt(agent).training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
-					// Calculate Kohonen Freq
-					newFreq = newFreq.collect({arg item, index, z;
-						item = ~kohonenF.wrapAt(agent).training(item.asArray, 1, 1, 0);
-						item = item.wrapAt(0).wrapAt(1);// Vecteur
-						//item = item.mod(127);
-						item = item / 127;
-					});
-					~listeagentfreq.wrapPut(agent, newFreq);
-					// Training Kohonen Amp
-					maxTraining.do({arg i; ~kohonenA.wrapAt(agent).training(newAmp.wrapAt(i).asArray, i+1, maxTraining, 1)});
-					// Calculate Kohonen Amp
-					newAmp = newAmp.collect({arg item, index;
-						item = ~kohonenA.wrapAt(agent).training(item.asArray, 1, 1, 0);
-						item = item.wrapAt(0).wrapAt(1);// Vecteur
-						//item = item.mod(127);
-						item = item / 127;
-					});
-					~listeagentamp.wrapPut(agent, newAmp);
-					// Training Kohonen Duree
-					maxTraining.do({arg i; ~kohonenD.wrapAt(agent).training(newDuree.wrapAt(i).asArray, i+1, maxTraining, 1)});
-					// Calculate Kohonen Duree
-					newDuree = newDuree.collect({arg item, index;
-						item = ~kohonenD.wrapAt(agent).training(item.asArray, 1, 1, 0);
-						item = item.wrapAt(0).wrapAt(1);// Vecteur
-						//item = item.mod(127);
-						item = item / 127 * ~dureeanalysemax;
-					});
-					~listeagentduree.wrapPut(agent, newDuree);
-				},
-				"Neural", {
-					maxTraining = ~listeagentfreq.wrapAt(agent).size;
-					maxTraining.do({arg i;
-						~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 1);
-					});
-					// Calculation algo new musical pattern
-					~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
-						# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 0);
-						newFreq = newFreq.add(f);
-						newAmp = newAmp.add(a);
-						newDuree = newDuree.add(d * ~dureeanalysemax);
-					});
-					~listeagentfreq.wrapPut(agent, newFreq);
-					~listeagentamp.wrapPut(agent, newAmp);
-					~listeagentduree.wrapPut(agent, newDuree);
-				},
-			);
-			//playing agent
-			~couleurs.wrapPut(agent,[1, 1, 1]);// blanc
-			while({duree < ~chordDurAgents.wrapAt(agent) and: {~listeagentfreq.wrapAt(agent).size > ~flagCompteurPlayingAgents.wrapAt(agent)} and: {~chordMaxAgents.wrapAt(agent) > compteuraccord}},
-				{freq=freq.add(~listeagentfreq.wrapAt(agent).wrapAt(~flagCompteurPlayingAgents.wrapAt(agent)) * 127);
-					amp=amp.add(~listeagentamp.wrapAt(agent).wrapAt(~flagCompteurPlayingAgents.wrapAt(agent)));
-					duree =~listeagentduree.wrapAt(agent).wrapAt(~flagCompteurPlayingAgents.wrapAt(agent));
-					~flagCompteurPlayingAgents.wrapPut(agent, ~flagCompteurPlayingAgents.wrapAt(agent) + 1);
-					compteuraccord=compteuraccord + 1;
-			});
-			// Set parametres genes Synth on/off
-			// Freq
-			if(~flagGeneFreq == 'off',
-				{freqRange = (~freqInstr.hi - ~freqInstr.lo);
-					freqLow = ~freqInstr.lo},
-				{freqRange = (~genomes.wrapAt(agent).wrapAt(4) - ~genomes.wrapAt(agent).wrapAt(5)).abs * 127;
-					freqLow = if(~genomes.wrapAt(agent).wrapAt(4) < ~genomes.wrapAt(agent).wrapAt(5), {~genomes.wrapAt(agent).wrapAt(4)},{~genomes.wrapAt(agent).wrapAt(5)}) * 127});
-			if(~flagGeneTransFreq == 'off',
-				{freqTrans = ~freqTransposeInstr.value},
-				{freqTrans = ~genomes.wrapAt(agent).wrapAt(6) * 254 - 127});
-			//Amp
-			if(~flagGeneAmp == 'off',
-				{ampRange = (~ampInstr.hi.dbamp - ~ampInstr.lo.dbamp);
-					ampLow = ~ampInstr.lo.dbamp},
-				{ampRange = (~genomes.wrapAt(agent).wrapAt(7) - ~genomes.wrapAt(agent).wrapAt(8)).abs;
-					ampLow = if(~genomes.wrapAt(agent).wrapAt(7) < ~genomes.wrapAt(agent).wrapAt(8), {~genomes.wrapAt(agent).wrapAt(7)},{~genomes.wrapAt(agent).wrapAt(8)})});
-			//Duree
-			if(~flagGeneDuree == 'off',
-				{dureeRange = (~dureeInstr.hi - ~dureeInstr.lo);
-					dureeLow = ~dureeInstr.lo},
-				{dureeRange = (~genomes.wrapAt(agent).wrapAt(9) - ~genomes.wrapAt(agent).wrapAt(10)).abs;
-					dureeLow = if(~genomes.wrapAt(agent).wrapAt(9) < ~genomes.wrapAt(agent).wrapAt(10), {~genomes.wrapAt(agent).wrapAt(9)},{~genomes.wrapAt(agent).wrapAt(10)})});
-			if(~flagGeneMulDuree == 'off',
-				{dureeTempo = ~dureeTempoinstr.value},
-				{dureeTempo = ~genomes.wrapAt(agent).wrapAt(11) * 80 - 16});
-			// Set good number / tempo
-			if(dureeTempo < 1 and: {dureeTempo >= 1.neg}, {dureeTempo = 1});
-			if(dureeTempo < 1.neg, {dureeTempo = dureeTempo.reciprocal.neg});
-			//Pan
-			if(~flagGenePan == 'off',
-				{pan=~panInstr.value},
-				{pan= ~genomes.wrapAt(agent).wrapAt(12) * 2 - 1;pan = [pan, pan]});
-			// Buffer + sample
-			if(~flagGeneBuffer == 'off',
-				{// Sample
-					if(~flagGeneSample == 'off',
-						{bufferSon = ~bufferSonsInstruments;
-							bufferSon2=~bufferSons.wrapAt((~genomes.wrapAt(agent).wrapAt(14)*~sounds.size - 1).ceil.clip(0, ~sounds.size - 1));
-							//Reverse sample
-							if(~flagGeneReverse == 'off',
-								{reverseSample=~reverseSynthSons.wrapAt(~soundsPositions);if(reverseSample == 1, {reverseSample=1.neg},{reverseSample=1})},
-								{reverseSample= (~genomes.wrapAt(agent).wrapAt(15) * 2 - 1).sign});
-							//Loop sample
-							if(~flagGeneLoop == 'off',
-								{loopSample=~loopSynthSons.wrapAt(~soundsPositions)},
-								{loopSample = (~genomes.wrapAt(agent).wrapAt(16) * 2 - 1).sign});
-							//Offset
-							if(~flagGeneOffset == 'off',
-								{offset=~posSamplesSons.wrapAt(~soundsPositions);
-									if(reverseSample == 1.neg, {offset=1 - offset})},
-								{offset=  ~genomes.wrapAt(agent).wrapAt(17);
-									if(reverseSample == 1.neg, {offset=1 - offset})})},
-						{bufferSon =  ~bufferSons.wrapAt((~genomes.wrapAt(agent).wrapAt(14)*~sounds.size-1).ceil.clip(0,~sounds.size-1));
-							bufferSon2= ~bufferSonsInstruments;
-							//Reverse sample
-							if(~flagGeneReverse == 'off',
-								{reverseSample=~reverseSynthSons.wrapAt(~soundsPositions);if(reverseSample == 1, {reverseSample=1.neg},{reverseSample=1})},
-								{reverseSample= (~genomes.wrapAt(agent).wrapAt(15) * 2 - 1).sign});
-							//Loop sample
-							if(~flagGeneLoop == 'off',
-								{loopSample=~loopSynthSons.wrapAt(~soundsPositions)},
-								{loopSample = (~genomes.wrapAt(agent).wrapAt(16) * 2 - 1).sign});
-							//Offset
-							if(~flagGeneOffset == 'off',
-								{offset=~posSamplesSons.wrapAt(~soundsPositions);
-									if(reverseSample == 1.neg, {offset=1 - offset})},
-								{offset=  ~genomes.wrapAt(agent).wrapAt(17);
-									if(reverseSample == 1.neg, {offset=1 - offset})})})},
-				// Buffers
-				{if(~flagEntreeMode=='Audio', {bufferSon =  ~bufferAudioAgents.wrapAt(agent);
-					bufferSon2= ~bufferSonsInstruments},{bufferSon =  ~bufferFileAgents.wrapAt(agent);
-					bufferSon2= ~bufferSonsInstruments});
-				//Reverse sample
-				if(~flagGeneReverse == 'off',
-					{reverseSample=~reverseSynthSons.wrapAt(~soundsPositions);if(reverseSample == 1, {reverseSample=1.neg},{reverseSample=1})},
-					{reverseSample= (~genomes.wrapAt(agent).wrapAt(15) * 2  - 1).sign});
-				//Loop sample
-				if(~flagGeneLoop == 'off',
-					{loopSample=~loopSynthSons.wrapAt(~soundsPositions)},
-					{loopSample = (~genomes.wrapAt(agent).wrapAt(16) * 2 - 1).sign});
-				//Offset
-				if(~flagGeneOffset == 'off',
-					{offset=~posSamplesSons.wrapAt(~soundsPositions);
-						if(reverseSample == 1.neg, {offset=1 - offset})},
-					{offset=  ~genomes.wrapAt(agent).wrapAt(17);
-						if(reverseSample == 1.neg, {offset=1 - offset})})});
-			// Synth
-			if(~flagGeneSynth == 'off',
-				{synth = ~synthInstruments},
-				{synth =  ~listSynth.wrapAt((~genomes.wrapAt(agent).wrapAt(34)*~listSynth.size - 1).ceil.clip(0, ~listSynth.size - 1))});
-			indexSynth = ~listSynth.detectIndex({arg item, i; item==synth});
-			if(indexSynth == nil, {indexSynth=0});
-			// Controls Synth
-			if(~flagGeneControl == 'off',
-				{controlF = ~controlsSynth.wrapAt(indexSynth).wrapAt(0); controlA = ~controlsSynth.wrapAt(indexSynth).wrapAt(1); controlD = ~controlsSynth.wrapAt(indexSynth).wrapAt(2);
-					// Random Controls Synth
-					if(~automationControlsSynth.wrapAt(indexSynth) == 1,
-						{
-							controlF = (controlF + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
-							controlA = (controlA + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
-							controlD = (controlD + (~automationJitterControlsSynth.wrapAt(indexSynth) * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
-					});
-				},
-				{controlF = ~genomes.wrapAt(agent).wrapAt(35); controlA = ~genomes.wrapAt(agent).wrapAt(36); controlD = ~genomes.wrapAt(agent).wrapAt(37);
-					// Random Controls Synth
-					if(~valueRandomControlsSynth == 1,
-						{
-							controlF = (controlF + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
-							controlA = (controlA + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
-							controlD = (controlD + (~valueJitterControlsSynth * rrand(1.0.neg, 1.0))).clip(0.01, 0.99);
-					});
-			});
-			// sourceOut
-			if(~flagGeneOut == 'off',
-				{indexOut=~listSynth.detectIndex({arg item, i; item==synth});if(indexOut == nil, {indexOut=0});
-					audioOut = ~audioOutSynth.wrapAt(indexOut)},
-				{audioOut =  ~genomes.wrapAt(agent).wrapAt(38)*~sourceOutAgents.size - 1});
-			// source Input
-			if(~flagGeneInput == 'off',
-				{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions)) - 1); sourceInAgent = ~audioInLR.wrapAt(~audioInputSons.wrapAt(~soundsPositions)) - 1},
-				{~synthRecAudioAgents.wrapAt(agent).setn(\in, ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40)) - 1); sourceInAgent = ~audioInLR.wrapAt(~genomes.wrapAt(agent).wrapAt(40)) - 1});
-			// test if File In
-			if(~flagEntreeMode == 'File', {sourceInAgent = ~busFileIn.index; flagInput = 1});
-			//envelope
-			if(~flagGeneEnvLevel == 'off',
-				{envLevel=~levelenvelope},
-				{envLevel=~genomes.wrapAt(agent).copyRange(18, 25)});
-			if(~flagGeneEnvDuree == 'off',
-				{envDuree = ~timeenvelope},
-				{timeEnv = envDuree = ~genomes.wrapAt(agent).copyRange(26, 33).sort;
-					~timeenvelope.size.do({arg i; envDuree.wrapPut(i, abs(timeEnv.wrapAt(i+1) - timeEnv.wrapAt(i)))});
-			});
-			//Freq
-			freq = freq / 127 * freqRange + freqLow + freqTrans;
-			if(~flagScaling != 'off', {
-				freq = freq.collect({arg item, index;
-					pos = 0;
-					octave = item.midicps.cpsoct.round(0.001);
-					ratio = octave.frac;
-					octave = octave.floor;
-					degre = (ratio * ~tuning.size + 0.5).floor;
-					(~scale.degrees.size - 1).do({arg i;
-						difL=abs(degre - ~scale.degrees.wrapAt(i));
-						difH=abs(degre - ~scale.degrees.wrapAt(i+1));
-						if(degre >= ~scale.degrees.wrapAt(i) and: {degre <= ~scale.degrees.wrapAt(i+1)},
-							{if(difL <= difH, {pos = i},{pos = i+1})});
-					});
-					item = ~scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
-					item = item.cpsmidi;
-				});
-			});
-			freqRate=freq - 48 + ~root;
-			freqRate=freqRate.clip(-127, 136);
-			// Setup Canal Midi Out
-			if(~flagGeneMidi == 'off',
-				{~canalMidiOutAgent.wrapPut(agent, ~canalMidiOut)},
-				{~canalMidiOutAgent.wrapPut(agent, ~genomes.wrapAt(agent).wrapAt(39)* 16 - 1)});
-			// Set MIDI Off
-			if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
-				~freqMidi.wrapAt(agent).size.do({arg index; ~midiOut.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0);
-					if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), 0)});
-				});// MIDI OFF
-				// Reset MIDI OUT
-				~freqMidi.wrapPut(agent, []);
-				~freqMidi.wrapPut(agent, (freq + 0.5).floor);// Liste freqMidi agents
-			});
-			//Set fhz
-			freq=freq.midicps.flat;
-			freqRate=freqRate.midicps.flat;
-			//Amp
-			amp = amp * ampRange + ampLow;
-			if(~flagAmpSynth == 'off', {ampReal = 1.0}, {ampReal = 0.0});
-			// Duree
-			duree = duree / ~dureeanalysemax * dureeRange + dureeLow;
-			// Quanta Music
-			duree=duree.floor + ((duree.frac*~quantaMusic+0.5).floor / ~quantaMusic);
-			if(duree == 0, {duree = ~quantaMusic.reciprocal});
-			duree = (duree * dureeTempo).max(0.025);
-			~dureesmusique.wrapPut(agent, duree);// Duree pour playing
-			duree = (duree * ~tempoMusicPlay.tempo.reciprocal).max(0.025);// duree pour synth
-			// Set data for playing
-			freq = freq.soloArray;
-			amp = amp.soloArray;
-			// Playing
-			freq.size.do({arg index;var a, ar=0;
-				// Amp
-				a = amp.wrapAt(index);
-				ar = ampReal;
-				// Send MIDI On
-				if(~flagMidiOut == 'on' and: {~canalMidiOutAgent.wrapAt(agent) >= 0}, {
-					~midiOut.noteOn(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), a*127);// Send note MIDI ON
-					if(flagVST == 'on', {~fxVST.midi.noteOn(~canalMidiOutAgent.wrapAt(agent), ~freqMidi.wrapAt(agent).wrapAt(index), a*127)});
-				});
-				// Synth
-				Synth.new(synth, ['out', audioOut + ~startChannelAudioOut, 'buseffets', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index,'freq', freq.wrapAt(index), 'rate', freqRate.wrapAt(index), 'amp', a, 'ampreal', ar, 'duree', duree, 'panLo', pan.wrapAt(0), 'panHi', pan.wrapAt(1), 'offset', offset, 'loop', loopSample, 'reverse', reverseSample,  'buffer', bufferSon.bufnum,  'buffer2', bufferSon2.bufnum, 'controlF', controlF, 'controlA', controlA, 'controlD', controlD, 'antiClick1', ~antiClick.wrapAt(0), 'antiClick2', ~antiClick.wrapAt(1),'controlenvlevel1', envLevel.wrapAt(0), 'controlenvlevel2', envLevel.wrapAt(1), 'controlenvlevel3', envLevel.wrapAt(2), 'controlenvlevel4', envLevel.wrapAt(3), 'controlenvlevel5', envLevel.wrapAt(4),  'controlenvlevel6', envLevel.wrapAt(5),  'controlenvlevel7', envLevel.wrapAt(6),  'controlenvlevel8', envLevel.wrapAt(7), 'controlenvtime1', envDuree.wrapAt(0), 'controlenvtime2', envDuree.wrapAt(1), 'controlenvtime3', envDuree.wrapAt(2), 'controlenvtime4', envDuree.wrapAt(3), 'controlenvtime5', envDuree.wrapAt(4), 'controlenvtime6', envDuree.wrapAt(5), 'controlenvtime7', envDuree.wrapAt(6), 'in', sourceInAgent, 'flag', flagInput], ~groupeSynthAgents, \addToTail);//play
-			});
 			});
 		};
 
@@ -5764,12 +5764,12 @@ G                       Init Genome Agent (solo).
 								s.sync;
 								~rawData = Array.newFrom(~rawData).stutter(2) / 2;
 								s.sync;
-								~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2);
+								~bufferanalysefile=Buffer.loadCollection(s, ~rawData, 2, action: {arg buf; Post << "Finished" << Char.nl});
 								s.sync;
 							},
 							{Post << "Loading sound for analyze " << " " << ~samplePourAnalyse << Char.nl;
 								s.sync;
-								~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse,  channels: [0, 1]);
+								~bufferanalysefile=Buffer.readChannel(s, ~samplePourAnalyse,  channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
 								s.sync;
 						});
 						//~bufferanalysefile = ~bufferanalysefile.normalize(1.0);
@@ -8485,7 +8485,7 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					//pointer = if(reverse > 0, Line.kr(offset, controlF, dureesample), Line.kr(controlF, offset, dureesample));
 					//main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer), 1);
-					//RecordBuf.ar(main, buffer);
+					//RecordBuf.ar(main, buffer, 0, 1, 0);
 					main = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, controlF + 0.01, -1, controlA * 15 + 1, controlD);
 
 
@@ -10901,7 +10901,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
@@ -10947,7 +10947,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
@@ -10993,7 +10993,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_LocalMax(main, controlF*64);
@@ -11039,7 +11039,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmear(main, controlF*64);
@@ -11085,7 +11085,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
@@ -11131,7 +11131,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
@@ -11177,7 +11177,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
@@ -11223,7 +11223,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
@@ -11269,7 +11269,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
@@ -11315,7 +11315,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
@@ -11361,7 +11361,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagAbove(main, controlF*64);
@@ -11407,7 +11407,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagBelow(main, controlF*64);
@@ -11453,7 +11453,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagClip(main, controlF*16);
@@ -11499,7 +11499,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagNoise(main);
@@ -11545,7 +11545,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSquared(main);
@@ -11591,7 +11591,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
@@ -11637,7 +11637,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmooth(main, controlF);
@@ -11683,7 +11683,7 @@ G                       Init Genome Agent (solo).
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
@@ -13105,7 +13105,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					localBuf = LocalBuf(s.sampleRate, 1);
-					buffer = RecordBuf.ar(ineffet, localBuf);
+					buffer = RecordBuf.ar(ineffet, localBuf, 0, 1, 0);
 					local = LocalIn.ar(1);
 					rate = control1*4;
 					//if(rate < 0.5 , BufRateScale.kr(buffer) * rate, BufRateScale.kr(buffer) * rate, * 20 - 9);
@@ -13142,7 +13142,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					localBuf = LocalBuf(s.sampleRate, 1);
-					buffer = RecordBuf.ar(ineffet, localBuf);
+					buffer = RecordBuf.ar(ineffet, localBuf, 0, 1, 0);
 					local = LocalIn.ar(1);
 					rate = control3*4;
 					//if(rate < 0.5 , BufRateScale.kr(buffer) * rate, BufRateScale.kr(buffer) * rate, * 20 - 9);
@@ -13178,7 +13178,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, 2);// + ou - local;
 					LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
@@ -13206,7 +13206,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2.reciprocal) + (control3*4), Dust.kr(control4.reciprocal), Logistic.kr(control5 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(localBuf), 1, 0.333, 0.5) + local * amp;
 
@@ -13233,7 +13233,7 @@ G                       Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control2 * 2).clip(0.0625, 2.0), 1.0, control3 * BufFrames.kr(localBuf), 1);
 					effet = FFT(LocalBuf(2048, 1), effet);
@@ -13263,7 +13263,7 @@ G                       Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
 					effet = FFT(LocalBuf(512, 1), effet);
@@ -13293,7 +13293,7 @@ G                       Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
 					effet = FFT(LocalBuf(2048, 1), effet);
@@ -13993,7 +13993,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					buffer = LocalBuf(s.sampleRate, 1).clear;
 					trig = Dust.kr(control1 * 64 + 0.01);
-					RecordBuf.ar(ineffet, buffer, Saw.kr(control2 * 16 + 0.01).abs, trigger: trig);
+					RecordBuf.ar(ineffet, buffer, Saw.kr(control2 * 16 + 0.01).abs, 1, 0, trigger: trig);
 					// effet
 					effet=Mix(Convolution2L.ar(ineffet, buffer, trig * control3, 2048));
 					effet = effet * amp;
@@ -14021,7 +14021,7 @@ G                       Init Genome Agent (solo).
 					var ineffet, effet, ambisonic, localBuf, buffer, local,rate;
 					ineffet=Mix(In.ar(in, 2));
 					localBuf = LocalBuf(s.sampleRate, 1);
-					buffer = RecordBuf.ar(ineffet, localBuf);
+					buffer = RecordBuf.ar(ineffet, localBuf, 0, 1, 0);
 					local = LocalIn.ar(1);
 					rate = control1*4;
 					// effet

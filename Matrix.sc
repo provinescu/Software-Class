@@ -740,7 +740,6 @@ y ... -						Musical keys.
 							fonctionLoadSynthesizer.value(data, tampon);
 							//Document.listener.string="";
 							s.queryAllNodes;
-							listeDataOSC = tampon;
 							/*// Init Band for Synth
 							fonctionInitBand.value(numFhzBand);*/
 					});
@@ -1367,7 +1366,7 @@ y ... -						Musical keys.
 											musicData=musicData.add(energy);musicData=musicData.add(flux);
 											freqBefore = freqTampon; ampBefore = ampTampon; dureeBefore = duree;
 											// Set All Data
-											if(signalBuffer > listeDataOSC.at(0).size,
+											if(signalBuffer >= listeDataOSC.at(0).size,
 												{
 													listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
 													lastTimeBand.put(0, time);
@@ -1386,7 +1385,7 @@ y ... -						Musical keys.
 													// Buses
 													busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
 													// Add Data
-													if(signalBuffer > listeDataOSC.at(i).size,
+													if(signalBuffer >= listeDataOSC.at(i).size,
 														{
 															listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
 															lastTimeBand.put(i, time);
@@ -1464,7 +1463,7 @@ y ... -						Musical keys.
 									musicData=musicData.add(energy);musicData=musicData.add(flux);
 									freqBefore = freqTampon; ampBefore = ampTampon; dureeBefore = duree;
 									// Set All Data
-									if(signalBuffer > listeDataOSC.at(0).size,
+									if(signalBuffer >= listeDataOSC.at(0).size,
 										{
 											listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
 											lastTimeBand.put(0, time);
@@ -1483,7 +1482,7 @@ y ... -						Musical keys.
 											// Buses
 											busOSC.at(i).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux);
 											// Add Data
-											if(signalBuffer > listeDataOSC.at(i).size,
+											if(signalBuffer >= listeDataOSC.at(i).size,
 												{
 													listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
 													lastTimeBand.put(i, time);
@@ -1580,7 +1579,7 @@ y ... -						Musical keys.
 								musicData=musicData.add(energyMIDI);musicData=musicData.add(fluxMIDI);
 								freqBefore = freqTampon; ampBefore = ampTampon; dureeBefore = dureeMIDI;
 								// Set All Data
-								if(signalBuffer > listeDataOSC.at(0).size,
+								if(signalBuffer >= listeDataOSC.at(0).size,
 									{
 										listeDataOSC.put(0, listeDataOSC.at(0).add(musicData));
 										lastTimeBand.put(0, time);
@@ -1599,7 +1598,7 @@ y ... -						Musical keys.
 										// Buses
 										busOSC.at(i).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI);
 										// Add Data
-										if(signalBuffer > listeDataOSC.at(i).size,
+										if(signalBuffer >= listeDataOSC.at(i).size,
 											{
 												listeDataOSC.put(i, listeDataOSC.at(i).add(musicData));
 												lastTimeBand.put(i, time);
@@ -11956,7 +11955,7 @@ y ... -						Musical keys.
 				local = LocalIn.ar(1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, loop: 1, preLevel: 0.333);
+				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				//FX
 				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, mul: amp);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
@@ -12038,7 +12037,7 @@ y ... -						Musical keys.
 				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, loop: 1);
+				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, ctrl3 * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				PV_RecordBuf(chain, local, 0, 1, 1);
@@ -12083,7 +12082,7 @@ y ... -						Musical keys.
 				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, loop: 1);
+				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, 0, 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(512, 1), chain);
 				PV_RecordBuf(chain, local, 0, 1, 1);
@@ -12128,7 +12127,7 @@ y ... -						Musical keys.
 				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, loop: 1);
+				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, 0, 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(512, 1), chain);
 				PV_RecordBuf(chain, local, 0, 1, 1);

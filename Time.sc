@@ -666,7 +666,7 @@ f						Switch File for Analyze.
 				if(f.numChannels == 1, {
 					Post << "Loading mono sound ->" << p << Char.nl;
 					s.sync;
-					b=Buffer.read(s, p);
+					b=Buffer.read(s, p, action: {arg buf; Post << "Finished" << Char.nl});
 					s.sync;
 				}, {
 					d = FloatArray.newClear(f.numFrames * 2);
@@ -705,12 +705,12 @@ f						Switch File for Analyze.
 						s.sync;
 						d = Array.newFrom(d).stutter(2) / 2;
 						s.sync;
-						bufferFile=Buffer.loadCollection(s, d, 2);
+						bufferFile=Buffer.loadCollection(s, d, 2, action: {arg buf; Post << "Finished" << Char.nl});
 						s.sync;
 					},
 					{Post << "Loading sound stereo for analyze" << p << Char.nl;
 						s.sync;
-						bufferFile=Buffer.readChannel(s, p, channels: [0, 1]);
+						bufferFile=Buffer.readChannel(s, p, channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
 						s.sync;
 				});
 				f.close;
@@ -4870,7 +4870,7 @@ f						Switch File for Analyze.
 		SynthDef('PV_MagFreeze',
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear;
-				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
+				RecordBuf.ar(signal, buffer, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = PlayBuf.ar(1, buffer, (ctrl1 / 12544 * 4).clip(0.25, 4), 1, loop: 1);
 				chain = FFT(LocalBuf(2048, 1), chain);
 				chain = PV_MagFreeze(chain, SinOsc.kr(ctrl2.clip(0.0625, 1)));
@@ -5112,7 +5112,7 @@ f						Switch File for Analyze.
 		SynthDef('DJ_FX',
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate, 1).clear, local=LocalIn.ar(1);
-				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
+				RecordBuf.ar(signal, buffer,  recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = Mix(HPplayBuf.ar(1, buffer, (ctrl1 / 12544 * 4) + LFNoise2.kr(ctrl2.reciprocal), 1, 0, loop: 1) + (local * 0.5));
 				LocalOut.ar(DelayC.ar(chain, 1, ctrl3.clip(0.01, 1)));
 				chain = Mix(chain  * vol + (signal * (1 - vol)));
@@ -5184,7 +5184,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, vol, gate = 1;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
 				LocalIn.ar(1).clear;
-				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
+				RecordBuf.ar(signal, buffer,  recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 / 12544 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), 0.2, -1, 8, 0, 1, vol, signal * (1 - vol)));
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl3.clip(0.01, 4)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
@@ -5266,7 +5266,7 @@ f						Switch File for Analyze.
 			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
 				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
 				LocalIn.ar(1).clear;
-				RecordBuf.ar(signal, buffer, loop: 1, preLevel: 0.333);
+				RecordBuf.ar(signal, buffer,  recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), ctrl3.clip(0.01, 1), -1, (ctrl4 * 16).clip(1, 16), 0, 1, vol, signal * (1 - vol)));
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl5.clip(0.01, 4)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);

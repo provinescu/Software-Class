@@ -1130,9 +1130,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~file.openRead(~sounds.wrapAt(i).standardizePath);
 					s.sync;
 					if(~file.numChannels == 1,
-						{Post << "Loading mono sound" << " " << ~sounds.wrapAt(i).standardizePath << Char.nl;
-							s.sync;
-							~listebuffer=~listebuffer.add(Buffer.read(s, ~sounds.wrapAt(i).standardizePath));
+						{	~listebuffer=~listebuffer.add(Buffer.read(s, ~sounds.wrapAt(i).standardizePath, action: {Post << i << ~sounds.wrapAt(i).standardizePath << " Finished" << Char.nl}));
 							s.sync;
 						},
 						{~rawData= FloatArray.newClear(~file.numFrames * 2);
@@ -1145,7 +1143,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							s.sync;
 							~rawData = ~rawData.unlace(2).sum / 2;
 							s.sync;
-							~listebuffer=~listebuffer.add(Buffer.loadCollection(s, ~rawData, 1));
+							~listebuffer=~listebuffer.add(Buffer.loadCollection(s, ~rawData, 1, action: {Post << i << ~sounds.wrapAt(i).standardizePath << " Finished" << Char.nl}));
 							s.sync;
 					});
 					//~listebuffer.wrapPut(i, ~listebuffer.wrapAt(i).normalize(1.0));
@@ -3489,8 +3487,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			);
 			//Range Band 100
 			~rangeBand = ~rangeBand.add(EZText(w, Rect(0, 0, 260, 20), "Range Band",
-			{arg range; ~bandFHZ.put(i, range.value)},
-			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true, 60);
+				{arg range; ~bandFHZ.put(i, range.value)},
+				[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true, 60);
 			);
 			w.view.decorator.nextLine;
 			StaticText(w, Rect(0,0, 50, 18)).string_("Tuning").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 10));
@@ -6075,7 +6073,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
@@ -6112,7 +6110,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					main = if(freq < 64.5.midicps , RLPF.ar(osc, XLine.ar(63.5.midicps*controls.at(0)+27.5, freq, duree*controls.at(2)), 0.333), RHPF.ar(osc, XLine.ar(127.midicps*controls.at(1)+27.5, freq, duree*controls.at(2)), 0.333));
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
@@ -6152,7 +6150,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// envelope (identique pour chaque synth !!!!!)
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					if(freqRate.abs >= 1.0 , main=Resonz.ar(osc, XLine.ar(127.midicps*controls.at(0)+21.midicps, 55*controls.at(1) + 21.midicps, duree*controls.at(2))), main=Resonz.ar(osc, XLine.ar(55*controls.at(0)+21.midicps, 127.midicps*controls.at(1) + 21.midicps, duree*controls.at(2))));
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
@@ -6193,7 +6191,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controls.at(0) * 10, controls.at(1) * 10);
+					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controls.at(0) * 10, controls.at(1) * 10);
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
@@ -6233,7 +6231,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controls.at(0) * 40, 40, abs(controls.at(0)*2-1));
+					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controls.at(0) * 40, 40, abs(controls.at(0)*2-1));
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
@@ -6273,7 +6271,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25)), controls.at(0) * 512, controls.at(1) * 2pi));
+					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controls.at(0) * 512, controls.at(1) * 2pi));
 					//main = Limiter.ar(main, 1.0, 0.01);
 					//
 					// Switch Audio Out
@@ -6313,9 +6311,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagShift(main, controls.at(0) * 4, controls.at(1) * 128 - 64);
@@ -6359,9 +6357,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_LocalMax(main, controls.at(0)*64);
@@ -6405,9 +6403,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmear(main, controls.at(0)*64);
@@ -6451,9 +6449,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RandComb(main, controls.at(0),  LFNoise2.kr(controls.at(1)*64));
@@ -6497,9 +6495,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinShift(main, controls.at(0)*4,  controls.at(1)*256 - 128);
@@ -6543,9 +6541,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BinScramble(main, controls.at(0), controls.at(1), LFNoise2.kr(controls.at(2).reciprocal));
@@ -6589,9 +6587,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_BrickWall(main, controls.at(0)*2 - 1);
@@ -6635,9 +6633,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_ConformalMap(main, controls.at(0)*2 - 1, controls.at(1)*2 - 1);
@@ -6681,9 +6679,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controls.at(0)*100), (controls.at(1)*100).reciprocal));
@@ -6727,9 +6725,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagAbove(main, controls.at(0)*64);
@@ -6773,9 +6771,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagBelow(main, controls.at(0)*64);
@@ -6819,9 +6817,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagClip(main, controls.at(0)*16);
@@ -6865,9 +6863,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagNoise(main);
@@ -6911,9 +6909,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSquared(main);
@@ -6957,9 +6955,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RectComb(main, controls.at(0) * 32, controls.at(1), controls.at(2));
@@ -7003,9 +7001,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_MagSmooth(main, controls.at(0));
@@ -7049,9 +7047,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_Compander(main, controls.at(0)*64, controls.at(1)*10, controls.at(2)*10);
@@ -7095,9 +7093,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4),timeScale: duree, levelScale: 1, doneAction: 2);
 					// Synth
-					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(main, buffer);
+					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
 					main = FFT(LocalBuf(2048, 1), main);
 					main = PV_RandComb(main, controls.at(0),  LFNoise2.kr(controls.at(1)*64));
@@ -7142,9 +7140,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7193,9 +7191,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7244,9 +7242,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7295,9 +7293,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7346,9 +7344,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7397,9 +7395,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7448,9 +7446,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7499,9 +7497,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7550,9 +7548,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7601,9 +7599,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -7652,9 +7650,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Synth
-					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp / 2 - 0.25));
+					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					// RecordBuf
-					recBuf=RecordBuf.ar(in1, buffer2);
+					recBuf=RecordBuf.ar(in1, buffer2, 0, 1, 0);
 					//pos = if(controls.at(1).value <= 0.01 , pos, Logistic.kr(controls.at(1)*4, 1, Rand(0, 1)));
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
@@ -11572,7 +11570,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6);// + ou - local;
 					effet = Limiter.ar(effet, 1.0, 0.01);
@@ -11604,9 +11602,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					buffer = RecordBuf.ar(ineffet, localBuf);
+					buffer = RecordBuf.ar(ineffet, localBuf, 0, 1, 0);
 					rate = control1*4;
-					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0, loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2)+rate, Dust.kr(control3), Logistic.kr(control4/2+3.5, 100, Rand(0, 1))* BufFrames.kr(localBuf), 1, 0.05, 0.1) + local * amp / 2;
 					effet = Mix(effet);
@@ -12296,7 +12294,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
+					RecordBuf.ar(ineffet * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf,0, 1, 0, loop: 0, trigger: Impulse.kr(control1), preLevel: 0.333);
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6);// + ou - local;
 					effet = Limiter.ar(effet, 1.0, 0.01);
@@ -12327,7 +12325,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					buffer = RecordBuf.ar(ineffet, localBuf);
+					buffer = RecordBuf.ar(ineffet, localBuf, 0, 1, 0);
 					rate = control1*4;
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2)+rate, Dust.kr(control3), Logistic.kr(control4/2+3.5, 100, Rand(0, 1))* BufFrames.kr(localBuf), 1, 0.05, 0.1) + local * amp / 2;
