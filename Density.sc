@@ -4301,7 +4301,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		}, 6, layout: \vert2);
 		// Data Maximum
 		EZKnob(windowEar, 80 @ 80, "Max Data", ControlSpec(1, 255, \lin, 1),
-			{|ez| maximumData = ez.value;
+			{|ez| maximumData = (ez.value - 1).max(1);
 				dataFlux = [];
 				dataFlatness = [];
 				dataCentroid = [];
@@ -4357,7 +4357,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 				numIndexSynthBand = 0
-		}, maximumData,layout: \vert2);
+		}, 24,layout: \vert2);
 		windowEar.view.decorator.nextLine;
 		// Synth
 		StaticText(windowEar, Rect(0, 0, 500, 15)).string_("SYNTHESIZER").stringColor_(Color.yellow);
