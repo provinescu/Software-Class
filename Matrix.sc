@@ -193,7 +193,7 @@ Matrix {
 			'RandKlankSample',
 			'DjScratch',
 			'LiquidFilter',
-			'FluidSynth',
+			//'FluidSynth',
 			//////// FFT 1 buffer
 			'FFT 1 BUFFER (',
 			'PV_HPshiftDown',
@@ -6523,7 +6523,7 @@ y ... -						Musical keys.
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
-		SynthDef('FluidSynth',
+		/*SynthDef('FluidSynth',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
 				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
 				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
@@ -6575,7 +6575,7 @@ y ... -						Musical keys.
 				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
 				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
+		}).add;*/
 
 		//////////////////////// FFT with 1 Sample /////////////////////////
 
