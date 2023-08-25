@@ -2161,11 +2161,11 @@ G                       Init Genome Agent (solo).
 			~kohonenA = ~kohonenA.add(HPclassKohonen.new(1,127,1));
 			~kohonenD = ~kohonenD.add(HPclassKohonen.new(1,127,1));
 			// For Genetic
-			~geneticF = ~geneticF.add(HPclassGenetiques.new(1, 64));
-			~geneticA = ~geneticA.add(HPclassGenetiques.new(1, 64));
-			~geneticD = ~geneticD.add(HPclassGenetiques.new(1, 64));
+			~geneticF = ~geneticF.add(HPclassGenetiques.new(1, 127));
+			~geneticA = ~geneticA.add(HPclassGenetiques.new(1, 127));
+			~geneticD = ~geneticD.add(HPclassGenetiques.new(1, 127));
 			// For Neural
-			~neuralFAD = ~neuralFAD.add(HPNeuralNet.new(3, 1, [5], 3));
+			~neuralFAD = ~neuralFAD.add(HPNeuralNet.new(3, 1, [9], 3));
 			// Creation Genome
 			if(mode == 'init', {
 				genome=[];
@@ -2900,11 +2900,11 @@ G                       Init Genome Agent (solo).
 						"Genetic", {
 							// Calculation algo new musical pattern
 							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
-								# f = ~geneticF.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i)], 'rec', 0.5, ~flatness, ~flux);
+								# f = ~geneticF.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i)], 1, ~flatness, ~flux);
 								newFreq = newFreq.add(f);
-								# a = ~geneticA.wrapAt(agent).next([~listeagentamp.wrapAt(agent).wrapAt(i)], 'rec', 0.5, ~flatness, ~flux);
+								# a = ~geneticA.wrapAt(agent).next([~listeagentamp.wrapAt(agent).wrapAt(i)], 1, ~flatness, ~flux);
 								newAmp = newAmp.add(a);
-								# d = ~geneticD.wrapAt(agent).next([~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], 'rec', 0.5, ~flatness, ~flux);
+								# d = ~geneticD.wrapAt(agent).next([~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], 1, ~flatness, ~flux);
 								newDuree = newDuree.add(d * ~dureeanalysemax);
 							});
 							~listeagentfreq.wrapPut(agent, newFreq);
@@ -2920,7 +2920,7 @@ G                       Init Genome Agent (solo).
 							maxTraining.do({arg i; ~kohonenF.wrapAt(agent).training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
 							// Calculate Kohonen Freq
 							newFreq = newFreq.collect({arg item, index, z;
-								item = ~kohonenF.wrapAt(agent).training(item.asArray, 1, 1, 0);
+								item = ~kohonenF.wrapAt(agent).training(item.asArray, 1, 1, 1);
 								item = item.wrapAt(0).wrapAt(1);// Vecteur
 								//item = item.mod(127);
 								item = item / 127;
@@ -2930,7 +2930,7 @@ G                       Init Genome Agent (solo).
 							maxTraining.do({arg i; ~kohonenA.wrapAt(agent).training(newAmp.wrapAt(i).asArray, i+1, maxTraining, 1)});
 							// Calculate Kohonen Amp
 							newAmp = newAmp.collect({arg item, index;
-								item = ~kohonenA.wrapAt(agent).training(item.asArray, 1, 1, 0);
+								item = ~kohonenA.wrapAt(agent).training(item.asArray, 1, 1, 1);
 								item = item.wrapAt(0).wrapAt(1);// Vecteur
 								//item = item.mod(127);
 								item = item / 127;
@@ -2940,7 +2940,7 @@ G                       Init Genome Agent (solo).
 							maxTraining.do({arg i; ~kohonenD.wrapAt(agent).training(newDuree.wrapAt(i).asArray, i+1, maxTraining, 1)});
 							// Calculate Kohonen Duree
 							newDuree = newDuree.collect({arg item, index;
-								item = ~kohonenD.wrapAt(agent).training(item.asArray, 1, 1, 0);
+								item = ~kohonenD.wrapAt(agent).training(item.asArray, 1, 1, 1);
 								item = item.wrapAt(0).wrapAt(1);// Vecteur
 								//item = item.mod(127);
 								item = item / 127 * ~dureeanalysemax;
@@ -2948,13 +2948,10 @@ G                       Init Genome Agent (solo).
 							~listeagentduree.wrapPut(agent, newDuree);
 						},
 						"Neural", {
-							maxTraining = ~listeagentfreq.wrapAt(agent).size;
-							maxTraining.do({arg i;
-								~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 1);
-							});
+							//maxTraining = ~listeagentfreq.wrapAt(agent).size;
 							// Calculation algo new musical pattern
 							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
-								# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], mode: 0);
+								# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], nil, 1, 0.5, 0.5);
 								newFreq = newFreq.add(f);
 								newAmp = newAmp.add(a);
 								newDuree = newDuree.add(d * ~dureeanalysemax);

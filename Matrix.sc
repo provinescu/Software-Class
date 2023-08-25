@@ -737,13 +737,10 @@ y ... -						Musical keys.
 				7, {
 					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
-							tampon = listeDataOSC;
 							data = fonctionSaveSynthesizer.value(window);
-							fonctionLoadSynthesizer.value(data, tampon);
+							fonctionLoadSynthesizer.value(data);
 							//Document.listener.string="";
 							s.queryAllNodes;
-							/*// Init Band for Synth
-							fonctionInitBand.value(numFhzBand);*/
 					});
 				},
 				// Copy Preset
@@ -3288,11 +3285,11 @@ y ... -						Musical keys.
 			kohonenA = HPclassKohonen.new(1,127,1);
 			kohonenD = HPclassKohonen.new(1,127,1);
 			// For Genetic
-			geneticF = HPclassGenetiques.new(1, 64);
-			geneticA = HPclassGenetiques.new(1, 64);
-			geneticD = HPclassGenetiques.new(1, 64);
+			geneticF = HPclassGenetiques.new(1, 127);
+			geneticA = HPclassGenetiques.new(1, 127);
+			geneticD = HPclassGenetiques.new(1, 127);
 			// For Neural
-			neuralFAD = HPNeuralNet.new(3, 1, [5], 3);
+			neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
 
 			// Init fhzBand
 			fonctionBand = {arg band;
@@ -3904,11 +3901,11 @@ y ... -						Musical keys.
 				kohonenA = HPclassKohonen.new(1,127,1);
 				kohonenD = HPclassKohonen.new(1,127,1);
 				// For Genetic
-				geneticF = HPclassGenetiques.new(1, 64);
-				geneticA = HPclassGenetiques.new(1, 64);
-				geneticD = HPclassGenetiques.new(1, 64);
+				geneticF = HPclassGenetiques.new(1, 127);
+				geneticA = HPclassGenetiques.new(1, 127);
+				geneticD = HPclassGenetiques.new(1, 127);
 				// For Neural
-				neuralFAD = HPNeuralNet.new(3, 1, [5], 3);
+				neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
 			});
 
 			for(0, numFhzBand,
@@ -4382,13 +4379,14 @@ y ... -						Musical keys.
 						freqGen = [];
 						ampGen = [];
 						durGen = [];
+						//busOSC.at(0).get({arg val; flux = val.at(7); flatness = val.at(5)});
 						// Calculation algo new musical pattern
 						newFreq.size.do({arg i, f, a, d;
-							# f = geneticF.next([newFreq.at(i)], 'rec', 0.5, flatness, flux);
+							# f = geneticF.next([newFreq.at(i)], 1, 0.5, 0.15);
 							freqGen = freqGen.add(f);
-							# a = geneticA.next([newAmp.at(i)], 'rec', 0.5, flatness, flux);
+							# a = geneticA.next([newAmp.at(i)], 1, 0.5, 0.15);
 							ampGen = ampGen.add(a);
-							# d = geneticD.next([newDuree.at(i)], 'rec', 0.5, flatness, flux);
+							# d = geneticD.next([newDuree.at(i)], 1, 0.5, 0.15);
 							durGen = durGen.add(d);
 						});
 						newFreq = freqGen;
@@ -4399,10 +4397,13 @@ y ... -						Musical keys.
 						// Training Kohonen Freq
 						maxTraining = newFreq.size;
 						newFreq = newFreq * 127;
-						maxTraining.do({arg i; kohonenF.training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
+						maxTraining.do({arg i;
+							newFreq.size.do({arg i;
+								kohonenF.training(newFreq.wrapAt(i).asArray, i+1, maxTraining, 1)});
+						});
 						// Calculate Kohonen Freq
 						newFreq = newFreq.collect({arg item, index, z;
-							item = kohonenF.training(item.asArray, 1, 1, 0);
+							item = kohonenF.training(item.asArray, 1, 1, 1);
 							item = item.at(0).at(1);// Vecteur
 							item = item / 127;
 						});
@@ -4411,7 +4412,7 @@ y ... -						Musical keys.
 						maxTraining.do({arg i; kohonenA.training(newAmp.wrapAt(i).asArray, i+1, maxTraining, 1)});
 						// Calculate Kohonen Amp
 						newAmp = newAmp.collect({arg item, index;
-							item = kohonenA.training(item.asArray, 1, 1, 0);
+							item = kohonenA.training(item.asArray, 1, 1, 1);
 							item = item.at(0).at(1);// Vecteur
 							item = item / 127;
 						});
@@ -4420,7 +4421,7 @@ y ... -						Musical keys.
 						maxTraining.do({arg i; kohonenD.training(newDuree.wrapAt(i).asArray, i+1, maxTraining, 1)});
 						// Calculate Kohonen Duree
 						newDuree = newDuree.collect({arg item, index;
-							item = kohonenD.training(item.asArray, 1, 1, 0);
+							item = kohonenD.training(item.asArray, 1, 1, 1);
 							item = item.at(0).at(1);// Vecteur
 							item = item / 127;
 						});
@@ -4430,11 +4431,10 @@ y ... -						Musical keys.
 						ampNeu = [];
 						durNeu = [];
 						// Training Neural
-						maxTraining = newFreq.size;
-						maxTraining.do({arg i; neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], mode: 1)});
+						//maxTraining = newFreq.size;
 						// Calculate Neural
 						newFreq.size.do({arg i, f, a, d;
-							# f, a, d = neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], mode: 0);
+							# f, a, d = neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], nil, 1, 0.5, 0.5);
 							// Freq
 							freqNeu = freqNeu.add(f.at(0));
 							// Amp

@@ -1602,7 +1602,7 @@ Density {
 						maxTraining.do({arg i; kohonenF.training(freq.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Freq
 						freq = freq.collect({arg item, index, z;
-							item = kohonenF.training(item.asArray, 1, 1, 0);
+							item = kohonenF.training(item.asArray, 1, 1, 1);
 							item.at(0).at(1) / 127;// Vecteur
 						});
 						// Setup Range Freq
@@ -1634,7 +1634,7 @@ Density {
 						maxTraining.do({arg i; kohonenA.training(amp.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Amp
 						amp = amp.collect({arg item, index;
-							item = kohonenA.training(item.asArray, 1, 1, 0);
+							item = kohonenA.training(item.asArray, 1, 1, 1);
 							item.at(0).at(1) / 127;// Vecteur
 						});
 						// Set Range Amp
@@ -1645,7 +1645,7 @@ Density {
 						maxTraining.do({arg i; kohonenD.training(duree.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Duree
 						duree = duree.collect({arg item, index;
-							item = kohonenD.training(item.asArray, 1, 1, 0);
+							item = kohonenD.training(item.asArray, 1, 1, 1);
 							item.at(0).at(1) / 127;// Vecteur
 						});
 						if(flagChord == 'on', {
@@ -1699,11 +1699,11 @@ Density {
 						// Freq Transformation
 						// Calculation algo new musical pattern
 						freq.size.do({arg i, f, a, d;
-							# f = geneticF.next([freq.at(i)], 'rec', 0.5, flatness, flux);
+							# f = geneticF.next([freq.at(i)], 1, flatness, flux);
 							listF = listF.add(f);
-							# a = geneticA.next([amp.at(i)], 'rec', 0.5, flatness, flux);
+							# a = geneticA.next([amp.at(i)], 1,  flatness, flux);
 							listA = listA.add(a);
-							# d = geneticD.next([duree.at(i)], 'rec', 0.5, flatness, flux);
+							# d = geneticD.next([duree.at(i)], 1, flatness, flux);
 							listD = listD.add(d);
 						});
 						freq = listF;
@@ -1884,11 +1884,10 @@ Density {
 						# flux, flatness, centroid, energy, bpm = data.at(0);
 						// Freq Transformation
 						// Training Neural
-						maxTraining = freq.size;
-						maxTraining.do({arg i; neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], mode: 1)});
+						//maxTraining = freq.size;
 						// Calculate Neural Freq Amp Duree
 						freq.size.do({arg i, f, a, d;
-							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], mode: 0);
+							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], nil, 1, 0.5, 0.5);
 							// Freq
 							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0)).midicps);
 							// Amp
@@ -2046,11 +2045,11 @@ Density {
 				kohonenA = HPclassKohonen.new(1,127,1);
 				kohonenD = HPclassKohonen.new(1,127,1);
 				// For Genetic
-				geneticF = HPclassGenetiques.new(1, 24);
-				geneticA = HPclassGenetiques.new(1, 24);
-				geneticD = HPclassGenetiques.new(1, 24);
+				geneticF = HPclassGenetiques.new(1, 127);
+				geneticA = HPclassGenetiques.new(1, 127);
+				geneticD = HPclassGenetiques.new(1, 127);
 				// For Neural
-				neuralFAD = HPNeuralNet.new(3, 1, [5], 3);
+				neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
 				// Choose Algorithm
 				algorithm = rrand(algoLo, algoHi);
 				algorithm = listAlgorithm.at(algorithm);
