@@ -4349,7 +4349,7 @@ y ... -						Musical keys.
 						});
 						newFreq = newFreq.mod(1);
 						// Amp
-						newAmp = newAmp * distances;
+						if(coin(cv.frac), {newAmp = newAmp * distances}, {newAmp = newAmp / distances});
 						// Transpose
 						if(coin(cv.frac), {newAmp = newAmp + (ecartType * dissymetrie.sign);
 						});
@@ -4362,7 +4362,7 @@ y ... -						Musical keys.
 						});
 						newAmp = newAmp.mod(1);
 						// Duree
-						newDuree = newDuree / distances;
+						if(coin(cv.frac), {newDuree = newDuree / distances},{newDuree = newDuree * distances});
 						// Transpose
 						if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
 						});

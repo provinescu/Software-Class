@@ -1786,8 +1786,6 @@ Density {
 						dureeChord = q1;
 						// Set new data
 						freq = distances;
-						amp = distances;
-						duree = duree / distances;
 						// Freq
 						//Change Octave or Transpose
 						if(coin(cv.frac), {
@@ -1808,6 +1806,33 @@ Density {
 								freq = ecartSemiQ / freq;
 							});
 						});
+						freq = freq.mod(1);
+						// Amp
+						if(coin(cv.frac), {amp = amp * distances}, {amp = amp / distances});
+						// Transpose
+						if(coin(cv.frac), {amp = amp + (ecartType * dissymetrie.sign);
+						});
+						// Compress expand
+						if(coin(cv.frac), {
+							amp = amp * cv;
+						},
+						{
+							amp = amp + (ecartSemiQ * dissymetrie.sign)
+						});
+						amp = amp.mod(1);
+						// Duree
+						if(coin(cv.frac), {duree = duree / distances},{duree = duree * distances});
+						// Transpose
+						if(coin(cv.frac), {duree = duree + (ecartType * dissymetrie.sign);
+						});
+						// Compress expand
+						if(coin(cv.frac), {
+							duree = duree * cv;
+						},
+						{
+							duree = duree + (ecartSemiQ * dissymetrie.sign)
+						});
+						duree = duree.mod(1);
 						// Setup Range Freq
 						freq = freq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
 						freq = freq.midicps;

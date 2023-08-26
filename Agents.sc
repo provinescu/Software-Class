@@ -2869,7 +2869,7 @@ G                       Init Genome Agent (solo).
 							newFreq = newFreq.mod(1);
 							~listeagentfreq.wrapPut(agent, newFreq);
 							// Amp
-							newAmp = distances;
+							if(coin(cv.frac), {newAmp = newAmp * distances}, {newAmp = newAmp / distances});
 							// Transpose
 							if(coin(cv.frac), {newAmp = newAmp + (ecartType * dissymetrie.sign);
 							});
@@ -2883,7 +2883,7 @@ G                       Init Genome Agent (solo).
 							newAmp = newAmp.mod(1);
 							~listeagentamp.wrapPut(agent, newAmp);
 							// Duree
-							newDuree = distances;
+							if(coin(cv.frac), {newDuree = newDuree / distances},{newDuree = newDuree * distances});
 							// Transpose
 							if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
 							});
