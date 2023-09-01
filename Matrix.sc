@@ -738,7 +738,7 @@ y ... -						Musical keys.
 					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
 							data = fonctionSaveSynthesizer.value(window);
-							fonctionLoadSynthesizer.value(data);
+							fonctionLoadSynthesizer.value(data, listeDataOSC);
 							//Document.listener.string="";
 							s.queryAllNodes;
 					});
@@ -746,7 +746,7 @@ y ... -						Musical keys.
 				// Copy Preset
 				8, {
 					data = fonctionSavePreset.value(listeWindowSynth);
-					fonctionLoadPreset.value(data);
+					fonctionLoadPreset.value(data, [ ], [ ], listeDataOSC);
 					//Document.listener.string="";
 					// Setup Font View Synth
 					listeWindowSynth.do({arg window;
@@ -887,7 +887,7 @@ y ... -						Musical keys.
 			data.value;
 		};
 
-		fonctionLoadSynthesizer = {arg data, freezeOSC;
+		fonctionLoadSynthesizer = {arg data, freezeOSC=[];
 			var name, index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2;
 			// Set name Synthesizer or FX
 			name = data.last.split($[).at(0);
@@ -982,6 +982,7 @@ y ... -						Musical keys.
 					if(synth.nodeID == id, {orderListeWindow = orderListeWindow.add	(listeWindow.at(item))});
 				});
 			});
+			orderListeWindow.postcs;
 			orderListeWindow.do({arg window;
 				data = data.add(fonctionSaveSynthesizer.value(window))}); // Synth
 			data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
@@ -995,7 +996,7 @@ y ... -						Musical keys.
 			data.value;
 		};
 
-		fonctionLoadPreset = {arg preset, dataControlSynth, tampon, tampon2;
+		fonctionLoadPreset = {arg preset, dataControlSynth=[], tampon=[], tampon2=[];
 			tampon2 = preset.last;// Load freezeDataOSC
 			preset.remove(preset.last);// Remove FreezeDataOSC
 			tampon = preset.last;// Load OSCmusicData
@@ -1136,7 +1137,7 @@ y ... -						Musical keys.
 			// New Window
 			# window, freeze = fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC);
 			listeWindowSynth=listeWindowSynth.add(window);
-			listeWindowFreeze = listeWindowFreeze.add(freeze);
+			listeWindowFreeze = listeWindowFreeze.add(freeze.value);
 			// Init Band for Synth
 			//fonctionInitBand.value(numFhzBand);
 			//Document.listener.string="";
@@ -3924,7 +3925,7 @@ y ... -						Musical keys.
 			// Freeze Data OSC Button
 			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FAD@", Color.green], ["FAD!", Color.red], ["FAD!", Color.blue]]).action_({arg flag;
 				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]});
-				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy});
+				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy; listeWindowFreeze.do({arg freeze, index; listeWindowFreeze.put(index, freezeDataOSC)})});
 				if(flag.value == 2, {flagFreezeDataOSC = 'on'});
 			});
 
@@ -6524,57 +6525,57 @@ y ... -						Musical keys.
 		}).add;
 
 		/*SynthDef('FluidSynth',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, rate, buffer, envelope, ambisonic, dureeSample, localBuf, harm, perc, residual;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-				// Set AMP
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Set DUREE
-				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
-				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
-				dureeSample = clip2(duree, dureeSample);
-				// Envelope
-				//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
-				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
-				// Set Buffer
-				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				// Synth
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				# harm, perc, residual = FluidHPSS.ar(chain, 17, 31, maskingMode: 2);
-				chain = Select.ar(ctrl2 * 2,[chain, harm, perc,residual]);
-				// chain = Limiter.ar(chain, 1.0, 0.01);
-				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, Rand(panLo, panHi), envelope),
-						// Pan v2
-						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+		{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+		freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+		levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+		switchBuffer1=0, switchBuffer2=0,
+		panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+		ctrlHP1=0.33, ctrlHP2=0.5,
+		ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+		envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+		envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+		var chain, rate, buffer, envelope, ambisonic, dureeSample, localBuf, harm, perc, residual;
+		// Set FHZ
+		rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+		// Set AMP
+		amp = amp * (ampHi - ampLo) + ampLo;
+		// Set DUREE
+		dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+		dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+		dureeSample = clip2(duree, dureeSample);
+		// Envelope
+		//envTime1 = if(envTime1 > dureeSample, 1.0, envTime1 * dureeSample.reciprocal);
+		envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
+		// Set Buffer
+		buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+		// Synth
+		chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+		# harm, perc, residual = FluidHPSS.ar(chain, 17, 31, maskingMode: 2);
+		chain = Select.ar(ctrl2 * 2,[chain, harm, perc,residual]);
+		// chain = Limiter.ar(chain, 1.0, 0.01);
+		// Switch Audio Out
+		chain = if(switchAudioOut == 0,
+		if(flagMC == 0,
+		// Pan v1
+		Pan2.ar(chain, Rand(panLo, panHi), envelope),
+		// Pan v2
+		Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+		if(switchAudioOut == 2,
+		if(flagMC == 0,
+		// PanAz v1
+		PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+		// PanAz v2
+		PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+		if(switchAudioOut == 1,
+		// Rotate2 v1
+		Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+		// Ambisonic v1
+		(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+		DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+		// Out
+		Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+		Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+		Out.ar(out, chain * flagAmpOnOff);
 		}).add;*/
 
 		//////////////////////// FFT with 1 Sample /////////////////////////
