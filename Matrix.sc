@@ -738,7 +738,15 @@ y ... -						Musical keys.
 					if(window.name.containsStringAt(0, "Matrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
 							data = fonctionSaveSynthesizer.value(window);
-							fonctionLoadSynthesizer.value(data, listeDataOSC);
+							tampon = [];
+							listeWindowFreeze.do({arg freeze, index;
+								if(listeWindowSynth.at(index) != nil, {
+								//[index, listeWindowSynth.at(index).name, window.name].postcs;
+								if(listeWindowSynth.at(index).name == window.name, {tampon = listeWindowFreeze.at(index)});
+					});
+							});
+							listeWindowFreeze = listeWindowFreeze.add(tampon);
+							fonctionLoadSynthesizer.value(data, tampon);
 							//Document.listener.string="";
 							s.queryAllNodes;
 					});
@@ -746,7 +754,11 @@ y ... -						Musical keys.
 				// Copy Preset
 				8, {
 					data = fonctionSavePreset.value(listeWindowSynth);
+					tampon = data.last;// listeWindowFreeze
 					fonctionLoadPreset.value(data, [ ], [ ], listeDataOSC);
+					tampon.do({arg freeze, index;
+						listeWindowFreeze = listeWindowFreeze.add(freeze);
+					});
 					//Document.listener.string="";
 					// Setup Font View Synth
 					listeWindowSynth.do({arg window;
@@ -982,7 +994,6 @@ y ... -						Musical keys.
 					if(synth.nodeID == id, {orderListeWindow = orderListeWindow.add	(listeWindow.at(item))});
 				});
 			});
-			orderListeWindow.postcs;
 			orderListeWindow.do({arg window;
 				data = data.add(fonctionSaveSynthesizer.value(window))}); // Synth
 			data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
@@ -4964,7 +4975,7 @@ y ... -						Musical keys.
 			fonctionSynthTdefFX.value;
 			if(synthAndFX != nil, {synthAndFX.run(true)});
 
-			windowSynth.onClose_({
+			windowSynth.onClose_({arg window;
 				s.bind{
 					// MIDI OFF
 					if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.allNotesOff(canalMIDIinstr);
