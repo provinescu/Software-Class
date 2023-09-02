@@ -2117,7 +2117,6 @@ y ... -						Musical keys.
 				if(char == $N, {
 					tampon = listeDataOSC;
 					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0, tampon);// Fonction Add SinOsc by default
-					listeDataOSC = tampon;
 				});
 				// Key b -> switch recording buffer data OSC on/off
 				if(char == $b,  {
@@ -3186,7 +3185,6 @@ y ... -						Musical keys.
 				listeWindowSynth.last.view.children.at(0).valueAction_(0);// Synth Play Off
 				s.sync;
 			};
-			listeDataOSC = tampon;
 			addNewSynth.value=0;
 		};
 		windowControl.view.decorator.nextLine;
@@ -3925,7 +3923,11 @@ y ... -						Musical keys.
 			// Freeze Data OSC Button
 			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FAD@", Color.green], ["FAD!", Color.red], ["FAD!", Color.blue]]).action_({arg flag;
 				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]});
-				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy; listeWindowFreeze.do({arg freeze, index; listeWindowFreeze.put(index, freezeDataOSC)})});
+				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy;
+					listeWindowFreeze.do({arg freeze, index;
+						if(listeWindowSynth.at(index).name.containsi(groupe.nodeID.asString), {listeWindowFreeze.put(index, freezeDataOSC)});
+					});
+				});
 				if(flag.value == 2, {flagFreezeDataOSC = 'on'});
 			});
 
