@@ -1722,14 +1722,15 @@ y ... -						Musical keys.
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
-													tampon2 = tampon.last;
+													listeWindowFreeze = tampon.last;
 													tampon.remove(tampon.last);// remove freezeDataOSC
+													tampon2 = tampon.last;// OSCmusicDATA
 													tampon.remove(tampon.last);// Remove OSCmusicData
 													fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
 													tampon.remove(tampon.last);// Remove control panel
 													fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 													tampon.remove(tampon.last);// Remove controlSynth panel
-													fonctionLoadSynthesizer.value(tampon, tampon2);
+													fonctionLoadSynthesizer.value(tampon.at(0), tampon2);
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
@@ -1753,14 +1754,15 @@ y ... -						Musical keys.
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
-													tampon2 = tampon.last;
+													listeWindowFreeze = tampon.last;
 													tampon.remove(tampon.last);// remove freezeDataOSC
+													tampon2 = tampon.last;// OSCmusicDATA
 													tampon.remove(tampon.last);// Remove OSCmusicData
 													fonctionLoadControl.value(windowControl, tampon.last);//Load Control Panel
 													tampon.remove(tampon.last);// Remove control panel
 													fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 													tampon.remove(tampon.last);// Remove controlSynth panel
-													fonctionLoadSynthesizer.value(tampon, tampon2);
+													fonctionLoadSynthesizer.value(tampon.at(0), tampon2);
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
@@ -3938,7 +3940,7 @@ y ... -						Musical keys.
 				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy;
 					listeWindowFreeze.do({arg freeze, index;
 						if(listeWindowSynth.at(index) != nil, {
-						if(listeWindowSynth.at(index).name.containsi(groupe.nodeID.asString), {listeWindowFreeze.put(index, freezeDataOSC)});
+							if(listeWindowSynth.at(index).name.containsi(groupe.nodeID.asString), {listeWindowFreeze.put(index, freezeDataOSC)});
 						});
 					});
 				});
