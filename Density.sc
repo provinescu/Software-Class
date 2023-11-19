@@ -2241,18 +2241,18 @@ Density {
 									recBuffer.set(\trigger, 0);
 									s.sync;
 								});
-								loopSound}, inf),
-							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, inf),
-							\reverse, Pfuncn({newRevSound}, inf),
+								loopSound}, 1),
+							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, 1),
+							\reverse, Pfuncn({newRevSound}, 1),
 							\freq, Pseq(freq, 1),
 							\amp, Pseq(amp, 1),
 							\dur, Pseq(duree, 1),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
 							\legato,  0.5,
-							\ctrlHP1, Pfuncn({ctrlHP1}, inf),
-							\ctrlHP2, Pfuncn({ctrlHP2}, inf),
-							\stretch, Pfuncn({stretchDuree}, inf),
+							\ctrlHP1, Pfuncn({ctrlHP1}, 1),
+							\ctrlHP2, Pfuncn({ctrlHP2}, 1),
+							\stretch, Pfuncn({stretchDuree}, 1),
 							\flux, (busOSCflux.at(indexBandFhz)).asMap,
 							\flatness, (busOSCflatness.at(indexBandFhz)).asMap,
 							\centroid, (busOSCcentroid.at(indexBandFhz)).asMap,
@@ -2286,10 +2286,10 @@ Density {
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, inf),
-								\amp, Pseq(amp, inf),
-								\dur, Pseq(duree, inf),
-								\stretch, Pfuncn({stretchDuree}, inf),
+								\freq, Pseq(freq, 1),
+								\amp, Pseq(amp, 1),
+								\dur, Pseq(duree, 1),
+								\stretch, Pfuncn({stretchDuree}, 1),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -2300,10 +2300,10 @@ Density {
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, inf),
-								\amp, Pseq(amp, inf),
-								\dur, Pseq(duree, inf),
-								\stretch, Pfuncn({stretchDuree}, inf),
+								\freq, Pseq(freq, 1),
+								\amp, Pseq(amp, 1),
+								\dur, Pseq(duree, 1),
+								\stretch, Pfuncn({stretchDuree}, 1),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -5094,8 +5094,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Add(fft1, fft2);
 				chain = IFFT(chain) * envelope;
 				// Out
@@ -5117,8 +5117,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Mul(fft1, fft2);
 				chain = IFFT(chain) * 0.5 * envelope;
 				// Out
@@ -5142,8 +5142,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_MagDiv(fft1, fft2, flatness);
 				chain = IFFT(chain) * 0.5 * envelope;
 				// Out
@@ -5167,8 +5167,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
 				chain = IFFT(chain) * envelope;
 				// Out
@@ -5193,8 +5193,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Play Buffer
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
 				chain = IFFT(chain) * envelope;
 				// Out
@@ -7010,8 +7010,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Add(fft1, fft2);
 				chain = IFFT(chain) * envelope;
 				// Out
@@ -7037,8 +7037,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Mul(fft1, fft2);
 				chain = IFFT(chain) * 0.5 * envelope;
 				// Out
@@ -7066,8 +7066,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_MagDiv(fft1, fft2, flatness);
 				chain = IFFT(chain) * 0.5 * envelope;
 				// Out
@@ -7095,8 +7095,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
 				chain = IFFT(chain) * envelope;
 				// Out
@@ -7125,8 +7125,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
 				chain = IFFT(chain) * envelope;
 				// Out
@@ -7155,8 +7155,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Add(fft1, fft2);
 				chain = IFFT(chain) * envelope * amp;
 				// Out
@@ -7183,8 +7183,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Mul(fft1, fft2);
 				chain = IFFT(chain) * 0.5 * envelope * amp;
 				// Out
@@ -7213,8 +7213,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_MagDiv(fft1, fft2, flatness);
 				chain = IFFT(chain) * 0.5 * envelope * amp;
 				// Out
@@ -7243,8 +7243,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
 				chain = IFFT(chain) * envelope * amp;
 				// Out
@@ -7274,8 +7274,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(0, BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
 				chain = IFFT(chain) * envelope * amp;
 				// Out
@@ -7309,8 +7309,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Add(fft1, fft2);
 				chain = IFFT(chain) * envelope * amp;
 				// Out
@@ -7342,8 +7342,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_Mul(fft1, fft2);
 				chain = IFFT(chain) * 0.5 * envelope * amp;
 				// Out
@@ -7375,8 +7375,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_MagDiv(fft1, fft2, flatness);
 				chain = IFFT(chain) * 0.5 * envelope * amp;
 				// Out
@@ -7408,8 +7408,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
 				chain = IFFT(chain) * envelope * amp;
 				// Out
@@ -7441,8 +7441,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
-				fft1 = FFT(LocalBuf(2048, 1), in1);
-				fft2 = FFT(LocalBuf(2048, 1), in2);
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
 				chain = IFFT(chain) * envelope * amp;
 				// Out
@@ -7946,7 +7946,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in = In.ar(in);
 				// Envelope
 				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagNoise(chain);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -7963,7 +7963,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagClip(chain, (1 - flatness) * 16);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -7980,7 +7980,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagSmooth(chain, flatness);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -7998,7 +7998,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_Diffuser(chain, Trig1.kr(LFNoise1.kr(flux * 100), (flatness * 100).reciprocal));
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8016,7 +8016,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_BrickWall(chain, flatness * 200 - 100 / 100);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8034,7 +8034,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_LocalMax(chain, flatness * 64);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8049,7 +8049,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				in = In.ar(in);
 				// Envelope
 				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagSquared(chain);
 				chain= IFFT(chain) * 0.25 * envelope;
 				// Out
@@ -8066,7 +8066,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagBelow(chain, flatness * 10);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8083,7 +8083,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagAbove(chain, flatness * 64);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8101,7 +8101,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_RandComb(chain, flatness, LFNoise1.kr(flux * 100));
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8119,7 +8119,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagShift(chain, 1, flux - 0.5 * 128);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8137,7 +8137,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagShift(chain, flatness.log.abs.clip(0.25, 4));
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8155,7 +8155,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagShift(chain, flatness.log.abs.clip(0.25, 4), flux - 0.5 * 128);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8173,7 +8173,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_BinScramble(chain, flatness, flux, LFNoise1.kr(flux.reciprocal));
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8191,7 +8191,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_BinShift(chain, flatness.log.abs.clip(0.25, 4), flatness - 0.5 * 128);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8209,7 +8209,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_RectComb(chain, flatness * 32, flux, flatness);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8227,7 +8227,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_ConformalMap(chain, flatness * 2 - 1, flux * 2 - 1);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8245,7 +8245,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_Compander(chain, flatness * 50, flux.log.abs, flatness.log10);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8263,7 +8263,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_SpectralEnhance(chain, flux.log2.abs.floor, flatness * 4 + 1, flatness.log2.abs);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8283,7 +8283,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
 				RecordBuf.ar(in, buffer, recLevel: 1, preLevel: 0, loop: 1);
 				chain = PlayBuf.ar(1, buffer, flux.log.abs.clip(0.25, 4), 1, loop: 1);
-				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagFreeze(chain, SinOsc.kr(flatness.log10.abs.reciprocal));
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8303,7 +8303,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				flatness = flatness.clip(0.01, 1.0);
 				RecordBuf.ar(in, buffer,  recLevel: 1, preLevel: 0, loop: 1);
 				chain = PlayBuf.ar(1, buffer, 1, 1, loop: 1);
-				chain = FFT(LocalBuf(2048, 1), chain);
+				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_Cutoff(chain, flux);
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8357,7 +8357,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				buffer = LocalBuf(s.sampleRate * 1, 1).clear;
 				trig = Impulse.kr(bpm);
 				RecordBuf.ar(in, buffer, Saw.kr(energy).abs, trigger: trig);
-				chain = Convolution2.ar(in, buffer, trig, 2048) * envelope;
+				chain = Convolution2.ar(in, buffer, trig, 1024) * envelope;
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;
@@ -8373,7 +8373,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagShift(chain, flatness.log.abs.clip(0.25, 4));
 				chain= IFFT(chain) * envelope;
 				// Out
@@ -8391,7 +8391,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(2048, 1), in);
+				chain = FFT(LocalBuf(1024, 1), in);
 				chain = PV_MagShift(chain, flatness.log.abs.clip(0.25, 4), flux - 0.5 * 128);
 				chain= IFFT(chain) * envelope;
 				// Out
