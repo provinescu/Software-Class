@@ -1,21 +1,21 @@
-
-// NewAlgo
+// Wekinator + SuperCollider
 
 WekDensity {
 
 	classvar <> s;
 
-	var tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
-	var keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic;
-	var lastTime, oscMusicFFT,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpWekDensity, flagMidiOut, masterAppAddr, slaveAppAddr;
-	var oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
+	var tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
+	var wekFreq, wekAmp, wekDur, wekBPM, wekCentroid, wekEnergy, wekFlux, wekFlatness;
+	var keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, createGUI, displayAnalyzeFFT, displayAnalyzeMusic,  groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb;
+	var lastTime, oscMusicFFT,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpWekDensity, flagMidiOut, plotterDataGUI;
+	var oscStateFlag, indexWindows, pathData, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, plotterMFCCGUI;
 	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexSynthX, indexSynthY, jitterIndexSynthX, jitterIndexSynthY, displayInstrument, displaySound, indexSoundX, indexSoundY;
 	var jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
-	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
-	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender, receiver;
-	var dimIn, flagStreamMFCC, flagFFT, plotterMFCCGUI, responder, midiOut;
+	var midiOut, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
+	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender, receiver;
+	var dimIn, flagStreamMFCC, flagFFT, responder;
 
-	*new {arg path = "~/Documents/WekDensity/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity";
+	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity";
 
 		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag);
 
@@ -54,6 +54,8 @@ WekDensity {
 		);// Type Format stereo, ambisonic, etc...
 
 		//Server.default = s = Server(name,NetAddr("localhost",57570), Server.default.options);
+		/*// Increase Memory Server
+		Server.default.options.memSize = 2**20;*/
 		s = Server.default;
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);
@@ -70,6 +72,18 @@ WekDensity {
 
 		headerFormat = "aiff";
 		sampleFormat = "float";
+
+		// Open Wekinator
+		Pipe.new("open -a Wekinator", "r").close;
+
+		// Run the Soft
+		this.run;
+
+	}
+
+	// Soft WekDensity
+
+	run {
 
 		// Init
 		typeAlgoAnalyze = 0;
@@ -222,6 +236,14 @@ WekDensity {
 		dimIn = 13;
 		flagFFT = 'on';
 		flagStreamMFCC = 'off';
+		wekFreq = 60;
+		wekAmp = -12;
+		wekDur = 1;
+		wekBPM = 1;
+		wekCentroid = 60;
+		wekEnergy = 60;
+		wekFlux = 0.5;
+		wekFlatness = 0.5;
 		// Wek Out 8 data music + fft + 6 data synth sound fx
 
 		// Audio Out
@@ -807,7 +829,6 @@ WekDensity {
 
 		// Fonction pour Recording
 		fonctionRecOn={
-			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPrec', "Rec On")});// Send Synchro Rec On
 			if(flagRecording == 'off', {
 				flagRecording = 'on';
 				s.bind{
@@ -822,13 +843,11 @@ WekDensity {
 		};
 
 		fonctionRecOff={
-			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPrec', "Rec Off")});// Send Synchro Rec On
 			flagRecording = 'off';
 			s.stopRecording;
 		};
 
 		fonctionRecPause={
-			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPrec', "Rec Pause")});// Send Synchro Rec On
 			if(startSystem.value == 1, {
 				if(flagRecording == 'on', {s.pauseRecording; flagRecording = 'pause'},{s.record; flagRecording = 'on'});
 			});
@@ -844,19 +863,336 @@ WekDensity {
 			});
 		};
 
-		// Open Wekinator
-		Pipe.new("open -a Wekinator", "r").close;
+		// Help
+		helpWekDensity = "
+Single commandes:
 
-		// Run the Soft
-		this.run;
+esc	or SpaceBar			System on/off.
+q / ctrl + q			Switch Algorithm Analyze.
+h						Switch Source IN.
+i						Init Synth.
+ctrl+i					Init System.
+alt+i					Reset System.
+ctrl + f				Load and Add File for Analyze.
+w / ctrl + w			Switch Window.
+z						Load Random Preset.
+k                       New Environment.
 
-	}
+Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
-	// Soft WekDensity
+l			 			Load Preset.
+s				 		Save Preset.
+f						Switch File for analyze.
 
-	run {
 
-		"Please Wait... Loading WekDensity...".postln;
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+ShortCut for Keyboard Panel:
+
+<						Keyboard Transpose down.
+>						Keyboard Transpose up.
+
+ysxdcvgbhnjm,l.e-		Musical Keys.
+
+";
+
+		// ///////////////////////// Menu WekDensity /////////////////////////////////
+
+		menuFile = Menu(
+			MenuAction("Load File for Analyze",
+				{Dialog.openPanel({ arg path;
+					listeFileAnalyze.do({arg buffer; buffer.free});
+					listeFileAnalyze=[];
+					listeNameFileAnalyze=[];
+					bufferFile.free;
+					fonctionLoadFileForAnalyse.value(path);
+					// Setup GUI Value
+					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
+			Menu(
+				MenuAction("On", {synthFileIn.set('loop', 1)}),
+				MenuAction("Off", {synthFileIn.set('loop', 0)});
+			).title_("Loop");
+		);
+		MainMenu.register(menuFile.title_("File for Analyze"), "WekDensityTools");
+
+		menuPreset = Menu(
+			MenuAction("Load Preset", {Dialog.openPanel({ arg path, file;
+				file = File(path,"r");
+				fonctionLoadPreset.value(file.readAllString.interpret);
+				file.close;
+				windowEar.name="WekDensity" + typeMasterOut + " | " + PathName.new(path).fileName;
+			},
+			{"cancelled".postln})}),
+			MenuAction("Save Preset",{Dialog.savePanel({arg path, name, pathonly, fileName, file;
+				path = PathName.new(path);
+				pathonly = path.pathOnly;
+				name = path.fileName;
+				name = "preset" + name;
+				path = pathonly ++ name;
+				fileName = PathName.new(path).fileName;
+				path = PathName.new(path).fullPath;
+				file = File(path ++ ".scd", "w");
+				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
+				file.close;
+				windowEar.name = "WekDensity" + typeMasterOut + " | " + fileName;
+			}, {"cancelled".postln})});
+		);
+		MainMenu.register(menuPreset.title_("Preset"), "WekDensityTools");
+
+		menuInitAll = Menu(
+			MenuAction("Init All", {arg file;
+				//Init Orchestra Sounds FX
+				s.bind{
+					file = File(pathData ++ "Synth.scd","r");
+					synthOrchestra = file.readAllString.interpret;
+					file.close;
+					s.sync;
+					file = File(pathData ++ "Sounds.scd","r");
+					soundOrchestra = file.readAllString.interpret;
+					file.close;
+					fonctionLoadSoundOrchestra.value(soundOrchestra);
+					s.sync;
+					file = File(pathData ++ "FX.scd","r");
+					fxOrchestra = file.readAllString.interpret;
+					file.close;
+					s.sync;
+				};
+			}),
+			Menu(
+				MenuAction("Load", {Dialog.openPanel({arg path, file;
+					file = File(path,"r");
+					synthOrchestra = file.readAllString.interpret;
+					file.close;
+				},
+				{"cancelled".postln});
+				}),
+				MenuAction("Edit/Save", {arg window, text;
+					window = Document.new("Synth Edit/Save", synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; synthOrchestra = text.interpret};
+				});
+			).title_("Synth"),
+			Menu(
+				MenuAction("Load", {Dialog.openPanel({arg path, file;
+					file = File(path,"r");
+					soundOrchestra = file.readAllString.interpret;
+					file.close;
+					s.bind{
+						fonctionLoadSoundOrchestra.value(soundOrchestra);
+						s.sync;
+					};
+				},
+				{"cancelled".postln});
+				}),
+				MenuAction("Edit/Save", {arg window, text;
+					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret};
+					s.bind{
+						fonctionLoadSoundOrchestra.value(soundOrchestra);
+						s.sync;
+					};
+				});
+			).title_("Sound"),
+			Menu(
+				MenuAction("Load", {Dialog.openPanel({arg path, file;
+					file = File(path,"r");
+					fxOrchestra = file.readAllString.interpret;
+					file.close;
+				},
+				{"cancelled".postln});
+				}),
+				MenuAction("Edit/Save", {arg window, text;
+					window = Document.new("FX Edit/Save", fxOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; fxOrchestra = text.interpret};
+				});
+			).title_("FX")
+		);
+		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "WekDensityTools");
+
+		menuRecording = Menu(
+			MenuAction("Start Recording", {
+				fonctionRecOn.value;
+			}),
+			MenuAction("Stop Recording", {
+				fonctionRecOff.value;
+			}),
+			MenuAction("Switch Pause Recording On/Off", {
+				fonctionRecPause.value;
+			});
+		);
+		MainMenu.register(menuRecording.title_("Recording"), "WekDensityTools");
+
+		menuAudio = Menu(
+			MenuAction("Channels FhzBand Out", {
+				SCRequestString("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]", "Channels", {arg strg;
+					channelsSynth = strg.value.interpret; channelsSynth = channelsSynth.max(1) - 1;
+				});
+			}),
+			MenuAction("Channels Reverb Out", {
+				SCRequestString("1", "Channels", {arg strg;
+					channelsVerb = strg.value.asInteger; channelsVerb = channelsVerb.max(1) - 1;
+					groupeVerb.set(\out, channelsVerb.value);
+				});
+			}),
+			MenuAction("Stereo", {recChannels = 2; numberAudioOut = 2;
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
+				typeMasterOut = listeMasterOut.at(0);
+				startSystem.valueAction_(0);
+				groupeVerb.freeAll;
+				groupeLimiter.freeAll;
+				groupeVST.freeAll;
+				this.initSynthDef;
+				gVerb = Synth.new("GVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Stereo", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
+				// Setup GUI Value
+				windowGVerb.view.children.at(0).valueAction_(0);
+				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+				// Setup GUI Value
+				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo"; windowVST.name = "VST Stereo";
+			}),
+			MenuAction("Rotate2", {recChannels = 2; numberAudioOut = 2;
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
+				typeMasterOut = listeMasterOut.at(1);
+				startSystem.valueAction_(0);
+				groupeVerb.freeAll;
+				groupeLimiter.freeAll;
+				groupeVST.freeAll;
+				this.initSynthDef;
+				Synth.new("GVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Rotate2", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
+				// Setup GUI Value
+				windowGVerb.view.children.at(0).valueAction_(0);
+				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+				// Setup GUI Value
+				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+				windowGVerb.name = "Reverb Rotate2"; windowEar.name = "Reverb Rotate2"; windowVST.name = "VST Rotate2";
+			}),
+			MenuAction("MultiSpeaker", {
+				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
+					s.recChannels_(recChannels);
+					s.options.numInputBusChannels_(20);
+					//s.options.numOutputBusChannels_(8);
+					typeMasterOut = listeMasterOut.at(2);
+					startSystem.valueAction_(0);
+					groupeVerb.freeAll;
+					groupeLimiter.freeAll;
+					groupeVST.freeAll;
+					this.initSynthDef;
+					Synth.new("GVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("JPverb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST MultiSpeaker", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					fxVST = VSTPluginController(synthVST);
+					// Setup GUI Value
+					windowGVerb.view.children.at(0).valueAction_(0);
+					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+					// Setup GUI Value
+					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+					windowGVerb.name = "Reverb MultiSpeaker"; windowEar.name = "Reverb MultiSpeaker"; windowVST.name = "VST MultiSpeaker";
+				});
+			}),
+			MenuAction("Ambisonic", {
+				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
+					s.recChannels_(recChannels);
+					s.options.numInputBusChannels_(20);
+					//s.options.numOutputBusChannels_(8);
+					typeMasterOut = listeMasterOut.at(3);
+					startSystem.valueAction_(0);
+					groupeVerb.freeAll;
+					groupeLimiter.freeAll;
+					groupeVST.freeAll;
+					this.initSynthDef;
+					Synth.new("GVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("JPverb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST Ambisonic", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					fxVST = VSTPluginController(synthVST);
+					// Setup GUI Value
+					windowGVerb.view.children.at(0).valueAction_(0);
+					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+					// Setup GUI Value
+					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+					windowGVerb.name = "Reverb Ambisonic"; windowEar.name = "Reverb Ambisonic"; windowVST.name = "VST Ambisonic";
+				});
+			}),
+			MenuAction("Dolby5.1", {recChannels = 6; numberAudioOut = 6;
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
+				typeMasterOut = listeMasterOut.at(4);
+				startSystem.valueAction_(0);
+				groupeVerb.freeAll;
+				groupeLimiter.freeAll;
+				groupeVST.freeAll;
+				this.initSynthDef;
+				Synth.new("GVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Dolby5.1", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
+				// Setup GUI Value
+				windowGVerb.view.children.at(0).valueAction_(0);
+				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+				// Setup GUI Value
+				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
+			});
+		);
+		MainMenu.register(menuAudio.title_("Audio"), "WekDensityTools");
+
+		menuMIDI = Menu(
+			MenuAction("Init", {
+				MIDIClient.init;
+				if(MIDIClient.externalSources != [ ], {
+					// Connect first device by default
+					MIDIIn.connect(0, 0);
+					midiOut = MIDIOut(0);
+					//midiOut.connect(0);
+					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
+				}, {"Warning no MIDI Devices Connected".postln});
+			}),
+			Menu(
+				MenuAction("Connect IN", {
+					SCRequestString("0", "Device", {arg index, port;
+						port = index.asInteger;
+						MIDIIn.connect(port, MIDIClient.sources.at(port));
+					});
+				}),
+				MenuAction("Connect Out", {
+					SCRequestString("0", "Device", {arg index, port;
+						port = index.asInteger;
+						midiOut = MIDIOut(port);
+						//midiOut.connect(port);
+						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
+					});
+				});
+			).title_("Setting");
+		);
+		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTools");
+
+		menuAlgo = Menu(
+			MenuAction("Not Activate", {nil}),
+		);
+		MainMenu.register(menuAlgo.title_("Algorithm"), "WekDensityTools");
+
+		menuHelp = MenuAction("Help ShortCut", {
+			//Document.new("ShortCut for WekDensity", helpWekDensity);
+			TextView().name_("ShortCut for WekDensity").string_(helpWekDensity).front;
+		});
+		MainMenu.register(menuHelp, "WekDensityTools");
 
 		// Run Soft
 		s.waitForBoot({
@@ -879,8 +1215,6 @@ WekDensity {
 			s.sync;
 
 			// OSC Setting
-			/*masterAppAddr = NetAddr.localAddr;
-			slaveAppAddr = NetAddr.localAddr;*/
 			// Wekinator
 			sender.free;
 			receiver.free;
@@ -888,8 +1222,6 @@ WekDensity {
 			sender = NetAddr.new("127.0.0.1", 6448);// Wekinator
 			receiver = NetAddr.new("127.0.0.1", 57120);// create the NetAddr ... only the language port 57120 actually works
 			oscStateFlag = 'off';
-
-			//ardourOSC = NetAddr("127.0.0.1", 3819);// Ardour's port number
 
 			// Group
 			groupeAnalyse = ParGroup.new(s, \addToTail);
@@ -1430,7 +1762,18 @@ WekDensity {
 						inFFT = inFFT.add(indexFXX);
 						inFFT = inFFT.add(indexFXY);
 						// Automation on off
-						if(flagStreamMFCC == 'on',
+						if(flagStreamMFCC == 'off',
+							{
+								inFFT.put(0, wekFreq);
+								inFFT.put(1, wekAmp);
+								inFFT.put(2, wekDur);
+								inFFT.put(3, wekBPM);
+								inFFT.put(4, wekCentroid);
+								inFFT.put(5, wekEnergy);
+								inFFT.put(6, wekFlux);
+								inFFT.put(7, wekFlatness);
+						});
+						if(flagStreamMFCC != 'wek',
 							{
 								sender.sendMsg("/wekinator/control/outputs", *inFFT[0..]);
 						});
@@ -2653,6 +2996,8 @@ WekDensity {
 			if(flagVST == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
+			sender.free;
+			receiver.free;
 			//s.quit;
 		};
 
@@ -2661,366 +3006,6 @@ WekDensity {
 	}
 
 	createGUI {
-
-		// Help
-		helpWekDensity = "
-Single commandes:
-
-esc	or SpaceBar			System on/off.
-q / ctrl + q			Switch Algorithm Analyze.
-h						Switch Source IN.
-i						Init Synth.
-ctrl+i					Init System.
-alt+i					Reset System.
-ctrl + f				Load and Add File for Analyze.
-w / ctrl + w			Switch Window.
-z						Load Random Preset.
-k                       New Environment.
-
-Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
-
-l			 			Load Preset.
-s				 		Save Preset.
-f						Switch File for analyze.
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
-
-ShortCut for Keyboard Panel:
-
-<						Keyboard Transpose down.
->						Keyboard Transpose up.
-
-ysxdcvgbhnjm,l.e-		Musical Keys.
-
-";
-
-		// ///////////////////////// Menu WekDensity /////////////////////////////////
-
-		menuFile = Menu(
-			MenuAction("Load File for Analyze",
-				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
-					// Setup GUI Value
-					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
-			Menu(
-				MenuAction("On", {synthFileIn.set('loop', 1)}),
-				MenuAction("Off", {synthFileIn.set('loop', 0)});
-			).title_("Loop");
-		);
-		MainMenu.register(menuFile.title_("File for Analyze"), "WekDensityTools");
-
-		menuPreset = Menu(
-			MenuAction("Load Preset", {Dialog.openPanel({ arg path, file;
-				file = File(path,"r");
-				fonctionLoadPreset.value(file.readAllString.interpret);
-				file.close;
-				windowEar.name="WekDensity" + typeMasterOut + " | " + PathName.new(path).fileName;
-			},
-			{"cancelled".postln})}),
-			MenuAction("Save Preset",{Dialog.savePanel({arg path, name, pathonly, fileName, file;
-				path = PathName.new(path);
-				pathonly = path.pathOnly;
-				name = path.fileName;
-				name = "preset" + name;
-				path = pathonly ++ name;
-				fileName = PathName.new(path).fileName;
-				path = PathName.new(path).fullPath;
-				file = File(path ++ ".scd", "w");
-				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
-				file.close;
-				windowEar.name = "WekDensity" + typeMasterOut + " | " + fileName;
-			}, {"cancelled".postln})});
-		);
-		MainMenu.register(menuPreset.title_("Preset"), "WekDensityTools");
-
-		menuInitAll = Menu(
-			MenuAction("Init All", {arg file;
-				//Init Orchestra Sounds FX
-				s.bind{
-					file = File(pathData ++ "Synth.scd","r");
-					synthOrchestra = file.readAllString.interpret;
-					file.close;
-					s.sync;
-					file = File(pathData ++ "Sounds.scd","r");
-					soundOrchestra = file.readAllString.interpret;
-					file.close;
-					fonctionLoadSoundOrchestra.value(soundOrchestra);
-					s.sync;
-					file = File(pathData ++ "FX.scd","r");
-					fxOrchestra = file.readAllString.interpret;
-					file.close;
-					s.sync;
-				};
-			}),
-			Menu(
-				MenuAction("Load", {Dialog.openPanel({arg path, file;
-					file = File(path,"r");
-					synthOrchestra = file.readAllString.interpret;
-					file.close;
-				},
-				{"cancelled".postln});
-				}),
-				MenuAction("Edit/Save", {arg window, text;
-					window = Document.new("Synth Edit/Save", synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; synthOrchestra = text.interpret};
-				});
-			).title_("Synth"),
-			Menu(
-				MenuAction("Load", {Dialog.openPanel({arg path, file;
-					file = File(path,"r");
-					soundOrchestra = file.readAllString.interpret;
-					file.close;
-					s.bind{
-						fonctionLoadSoundOrchestra.value(soundOrchestra);
-						s.sync;
-					};
-				},
-				{"cancelled".postln});
-				}),
-				MenuAction("Edit/Save", {arg window, text;
-					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret};
-					s.bind{
-						fonctionLoadSoundOrchestra.value(soundOrchestra);
-						s.sync;
-					};
-				});
-			).title_("Sound"),
-			Menu(
-				MenuAction("Load", {Dialog.openPanel({arg path, file;
-					file = File(path,"r");
-					fxOrchestra = file.readAllString.interpret;
-					file.close;
-				},
-				{"cancelled".postln});
-				}),
-				MenuAction("Edit/Save", {arg window, text;
-					window = Document.new("FX Edit/Save", fxOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; fxOrchestra = text.interpret};
-				});
-			).title_("FX")
-		);
-		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "WekDensityTools");
-
-		menuRecording = Menu(
-			MenuAction("Start Recording", {
-				fonctionRecOn.value;
-			}),
-			MenuAction("Stop Recording", {
-				fonctionRecOff.value;
-			}),
-			MenuAction("Switch Pause Recording On/Off", {
-				fonctionRecPause.value;
-			});
-		);
-		MainMenu.register(menuRecording.title_("Recording"), "WekDensityTools");
-
-		menuAudio = Menu(
-			MenuAction("Channels FhzBand Out", {
-				SCRequestString("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]", "Channels", {arg strg;
-					channelsSynth = strg.value.interpret; channelsSynth = channelsSynth.max(1) - 1;
-				});
-			}),
-			MenuAction("Channels Reverb Out", {
-				SCRequestString("1", "Channels", {arg strg;
-					channelsVerb = strg.value.asInteger; channelsVerb = channelsVerb.max(1) - 1;
-					groupeVerb.set(\out, channelsVerb.value);
-				});
-			}),
-			MenuAction("Stereo", {recChannels = 2; numberAudioOut = 2;
-				s.recChannels_(recChannels);
-				s.options.numInputBusChannels_(20);
-				//s.options.numOutputBusChannels_(8);
-				typeMasterOut = listeMasterOut.at(0);
-				startSystem.valueAction_(0);
-				groupeVerb.freeAll;
-				groupeLimiter.freeAll;
-				groupeVST.freeAll;
-				this.initSynthDef;
-				gVerb = Synth.new("GVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Stereo", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-				fxVST = VSTPluginController(synthVST);
-				// Setup GUI Value
-				windowGVerb.view.children.at(0).valueAction_(0);
-				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-				// Setup GUI Value
-				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo"; windowVST.name = "VST Stereo";
-			}),
-			MenuAction("Rotate2", {recChannels = 2; numberAudioOut = 2;
-				s.recChannels_(recChannels);
-				s.options.numInputBusChannels_(20);
-				//s.options.numOutputBusChannels_(8);
-				typeMasterOut = listeMasterOut.at(1);
-				startSystem.valueAction_(0);
-				groupeVerb.freeAll;
-				groupeLimiter.freeAll;
-				groupeVST.freeAll;
-				this.initSynthDef;
-				Synth.new("GVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Rotate2", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-				fxVST = VSTPluginController(synthVST);
-				// Setup GUI Value
-				windowGVerb.view.children.at(0).valueAction_(0);
-				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-				// Setup GUI Value
-				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Rotate2"; windowEar.name = "Reverb Rotate2"; windowVST.name = "VST Rotate2";
-			}),
-			MenuAction("MultiSpeaker", {
-				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
-					s.recChannels_(recChannels);
-					s.options.numInputBusChannels_(20);
-					//s.options.numOutputBusChannels_(8);
-					typeMasterOut = listeMasterOut.at(2);
-					startSystem.valueAction_(0);
-					groupeVerb.freeAll;
-					groupeLimiter.freeAll;
-					groupeVST.freeAll;
-					this.initSynthDef;
-					Synth.new("GVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					allPass = Synth.newPaused("Allpass MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					jpVerb = Synth.newPaused("JPverb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					synthVST = Synth.newPaused("VST MultiSpeaker", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-					fxVST = VSTPluginController(synthVST);
-					// Setup GUI Value
-					windowGVerb.view.children.at(0).valueAction_(0);
-					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-					// Setup GUI Value
-					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-					windowGVerb.name = "Reverb MultiSpeaker"; windowEar.name = "Reverb MultiSpeaker"; windowVST.name = "VST MultiSpeaker";
-				});
-			}),
-			MenuAction("Ambisonic", {
-				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
-					s.recChannels_(recChannels);
-					s.options.numInputBusChannels_(20);
-					//s.options.numOutputBusChannels_(8);
-					typeMasterOut = listeMasterOut.at(3);
-					startSystem.valueAction_(0);
-					groupeVerb.freeAll;
-					groupeLimiter.freeAll;
-					groupeVST.freeAll;
-					this.initSynthDef;
-					Synth.new("GVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					allPass = Synth.newPaused("Allpass Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					jpVerb = Synth.newPaused("JPverb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					synthVST = Synth.newPaused("VST Ambisonic", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-					fxVST = VSTPluginController(synthVST);
-					// Setup GUI Value
-					windowGVerb.view.children.at(0).valueAction_(0);
-					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-					// Setup GUI Value
-					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-					windowGVerb.name = "Reverb Ambisonic"; windowEar.name = "Reverb Ambisonic"; windowVST.name = "VST Ambisonic";
-				});
-			}),
-			MenuAction("Dolby5.1", {recChannels = 6; numberAudioOut = 6;
-				s.recChannels_(recChannels);
-				s.options.numInputBusChannels_(20);
-				//s.options.numOutputBusChannels_(8);
-				typeMasterOut = listeMasterOut.at(4);
-				startSystem.valueAction_(0);
-				groupeVerb.freeAll;
-				groupeLimiter.freeAll;
-				groupeVST.freeAll;
-				this.initSynthDef;
-				Synth.new("GVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Dolby5.1", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-				fxVST = VSTPluginController(synthVST);
-				// Setup GUI Value
-				windowGVerb.view.children.at(0).valueAction_(0);
-				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-				// Setup GUI Value
-				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
-			});
-		);
-		MainMenu.register(menuAudio.title_("Audio"), "WekDensityTools");
-
-		menuMIDI = Menu(
-			MenuAction("Init", {
-				MIDIClient.init;
-				if(MIDIClient.externalSources != [ ], {
-					// Connect first device by default
-					MIDIIn.connect(0, 0);
-					midiOut = MIDIOut(0);
-					//midiOut.connect(0);
-					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
-				}, {"Warning no MIDI Devices Connected".postln});
-			}),
-			Menu(
-				MenuAction("Connect IN", {
-					SCRequestString("0", "Device", {arg index, port;
-						port = index.asInteger;
-						MIDIIn.connect(port, MIDIClient.sources.at(port));
-					});
-				}),
-				MenuAction("Connect Out", {
-					SCRequestString("0", "Device", {arg index, port;
-						port = index.asInteger;
-						midiOut = MIDIOut(port);
-						//midiOut.connect(port);
-						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
-					});
-				});
-			).title_("Setting");
-		);
-		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTools");
-
-		menuOSC = Menu(
-			MenuAction("Setting", {var addrM, addrS;
-				// Set OSC Addresse et Port Master
-				addrM=NetAddr.localAddr;
-				addrS=NetAddr.localAddr;
-				slaveAppAddr.disconnect;
-				SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
-					SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
-						// Set OSC Addresse et Port Slave
-						SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-							SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
-								//initOSCresponder.value;
-							});
-						});
-					});
-				});
-			}),
-			MenuAction("OSC Master", {oscStateFlag='master';
-				"WekDensity is OSC now !".postln;
-			}),
-			MenuAction("OSC Slave", {oscStateFlag='slave';
-				"WekDensity is OSC SLAVE now !".postln;
-			}),
-			MenuAction("OSC Off", {oscStateFlag='off';
-				"OSC is OFF now !".postln;
-			});
-		);
-		MainMenu.register(menuOSC.title_("OSC"), "WekDensityTools");
-
-		menuAlgo = Menu(
-			MenuAction("Not Activate", {nil}),
-		);
-		MainMenu.register(menuAlgo.title_("Algorithm"), "WekDensityTools");
-
-		menuHelp = MenuAction("Help ShortCut", {
-			//Document.new("ShortCut for WekDensity", helpWekDensity);
-			TextView().name_("ShortCut for WekDensity").string_(helpWekDensity).front;
-		});
-		MainMenu.register(menuHelp, "WekDensityTools");
 
 		// Fonction ShortCut
 		fonctionShortCut = {arg window;
@@ -3669,19 +3654,21 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowKeyboard.onClose_({nil});
 
 		////// Window Plotter Data /////
-		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness", Rect(710, 800, 510, 505), scroll: true);
+		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness", Rect(710, 800, 510, 660), scroll: true);
 		windowPlotterData.alpha=1.0;
 		windowPlotterData.front;
 		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
-		// Display ON / OFF
-		//Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
 		// Refresh Display
 		refreshDisplayDataMusic = Button(windowPlotterData,Rect(0, 0, 100, 20));
 		refreshDisplayDataMusic.states = [["Refresh Plotter"]];
 		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0], [0], [0], [0],[0],[0]]; plotterData = [[0], [0], [0],[0],[0],[0],[0],[0]];
 		};
-		Button(windowPlotterData, Rect(0, 0, 150, 15)).states_([["StreamFFT+MFCC On", Color.green], ["StreamFFT+MFCC Off", Color.red]]).action_({|view|
-			if(view.value == 0, {flagStreamMFCC = 'off'}, {flagStreamMFCC = 'on'});
+		Button(windowPlotterData, Rect(0, 0, 150, 15)).states_([["Stream Wek", Color.green], ["Stream FFT+MFCC", Color.red], ["Wekinator Running", Color.yellow]]).action_({|view|
+			switch(view.value,
+				0, {flagStreamMFCC = 'off'},
+				1, {flagStreamMFCC = 'on'},
+				2, {flagStreamMFCC = 'wek'}
+			);
 		});
 		// Range FFT
 		EZRanger(windowPlotterData , 500 @ 15, "Range FFT", \unipolar,
@@ -3690,6 +3677,23 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		plotterDataGUI = Plotter("Analyze Data", Rect(0, 0, 500, 390), windowPlotterData).plotMode_(\steps);
 		plotterDataGUI.value = [[0], [0], [0],[0],[0],[0],[0],[0]];
 		plotterMFCCGUI = Plotter("Analyze MFCC", Rect(0, 0, 500, 60), windowPlotterData).plotMode_(\plines);
+		// Wek Sliders
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekFreq", ControlSpec(0, 127, \lin, 0),
+			{|ez| wekFreq = ez.value}, 60, false, 60, 40).valueAction_(60);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekAmp", \db,
+			{|ez| wekAmp = ez.value}, -12, false, 60, 40).valueAction_(-12);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekDur", ControlSpec(0.01, dureeMaximumAnalyze, \lin, 0),
+			{|ez| wekDur = ez.value}, 1, false, 60, 40).valueAction_(1);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekBPM", ControlSpec(1/8, 8, \lin, 0),
+			{|ez| wekBPM = ez.value}, 1, false, 60, 40).valueAction_(1);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekCentroid", ControlSpec(0, 127, \lin, 0),
+			{|ez| wekCentroid = ez.value}, 60, false, 60, 40).valueAction_(60);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekEnergy", ControlSpec(0, 127, \lin, 0),
+			{|ez| wekEnergy = ez.value}, -12, false, 60, 40).valueAction_(60);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekFlux", \unipolar,
+			{|ez| wekFlux = ez.value}, 0.5, false, 60, 40).valueAction_(0.5);
+		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekFlatness", \unipolar,
+			{|ez| wekFlatness = ez.value}, 0.5, false, 60, 40).valueAction_(0.5);
 		refreshDisplayDataMusic.focus;
 
 		////////////////////////// Window GVerb ///////////////////////////////
@@ -3997,7 +4001,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 					numIndexSynthBand = 0;
-					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport play
 				},
 				1, {
 					switchSourceIn.valueAction_(switchSourceIn.value);
@@ -4007,7 +4010,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					playInstruments.play;
 					watchSilence.play;
 					memoryMusic.play;
-					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
 				}
 			);
 		};
