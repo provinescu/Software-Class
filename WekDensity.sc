@@ -4,7 +4,7 @@ WekDensity {
 
 	classvar <> s;
 
-	var tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
+	var pbind, tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
 	var wekFreq, wekAmp, wekDur, wekBPM, wekCentroid, wekEnergy, wekFlux, wekFlatness;
 	var keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, createGUI, displayAnalyzeFFT, displayAnalyzeMusic,  groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb;
 	var lastTime, oscMusicFFT,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpWekDensity, flagMidiOut, plotterDataGUI;
@@ -54,8 +54,6 @@ WekDensity {
 		);// Type Format stereo, ambisonic, etc...
 
 		//Server.default = s = Server(name,NetAddr("localhost",57570), Server.default.options);
-		/*// Increase Memory Server
-		Server.default.options.memSize = 2**20;*/
 		s = Server.default;
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);
@@ -244,6 +242,7 @@ WekDensity {
 		wekEnergy = 60;
 		wekFlux = 0.5;
 		wekFlatness = 0.5;
+		pbind = 1;
 		// Wek Out 8 data music + fft + 6 data synth sound fx
 
 		// Audio Out
@@ -2653,18 +2652,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 									recBuffer.set(\trigger, 0);
 									s.sync;
 								});
-								loopSound}, 1),
-							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, 1),
-							\reverse, Pfuncn({newRevSound}, 1),
+								loopSound}, pbind),
+							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, pbind),
+							\reverse, Pfuncn({newRevSound}, pbind),
 							\freq, Pseq(freq, 1),
 							\amp, Pseq(amp, 1),
 							\dur, Pseq(duree, 1),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
 							\legato,  0.5,
-							\ctrlHP1, Pfuncn({ctrlHP1}, 1),
-							\ctrlHP2, Pfuncn({ctrlHP2}, 1),
-							\stretch, Pfuncn({stretchDuree}, 1),
+							\ctrlHP1, Pfuncn({ctrlHP1}, pbind),
+							\ctrlHP2, Pfuncn({ctrlHP2}, pbind),
+							\stretch, Pfuncn({stretchDuree}, pbind),
 							\flux, (busOSCflux.at(indexBandFhz)).asMap,
 							\flatness, (busOSCflatness.at(indexBandFhz)).asMap,
 							\centroid, (busOSCcentroid.at(indexBandFhz)).asMap,
@@ -2698,10 +2697,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, 1),
-								\amp, Pseq(amp, 1),
-								\dur, Pseq(duree, 1),
-								\stretch, Pfuncn({stretchDuree}, 1),
+								\freq, Pseq(freq, pbind),
+								\amp, Pseq(amp, pbind),
+								\dur, Pseq(duree, pbind),
+								\stretch, Pfuncn({stretchDuree}, pbind),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -2712,10 +2711,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, 1),
-								\amp, Pseq(amp, 1),
-								\dur, Pseq(duree, 1),
-								\stretch, Pfuncn({stretchDuree}, 1),
+								\freq, Pseq(freq, pbind),
+								\amp, Pseq(amp, pbind),
+								\dur, Pseq(duree, pbind),
+								\stretch, Pfuncn({stretchDuree}, pbind),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -3670,6 +3669,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				2, {flagStreamMFCC = 'wek'}
 			);
 		});
+		// Pbind Data Loop
+		Button(windowPlotterData, Rect(0, 0, 150, 15)).
+		states_([["Pbind Data Loop On", Color.green], ["Pbind Data Loop Off", Color.red]]).
+		action = {arg val;
+			switch (val.value,
+				0, {pbind = 1},
+				1, {pbind = inf}
+			);
+		};
 		// Range FFT
 		EZRanger(windowPlotterData , 500 @ 15, "Range FFT", \unipolar,
 			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65);
@@ -4881,7 +4889,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		listeWindows=listeWindows.add(windowPlotterData);
 		listeWindows=listeWindows.add(windowKeyboard);
 		//listeWindows=listeWindows.add(windowVST);
-		listeWindows.do({arg window; fonctionShortCut.value(window)});
+		listeWindows.do({arg window; fonctionShortCut.value(window);
+			window.view.do({arg view;
+				view.children.do({arg subView;
+					subView.font = Font("Helvetica", 10);
+				});
+			});
+		});
 
 		// Init Preset
 		//Post << "Init Preset" <<  Char.nl;
@@ -4957,7 +4971,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				ampInput = if(ampLoPass < 1, 1, if(ampHiPass < 0, 1, 0));
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-				fft2 = FFT(LocalBuf(512, 1), inputFilter);
+				fft2 = FFT(LocalBuf(1024, 1), inputFilter);
 				harmonic = FFT(LocalBuf(512, 1), inputFilter);
 				percussive = FFT(LocalBuf(512, 1), inputFilter);
 				#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);

@@ -8,7 +8,7 @@ Density {
 	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
 	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
 	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
-	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand;
+	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, pbind;
 
 	*new {arg path = "~/Documents/Density/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density";
 
@@ -76,7 +76,7 @@ Density {
 		scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
 		keyVolume = 12.neg.dbamp;
 		canalMIDI = 0;
-		rangeDBintruments = [-36.dbamp, -1.dbamp];
+		rangeDBintruments = [-12.dbamp, -3.dbamp];
 		rangeFreqintruments = [0, 127];
 		quantizationDuree = 100;
 		keyboardTranslateBefore = 0;
@@ -214,6 +214,7 @@ Density {
 		12.do({arg i; channelsSynth = channelsSynth.add(0)});// Channels Synth Ouput en fonction des numFhzBand
 		channelsVerb = 0; // Verb ouput channel
 		rangeFFT = [0.0, 1.0];
+		pbind = 1;
 
 		// Audio Out
 		listeMasterOut = [
@@ -2241,18 +2242,18 @@ Density {
 									recBuffer.set(\trigger, 0);
 									s.sync;
 								});
-								loopSound}, 1),
+								loopSound}, pbind),
 							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, 1),
-							\reverse, Pfuncn({newRevSound}, 1),
+							\reverse, Pfuncn({newRevSound}, pbind),
 							\freq, Pseq(freq, 1),
 							\amp, Pseq(amp, 1),
 							\dur, Pseq(duree, 1),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
 							\legato,  0.5,
-							\ctrlHP1, Pfuncn({ctrlHP1}, 1),
-							\ctrlHP2, Pfuncn({ctrlHP2}, 1),
-							\stretch, Pfuncn({stretchDuree}, 1),
+							\ctrlHP1, Pfuncn({ctrlHP1}, pbind),
+							\ctrlHP2, Pfuncn({ctrlHP2}, pbind),
+							\stretch, Pfuncn({stretchDuree}, pbind),
 							\flux, (busOSCflux.at(indexBandFhz)).asMap,
 							\flatness, (busOSCflatness.at(indexBandFhz)).asMap,
 							\centroid, (busOSCcentroid.at(indexBandFhz)).asMap,
@@ -2286,10 +2287,10 @@ Density {
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, 1),
-								\amp, Pseq(amp, 1),
-								\dur, Pseq(duree, 1),
-								\stretch, Pfuncn({stretchDuree}, 1),
+								\freq, Pseq(freq, pbind),
+								\amp, Pseq(amp, pbind),
+								\dur, Pseq(duree, pbind),
+								\stretch, Pfuncn({stretchDuree}, pbind),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -2300,10 +2301,10 @@ Density {
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, 1),
-								\amp, Pseq(amp, 1),
-								\dur, Pseq(duree, 1),
-								\stretch, Pfuncn({stretchDuree}, 1),
+								\freq, Pseq(freq, pbind),
+								\amp, Pseq(amp, pbind),
+								\dur, Pseq(duree, pbind),
+								\stretch, Pfuncn({stretchDuree}, pbind),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -3626,6 +3627,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		refreshDisplayDataMusic.states = [["Refresh Plotter"]];
 		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0]]; plotterData = [[0], [0], [0]];
 		};
+		// Pbind Data Loop
+		Button(windowPlotterData, Rect(0, 0, 150, 15)).
+		states_([["Pbind Data Loop On", Color.green], ["Pbind Data Loop Off", Color.red]]).
+		action = {arg val;
+			switch (val.value,
+				0, {pbind = 1},
+				1, {pbind = inf}
+			);
+		};
 		// Plotter
 		plotterDataGUI = Plotter("Analyze Music", Rect(0, 0, 500, 180), windowPlotterData).plotMode_(\steps);
 		plotterDataGUI.value = [[0], [0], [0]];
@@ -4392,7 +4402,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowEar.view.decorator.nextLine;
 		// Range Amplitude
 		EZRanger(windowEar , 550 @ 20, "Range Amp", \db,
-			{|ez| rangeDBintruments = ez.value.dbamp}, [-36, -1], labelWidth: 100,numberWidth: 50);
+			{|ez| rangeDBintruments = ez.value.dbamp}, [-12, -3], labelWidth: 100,numberWidth: 50);
 		windowEar.view.decorator.nextLine;
 		// Range Duree
 		EZRanger(windowEar , 550 @ 20, "Range Duree", ControlSpec(0, 60, \lin, 0),
