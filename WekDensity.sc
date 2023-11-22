@@ -3653,7 +3653,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowKeyboard.onClose_({nil});
 
 		////// Window Plotter Data /////
-		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness", Rect(710, 800, 510, 660), scroll: true);
+		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness", Rect(710, 800, 510, 675), scroll: true);
 		windowPlotterData.alpha=1.0;
 		windowPlotterData.front;
 		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
@@ -3662,15 +3662,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		refreshDisplayDataMusic.states = [["Refresh Plotter"]];
 		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0], [0], [0], [0],[0],[0]]; plotterData = [[0], [0], [0],[0],[0],[0],[0],[0]];
 		};
-		Button(windowPlotterData, Rect(0, 0, 150, 15)).states_([["Stream Wek", Color.green], ["Stream FFT+MFCC", Color.red], ["Wekinator Running", Color.yellow]]).action_({|view|
-			switch(view.value,
-				0, {flagStreamMFCC = 'off'},
-				1, {flagStreamMFCC = 'on'},
-				2, {flagStreamMFCC = 'wek'}
-			);
-		});
 		// Pbind Data Loop
-		Button(windowPlotterData, Rect(0, 0, 150, 15)).
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).
 		states_([["Pbind Data Loop On", Color.green], ["Pbind Data Loop Off", Color.red]]).
 		action = {arg val;
 			switch (val.value,
@@ -3678,6 +3671,38 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				1, {pbind = inf}
 			);
 		};
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["Stream Soft", Color.green], ["Stream FFT+MFCC", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+					windowPlotterData.view.children.at(5).value_(0);
+				},
+				1, {flagStreamMFCC = 'on'; sender.sendMsg("/wekinator/control/stopRunning");
+					windowPlotterData.view.children.at(5).value_(0);
+				}
+			);
+		});
+		windowPlotterData.view.decorator.nextLine;
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRec On", Color.green], ["WekRec Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {sender.sendMsg("/wekinator/control/stopRecording")},
+				1, {sender.sendMsg("/wekinator/control/startRecording")}
+			);
+		});
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.green], ["WekTrain Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {sender.sendMsg("/wekinator/control/cancelTrain")},
+				1, {sender.sendMsg("/wekinator/control/train")}
+			);
+		});
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.green], ["WekRun Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+					windowPlotterData.view.children.at(2).value_(0);
+				},
+				1, {flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+				}
+			);
+		});
 		// Range FFT
 		EZRanger(windowPlotterData , 500 @ 15, "Range FFT", \unipolar,
 			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65);

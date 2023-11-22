@@ -2744,16 +2744,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~differencedureeinstrument = ~differencedureeinstrument.add(EZSlider(w, 200 @ 18, "Dist Dur",ControlSpec(0.01, 16, \exp, 0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~differencedureeinstrument",ez.value);~differenceduree.wrapPut(i,ez.value)},
 				0.0625,labelWidth: 65,numberWidth: 40));
-			~dureeanalysesilence = ~dureeanalysesilence.add(EZSlider(w, 200 @ 18, "Memory Time",ControlSpec(1, 3600, \exp),
+			~dureeanalysesilence = ~dureeanalysesilence.add(EZSlider(w, 200 @ 18, "Memory Time",ControlSpec(0.01, 3600, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysesilence",ez.value);~dureeanalysesil.wrapPut(i,ez.value)},
 				4,labelWidth: 65,numberWidth: 35));
 			w.view.decorator.nextLine;
-			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "Max Dur",ControlSpec(1, 60, \exp),
+			~dureeanalysemaxinstrument = ~dureeanalysemaxinstrument.add(EZSlider(w, 200 @ 18, "Max Dur",ControlSpec(0.01, 60, \exp),
 				{|ez| ~writepartitions.value(i,'normal','off',"~dureeanalysemaxinstrument",ez.value);~dureeanalysemax.wrapPut(i,ez.value);
 					if(ez.value > ~dureeanalysesil.wrapAt(i), {~dureeanalysesil.wrapPut(i, ez.value);~dureeanalysesilence.wrapAt(i).value_(ez.value)})},
 				4, false, 65, 35));
 			// Chords
-			~maxaccordinstrument = ~maxaccordinstrument.add(EZSlider(w, 200 @ 18, "Chord",ControlSpec(1, 12, \lin, 1),
+			~maxaccordinstrument = ~maxaccordinstrument.add(EZSlider(w, 200 @ 18, "Chord",ControlSpec(0, 12, \lin, 1),
 				{|ez| ~writepartitions.value(i,'normal','off',"~maxaccordinstrument",ez.value);~maxaccord.wrapPut(i,ez.value)},
 				6,labelWidth: 65,numberWidth: 20));
 			~dureeaccordinstrument = ~dureeaccordinstrument.add(EZSlider(w, 200 @ 18, "ChordDur",ControlSpec(0.01, 1.0, \exp),
@@ -3318,7 +3318,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~automationeffetpost.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~automationeffetpost",view.value);
 				~randomValueEffetPost.wrapAt(i).wrapPut(~syntheffetsPostcontrol.wrapAt(i).value, view.value)};
 			w.view.decorator.nextLine;
-			~quantizationview=~quantizationview.add(EZSlider(w, 205 @ 18, "Quanta", ControlSpec(1, 100, \exp, 0),
+			~quantizationview=~quantizationview.add(EZSlider(w, 205 @ 18, "Quanta", ControlSpec(0.01, 100, \exp, 0),
 				{|ez| ~writepartitions.value(i,'normal','off',"~quantizationview",ez.value);
 					~tempoSystem.schedAbs(~tempoSystem.beats, {~quantization.wrapPut(i, ez.value);nil})},
 				100,labelWidth: 42,numberWidth: 35));
@@ -6315,7 +6315,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controls.at(0) * 4, controls.at(1) * 128 - 64);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6361,7 +6361,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controls.at(0)*64);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6407,7 +6407,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controls.at(0)*64);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6453,7 +6453,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controls.at(0),  LFNoise2.kr(controls.at(1)*64));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6499,7 +6499,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controls.at(0)*4,  controls.at(1)*256 - 128);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6545,7 +6545,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controls.at(0), controls.at(1), LFNoise2.kr(controls.at(2).reciprocal));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6591,7 +6591,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controls.at(0)*2 - 1);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6637,7 +6637,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controls.at(0)*2 - 1, controls.at(1)*2 - 1);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6683,7 +6683,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controls.at(0)*100), (controls.at(1)*100).reciprocal));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6729,7 +6729,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controls.at(0)*64);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6775,7 +6775,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controls.at(0)*64);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6821,7 +6821,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controls.at(0)*16);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6867,7 +6867,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6913,7 +6913,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -6959,7 +6959,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controls.at(0) * 32, controls.at(1), controls.at(2));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7005,7 +7005,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controls.at(0));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7051,7 +7051,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, controls.at(0)*64, controls.at(1)*10, controls.at(2)*10);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7097,7 +7097,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controls.at(0),  LFNoise2.kr(controls.at(1)*64));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7147,8 +7147,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7198,8 +7198,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_Min(fft1, fft2);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7249,8 +7249,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_MagDiv(fft1, fft2, controls.at(1)+0.0001);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7300,8 +7300,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7351,8 +7351,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7402,8 +7402,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_RandWipe(fft1, fft2, controls.at(1), LFNoise2.kr(controls.at(2).reciprocal));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7453,8 +7453,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_BinWipe(fft1, fft2, controls.at(1)*2 - 1);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7504,8 +7504,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7555,8 +7555,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_RectComb2(fft1, fft2, controls.at(1) * 32, controls.at(2), controls.at(3));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -7606,8 +7606,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					in2=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, 0, BufFrames.kr(buffer)*controls.at(0), loop);
 					// Main Synth
-					fft1 = FFT(LocalBuf(2048, 1), in1);
-					fft2 = FFT(LocalBuf(2048, 1), in2);
+					fft1 = FFT(LocalBuf(1024, 1), in1);
+					fft2 = FFT(LocalBuf(1024, 1), in2);
 					main=PV_Morph(fft1, fft2, controls.at(1));
 					main= IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9245,7 +9245,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main=PV_BinScramble(main,controls.at(0),controls.at(1), LFNoise2.kr(controls.at(2)*100));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9288,7 +9288,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					fft=FFT(LocalBuf(2048, 1), in);
+					fft=FFT(LocalBuf(1024, 1), in);
 					main=PV_BinShift(fft, controls.at(0)*4, controls.at(1)*256-128);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9331,7 +9331,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					fft=FFT(LocalBuf(2048, 1), in);
+					fft=FFT(LocalBuf(1024, 1), in);
 					main=PV_ConformalMap(fft, controls.at(0)*2-1, controls.at(1)*2-1);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9374,7 +9374,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					fft=FFT(LocalBuf(2048, 1), in);
+					fft=FFT(LocalBuf(1024, 1), in);
 					main=PV_LocalMax(fft, controls.at(0)*64);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9417,7 +9417,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					fft=FFT(LocalBuf(2048, 1), in);
+					fft=FFT(LocalBuf(1024, 1), in);
 					main=PV_MagSmear(fft, controls.at(0)*64);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9460,7 +9460,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main=PV_RandComb(main,controls.at(0), LFNoise2.kr(controls.at(1)*64));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9503,7 +9503,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main=PV_MagShift(main,controls.at(0)*4, controls.at(1)*128-64);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9546,7 +9546,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_MagSquared(main);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9589,7 +9589,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_MagNoise(main);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9632,7 +9632,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_MagClip(main, controls.at(0)*16);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9675,7 +9675,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_MagAbove(main, controls.at(0)*64);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9718,7 +9718,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_MagBelow(main, controls.at(0)*64);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9761,7 +9761,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controls.at(0)*100), (controls.at(1)*100).reciprocal));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9804,7 +9804,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_BrickWall(main, controls.at(0)*2 - 1);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9847,7 +9847,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_RectComb(main, controls.at(0) * 32, controls.at(1), controls.at(2));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9890,7 +9890,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_MagSmooth(main, controls.at(0));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9933,7 +9933,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main=FFT(LocalBuf(2048, 1), in);
+					main=FFT(LocalBuf(1024, 1), in);
 					main = PV_Compander(main, controls.at(0)*64, controls.at(1)*10, controls.at(2)*10);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -9976,7 +9976,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,4), gate, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					// Sample
 					in=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					main = FFT(LocalBuf(2048, 1), in);
+					main = FFT(LocalBuf(1024, 1), in);
 					main = PV_Cutoff(main, controls.at(0) * 2 - 1);
 					main = IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10022,8 +10022,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_Mul(fft1, fft2);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10113,8 +10113,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_Max(fft1, fft2);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10160,8 +10160,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10207,8 +10207,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_Add(fft1, fft2);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10254,8 +10254,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_MagDiv(fft1, fft2, controls.at(1)+0.0001);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10301,8 +10301,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_BinWipe(fft1, fft2, controls.at(1)*4 - 1);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10348,8 +10348,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10395,8 +10395,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_RectComb2(fft1, fft2, controls.at(1) * 32, controls.at(2), controls.at(3));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10442,8 +10442,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_Morph(fft1, fft2, controls.at(1));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10489,8 +10489,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample Attention les buffers doivent avoir la meme longueur !!!!!!!!!!!
 					in1=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate1, trigger, BufFrames.kr(buffer)*pos, loop);
 					in2=PlayBuf.ar(1, buffer2, BufRateScale.kr(buffer2)*rate2, trigger, BufFrames.kr(buffer2)*controls.at(0), loop2);
-					fft1=FFT(LocalBuf(2048, 1), in1);
-					fft2=FFT(LocalBuf(2048, 1), in2);
+					fft1=FFT(LocalBuf(1024, 1), in1);
+					fft2=FFT(LocalBuf(1024, 1), in2);
 					main=PV_RandWipe(fft1, fft2, controls.at(1), LFNoise2.kr(controls.at(2)*100));
 					main=IFFT(main);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -10837,7 +10837,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Sample
 					trigger = Impulse.kr(controls.at(0)*100);
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer)*rate, trigger, BufFrames.kr(buffer)*pos, loop);
-					local =FFT(LocalBuf(2048, 1), main);
+					local =FFT(LocalBuf(1024, 1), main);
 					local = SpecCentroid.kr(local);
 					main = MidEQ.ar(main, local.unipolar, controls.at(3).clip(0.01, 1.0)*512/local.unipolar, controls.at(4).clip(0.01, 1.0)-0.5*128);
 					//main = Limiter.ar(main, 1.0, 0.01);
@@ -11636,7 +11636,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// son en entree de la effet + controles
 					ineffet=Limiter.ar(Mix.new(In.ar(in,2)), 1.0, 0.01);
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_Cutoff(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = Limiter.ar(effet, 1.0, 0.01);
