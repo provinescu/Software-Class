@@ -114,7 +114,7 @@ Launcher {
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density"]).stringColor_(Color.white).action = {|source|
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekDensity", "WekMatrix"]).stringColor_(Color.white).action = {|source|
 			switch (source.value,
 				0, {
 					nameSoft = "Robot";// 57564
@@ -135,6 +135,14 @@ Launcher {
 				4,	{
 					nameSoft = "Density";// 57568
 					path = "~/Documents/Density/";
+				},
+				5,	{
+					nameSoft = "WekDensity";// 57570
+					path = "~/Documents/WekDensity/";
+				},
+				6,	{
+					nameSoft = "WekMatrix";// 57571
+					path = "~/Documents/WekMatrix/";
 				}
 			);
 		};

@@ -12,7 +12,7 @@ WekDensity {
 	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexSynthX, indexSynthY, jitterIndexSynthX, jitterIndexSynthY, displayInstrument, displaySound, indexSoundX, indexSoundY;
 	var jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
 	var midiOut, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
-	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender, receiver;
+	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
 	var dimIn, flagStreamMFCC, pbind, responder;
 
 	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity";
@@ -1214,10 +1214,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// OSC Setting
 			// Wekinator
 			sender.free;
-			receiver.free;
 			responder.free;
 			sender = NetAddr.new("127.0.0.1", 6448);// Wekinator
-			receiver = NetAddr.new("127.0.0.1", 57120);// create the NetAddr ... only the language port 57120 actually works
 			oscStateFlag = 'off';
 
 			// Group
@@ -3032,7 +3030,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
 			sender.free;
-			receiver.free;
 			//s.quit;
 		};
 

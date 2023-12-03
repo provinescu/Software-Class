@@ -483,7 +483,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~tempogenetique=16;
 			~tempoautomation=24;// 1/24 de seconde pour automation des controls instruments
 			~tempoalgorithmes=16;// tempo des autres algorithmes....
-			~tempopartitions=24;// tempo des partitions....
+			~tempopartitions=100;// tempo des partitions....
 			~paraAlgoAnalyseAudio=[[0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5]];
 			~instrumentactuel=0;
 			~differencefreq=[];
@@ -2203,7 +2203,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							freqRate=(~freq.wrapAt(i).wrapAt(ii).cpsmidi - 48).midicps;
 							~busfreqRatesynth.wrapAt(i).wrapAt(ii).set(freqRate);
 							// Creation du synth pour jouer l'evenement musical
-							~listeSynthID.wrapPut(i,Synth.new(~listesynth.wrapAt(i),['out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut,'duree',~duree.wrapAt(i),'controlenvlevel1',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvlevel2',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvlevel3',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvlevel4',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvlevel5',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvlevel6',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvlevel7',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'controlenvlevel8',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7),'controlenvtime1',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvtime2',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2)- ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvtime3',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvtime4',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvtime5',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvtime6',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvtime7',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'buseffetsPost',~buseffetsPostsynth.wrapAt(i).index,'buseffetsPre',~buseffetsPresynth.wrapAt(i).index,'loop',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'loop2',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'buffer', ~bufferTampon.wrapAt(i).bufnum,'buffer2', ~bufferAddTampon.wrapAt(i).bufnum,'reverse',~reversesampledatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'reverse2',~reversesampledatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'wavetable',~wavetable.wrapAt(i).bufnum,'wavetable2',0,'ampPre',~ampPre.wrapAt(i), 'ampPost',~ampPost.wrapAt(i), 'byPass', ~flagByPassSynth.wrapAt(i)],~gsynth.wrapAt(i)).mapn('freq',~busfreqsynth.wrapAt(i).wrapAt(ii).index,1,'freqRate', ~busfreqRatesynth.wrapAt(i).wrapAt(ii).index,1,'amp',~busampsynth.wrapAt(i).index,1,'panLo',~buspansynthLo.wrapAt(i).index,1,'panHi',~buspansynthHi.wrapAt(i).index,1,'pos', ~busoffsetplaysampler.wrapAt(i).index,1,'controls',~buscontrolsynth.wrapAt(i).index, 10));
+							~listeSynthID.wrapPut(i,Synth.new(~listesynth.wrapAt(i),['out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut,'duree',~duree.wrapAt(i),'controlenvlevel1',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvlevel2',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvlevel3',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvlevel4',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvlevel5',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvlevel6',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvlevel7',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'controlenvlevel8',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7),'controlenvtime1',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvtime2',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2)- ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvtime3',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvtime4',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvtime5',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvtime6',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvtime7',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'buseffetsPost',~buseffetsPostsynth.wrapAt(i).index,'buseffetsPre',~buseffetsPresynth.wrapAt(i).index,'loop',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'loop2',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'buffer', ~bufferTampon.wrapAt(i).bufnum,'buffer2', ~bufferAddTampon.wrapAt(i).bufnum,'reverse',~reversesampledatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'reverse2',~reversesampledatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'wavetable',~wavetable.wrapAt(i).bufnum,'wavetable2',0,'ampPre',~ampPre.wrapAt(i), 'ampPost',~ampPost.wrapAt(i), 'byPass', 1 - ~flagByPassSynth.wrapAt(i)],~gsynth.wrapAt(i)).mapn('freq',~busfreqsynth.wrapAt(i).wrapAt(ii).index,1,'freqRate', ~busfreqRatesynth.wrapAt(i).wrapAt(ii).index,1,'amp',~busampsynth.wrapAt(i).index,1,'panLo',~buspansynthLo.wrapAt(i).index,1,'panHi',~buspansynthHi.wrapAt(i).index,1,'pos', ~busoffsetplaysampler.wrapAt(i).index,1,'controls',~buscontrolsynth.wrapAt(i).index, 10));
 							// set canal audio out effets
 							~nombreEffetsPre.do({arg ii;
 								~listeeffetsPresynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
@@ -3487,8 +3487,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			);
 			//Range Band 100
 			~rangeBand = ~rangeBand.add(EZText(w, Rect(0, 0, 260, 20), "Range Band",
-				{arg range; ~bandFHZ.put(i, range.value)},
-				[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true, 60);
+				{arg range;
+					~writepartitions.value(i,'normal','off',"~rangeBand",range.value);
+					~bandFHZ.put(i, range.value)},
+				[[0, 127], [0, 42], [42, 84], [84, 127] ], true, 60);
 			);
 			w.view.decorator.nextLine;
 			StaticText(w, Rect(0,0, 50, 18)).string_("Tuning").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 10));
@@ -3685,7 +3687,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~byPassSynth = ~byPassSynth.add(Button(w, Rect(0, 0, 100, 18))
 				.states_([["ByPass On", Color.green], ["ByPass Off", Color.red]])
 				.action = {arg flag;
-					flag = (flag.value - 1).abs;
 					~writepartitions.value(i,'normal','off',"~byPassSynth", flag.value);
 					~flagByPassSynth.put(i, flag.value);
 				};
@@ -5663,7 +5664,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 	createScore {
 		// PARTITIONS LECTURE ET TIMING (1/24)
-		~routinepartitions=Tdef(\partitions, {var duree,instr,commande,numero,code,valeur,datas,level;
+		~routinepartitions=Tdef(\partitions, {
+			var duree,instr,commande,numero,code,valeur,datas,level;
 			loop({
 				{40.do({arg i;
 					// Evaluation des durees partitions rec
@@ -5759,7 +5761,8 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 		);
 
 		// WRITE PARTITIONS
-		~writepartitions={arg instr, commande, numero, code, valeur;var part;
+		~writepartitions={arg instr, commande, numero, code, valeur;
+			var part;
 			40.do({arg i;
 				if(~flagrecpart.wrapAt(i)==1,{
 					if(~listerecpart.wrapAt(i)==[],{part=~listerecpart.wrapAt(i);part=part.add(instr.asSymbol);part=part.add(commande);part=part.add(numero);part=part.add(code);part=part.add(valeur);~listerecpart.wrapPut(i,part);~dureerecpart.wrapPut(i,0)},
