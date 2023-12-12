@@ -13,7 +13,7 @@ WekDensity {
 	var jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
 	var midiOut, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
-	var dimIn, flagStreamMFCC, pbind, responder;
+	var dimIn, flagStreamMFCC, pbind, responder, flagDureeMFCC;
 
 	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity";
 
@@ -241,6 +241,7 @@ WekDensity {
 		wekFlux = 0.5;
 		wekFlatness = 0.5;
 		pbind = 1;
+		flagDureeMFCC = 'off';
 
 		// Audio Out
 		listeMasterOut = [
@@ -1366,9 +1367,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			(numFhzBand + 1).do({arg i; lastTime = lastTime.add(Main.elapsedTime)});
 
 			// DATA WIKI OUT
-			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort, freq=0, amp=0, timer=1, duree=0, centroid=0, flatness=0, energy=0, flux=0, bpm=0;
+			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort, freq=0, amp=0, duree=0, centroid=0, flatness=0, energy=0, flux=0, bpm=0;
 				var wekOut, buffer;
-				var musicData, fxData, dureeDisplay, indexFhz, indexBand, freqNew, ampNew, freqStream, ampStream, dureeStream;
+				var musicData, fxData, indexFhz, indexBand, freqNew, ampNew, freqStream, ampStream, dureeStream;
 				var instrumentName, soundName, fxName;
 				wekOut = msg[1..];
 				musicData = wekOut[0..3];//Freq amp Duree BPM
@@ -1379,10 +1380,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				indexBand = 0;
 				freq = wekOut[0].abs.midicps.clip(20, 4186);
 				amp = wekOut[1].dbamp.clip(0, 1);
-				timer = wekOut[2].abs.clip(0.01, dureeMaximumAnalyze); // Duree de l'algo
 				userBPM = wekOut[3].abs.clip(7.5, 480) / 480;// User BPM
-				duree =  time - lastTime.at(0);
-				dureeDisplay = time - lastTime.at(0);
+				if(flagDureeMFCC == 'off',
+					{
+						duree = wekOut[2].abs.clip(0.01, dureeMaximumAnalyze);
+					},
+					{
+						duree =  time - lastTime.at(0);
+				});
 				// Setup Data
 				if(duree > dureeMaximumAnalyze or: {duree > memoryTime}, {
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -1718,9 +1723,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Plot Data
 				plotDataMusic.value(musicData[0].cpsmidi, musicData[1], musicData[2], musicData[3], fxData[0], fxData[1], fxData[2], fxData[3]);
 				{
-					windowEar.view.children.at(56).x_(wekOut[16]); windowEar.view.children.at(56).y_(wekOut[17]);
-					windowEar.view.children.at(58).x_(wekOut[18]); windowEar.view.children.at(58).y_(wekOut[19]);
-					windowEar.view.children.at(60).x_(wekOut[20]); windowEar.view.children.at(60).y_(wekOut[21]);
+					windowEar.view.children.at(56).x_(indexSynthX); windowEar.view.children.at(56).y_(indexSynthY);
+					windowEar.view.children.at(58).x_(indexSoundX); windowEar.view.children.at(58).y_(indexSoundY);
+					windowEar.view.children.at(60).x_(indexFXX); windowEar.view.children.at(60).y_(indexFXY);
 					instrumentName = synthOrchestra.at((indexSynthX * (synthOrchestra.size - 1) + 0.5).floor);
 					instrumentName = instrumentName.at((indexSynthY * (instrumentName.size - 1) + 0.5).floor);
 					displayInstrument.string = (indexSynthX.asStringPrec(2) + indexSynthY.asStringPrec(2) + instrumentName);
@@ -1746,14 +1751,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowEar.view.children.at(32).children.at(2).valueAction = stretchDuree;
 					windowEar.view.children.at(33).children.at(2).valueAction = quantizationDuree;
 					windowEar.view.children.at(34).children.at(2).valueAction = userBPM * 480;
-				// Wek Data
+					/*// Wek Data
 					windowPlotterData.view.children.at(9).children.at(2).valueAction = wekOut[0];
 					windowPlotterData.view.children.at(10).children.at(2).valueAction = wekOut[1];
 					windowPlotterData.view.children.at(11).children.at(2).valueAction = wekOut[2];
 					windowPlotterData.view.children.at(12).children.at(2).valueAction = wekOut[4];
 					windowPlotterData.view.children.at(13).children.at(2).valueAction = wekOut[5];
 					windowPlotterData.view.children.at(14).children.at(2).valueAction = wekOut[6];
-					windowPlotterData.view.children.at(15).children.at(2).valueAction = wekOut[7];
+					windowPlotterData.view.children.at(15).children.at(2).valueAction = wekOut[7];*/
 				}.defer;
 				dureeAnalyzeOSCMusic = Main.elapsedTime;
 				//Post << "Out" <<< msg << Char.nl;
@@ -3704,7 +3709,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				1, {pbind = inf}
 			);
 		};
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["Stream Soft", Color.green], ["Stream FFT+MFCC", Color.red]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["Stream Data Wek", Color.magenta], ["Stream FFT+MFCC", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off';
 					//sender.sendMsg("/wekinator/control/stopRunning");
@@ -3716,20 +3721,28 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				}
 			);
 		});
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["Duree Wek", Color.magenta], ["Duree Algo", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagDureeMFCC = 'off';
+				},
+				1, {flagDureeMFCC = 'on';
+				}
+			);
+		});
 		windowPlotterData.view.decorator.nextLine;
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRec On", Color.green], ["WekRec Off", Color.red]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
 				1, {sender.sendMsg("/wekinator/control/startRecording")}
 			);
 		});
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.green], ["WekTrain Off", Color.red]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.magenta], ["WekTrain Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/cancelTrain")},
 				1, {sender.sendMsg("/wekinator/control/train")}
 			);
 		});
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.green], ["WekRun Off", Color.red]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
 					windowPlotterData.view.children.at(2).value_(0);
@@ -3747,19 +3760,19 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		plotterMFCCGUI = Plotter("Analyze MFCC", Rect(0, 0, 500, 60), windowPlotterData).plotMode_(\plines);
 		// Wek Sliders
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekFreq", ControlSpec(0, 127),
-			{|ez| wekFreq = ez.value}, 60, false, 60, 40).valueAction_(60);
+			{|ez| wekFreq = ez.value}, 60, false, 60, 40).valueAction_(60).setColors(Color.grey(0.3), Color.magenta);
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekAmp", \db,
-			{|ez| wekAmp = ez.value}, -12, false, 60, 40).valueAction_(-12);
+			{|ez| wekAmp = ez.value.clip(-120, 0)}, -12, false, 60, 40).valueAction_(-12).setColors(Color.grey(0.3), Color.magenta);
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekDur", ControlSpec(0.01, dureeMaximumAnalyze, \lin, 0),
-			{|ez| wekDur = ez.value}, 1, false, 60, 40).valueAction_(1);
+			{|ez| wekDur = ez.value}, 1, false, 60, 40).valueAction_(1).setColors(Color.grey(0.3), Color.magenta);
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekCentroid", ControlSpec(0, 127, \lin, 0),
-			{|ez| wekCentroid = ez.value}, 60, false, 60, 40).valueAction_(60);
+			{|ez| wekCentroid = ez.value}, 60, false, 60, 40).valueAction_(60).setColors(Color.grey(0.3), Color.magenta);
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekEnergy", ControlSpec(0, 127, \lin, 0),
-			{|ez| wekEnergy = ez.value}, -12, false, 60, 40).valueAction_(60);
+			{|ez| wekEnergy = ez.value}, -12, false, 60, 40).valueAction_(60).setColors(Color.grey(0.3), Color.magenta);
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekFlux", \unipolar,
-			{|ez| wekFlux = ez.value}, 0.5, false, 60, 40).valueAction_(0.5);
+			{|ez| wekFlux = ez.value}, 0.5, false, 60, 40).valueAction_(0.5).setColors(Color.grey(0.3), Color.magenta);
 		EZSlider(windowPlotterData, Rect(0, 0, 500, 15), "WekFlatness", \unipolar,
-			{|ez| wekFlatness = ez.value}, 0.5, false, 60, 40).valueAction_(0.5);
+			{|ez| wekFlatness = ez.value}, 0.5, false, 60, 40).valueAction_(0.5).setColors(Color.grey(0.3), Color.magenta);
 		refreshDisplayDataMusic.focus;
 
 		////////////////////////// Window GVerb ///////////////////////////////
@@ -4485,25 +4498,25 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowEar.view.decorator.nextLine;
 		// Range Freq
 		EZRanger(windowEar , 550 @ 20, "Range FHZ", ControlSpec(0, 127, \lin, 0.1),
-			{|ez| rangeFreqintruments = ez.value}, [0, 127], labelWidth: 100, numberWidth: 50);
+			{|ez| rangeFreqintruments = ez.value}, [0, 127], labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Range Amplitude
 		EZRanger(windowEar , 550 @ 20, "Range Amp", \db,
-			{|ez| rangeDBintruments = ez.value.dbamp}, [-12, -6], labelWidth: 100,numberWidth: 50);
+			{|ez| rangeDBintruments = ez.value.dbamp}, [-12, -6], labelWidth: 100,numberWidth: 50).setColors( Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Range Duree
 		EZRanger(windowEar , 550 @ 20, "Range Duree", ControlSpec(0, 60, \lin, 0),
-			{|ez| rangeDureeintruments = ez.value}, [0, dureeMaximumAnalyze], labelWidth: 100,numberWidth: 50);
+			{|ez| rangeDureeintruments = ez.value}, [0, dureeMaximumAnalyze], labelWidth: 100,numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Stretch Duree
 		EZKnob(windowEar, 80 @ 80, "Stretch", ControlSpec(0.0167, 60, \exp, 0),
-			{|ez| stretchDuree = ez.value}, 1, layout: \vert2);
+			{|ez| stretchDuree = ez.value}, 1, layout: \vert2).setColors(Color.grey(0.3), Color.magenta);
 		// Quantization
 		EZKnob(windowEar, 80 @ 80, "Quantization", ControlSpec(1, 100, \lin, 1),
-			{|ez| quantizationDuree = ez.value}, 100, layout: \vert2);
+			{|ez| quantizationDuree = ez.value}, 100, layout: \vert2).setColors(Color.grey(0.3), Color.magenta);
 		// BPM
 		EZKnob(windowEar, 80 @ 80, "BPM System", ControlSpec(7.5, 480, \exp, 1),
-			{|ez| userBPM = ez.value / 60; TempoClock.default.tempo = userBPM; userBPM = userBPM.reciprocal}, 60, layout: \vert2);
+			{|ez| userBPM = ez.value / 60; TempoClock.default.tempo = userBPM; userBPM = userBPM.reciprocal}, 60, layout: \vert2).setColors(Color.grey(0.3), Color.magenta);
 		// FX
 		EZKnob(windowEar, 80 @ 80, "FX",\unipolar,
 			{|ez| fadeFX = ez.value; groupeFX.set(\xFade, ez.value)}, 0.5, layout: \vert2);
@@ -4678,7 +4691,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			instrumentName = synthOrchestra.at((indexX * (synthOrchestra.size - 1) + 0.5).floor);
 			instrumentName = instrumentName.at((indexY * (instrumentName.size - 1) + 0.5).floor);
 			displayInstrument.string = (indexSynthX.asStringPrec(2) + indexSynthY.asStringPrec(2) + instrumentName);
-		});
+		}).knobColor = Color.magenta;
 		// Jitter Y Sound
 		EZSlider(windowEar, Rect(0, 0, 25, 100), "JitY", ControlSpec(0, 100, \lin, 0),
 			{|ez| jitterIndexSoundY = ez.value / 100}, jitterIndexSoundY * 100, false, 40, 35, layout:\vert);
@@ -4696,7 +4709,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			soundName = soundOrchestra.at((indexX * (soundOrchestra.size - 1) + 0.5).floor);
 			soundName = soundName.at((indexY * (soundName.size - 1) + 0.5).floor);
 			displaySound.string = (indexSoundX.asStringPrec(2) +  indexSoundY.asStringPrec(2) + PathName.new(soundName).fileName);
-		});
+		}).knobColor = Color.magenta;
 		// Jitter Y FX
 		EZSlider(windowEar, Rect(0, 0, 25, 100), "JitY", ControlSpec(0, 100, \lin, 0),
 			{|ez| jitterIndexFXY = ez.value / 100}, jitterIndexFXY * 100, false, 40, 35, layout:\vert);
@@ -4712,7 +4725,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			fxName = fxOrchestra.at((indexX * (fxOrchestra.size - 1) + 0.5).floor);
 			fxName = fxName.at((indexY * (fxName.size - 1) + 0.5).floor);
 			displayFX.string = (indexFXX.asStringPrec(2) + indexFXY.asStringPrec(2) + fxName);
-		});
+		}).knobColor = Color.magenta;
 		windowEar.view.decorator.nextLine;
 		// Jitter X Instrument
 		EZSlider(windowEar, Rect(0, 0, 230, 20), "JitX", ControlSpec(0, 100, \lin, 0),
