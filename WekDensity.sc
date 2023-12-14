@@ -12,8 +12,8 @@ WekDensity {
 	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexSynthX, indexSynthY, jitterIndexSynthX, jitterIndexSynthY, displayInstrument, displaySound, indexSoundX, indexSoundY;
 	var jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
 	var midiOut, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
-	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, file, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
-	var dimIn, flagStreamMFCC, pbind, responder, flagDureeMFCC;
+	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
+	var dimIn, flagStreamMFCC, loopMusic, responder, flagDureeMFCC;
 
 	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity";
 
@@ -240,7 +240,7 @@ WekDensity {
 		wekEnergy = 60;
 		wekFlux = 0.5;
 		wekFlatness = 0.5;
-		pbind = 1;
+		loopMusic = 1;
 		flagDureeMFCC = 'off';
 
 		// Audio Out
@@ -640,8 +640,9 @@ WekDensity {
 							});
 							// QPopUpMenu + QButton + EnvelopeView
 							if(data.at(item).at(0)  == "a PopUpMenu" or: {data.at(item).at(0) == "a EnvelopeView"} or: {data.at(item).at(0) == "an EnvelopeView"} or: 	{data.at(item).at(0) == "a Button"} or: {data.at(item).at(0) == "a QPopUpMenu"} or: {data.at(item).at(0) == "a QEnvelopeView"} or: 	{data.at(item).at(0) == "a QButton"} or: {data.at(item).at(0) == "a SCPopUpMenu"} or: {data.at(item).at(0) == "a SCEnvelopeView"} or: {data.at(item).at(0) == "a SCButton"},
-								{if(index == 2 and: {item == 5}, {nil},
-									{view.valueAction_(data.at(item).at(1))})});
+								{
+									if(index == 2 and: {item == 4 or: {item == 5} or: {item == 6}}, {nil},
+										{view.valueAction_(data.at(item).at(1))})});
 							// NumberBox
 							if(data.at(item).at(0)  == "a NumberBox" or: {data.at(item).at(0) == "a QNumberBox"} or: {data.at(item).at(0) == "a SCNumberBox"},
 								{view.valueAction_(data.at(item).at(1))});
@@ -1404,7 +1405,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 									// Set All Data
 									// Freq
 									busOSCfreq.at(0).set(freqNew);
-									if(maximumData >= dataFreq.at(0).size,
+									if(maximumData > dataFreq.at(0).size,
 										{
 											dataFreq.put(0, dataFreq.at(0).add(freqNew));
 										},
@@ -1417,7 +1418,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 									// Set Bus
 									busOSCamp.at(0).set(ampNew);
 									// Add DataAmp
-									if(maximumData >= dataAmp.at(0).size,
+									if(maximumData > dataAmp.at(0).size,
 										{
 											dataAmp.put(0, dataAmp.at(0).add(ampNew));
 										},
@@ -1430,7 +1431,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 									// Set Bus
 									busOSCduree.at(0).set(duree);
 									// Add DataDuree
-									if(maximumData >= dataDuree.at(0).size,
+									if(maximumData > dataDuree.at(0).size,
 										{
 											dataDuree.put(0, dataDuree.at(0).add(duree));
 										},
@@ -1452,7 +1453,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 												// Freq
 												busOSCfreq.at(i).set(freqNew);
 												// Add Data
-												if(maximumData >= dataFreq.at(i).size,
+												if(maximumData > dataFreq.at(i).size,
 													{
 														dataFreq.put(i, dataFreq.at(i).add(freqNew));
 													},
@@ -1465,7 +1466,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 												// Set Bus
 												busOSCamp.at(i).set(ampNew);
 												// Add DataAmp
-												if(maximumData >= dataAmp.at(i).size,
+												if(maximumData > dataAmp.at(i).size,
 													{
 														dataAmp.put(i, dataAmp.at(i).add(ampNew));
 													},
@@ -1485,7 +1486,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 													{
 														busOSCduree.at(i).set(duree);
 														// Add DataDuree
-														if(maximumData >= dataDuree.at(i).size,
+														if(maximumData > dataDuree.at(i).size,
 															{
 																dataDuree.put(i, dataDuree.at(i).add(duree));
 															},
@@ -1509,7 +1510,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 												busOSCbpm.at(i).setSynchronous(busOSCbpm.at(0).getSynchronous);
 												// ADD DATA FFT
 												// Flux
-												if(maximumData >= dataFlux.at(i).size,
+												if(maximumData > dataFlux.at(i).size,
 													{
 														dataFlux.put(i, dataFlux.at(i).add((busOSCflux.at(0).getSynchronous)));
 													},
@@ -1519,7 +1520,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 														indexDataFlux.put(i, indexDataFlux.at(i) + 1);
 												});
 												// Flatness
-												if(maximumData >= dataFlatness.at(i).size,
+												if(maximumData > dataFlatness.at(i).size,
 													{
 														dataFlatness.put(i, dataFlatness.at(i).add((busOSCflatness.at(0).getSynchronous)));
 													},
@@ -1529,7 +1530,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 														indexDataFlatness.put(i, indexDataFlatness.at(i) + 1);
 												});
 												// Centroid
-												if(maximumData >= dataCentroid.at(i).size,
+												if(maximumData > dataCentroid.at(i).size,
 													{
 														dataCentroid.put(i, dataCentroid.at(i).add((busOSCcentroid.at(0).getSynchronous)));
 													},
@@ -1539,7 +1540,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 														indexDataCentroid.put(i, indexDataCentroid.at(i) + 1);
 												});
 												// Energy
-												if(maximumData >= dataEnergy.at(i).size,
+												if(maximumData > dataEnergy.at(i).size,
 													{
 														dataEnergy.put(i, dataEnergy.at(i).add((busOSCenergy.at(0).getSynchronous)));
 													},
@@ -1549,7 +1550,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 														indexDataEnergy.put(i, indexDataEnergy.at(i) + 1);
 												});
 												// BPM
-												if(maximumData >= dataBPM.at(i).size,
+												if(maximumData > dataBPM.at(i).size,
 													{
 														dataBPM.put(i, dataBPM.at(i).add(busOSCbpm.at(0).getSynchronous));
 													},
@@ -1654,7 +1655,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
 				// Set Bus Flux
 				busOSCflux.at(0).set(flux);
-				if(maximumData >= dataFlux.at(0).size,
+				if(maximumData > dataFlux.at(0).size,
 					{
 						dataFlux.put(0, dataFlux.at(0).add(flux));
 					},
@@ -1665,7 +1666,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				// Set BusFlatness
 				busOSCflatness.at(0).set(flatness);
-				if(maximumData >= dataFlatness.at(0).size,
+				if(maximumData > dataFlatness.at(0).size,
 					{
 						dataFlatness.put(0, dataFlatness.at(0).add(flatness));
 					},
@@ -1676,7 +1677,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				// Set Bus Centroid
 				busOSCcentroid.at(0).set(energy);
-				if(maximumData >= dataCentroid.at(0).size,
+				if(maximumData > dataCentroid.at(0).size,
 					{
 						dataCentroid.put(0, dataCentroid.at(0).add(centroid));
 					},
@@ -1687,7 +1688,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				// Set Bus Energy
 				busOSCenergy.at(0).set(energy);
-				if(maximumData >= dataEnergy.at(0).size,
+				if(maximumData > dataEnergy.at(0).size,
 					{
 						dataEnergy.put(0, dataEnergy.at(0).add(energy));
 					},
@@ -1698,7 +1699,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				// Set Bus BPM
 				busOSCbpm.at(0).set(bpm);
-				if(maximumData >= dataBPM.at(0).size,
+				if(maximumData > dataBPM.at(0).size,
 					{
 						dataBPM.put(0, dataBPM.at(0).add(bpm));
 					},
@@ -2560,8 +2561,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Duree Instrument
 				dureeInstrument = duree.sum;
 				// DureeStretchBPM
-				//dureeStretchBPM =  dureeInstrument * stretchDuree * userBPM;
-				dureeStretchBPM =  dureeInstrument;
+				dureeStretchBPM =  duree.sum * globalDensity.reciprocal;
 				// Buffer
 				if(flagSampler == "Sampler+Sound", {
 					if(coin(0.5), {
@@ -2693,18 +2693,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 									recBuffer.set(\trigger, 0);
 									s.sync;
 								});
-								loopSound}, pbind),
-							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, pbind),
-							\reverse, Pfuncn({newRevSound}, pbind),
-							\freq, Pseq(freq, 1),
-							\amp, Pseq(amp, 1),
-							\dur, Pseq(duree, 1),
+								loopSound}, inf),
+							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, inf),
+							\reverse, Pfuncn({newRevSound}, inf),
+							\freq, Pseq(freq, loopMusic),
+							\amp, Pseq(amp, loopMusic),
+							\dur, Pseq(duree, loopMusic),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
 							\legato,  0.5,
-							\ctrlHP1, Pfuncn({ctrlHP1}, pbind),
-							\ctrlHP2, Pfuncn({ctrlHP2}, pbind),
-							\stretch, Pfuncn({stretchDuree}, pbind),
+							\ctrlHP1, Pfuncn({ctrlHP1}, inf),
+							\ctrlHP2, Pfuncn({ctrlHP2}, inf),
+							\stretch, Pfuncn({stretchDuree}, inf),
 							\flux, (busOSCflux.at(indexBandFhz)).asMap,
 							\flatness, (busOSCflatness.at(indexBandFhz)).asMap,
 							\centroid, (busOSCcentroid.at(indexBandFhz)).asMap,
@@ -2738,10 +2738,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, pbind),
-								\amp, Pseq(amp, pbind),
-								\dur, Pseq(duree, pbind),
-								\stretch, Pfuncn({stretchDuree}, pbind),
+								\freq, Pseq(freq, loopMusic),
+								\amp, Pseq(amp, loopMusic),
+								\dur, Pseq(duree, loopMusic),
+								\stretch, Pfuncn({stretchDuree}, inf),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -2752,10 +2752,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(freq, pbind),
-								\amp, Pseq(amp, pbind),
-								\dur, Pseq(duree, pbind),
-								\stretch, Pfuncn({stretchDuree}, pbind),
+								\freq, Pseq(freq, loopMusic),
+								\amp, Pseq(amp, loopMusic),
+								\dur, Pseq(duree, loopMusic),
+								\stretch, Pfuncn({stretchDuree}, inf),
 								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
@@ -2851,10 +2851,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								});
 							});
 						});
-						if((time - data.at(1)) > data.at(11) or: {data.at(5).asString.containsi("EventStreamPlayer") and: {data.at(5).streamHasEnded}}, {
+						if((time - data.at(1)) > data.at(11) /*or: {data.at(5).asString.containsi("EventStreamPlayer") and: {data.at(5).streamHasEnded}}*/, {
 							// Kill Synth
 							if(data.at(5).asString.containsi("EventStreamPlayer"),
-								{nil},
+								{data.at(5).stop; data.at(5).free},
 								{if(data.at(5).defName.asString.containsi("Env"), {data.at(5).free});
 							});
 							// Kill Synth Midi
@@ -2870,7 +2870,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							// Set MIDI Off (Stream Synth)
 							if(data.at(6) == nil, {
 								if(flagMidiOut == 'on', {midiOut.noteOff(data.at(7), data.at(10), 0)});
-								if(flagVST == 'on', {fxVST.midi.noteOff(data.at(7), data.at(10), 0); });
+								if(flagVST == 'on', {fxVST.midi.noteOff(data.at(7), data.at(10), 0)});
 							});
 							listeDataInstruments.removeAt(index);
 							listeBusOff = listeBusOff.add(data.at(0));
@@ -3691,7 +3691,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowKeyboard.onClose_({nil});
 
 		////// Window Plotter Data /////
-		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness", Rect(710, 800, 510, 660), scroll: true);
+		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness | MFCC", Rect(710, 800, 510, 660), scroll: true);
 		windowPlotterData.alpha=1.0;
 		windowPlotterData.front;
 		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
@@ -3705,8 +3705,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		states_([["Pbind Data Loop On", Color.green], ["Pbind Data Loop Off", Color.red]]).
 		action = {arg val;
 			switch (val.value,
-				0, {pbind = 1},
-				1, {pbind = inf}
+				0, {loopMusic = 1},
+				1, {loopMusic = inf}
 			);
 		};
 		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["Stream Data Wek", Color.magenta], ["Stream FFT+MFCC", Color.red]]).action_({|view|
@@ -4435,7 +4435,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		}, 6, layout: \vert2);
 		// Data Maximum
 		EZKnob(windowEar, 80 @ 80, "Max Data", ControlSpec(1, 255, \lin, 1),
-			{|ez| maximumData = (ez.value - 1).max(1);
+			{|ez|
+				maximumData = ez.value;
 				dataFlux = [];
 				dataFlatness = [];
 				dataCentroid = [];
@@ -4528,7 +4529,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 		}, maximumInstruments, layout: \vert2);
 		// Global WekDensity
-		EZKnob(windowEar, 80 @ 80, "WekDensity", ControlSpec(0, 100, \lin, 0.01),
+		EZKnob(windowEar, 80 @ 80, "Density", ControlSpec(0, 100, \lin, 0.01),
 			{|ez| globalDensity = ez.value / 100;
 				dataFlux = [];
 				dataFlatness = [];
@@ -4764,7 +4765,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowEar.view.children.at(34).enabled_(true);
 				windowEar.view.children.at(34).children.at(2).valueAction_(60);
 			});
-		});
+		}).enabled_(false);
 		// Chord On / Off
 		Button(windowEar, Rect(0, 0, 80, 20)).states_([["Chord On", Color.green], ["Chord Off", Color.red]]).action_({|view|
 			if(view.value == 1, {flagChord = 'on'}, {flagChord = 'off'});
@@ -4970,9 +4971,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		// Init Preset
 		//Post << "Init Preset" <<  Char.nl;
-		file = File(pathData++"Init Preset.scd","w");
-		file.write(fonctionSavePreset.value(listeWindows).asCompileString);
-		file.close;
+		File(pathData++"Init Preset.scd","w").write(fonctionSavePreset.value(listeWindows).asCompileString).close;
 
 	}
 
