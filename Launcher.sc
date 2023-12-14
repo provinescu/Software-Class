@@ -3,15 +3,15 @@ Launcher {
 
 	classvar  < s;
 
-	var <> name, ni, o, r, f, w, devIn, devOut, listDevIn, listDevOut, path, nameSoft, driverBlock, widthMC, orientationMC, flagMC;
+	var <> name, ni, o, r, f, w, devIn, devOut, listDevIn, listDevOut, path, nameSoft, driverBlock, widthMC, orientationMC, flagMC, wek;
 
-	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0;
+	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, wek=6448;
 
-		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek);
 
 	}
 
-	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
+	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek;
 
 		// Load Provinescu Software HP All In One avec adr Server 57569
 
@@ -30,6 +30,7 @@ Launcher {
 		widthMC = 2.0;
 		orientationMC = 0.5;
 		flagMC = 0;
+		wek = 6448;
 
 		// Output Panel
 		w = Window("HP Software", Rect(666, 333, 210, 450), scroll: true);
@@ -83,14 +84,14 @@ Launcher {
 				2,	{
 					SCRequestString("2.0", "Width", {arg strg; widthMC = strg.asFloat});
 					SCRequestString("0.5", "Orientation", {arg strg; orientationMC = strg.asFloat});
-					SCRequestString(0, "Mode MultiCanals Static(0) Dynamic(1)", {arg strg; flagMC = strg.asInteger});
+					SCRequestString("0", "Mode MultiCanals Static(0) Dynamic(1)", {arg strg; flagMC = strg.asInteger});
 					//SCRequestString("2", "Channels", {arg strg; r = strg.asInteger; o = strg.asInteger; f = 2});
 					f = 2;
 				},
 				3,	{
 					SCRequestString("2.0", "Width", {arg strg; widthMC = strg.asFloat});
 					SCRequestString("0.5", "Orientation", {arg strg; orientationMC = strg.asFloat});
-					SCRequestString(0, "Mode MultiCanals Static(0) Dynamic(1)", {arg strg; flagMC = strg.asInteger});
+					SCRequestString("0", "Mode MultiCanals Static(0) Dynamic(1)", {arg strg; flagMC = strg.asInteger});
 					//SCRequestString("2", "Channels", {arg strg; r = strg.asInteger; o = strg.asInteger; f = 3});
 					f = 3;
 				},
@@ -139,10 +140,12 @@ Launcher {
 				5,	{
 					nameSoft = "WekDensity";// 57570
 					path = "~/Documents/WekDensity/";
+					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
 				},
 				6,	{
 					nameSoft = "WekMatrix";// 57571
 					path = "~/Documents/WekMatrix/";
+					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
 				}
 			);
 		};
@@ -155,11 +158,11 @@ Launcher {
 		Button(w,Rect(0, 0, 200, 20)).states_([["Working Folder", Color.white]]).action = {arg start;
 			FileDialog.new({ arg paths;
 				paths = paths.at(0).asString ++"/"++ nameSoft;
-				nameSoft.interpret.new(paths, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC);
+				nameSoft.interpret.new(paths, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC, nameSoft, wek);
 				//Server.default.makeGui;
 			},
 			{
-				nameSoft.interpret.new(path, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC);
+				nameSoft.interpret.new(path, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC, nameSoft, wek);
 				//Server.default.makeGui;
 			}, fileMode: 2);
 			w.close;

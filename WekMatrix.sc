@@ -7,13 +7,13 @@ WekMatrix {
 
 	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuWekMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze, dimIn, speedMFCC, responder, sender, wekIn, wekOut;
 
-	*new	{arg path="~/Documents/WekMatrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekMatrix";
+	*new	{arg path="~/Documents/WekMatrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448 ;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek);
 
 	}
 
-	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
+	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek;
 
 		//// Setup GUI style
 		//GUI.qt;
@@ -61,6 +61,8 @@ WekMatrix {
 		midiOut.connect(0);
 
 		// Open Wekinator
+		sender.free;
+		sender = NetAddr.new("127.0.0.1", wek);// Wekinator
 		Pipe.new("open -a Wekinator", "r").close;
 
 		this.run;// Run the Soft
@@ -1087,7 +1089,7 @@ y ... -						Musical keys.
 					{nil});
 				// Range Band
 				if(item == 36, {rangeBand.valueAction = data.at(item).value});
-					// Wek no action
+				// Wek no action
 				if(item == 37 or: {item == 38} or: {item == 39}, {nil});
 			});
 			// Set BPM
@@ -1220,9 +1222,7 @@ y ... -						Musical keys.
 			systemBPM = TempoClock.default;
 
 			// Wekinator
-			sender.free;
 			responder.free;
-			sender = NetAddr.new("127.0.0.1", 6448);// Wekinator
 
 			// Bus Audio pour Analyze
 			busAnalyze = Bus.audio(s, 1);
@@ -1719,11 +1719,11 @@ y ... -						Musical keys.
 			// DATA WIKI OUT
 			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 
-				wekOut = msg[1];
+				wekOut = msg[1..];
 
 				// algo wek ici -> change preset par exemple !!!
 
-				//Post << "WekOut " <<< wekOut << Char.nl;
+				Post << "WekOut " <<< wekOut << Char.nl;
 
 			},'/wek/outputs');
 
@@ -3305,19 +3305,19 @@ y ... -						Musical keys.
 			{arg range; bandFHZ = range.value.midicps},
 			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true);
 		// Wek
-		Button(windowControl, Rect(0, 0, 100, 15)).states_([["WekRec On", Color.green], ["WekRec Off", Color.red]]).action_({|view|
+		Button(windowControl, Rect(0, 0, 100, 15)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
 				1, {sender.sendMsg("/wekinator/control/startRecording")}
 			);
 		});
-		Button(windowControl, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.green], ["WekTrain Off", Color.red]]).action_({|view|
+		Button(windowControl, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.magenta], ["WekTrain Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/cancelTrain")},
 				1, {sender.sendMsg("/wekinator/control/train")}
 			);
 		});
-		Button(windowControl, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.green], ["WekRun Off", Color.red]]).action_({|view|
+		Button(windowControl, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRunning");
 				},
@@ -3681,8 +3681,8 @@ y ... -						Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer two
 			knobOffset2 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset2, ez.value); ctrlBuffer.put(8, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
-			knobPreLevel2 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\preLevel, ez.value); ctrlBuffer.put(5, ez.value)}, 1, labelWidth: 30, numberWidth: 30);
-			knobPostLevel2 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\postLevel, ez.value); ctrlBuffer.put(6, ez.value)}, 0, labelWidth: 30, numberWidth: 30);
+			knobPreLevel2 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\preLevel, ez.value); ctrlBuffer.put(5, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
+			knobPostLevel2 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording2.set(\postLevel, ez.value); ctrlBuffer.put(6, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
 			knobRecOn2 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)],["Rec @", Color.black, Color.red(0.8, 0.25)],  ["Rec !", Color.black, Color.blue(0.8, 0.25)]];
 			knobRecOn2.action = {|view| if(view.value == 2, {bufferRecording2.set(\loop, 0); ctrlBuffer.put(7, 1); loopRec2 = 0},
 				{bufferRecording2.set(\loop, view.value); ctrlBuffer.put(7, view.value); loopRec2 = view.value});

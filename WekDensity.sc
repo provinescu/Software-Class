@@ -15,13 +15,13 @@ WekDensity {
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
 	var dimIn, flagStreamMFCC, loopMusic, responder, flagDureeMFCC;
 
-	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity";
+	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448;
 
-		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek);
 
 	}
 
-	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag;
+	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek;
 
 		//// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -72,6 +72,8 @@ WekDensity {
 		sampleFormat = "float";
 
 		// Open Wekinator
+		sender.free;
+		sender = NetAddr.new("127.0.0.1", wek);// Wekinator
 		Pipe.new("open -a Wekinator", "r").close;
 
 		// Run the Soft
@@ -1215,9 +1217,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 			// OSC Setting
 			// Wekinator
-			sender.free;
 			responder.free;
-			sender = NetAddr.new("127.0.0.1", 6448);// Wekinator
 			oscStateFlag = 'off';
 
 			// Group
