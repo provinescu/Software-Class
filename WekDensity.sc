@@ -1185,9 +1185,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTools");
 
 		menuAlgo = Menu(
-			MenuAction("Not Activate", {nil}),
+			MenuAction("Wekinator Port",
+				{
+					SCRequestString("6448", "Wekinator Port", {arg index, port;
+						port = index.asInteger;
+						sender.free;
+						sender = NetAddr.new("127.0.0.1", port);// Wekinator
+					});
+			}),
 		);
-		MainMenu.register(menuAlgo.title_("Algorithm"), "WekDensityTools");
+		MainMenu.register(menuAlgo.title_("Wekinator"), "WekDensityTools");
 
 		menuHelp = MenuAction("Help ShortCut", {
 			//Document.new("ShortCut for WekDensity", helpWekDensity);
