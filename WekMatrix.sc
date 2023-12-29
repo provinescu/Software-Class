@@ -7,7 +7,7 @@ WekMatrix {
 
 	var <> synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuWekMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze, dimIn, speedMFCC, responder, sender, wekIn, wekOut, menuAlgo;
 
-	*new	{arg path="~/Documents/WekMatrix/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448 ;
+	*new	{arg path="~/Documents/WekMatrix/", ni=8, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448 ;
 
 		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek);
 
@@ -1368,8 +1368,8 @@ y ... -						Musical keys.
 
 			// OSC pour Audio et File
 			oscMusicData = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-				var freq, amp, duree, tempo, freqCentroid=0, flatness=0, energy=0, flux=0, musicData=[];
-				if(msg.at(2) == 1,
+				var freq, amp, duree, tempo, freqCentroid=0, flatness=0, energy=0, flux=0, musicData=[], data;
+				if(msg.at(2) == 2,
 					{
 						if(flagKeyboard == 'off',
 							{
@@ -1380,9 +1380,9 @@ y ... -						Musical keys.
 								tempo = msg.at(6);
 								// Info spectral sur le son
 								freqCentroid = msg.at(7);
-								flatness = msg.at(8);
-								energy = msg.at(9);
-								flux = msg.at(10);
+								flatness = msg.at(10);
+								energy = msg.at(8);
+								flux = msg.at(9);
 								fluxOnFly = flux;
 								flatnessOnFly = flatness;
 								// Set BPM
@@ -1471,8 +1471,21 @@ y ... -						Musical keys.
 						// Sender
 						sender.sendMsg("/wek/inputs", *wekIn[0..]);
 
-						/*// Send control outputs for wekinator
-						sender.sendMsg("/wekinator/control/outputs", *data[0..]);*/
+						// Send control outputs for wekinator
+						data = data.add(controlPanSlider.lo);
+						data = data.add(controlPanSlider.hi);
+						data = data.add(controlFreqSlider.lo);
+						data = data.add(controlFreqSlider.hi);
+						data = data.add(controlFreqTranSlider.value);
+						data = data.add(controlAmpSlider.lo);
+						data = data.add(controlAmpSlider.hi);
+						data = data.add(controlDureeSlider.lo);
+						data = data.add(controlDureeSlider.hi);
+						data = data.add(controlDureeTranSlider.value);
+						data = data.add(controlQuantaSlider.value);
+						data = data.add(controlRootSlider.value);
+
+						sender.sendMsg("/wekinator/control/outputs", *data[0..]);
 
 						//Post << "WekIn " <<< wekIn << Char.nl;
 
@@ -1481,8 +1494,8 @@ y ... -						Musical keys.
 
 			// OSC pour Keyboard
 			oscKeyboardData = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-				var freq, amp, duree, tempo, freqCentroid=0, flatness=0, energy=0, flux=0, musicData=[];
-				if(msg.at(2) == 1,
+				var freq, amp, duree, tempo, freqCentroid=0, flatness=0, energy=0, flux=0, musicData=[], data;
+				if(msg.at(2) == 2,
 					{
 						if(flagKeyboard == 'on',
 							{
@@ -1493,9 +1506,9 @@ y ... -						Musical keys.
 								tempo = msg.at(6);
 								// Info spectral sur le son
 								freqCentroid = msg.at(7);
-								flatness = msg.at(8);
-								energy = msg.at(9);
-								flux = msg.at(10);
+								flatness = msg.at(10);
+								energy = msg.at(8);
+								flux = msg.at(9);
 								fluxOnFly = flux;
 								flatnessOnFly = flatness;
 								// Set BPM
@@ -1575,13 +1588,27 @@ y ... -						Musical keys.
 								dureeOSCdata = Main.elapsedTime;
 						});
 					},
+					// Wek IN
 					{
 						wekIn = msg[3..];
 						// Sender
 						sender.sendMsg("/wek/inputs", *wekIn[0..]);
 
-						/*// Send control outputs for wekinator
-						sender.sendMsg("/wekinator/control/outputs", *data[0..]);*/
+						// Send control outputs for wekinator
+						data = data.add(controlPanSlider.lo);
+						data = data.add(controlPanSlider.hi);
+						data = data.add(controlFreqSlider.lo);
+						data = data.add(controlFreqSlider.hi);
+						data = data.add(controlFreqTranSlider.value);
+						data = data.add(controlAmpSlider.lo);
+						data = data.add(controlAmpSlider.hi);
+						data = data.add(controlDureeSlider.lo);
+						data = data.add(controlDureeSlider.hi);
+						data = data.add(controlDureeTranSlider.value);
+						data = data.add(controlQuantaSlider.value);
+						data = data.add(controlRootSlider.value);
+
+						sender.sendMsg("/wekinator/control/outputs", *data[0..]);
 
 						//Post << "WekIn " <<< wekIn << Char.nl;
 				});
@@ -1589,16 +1616,17 @@ y ... -						Musical keys.
 
 			// OSC pour MIDI-IN
 			oscMIDIdata = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-				if(msg.at(2) == 1,
+				var data;
+				if(msg.at(2) == 2,
 					{
 						if(flagKeyboard == 'on',
 							{
 								// SetUp Env Var
 								tempoMIDI = msg.at(3);
 								freqCentroidMIDI = msg.at(4);
-								flatnessMIDI = msg.at(5);
-								energyMIDI = msg.at(6);
-								fluxMIDI = msg.at(7);
+								flatnessMIDI = msg.at(7);
+								energyMIDI = msg.at(5);
+								fluxMIDI = msg.at(6);
 								fluxOnFly = fluxMIDI;
 								flatnessOnFly = flatnessMIDI;
 								// Set BPM
@@ -1613,13 +1641,27 @@ y ... -						Musical keys.
 								dureeOSCdata = Main.elapsedTime;
 						});
 					},
+					// Wek In
 					{
 						wekIn = msg[3..];
 						// Sender
 						sender.sendMsg("/wek/inputs", *wekIn[0..]);
 
-						/*// Send control outputs for wekinator
-						sender.sendMsg("/wekinator/control/outputs", *data[0..]);*/
+						// Send control outputs for wekinator
+						data = data.add(controlPanSlider.lo);
+						data = data.add(controlPanSlider.hi);
+						data = data.add(controlFreqSlider.lo);
+						data = data.add(controlFreqSlider.hi);
+						data = data.add(controlFreqTranSlider.value);
+						data = data.add(controlAmpSlider.lo);
+						data = data.add(controlAmpSlider.hi);
+						data = data.add(controlDureeSlider.lo);
+						data = data.add(controlDureeSlider.hi);
+						data = data.add(controlDureeTranSlider.value);
+						data = data.add(controlQuantaSlider.value);
+						data = data.add(controlRootSlider.value);
+
+						sender.sendMsg("/wekinator/control/outputs", *data[0..]);
 
 						//Post << "WekIn " <<< wekIn << Char.nl;
 				});
@@ -1732,10 +1774,19 @@ y ... -						Musical keys.
 			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 
 				wekOut = msg[1..];
+				// Set Master Sliders Controls [pan, freq, transFreq, amp, duree, stretch, quant, root] 12 outputs
+				{
+					controlPanSlider.valueAction = wekOut[0..1];
+					controlFreqSlider.valueAction = wekOut[2..3];
+					controlFreqTranSlider.valueAction = wekOut[4];
+					controlAmpSlider.valueAction = wekOut[5..6];
+					controlDureeSlider.valueAction = wekOut[7..8];
+					controlDureeTranSlider.valueAction = wekOut[9];
+					controlQuantaSlider.valueAction = wekOut[10];
+					controlRootSlider.valueAction = wekOut[11];
+				}.defer;
 
-				// algo wek ici -> change preset par exemple !!!
-
-				Post << "WekOut " <<< wekOut << Char.nl;
+				//Post << "WekOut " <<< wekOut << Char.nl;
 
 			},'/wek/outputs');
 
@@ -2074,8 +2125,8 @@ y ... -						Musical keys.
 					controlFreqSlider.valueAction_([0, 127]);
 					previousFreq = [0, 127];
 					controlFreqTranSlider.valueAction_(0);
-					controlDureeSlider.valueAction_([0, 1]);
-					previousDuree = [0, 1];
+					controlDureeSlider.valueAction_([0, 4]);
+					previousDuree = [0, 4];
 					controlDureeTranSlider.valueAction_(1);
 					controlQuantaSlider.valueAction_(0);
 					previousPan = [-1, 1];
@@ -2788,32 +2839,34 @@ y ... -						Musical keys.
 		// Pan
 		previousPan = [-1, 1];
 		controlPanSlider = EZRanger(windowControlSynth, 250 @ 20, "Pan", \bipolar, {|ez| var valLo, valHi;
-			valLo = (ez.value.at(0)- previousPan.at(0));
-			valHi = (ez.value.at(1)- previousPan.at(1));
+			valLo = (ez.value.at(0));//- previousPan.at(0));
+			valHi = (ez.value.at(1));//- previousPan.at(1));
 			previousPan = ez.value;
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1, {
 					window.value.view.children.at(38).children.do({arg subView, subItem;
-						if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
+						//if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
+						if(subItem == 2, {subView.activeLo_(valLo + 1 / 2); subView.activeHi_(valHi + 1 / 2)})
 					});
 				});
 			});
-		},[-1, 1],labelWidth: 50, numberWidth: 35);
+		},[-1, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
 		previousFreq = [0, 127];
 		controlFreqSlider = EZRanger(windowControlSynth, 250 @ 20, "Freq", ControlSpec(0, 127, \lin, 0), {|ez| var valLo, valHi;
-			valLo = (ez.value.at(0)- previousFreq.at(0) / 127).clip(-1, 1);
-			valHi = (ez.value.at(1)- previousFreq.at(1) / 127).clip(-1, 1);
+			valLo = (ez.value.at(0) / 127);//- previousFreq.at(0) / 127).clip(-1, 1);
+			valHi = (ez.value.at(1) / 127);//- previousFreq.at(1) / 127).clip(-1, 1);
 			previousFreq = ez.value;
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1, {
 					window.value.view.children.at(39).children.do({arg subView, subItem;
-						if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
+						//if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
+						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
 					});
 				});
 			});
-		},[0, 127],labelWidth: 50, numberWidth: 35);
+		},[0, 127],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentFreq = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq T
 		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
@@ -2824,13 +2877,13 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35);
-		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initlog12Val:0, layout:\horz);
 		// Amp
 		previousAmp = [-inf, 0];
 		controlAmpSlider = EZRanger(windowControlSynth, 250 @ 20, "Amp", \db, {|ez| var valLo, valHi;
-			valLo = (ez.value.at(0).dbamp);// - previousAmp.at(0).dbamp);
-			valHi = (ez.value.at(1).dbamp);// - previousAmp.at(1).dbamp);
+			valLo = (ez.value.at(0) / 2).dbamp;// - previousAmp.at(0).dbamp);
+			valHi = (ez.value.at(1) / 2).dbamp;// - previousAmp.at(1).dbamp);
 			previousAmp = ez.value;
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1, {
@@ -2839,11 +2892,11 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		},[-inf, 0],labelWidth: 50, numberWidth: 35);
+		},[-inf, 0],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
 		previousDuree = [0, 1];
-		controlDureeSlider = EZRanger(windowControlSynth, 250 @ 20, "Dur", \unipolar,
+		controlDureeSlider = EZRanger(windowControlSynth, 250 @ 20, "Dur", ControlSpec(0, 60, \lin, 0),
 			{|ez| var valLo, valHi;
 				valLo = (ez.value.at(0));// - previousDuree.at(0)).clip(-1, 1);
 				valHi = (ez.value.at(1));// - previousDuree.at(1)).clip(-1, 1);
@@ -2851,11 +2904,12 @@ y ... -						Musical keys.
 				listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1, {
 						window.value.view.children.at(42).children.do({arg subView, subItem;
-							if(subItem == 2, {subView.activeLo_(valLo * (timeMaximum/60)); subView.activeHi_(valHi * (timeMaximum/60))})
+							//if(subItem == 2, {subView.activeLo_(valLo * (timeMaximum / 60)); subView.activeHi_(valHi * (timeMaximum / 60))})
+							if(subItem == 2, {subView.activeLo_(valLo / 60); subView.activeHi_(valHi / 60)})
 						});
 					});
 				});
-		},[0, 1],labelWidth: 50, numberWidth: 35);
+		},[0, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentDur = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree T
 		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
@@ -2866,7 +2920,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 1, labelWidth: 50, numberWidth: 35);
+		}, 1, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentDurT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Quantization
 		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
@@ -2878,7 +2932,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35);
+		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
 		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
@@ -2889,7 +2943,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35);
+		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 
 		windowControlSynth.onClose_({
@@ -3724,29 +3778,29 @@ y ... -						Musical keys.
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Musical Data").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Pan
 			panSlider=EZRanger(windowSynth, 390 @ 20, "Pan", \bipolar,
-				{|ez| groupe.set(\panLo, ez.lo);groupe.set(\panHi, ez.hi); panLo = ez.lo; panHi = ez.hi}, [-0.1, 0.1], false, 100, 50);
+				{|ez| groupe.set(\panLo, ez.lo);groupe.set(\panHi, ez.hi); panLo = ez.lo; panHi = ez.hi}, [-0.1, 0.1], false, 100, 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Freq
 			freqSlider = EZRanger(windowSynth, 390 @ 20, "Freq", ControlSpec(0, 127, \lin, 0),
-				{|ez| groupe.set(\freqLo, ez.lo);groupe.set(\freqHi, ez.hi); fhzLo = ez.lo; fhzHi = ez.hi},[0, 127],labelWidth: 100, numberWidth: 50);
+				{|ez| groupe.set(\freqLo, ez.lo);groupe.set(\freqHi, ez.hi); fhzLo = ez.lo; fhzHi = ez.hi},[0, 127],labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			// Freq T
-			freqTranSlider=EZSlider(windowSynth, 390 @ 20, "Freq Transpose", ControlSpec(-127, 127, \lin, 0), {|ez| groupe.set(\freqT, ez.value); fhzT = ez.value}, 0, labelWidth: 100, numberWidth: 50);
+			freqTranSlider=EZSlider(windowSynth, 390 @ 20, "Freq Transpose", ControlSpec(-127, 127, \lin, 0), {|ez| groupe.set(\freqT, ez.value); fhzT = ez.value}, 0, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Amp
 			ampSlider = EZRanger(windowSynth, 390 @ 20, "Amp", \db,
-				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-inf, 0],labelWidth: 100, numberWidth: 50);
+				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-12, -3],labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Duree
 			dureeSlider = EZRanger(windowSynth, 390 @ 20, "Dur", ControlSpec(0, 60, \lin, 0),
-				{|ez| groupe.set(\durLo, ez.lo);groupe.set(\durHi, ez.hi); durLo = ez.lo; durHi = ez.hi},[0, 4],labelWidth: 100, numberWidth: 50);
+				{|ez| groupe.set(\durLo, ez.lo);groupe.set(\durHi, ez.hi); durLo = ez.lo; durHi = ez.hi},[0, 4],labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			// Duree T
 			dureeTranSlider=EZSliderTempo(windowSynth, 390 @ 20, "Dur Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 				if(ez.value <= 0, {groupe.set(\durM, ez.value.abs.reciprocal); durM = ez.value.abs.reciprocal},
 					{groupe.set(\durM, ez.value); durM = ez.value});
-			}, 1, labelWidth: 100, numberWidth: 50);
+			}, 1, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			// Quantization
 			quantaSlider=EZSlider(windowSynth, 390 @ 20, "Quant", ControlSpec(1, 100, \lin, 1),
-				{|ez| systemBPM.schedAbs(systemBPM.beats, {groupe.set(\quanta, ez.value)}); quanta = ez.value}, 100, labelWidth: 100, numberWidth: 50);
+				{|ez| systemBPM.schedAbs(systemBPM.beats, {groupe.set(\quanta, ez.value)}); quanta = ez.value}, 100, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Envelope Synthesizer").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Envelope
@@ -5181,7 +5235,7 @@ y ... -						Musical keys.
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 				//Poll(Impulse.kr(24), array, "MFCC");
-				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [[freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], array], replyID: [1, 2]);
+				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [array, [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)]], replyID: [1, 2]);
 		}).add;
 
 		// WekMatrix Audio Analyze Pitch
@@ -5202,7 +5256,7 @@ y ... -						Musical keys.
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
-				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [[freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], array], replyID: [1, 2]);
+				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [array, [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)]], replyID: [1, 2]);
 		}).add;
 
 		// WekMatrix Audio Analyze Pitch2
@@ -5226,7 +5280,7 @@ y ... -						Musical keys.
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
 				array = MFCC.kr(fft2, dimIn);// 13 a 40 Bands
-				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [[freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], array], replyID: [1, 2]);
+				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [array, [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)]], replyID: [1, 2]);
 		}).add;
 
 		// WekMatrix Audio Analyze KeyTrack
@@ -5246,7 +5300,7 @@ y ... -						Musical keys.
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
-				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [[freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], array], replyID: [1, 2]);
+				SendReply.kr(detect, '/WekMatrix_Musical_Data', values: [array, [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)]], replyID: [1, 2]);
 		}).add;
 
 		// WekMatrix Keyboard
@@ -5262,7 +5316,7 @@ y ... -						Musical keys.
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
-				SendReply.kr(trigger, '/WekMatrix_Keyboard_Data', values: [[note, amp, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], array], replyID: [1, 2]);
+				SendReply.kr(trigger, '/WekMatrix_Keyboard_Data', values: [array, [note, amp, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)]], replyID: [1, 2]);
 		}).add;
 
 		// WekMatrix MIDI
@@ -5277,7 +5331,7 @@ y ... -						Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
-				SendReply.kr(trigger, '/WekMatrix_MIDI_Data', values: [[tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], array], replyID: [1, 2]);
+				SendReply.kr(trigger, '/WekMatrix_MIDI_Data', values: [array, [tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)], array], replyID: [1, 2]);
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
