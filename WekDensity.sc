@@ -15,7 +15,7 @@ WekDensity {
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
 	var dimIn, flagStreamMFCC, loopMusic, responder, flagDureeMFCC;
 
-	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448;
+	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448;
 
 		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek);
 
@@ -1769,7 +1769,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowPlotterData.view.children.at(15).children.at(2).valueAction = wekOut[7];*/
 				}.defer;
 				dureeAnalyzeOSCMusic = Main.elapsedTime;
-				//Post << "Out" <<< msg << Char.nl;
+				//Post << "Out " <<< msg << Char.nl;
 			},'/wek/outputs');
 
 			// OSC Music Data
@@ -2858,7 +2858,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								});
 							});
 						});
-						if((time - data.at(1)) > data.at(11) /*or: {data.at(5).asString.containsi("EventStreamPlayer") and: {data.at(5).streamHasEnded}}*/, {
+						if((time - data.at(1)) > data.at(11) or: {data.at(5).asString.containsi("EventStreamPlayer") and: {data.at(5).streamHasEnded}}, {
 							// Kill Synth
 							if(data.at(5).asString.containsi("EventStreamPlayer"),
 								{data.at(5).stop; data.at(5).free},
