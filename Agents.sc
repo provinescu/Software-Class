@@ -7356,7 +7356,7 @@ G                       Init Genome Agent (solo).
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
 					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7375,7 +7375,7 @@ G                       Init Genome Agent (solo).
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
 					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7398,7 +7398,7 @@ G                       Init Genome Agent (solo).
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7416,7 +7416,7 @@ G                       Init Genome Agent (solo).
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7430,7 +7430,7 @@ G                       Init Genome Agent (solo).
 				{arg in=0, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux;
 					input= SoundIn.ar(in);
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7449,7 +7449,7 @@ G                       Init Genome Agent (solo).
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
 					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7468,7 +7468,7 @@ G                       Init Genome Agent (solo).
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
 					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median:1, peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7491,7 +7491,7 @@ G                       Init Genome Agent (solo).
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7509,7 +7509,7 @@ G                       Init Genome Agent (solo).
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
 					ampin = A2K.kr(Amplitude.ar(input));
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -7523,7 +7523,7 @@ G                       Init Genome Agent (solo).
 				{arg busFileIn, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux;
 					input = In.ar(busFileIn);
-					fft = FFT(LocalBuf(2048, 1), input);
+					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
 					flatness =  SpecFlatness.kr(fft);
 					energy =  SpecPcile.kr(fft);
@@ -8569,7 +8569,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
 
@@ -8613,7 +8613,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
 
@@ -8657,7 +8657,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
 
@@ -8701,7 +8701,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
 
@@ -8745,7 +8745,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
 
@@ -8789,7 +8789,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
 
@@ -8833,7 +8833,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
 
@@ -8877,7 +8877,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
 
@@ -8921,7 +8921,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
 
@@ -8965,7 +8965,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
 
@@ -9009,7 +9009,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
 
@@ -9053,7 +9053,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
 
@@ -9097,7 +9097,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
 
@@ -9141,7 +9141,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
 
@@ -9185,7 +9185,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.01;
 
@@ -9229,7 +9229,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
 
@@ -9273,7 +9273,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
 
@@ -9317,7 +9317,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
 
@@ -9361,7 +9361,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_SpectralEnhance(main, (controlF*8+0.5).floor, controlA*4+1, controlD);
 					main= IFFT(main) * 0.125;
 
@@ -9405,7 +9405,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4));
 					main= IFFT(main) * 0.125;
 
@@ -9449,7 +9449,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4), controlA - 0.5 * 128);
 					main= IFFT(main) * 0.125;
 
@@ -9493,7 +9493,7 @@ G                       Init Genome Agent (solo).
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Cutoff(main, controlF * 2 - 1);
 					main= IFFT(main) * 0.125;
 
@@ -9538,8 +9538,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -9584,8 +9584,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
 
@@ -9630,8 +9630,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
 
@@ -9676,8 +9676,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.1;
 
@@ -9722,8 +9722,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Div(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -9768,8 +9768,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -9814,8 +9814,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
 
@@ -9860,8 +9860,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
 
@@ -9906,8 +9906,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -9952,8 +9952,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048),in1);
-					fft2=FFT(LocalBuf(2048),in2);
+					fft1=FFT(LocalBuf(1024),in1);
+					fft2=FFT(LocalBuf(1024),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
 
@@ -9998,8 +9998,8 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
 
@@ -10044,7 +10044,7 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
-					main=Convolution.ar(in1, in2, 2048) * 0.1;
+					main=Convolution.ar(in1, in2, 1024) * 0.1;
 					//main= IFFT(main);
 
 
@@ -10900,7 +10900,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
 
@@ -10946,7 +10946,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
 
@@ -10992,7 +10992,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
 
@@ -11038,7 +11038,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
 
@@ -11084,7 +11084,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
 
@@ -11130,7 +11130,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
 
@@ -11176,7 +11176,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
 
@@ -11222,7 +11222,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
 
@@ -11268,7 +11268,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
 
@@ -11314,7 +11314,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
 
@@ -11360,7 +11360,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
 
@@ -11406,7 +11406,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
 
@@ -11452,7 +11452,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
 
@@ -11498,7 +11498,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
 
@@ -11544,7 +11544,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.1;
 
@@ -11590,7 +11590,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
 
@@ -11636,7 +11636,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
 
@@ -11682,7 +11682,7 @@ G                       Init Genome Agent (solo).
 					// RecordBuf
 					recBuf=RecordBuf.ar(main, buffer, 0, 1, 0);
 					// Main Synth
-					main = FFT(LocalBuf(2048, 1), main);
+					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
 
@@ -11729,8 +11729,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -11777,8 +11777,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
 
@@ -11825,8 +11825,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
 
@@ -11873,8 +11873,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -11921,8 +11921,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -11969,8 +11969,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
 
@@ -12017,8 +12017,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
 
@@ -12066,8 +12066,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
 
@@ -12114,8 +12114,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
 
@@ -12162,8 +12162,8 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					fft1=FFT(LocalBuf(2048, 1),in1);
-					fft2=FFT(LocalBuf(2048, 1),in2);
+					fft1=FFT(LocalBuf(1024, 1),in1);
+					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
 
@@ -12210,7 +12210,7 @@ G                       Init Genome Agent (solo).
 					recBuf=RecordBuf.ar(in1, buffer2);
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
-					main=Convolution.ar(in1, in2, 2048) * 0.5;
+					main=Convolution.ar(in1, in2, 1024) * 0.5;
 
 
 					// Switch Audio Out
@@ -13233,7 +13233,7 @@ G                       Init Genome Agent (solo).
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control2 * 2).clip(0.0625, 2.0), 1.0, control3 * BufFrames.kr(localBuf), 1);
-					effet = FFT(LocalBuf(2048, 1), effet);
+					effet = FFT(LocalBuf(1024, 1), effet);
 					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_MagFreeze(effet, SinOsc.kr(control2 * control4.reciprocal));
 					effet= IFFT(effet);
@@ -13293,7 +13293,7 @@ G                       Init Genome Agent (solo).
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
-					effet = FFT(LocalBuf(2048, 1), effet);
+					effet = FFT(LocalBuf(1024, 1), effet);
 					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_BinPlayBuf(effet, localBuf, control2, control6 * BufFrames.kr(localBuf), control3 * 16, control4 * 8 + 1, control5 * 63 + 1, 1, 1);
 					effet= IFFT(effet);
@@ -13322,7 +13322,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_HPshiftDown(effet, control1*32);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13351,7 +13351,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_HPfiltre(effet, control1 * 32 + 1, control2 * 32 + 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13380,7 +13380,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagNoise(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13409,7 +13409,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagClip(effet, control1 * 16);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13438,7 +13438,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagSmooth(effet, control1);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13467,7 +13467,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagSmear(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13496,7 +13496,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_Diffuser(effet, Trig1.kr(LFNoise2.kr(control1*100), (control2*100).reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13525,7 +13525,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_BrickWall(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13554,7 +13554,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_LocalMax(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13583,7 +13583,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagSquared(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13612,7 +13612,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagBelow(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13641,7 +13641,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagAbove(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13670,7 +13670,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_RandComb(effet, control1*64, LFNoise2.kr(control2 * 64));
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13699,7 +13699,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagShift(effet, control1 * 4, control2 * 128 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13728,7 +13728,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_BinScramble(effet, control1, control2, LFNoise2.kr(control2.reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13757,7 +13757,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_BinShift(effet, control1 * 4, control2 * 256 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13786,7 +13786,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_RectComb(effet, control1*32, control2, control3);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13815,7 +13815,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_ConformalMap(effet, control1 * 2 - 1, control2 * 2 -1);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13844,7 +13844,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_Compander(effet, control1 * 64, control2 * 10, control3 * 10);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13873,7 +13873,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4));
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13902,7 +13902,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4), control2 - 0.5 * 128);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13931,7 +13931,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_Cutoff(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13960,7 +13960,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					ineffet=Mix(In.ar(in, 2));
 					// effet
-					effet = FFT(LocalBuf(2048, 1), ineffet);
+					effet = FFT(LocalBuf(1024, 1), ineffet);
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4));
 					effet = IFFT(effet);
 					effet = effet * amp;
@@ -13992,7 +13992,7 @@ G                       Init Genome Agent (solo).
 					trig = Dust.kr(control1 * 64 + 0.01);
 					RecordBuf.ar(ineffet, buffer, Saw.kr(control2 * 16 + 0.01).abs, 1, 0, trigger: trig);
 					// effet
-					effet=Mix(Convolution2L.ar(ineffet, buffer, trig * control3, 2048));
+					effet=Mix(Convolution2L.ar(ineffet, buffer, trig * control3, 1024));
 					effet = effet * amp;
 
 					// Switch Audio Out

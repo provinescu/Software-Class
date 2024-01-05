@@ -3116,11 +3116,8 @@ y ... -						Musical keys.
 				1, {sender.sendMsg("/wekinator/control/startRecording")}
 			);
 		});
-		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekTrain On", Color.magenta], ["WekTrain Off", Color.red]]).action_({|view|
-			switch(view.value,
-				0, {sender.sendMsg("/wekinator/control/cancelTrain")},
-				1, {sender.sendMsg("/wekinator/control/train")}
-			);
+		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekTrain On", Color.magenta]]).action_({|view|
+			sender.sendMsg("/wekinator/control/train")
 		});
 		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,

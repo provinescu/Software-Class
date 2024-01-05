@@ -3743,11 +3743,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				1, {sender.sendMsg("/wekinator/control/startRecording")}
 			);
 		});
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.magenta], ["WekTrain Off", Color.red]]).action_({|view|
-			switch(view.value,
-				0, {sender.sendMsg("/wekinator/control/cancelTrain")},
-				1, {sender.sendMsg("/wekinator/control/train")}
-			);
+		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.magenta]]).action_({|view|
+			sender.sendMsg("/wekinator/control/train")
 		});
 		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
@@ -4772,7 +4769,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowEar.view.children.at(34).enabled_(true);
 				windowEar.view.children.at(34).children.at(2).valueAction_(60);
 			});
-		}).enabled_(false);
+		});//.enabled_(false);
 		// Chord On / Off
 		Button(windowEar, Rect(0, 0, 80, 20)).states_([["Chord On", Color.green], ["Chord Off", Color.red]]).action_({|view|
 			if(view.value == 1, {flagChord = 'on'}, {flagChord = 'off'});
