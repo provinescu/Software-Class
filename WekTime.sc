@@ -2,7 +2,7 @@
 
 WekTime {
 
-	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData;
+	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWek;
 
 	var pathWekTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter;
 
@@ -285,6 +285,8 @@ f						Switch File for Analyze.
 		rangeFFT = [0, 1];
 		dimIn = 13;// 13 bands MFCC
 		flagStreamMFCC = 'off';
+		numPreset = 0;
+		lastNumPreset = 0;
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -935,7 +937,7 @@ f						Switch File for Analyze.
 			~synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 			~fxVST = VSTPluginController(~synthVST);
 
-			freqBefore=0; ampBefore=0; dureeBefore=0; lastTime = Main.elapsedTime;
+			freqBefore=0; ampBefore=0; dureeBefore=0; lastTime = Main.elapsedTime; lastTimeWek = Main.elapsedTime;
 
 			// DATA WIKI OUT
 			OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -956,8 +958,8 @@ f						Switch File for Analyze.
 						choiceFilter.put(i, wekOut[12+i].clip(0, (listeFilters.size - 1)).asInteger);
 						windowControlGUI.view.children.at(i * 93 + 260).valueAction_(wekOut[12+i].clip(0, 40).asInteger);//12 Filter
 						//CtrlFilter (264)
-						listeCtrl1Filter.put(i, wekOut[16+i].clip(20, 20000));//16
-						windowControlGUI.view.children.at(i * 93 + 264).children.at(2).valueAction_(wekOut[16+i].clip(20, 20000));
+						listeCtrl1Filter.put(i, wekOut[16+i].clip(20, 12544));//16
+						windowControlGUI.view.children.at(i * 93 + 264).children.at(2).valueAction_(wekOut[16+i].clip(20, 12544));
 						listeCtrl2Filter.put(i, wekOut[20+i].clip(0.01, 100) / 100);//20
 						windowControlGUI.view.children.at(i * 93 + 267).children.at(2).valueAction_(wekOut[20+i].clip(0.01, 100));
 						listeCtrl3Filter.put(i, wekOut[24+i].clip(0.01, 100) / 100);//24
@@ -977,7 +979,25 @@ f						Switch File for Analyze.
 						listeCtrl5FX.put(i, wekOut[48+i].clip(0.01, 100) / 100);//48
 						windowControlGUI.view.children.at(i * 93 + 290).children.at(2).valueAction_(wekOut[48+i].clip(0.01, 100));
 					});
-				}.defer;
+					rangeFFT = wekOut[52..53].clip(0, 1);
+					windowExternalControlGUI.view.children.at(27).children.at(2).lo_(rangeFFT[0]);
+					windowExternalControlGUI.view.children.at(27).children.at(2).hi_(rangeFFT[1]);
+					windowExternalControlGUI.view.children.at(27).children.at(1).value = rangeFFT[0];
+					windowExternalControlGUI.view.children.at(27).children.at(3).value = rangeFFT[1];
+					// Preset
+					numPreset = wekOut[54];// Number Preset
+					if(numPreset != lastNumPreset and: {(time - lastTimeWek) > 4},
+						// load new preset
+						{
+							if(File.exists(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
+								{
+									lastNumPreset = numPreset;
+									lastTimeWek = time;
+									file=File(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd","r");
+									fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
+									windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + numPreset.asInteger.asString});
+					});
+				}.defer(0);
 
 			},'/wek/outputs');
 
@@ -1018,8 +1038,8 @@ f						Switch File for Analyze.
 						fonctionAutomationPreset.value(flux, flatness);
 					},
 					{
-								mfcc = msg[3..];
-								mfccData = mfcc;// For MidiOn
+						mfcc = msg[3..];
+						mfccData = mfcc;// For MidiOn
 				});
 
 			}, '/WekTime_FFT_Data', serverAdresse);
@@ -1167,70 +1187,74 @@ f						Switch File for Analyze.
 						//Sender
 						sender.sendMsg("/wek/inputs", *mfcc[0..]);
 						if(flagStreamMFCC != 'wek',
-						{
-							// Send control outputs for wekinator 52 data
-							data = data.add(listeOctave[0]);//0
-							data = data.add(listeOctave[1]);
-							data = data.add(listeOctave[2]);
-							data = data.add(listeOctave[3]);
+							{
+								// Send control outputs for wekinator 52 data
+								data = data.add(listeOctave[0]);//0
+								data = data.add(listeOctave[1]);
+								data = data.add(listeOctave[2]);
+								data = data.add(listeOctave[3]);
 
-							data = data.add(listeDemiTon[0]);//4
-							data = data.add(listeDemiTon[1]);
-							data = data.add(listeDemiTon[2]);
-							data = data.add(listeDemiTon[3]);
+								data = data.add(listeDemiTon[0]);//4
+								data = data.add(listeDemiTon[1]);
+								data = data.add(listeDemiTon[2]);
+								data = data.add(listeDemiTon[3]);
 
-							data = data.add(listeCent[0]);//8
-							data = data.add(listeCent[1]);
-							data = data.add(listeCent[2]);
-							data = data.add(listeCent[3]);
+								data = data.add(listeCent[0]);//8
+								data = data.add(listeCent[1]);
+								data = data.add(listeCent[2]);
+								data = data.add(listeCent[3]);
 
-							data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
-							data = data.add(choiceFilter[1] * (listeFilters.size - 1));
-							data = data.add(choiceFilter[2] * (listeFilters.size - 1));
-							data = data.add(choiceFilter[3] * (listeFilters.size - 1));
+								data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
+								data = data.add(choiceFilter[1] * (listeFilters.size - 1));
+								data = data.add(choiceFilter[2] * (listeFilters.size - 1));
+								data = data.add(choiceFilter[3] * (listeFilters.size - 1));
 
-							data = data.add(listeCtrl1Filter[0]);//16
-							data = data.add(listeCtrl1Filter[1]);
-							data = data.add(listeCtrl1Filter[2]);
-							data = data.add(listeCtrl1Filter[3]);
-							data = data.add(listeCtrl2Filter[0] * 100);
-							data = data.add(listeCtrl2Filter[1] * 100);
-							data = data.add(listeCtrl2Filter[2] * 100);
-							data = data.add(listeCtrl2Filter[3] * 100);
-							data = data.add(listeCtrl3Filter[0] * 100);
-							data = data.add(listeCtrl3Filter[1] * 100);
-							data = data.add(listeCtrl3Filter[2] * 100);
-							data = data.add(listeCtrl3Filter[3] * 100);
+								data = data.add(listeCtrl1Filter[0]);//16
+								data = data.add(listeCtrl1Filter[1]);
+								data = data.add(listeCtrl1Filter[2]);
+								data = data.add(listeCtrl1Filter[3]);
+								data = data.add(listeCtrl2Filter[0] * 100);
+								data = data.add(listeCtrl2Filter[1] * 100);
+								data = data.add(listeCtrl2Filter[2] * 100);
+								data = data.add(listeCtrl2Filter[3] * 100);
+								data = data.add(listeCtrl3Filter[0] * 100);
+								data = data.add(listeCtrl3Filter[1] * 100);
+								data = data.add(listeCtrl3Filter[2] * 100);
+								data = data.add(listeCtrl3Filter[3] * 100);
 
-							data = data.add(choiceFX[0] * (listeFX.size - 1));//28
-							data = data.add(choiceFX[1] * (listeFX.size - 1));
-							data = data.add(choiceFX[2] * (listeFX.size - 1));
-							data = data.add(choiceFX[3] * (listeFX.size - 1));
+								data = data.add(choiceFX[0] * (listeFX.size - 1));//28
+								data = data.add(choiceFX[1] * (listeFX.size - 1));
+								data = data.add(choiceFX[2] * (listeFX.size - 1));
+								data = data.add(choiceFX[3] * (listeFX.size - 1));
 
-							data = data.add(listeCtrl1FX[0] * 100);//32
-							data = data.add(listeCtrl1FX[1] * 100);
-							data = data.add(listeCtrl1FX[2] * 100);
-							data = data.add(listeCtrl1FX[3] * 100);
-							data = data.add(listeCtrl2FX[0] * 100);
-							data = data.add(listeCtrl2FX[1] * 100);
-							data = data.add(listeCtrl2FX[2] * 100);
-							data = data.add(listeCtrl2FX[3] * 100);
-							data = data.add(listeCtrl3FX[0] * 100);
-							data = data.add(listeCtrl3FX[1] * 100);
-							data = data.add(listeCtrl3FX[2] * 100);
-							data = data.add(listeCtrl3FX[3] * 100);
-							data = data.add(listeCtrl4FX[0] * 100);
-							data = data.add(listeCtrl4FX[1] * 100);
-							data = data.add(listeCtrl4FX[2] * 100);
-							data = data.add(listeCtrl4FX[3] * 100);
-							data = data.add(listeCtrl5FX[0] * 100);
-							data = data.add(listeCtrl5FX[1] * 100);
-							data = data.add(listeCtrl5FX[2] * 100);
-							data = data.add(listeCtrl5FX[3] * 100);//51
+								data = data.add(listeCtrl1FX[0] * 100);//32
+								data = data.add(listeCtrl1FX[1] * 100);
+								data = data.add(listeCtrl1FX[2] * 100);
+								data = data.add(listeCtrl1FX[3] * 100);
+								data = data.add(listeCtrl2FX[0] * 100);
+								data = data.add(listeCtrl2FX[1] * 100);
+								data = data.add(listeCtrl2FX[2] * 100);
+								data = data.add(listeCtrl2FX[3] * 100);
+								data = data.add(listeCtrl3FX[0] * 100);
+								data = data.add(listeCtrl3FX[1] * 100);
+								data = data.add(listeCtrl3FX[2] * 100);
+								data = data.add(listeCtrl3FX[3] * 100);
+								data = data.add(listeCtrl4FX[0] * 100);
+								data = data.add(listeCtrl4FX[1] * 100);
+								data = data.add(listeCtrl4FX[2] * 100);
+								data = data.add(listeCtrl4FX[3] * 100);
+								data = data.add(listeCtrl5FX[0] * 100);
+								data = data.add(listeCtrl5FX[1] * 100);
+								data = data.add(listeCtrl5FX[2] * 100);
+								data = data.add(listeCtrl5FX[3] * 100);//51
+								data = data.add(rangeFFT[0]);//52
+								data = data.add(rangeFFT[1]);//53
+								data = data.add(numPreset);//54
 
-							// Sender
-							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-					});
+
+								// Sender
+								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+						});
 				}, {nil});
 			}, '/WekTime_OSC_Data', serverAdresse);
 
@@ -1365,70 +1389,73 @@ f						Switch File for Analyze.
 						// WEKINATOR
 						sender.sendMsg("/wek/inputs", *mfccData[0..]);
 						if(flagStreamMFCC != 'wek',
-						{
-							// Send control outputs for wekinator 52 data
-							data = data.add(listeOctave[0]);//0
-							data = data.add(listeOctave[1]);
-							data = data.add(listeOctave[2]);
-							data = data.add(listeOctave[3]);
+							{
+								// Send control outputs for wekinator 52 data
+								data = data.add(listeOctave[0]);//0
+								data = data.add(listeOctave[1]);
+								data = data.add(listeOctave[2]);
+								data = data.add(listeOctave[3]);
 
-							data = data.add(listeDemiTon[0]);//4
-							data = data.add(listeDemiTon[1]);
-							data = data.add(listeDemiTon[2]);
-							data = data.add(listeDemiTon[3]);
+								data = data.add(listeDemiTon[0]);//4
+								data = data.add(listeDemiTon[1]);
+								data = data.add(listeDemiTon[2]);
+								data = data.add(listeDemiTon[3]);
 
-							data = data.add(listeCent[0]);//8
-							data = data.add(listeCent[1]);
-							data = data.add(listeCent[2]);
-							data = data.add(listeCent[3]);
+								data = data.add(listeCent[0]);//8
+								data = data.add(listeCent[1]);
+								data = data.add(listeCent[2]);
+								data = data.add(listeCent[3]);
 
-							data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
-							data = data.add(choiceFilter[1] * (listeFilters.size - 1));
-							data = data.add(choiceFilter[2] * (listeFilters.size - 1));
-							data = data.add(choiceFilter[3] * (listeFilters.size - 1));
+								data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
+								data = data.add(choiceFilter[1] * (listeFilters.size - 1));
+								data = data.add(choiceFilter[2] * (listeFilters.size - 1));
+								data = data.add(choiceFilter[3] * (listeFilters.size - 1));
 
-							data = data.add(listeCtrl1Filter[0]);//16
-							data = data.add(listeCtrl1Filter[1]);
-							data = data.add(listeCtrl1Filter[2]);
-							data = data.add(listeCtrl1Filter[3]);
-							data = data.add(listeCtrl2Filter[0] * 100);
-							data = data.add(listeCtrl2Filter[1] * 100);
-							data = data.add(listeCtrl2Filter[2] * 100);
-							data = data.add(listeCtrl2Filter[3] * 100);
-							data = data.add(listeCtrl3Filter[0] * 100);
-							data = data.add(listeCtrl3Filter[1] * 100);
-							data = data.add(listeCtrl3Filter[2] * 100);
-							data = data.add(listeCtrl3Filter[3] * 100);
+								data = data.add(listeCtrl1Filter[0]);//16
+								data = data.add(listeCtrl1Filter[1]);
+								data = data.add(listeCtrl1Filter[2]);
+								data = data.add(listeCtrl1Filter[3]);
+								data = data.add(listeCtrl2Filter[0] * 100);
+								data = data.add(listeCtrl2Filter[1] * 100);
+								data = data.add(listeCtrl2Filter[2] * 100);
+								data = data.add(listeCtrl2Filter[3] * 100);
+								data = data.add(listeCtrl3Filter[0] * 100);
+								data = data.add(listeCtrl3Filter[1] * 100);
+								data = data.add(listeCtrl3Filter[2] * 100);
+								data = data.add(listeCtrl3Filter[3] * 100);
 
-							data = data.add(choiceFX[0] * (listeFX.size - 1));//28
-							data = data.add(choiceFX[1] * (listeFX.size - 1));
-							data = data.add(choiceFX[2] * (listeFX.size - 1));
-							data = data.add(choiceFX[3] * (listeFX.size - 1));
+								data = data.add(choiceFX[0] * (listeFX.size - 1));//28
+								data = data.add(choiceFX[1] * (listeFX.size - 1));
+								data = data.add(choiceFX[2] * (listeFX.size - 1));
+								data = data.add(choiceFX[3] * (listeFX.size - 1));
 
-							data = data.add(listeCtrl1FX[0] * 100);//32
-							data = data.add(listeCtrl1FX[1] * 100);
-							data = data.add(listeCtrl1FX[2] * 100);
-							data = data.add(listeCtrl1FX[3] * 100);
-							data = data.add(listeCtrl2FX[0] * 100);
-							data = data.add(listeCtrl2FX[1] * 100);
-							data = data.add(listeCtrl2FX[2] * 100);
-							data = data.add(listeCtrl2FX[3] * 100);
-							data = data.add(listeCtrl3FX[0] * 100);
-							data = data.add(listeCtrl3FX[1] * 100);
-							data = data.add(listeCtrl3FX[2] * 100);
-							data = data.add(listeCtrl3FX[3] * 100);
-							data = data.add(listeCtrl4FX[0] * 100);
-							data = data.add(listeCtrl4FX[1] * 100);
-							data = data.add(listeCtrl4FX[2] * 100);
-							data = data.add(listeCtrl4FX[3] * 100);
-							data = data.add(listeCtrl5FX[0] * 100);
-							data = data.add(listeCtrl5FX[1] * 100);
-							data = data.add(listeCtrl5FX[2] * 100);
-							data = data.add(listeCtrl5FX[3] * 100);//51
+								data = data.add(listeCtrl1FX[0] * 100);//32
+								data = data.add(listeCtrl1FX[1] * 100);
+								data = data.add(listeCtrl1FX[2] * 100);
+								data = data.add(listeCtrl1FX[3] * 100);
+								data = data.add(listeCtrl2FX[0] * 100);
+								data = data.add(listeCtrl2FX[1] * 100);
+								data = data.add(listeCtrl2FX[2] * 100);
+								data = data.add(listeCtrl2FX[3] * 100);
+								data = data.add(listeCtrl3FX[0] * 100);
+								data = data.add(listeCtrl3FX[1] * 100);
+								data = data.add(listeCtrl3FX[2] * 100);
+								data = data.add(listeCtrl3FX[3] * 100);
+								data = data.add(listeCtrl4FX[0] * 100);
+								data = data.add(listeCtrl4FX[1] * 100);
+								data = data.add(listeCtrl4FX[2] * 100);
+								data = data.add(listeCtrl4FX[3] * 100);
+								data = data.add(listeCtrl5FX[0] * 100);
+								data = data.add(listeCtrl5FX[1] * 100);
+								data = data.add(listeCtrl5FX[2] * 100);
+								data = data.add(listeCtrl5FX[3] * 100);//51
+								data = data.add(rangeFFT[0]);//52
+								data = data.add(rangeFFT[1]);//53
+								data = data.add(numPreset);//54
 
-							// Sender
-							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-					});
+								// Sender
+								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+						});
 				}, {nil});
 			}, '/WekTime_Keyboard_Data', serverAdresse);
 
@@ -1605,6 +1632,9 @@ f						Switch File for Analyze.
 							data = data.add(listeCtrl5FX[1] * 100);
 							data = data.add(listeCtrl5FX[2] * 100);
 							data = data.add(listeCtrl5FX[3] * 100);//51
+							data = data.add(rangeFFT[0]);//52
+							data = data.add(rangeFFT[1]);//53
+							data = data.add(numPreset);//54
 
 							// Sender
 							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
@@ -2129,6 +2159,18 @@ f						Switch File for Analyze.
 		);
 		MainMenu.register(menuOSC.title_("OSC"), "WekTimeTools");
 
+		menuAlgo = Menu(
+			MenuAction("Wekinator Port",
+				{
+					SCRequestString("6448", "Wekinator Port", {arg index, port;
+						port = index.asInteger;
+						sender.free;
+						sender = NetAddr.new("127.0.0.1", port);// Wekinator
+					});
+			}),
+		);
+		MainMenu.register(menuAlgo.title_("Wekinator"), "WekTimeTools");
+
 		menuHelp = MenuAction("Help ShortCut",
 			{
 				//Document.new("ShortCut for WekTime", helpWekTime);
@@ -2360,6 +2402,7 @@ f						Switch File for Analyze.
 			//load Preset+Control
 			if(commandeExecute == 'Load Preset+Control',{
 				if(File.exists(~pathWekTime ++ "Preset" + number.value.asString ++ ".scd"), {
+					numPreset = number.value;
 					file=File(~pathWekTime ++ "Preset" + number.value.asString ++ ".scd","r");
 					fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
 					windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
@@ -3044,7 +3087,7 @@ f						Switch File for Analyze.
 
 		//Normalize FFT
 		EZRanger(windowExternalControlGUI , 490 @ 15, "Range FFT", \unipolar,
-			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 64).setColors(knobColor: Color.new(0.582, 0, 0), sliderColor: Color.grey, stringColor: Color.new(0.985, 0.701, 0));
+			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 64).setColors(knobColor: Color.new(0.582, 0, 0), sliderColor: Color.grey, stringColor: Color.new(0.985, 0.701, 0)).setColors(Color.grey(0.3), Color.magenta);
 
 		// Set Range FHZband
 		rangeBand = EZText(windowExternalControlGUI, Rect(0, 0, 490, 20), "Range Band",
@@ -3774,7 +3817,7 @@ f						Switch File for Analyze.
 			action_({|view| listeActiveJitterVolumeFilter.put(synth, view.value)});
 
 			// Ctrl1 Filter
-			EZSlider(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 720, 310, 20), "Off", ControlSpec(20, 20000, \exp, 0),
+			EZSlider(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 720, 310, 20), "Off", ControlSpec(20, 12544, \exp, 0),
 				{|ez| listeCtrl1Filter.put(synth, ez.value)}, 440,labelWidth: 50, numberWidth: 50).setColors(knobColor: Color.new(0.985, 0.701, 0), sliderBackground: Color.black, stringColor:  Color.new(0.985, 0.701, 0)).enabled_(true).setColors(Color.grey(0.3), Color.magenta);
 
 			// Jitter Ctrl1 Filter
@@ -3933,13 +3976,13 @@ f						Switch File for Analyze.
 
 			// Jitter Ctrl5 FX
 			EZSlider(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 1155, 285, 15), "Jitter % ", ControlSpec(0.01, 100, \exp, 0),
-				{|ez| listeJitterCtrl2FX.put(synth, ez.value / 100)}, 10, false, 50, 35).setColors(knobColor: Color.new(0.1, 0.3, 1, 1), sliderBackground: Color.black, stringColor:  Color.new(0.1, 0.3, 1, 1)).enabled_(true);
+				{|ez| listeJitterCtrl5FX.put(synth, ez.value / 100)}, 10, false, 50, 35).setColors(knobColor: Color.new(0.1, 0.3, 1, 1), sliderBackground: Color.black, stringColor:  Color.new(0.1, 0.3, 1, 1)).enabled_(true);
 
 			// Active Jitter Ctrl5 FX
 			Button(windowControlGUI, Rect(synth * 315 + 295, numberSynth * 25 + 1155, 20, 15)).
 			states_([["O", Color.new(0.1, 0.8, 0.9, 1), Color.grey(0.75, 0.25)], ["X", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
 			background_(Color.grey).
-			action_({|view| listeActiveJitterCtrl2FX.put(synth, view.value)}).enabled_(true);
+			action_({|view| listeActiveJitterCtrl5FX.put(synth, view.value)}).enabled_(true);
 
 			// Panner
 			StaticText(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 1175, 315, 20)).string_("Panner").stringColor_(Color.new(0.985, 0.701, 0)).font_(Font("Georgia", 14)).align_(\center);

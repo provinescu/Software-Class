@@ -3640,13 +3640,13 @@ f						Switch File for Analyze.
 
 			// Jitter Ctrl5 FX
 			EZSlider(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 1155, 285, 15), "Jitter % ", ControlSpec(0.01, 100, \exp, 0),
-				{|ez| listeJitterCtrl2FX.put(synth, ez.value / 100)}, 10, false, 50, 35).setColors(knobColor: Color.new(0.1, 0.3, 1, 1), sliderBackground: Color.black, stringColor:  Color.new(0.1, 0.3, 1, 1)).enabled_(true);
+				{|ez| listeJitterCtrl5FX.put(synth, ez.value / 100)}, 10, false, 50, 35).setColors(knobColor: Color.new(0.1, 0.3, 1, 1), sliderBackground: Color.black, stringColor:  Color.new(0.1, 0.3, 1, 1)).enabled_(true);
 
 			// Active Jitter Ctrl5 FX
 			Button(windowControlGUI, Rect(synth * 315 + 295, numberSynth * 25 + 1155, 20, 15)).
 			states_([["O", Color.new(0.1, 0.8, 0.9, 1), Color.grey(0.75, 0.25)], ["X", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]]).
 			background_(Color.grey).
-			action_({|view| listeActiveJitterCtrl2FX.put(synth, view.value)}).enabled_(true);
+			action_({|view| listeActiveJitterCtrl5FX.put(synth, view.value)}).enabled_(true);
 
 			// Panner
 			StaticText(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 1175, 315, 20)).string_("Panner").stringColor_(Color.new(0.985, 0.701, 0)).font_(Font("Georgia", 14)).align_(\center);

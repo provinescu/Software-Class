@@ -3,7 +3,7 @@
 
 WekMatrix {
 
-	classvar  < s;
+	classvar  < s, numPreset, lastNumPreset, lastTimeWek;
 
 	var synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuWekMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem;
 	var fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider;
@@ -165,6 +165,8 @@ WekMatrix {
 		wekEnergy = 60;
 		wekFlux = 0.5;
 		wekFlatness = 0.5;
+		numPreset = 0;
+		lastNumPreset = 0;
 
 		choiceSynth = [
 			'Add a New Synthesizer or FX',
@@ -1141,7 +1143,7 @@ y ... -						Musical keys.
 					data = data.add(arrayData)});
 				// EZKnob
 				arrayData=[];
-				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15},
+				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)});
 						if(subItem == 1, {arrayData=arrayData.add("A Knob")});
@@ -1169,7 +1171,7 @@ y ... -						Musical keys.
 						if(subItem == 2, {subView.range(data.at(item).at(subItem).value)})});
 				});
 				// EZKnob
-				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15},
+				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} and:{data.at(item) != nil},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0 or: {subItem == 1}, {nil});
 						if(subItem == 2, {subView.valueAction = data.at(item).at(subItem).value});
@@ -1375,18 +1377,18 @@ y ... -						Musical keys.
 
 			ardourOSC = NetAddr("127.0.0.1", 3819);// define NetAddr on local machine with Ardour's port number
 
-			freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime;
+			freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime; lastTimeWek = Main.elapsedTime;
 
 			// DATA WIKI OUT
 			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 
-				var freq, amp, duree, bpm, centroid=0, flatness=0, energy=0, flux=0, wekOut, musicData=[];
+				var freq, amp, duree, bpm, centroid=0, flatness=0, energy=0, flux=0, wekOut, musicData=[], file;
 
 				// Music
 				wekOut = msg[1..];
 				freq = wekOut[0].abs.midicps.clip(20, 4186);
 				amp = wekOut[1].dbamp.clip(0, 1);
-				bpm = wekOut[3].abs.clip(7.5, 480) / 480;// User BPM
+				bpm = wekOut[3].abs.clip(7.5, 480) / 60;// User BPM
 				if(flagDureeMFCC == 'off',
 					{
 						duree = wekOut[2].abs.clip(0.01, timeMaximum);
@@ -1402,8 +1404,8 @@ y ... -						Musical keys.
 				flatnessOnFly = flatness;
 				// Set BPM
 				if(flagSystemBPM == 0, {bpm = 1});
-				if(flagSystemBPM == 1, {{bpmSlider.valueAction_(bpm)}.defer});
-				if(flagSystemBPM == 2, {bpm = systemBPM.bpm});
+				if(flagSystemBPM == 1, {{bpmSlider.valueAction_(bpm * 60)}.defer});
+				if(flagSystemBPM == 2, {bpm = systemBPM.tempo});
 				if(flagSystemBPM == 3, {bpm = oscTempoMaster});
 				// Set Bus OSC
 				if(flagDataOSC == 'on', {busOSC.at(0).set(freq, amp, duree, bpm, centroid, flatness, energy, flux)});
@@ -1480,12 +1482,29 @@ y ... -						Musical keys.
 							controlDureeTranSlider.valueAction = wekOut[17];
 							controlQuantaSlider.valueAction = wekOut[18];
 							controlRootSlider.valueAction = wekOut[19];
-
+							// Preset
+							numPreset = wekOut[20];// Number Preset
+							if(numPreset != lastNumPreset and: {(time - lastTimeWek) > 4},
+								// load new preset
+								{
+									{
+										if(File.exists(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
+											{
+												lastNumPreset = numPreset;
+												lastTimeWek = time;
+												fonctionUserOperatingSystem.value(9);
+												windowControl.name="WekMatrix Control" + " | " + "Preset" + numPreset.asInteger.asString;
+												file=File(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
+												fonctionLoadPreset.value(file.readAllString.interpret);
+												file.close;listeWindows.at(3).front;indexWindows=3;
+										}, {"cancelled".postln});
+									}.defer(0);
+							});
 							// Setup Automation Preset
 							fonctionAutomationPreset.value(listeDataOSC.at(0), centroid, flatness, energy, flux);
 							// Display Data on Control Panel
 							displayOSC.setString("Fhz:" + freq.cpsmidi.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (bpm * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + centroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
-						}.defer;
+						}.defer(0);
 				});
 
 				dureeOSCdata = Main.elapsedTime;
@@ -1540,6 +1559,7 @@ y ... -						Musical keys.
 				data = data.add(controlDureeTranSlider.value);
 				data = data.add(controlQuantaSlider.value);
 				data = data.add(controlRootSlider.value);
+				data = data.add(numPreset);//20
 
 				// Automation on off
 				if(flagStreamMFCC == 'off',
@@ -1900,7 +1920,7 @@ y ... -						Musical keys.
 				});
 				// key m -> Switch Algo Tempo�
 				if(char == $m, {if(bpmOnOff.value == 0, {bpmOnOff.valueAction_(1)},
-					{if(bpmOnOff.value == 1, {bpmOnOff.valueAction_(2)}, 		{if(bpmOnOff.value == 2, {bpmOnOff.valueAction_(3)},
+					{if(bpmOnOff.value == 1, {bpmOnOff.valueAction_(2)}, {if(bpmOnOff.value == 2, {bpmOnOff.valueAction_(3)},
 						{if(bpmOnOff.value == 3, {bpmOnOff.valueAction_(0)}, {nil});
 					});
 					});
@@ -1958,6 +1978,20 @@ y ... -						Musical keys.
 					pourcentQuant.value = 0;
 					pourcentRoot.value = 0;
 					listeWindowFreeze = [];
+					wekFreq = 60;
+					windowControlSynth.view.children.at(16).children.at(2).valueAction = 60;
+					wekAmp = -12;
+					windowControlSynth.view.children.at(17).children.at(2).valueAction = -12;
+					wekDur = 1;
+					windowControlSynth.view.children.at(18).children.at(2).valueAction = 1;
+					wekCentroid = 60;
+					windowControlSynth.view.children.at(19).children.at(2).valueAction = 60;
+					wekEnergy = 60;
+					windowControlSynth.view.children.at(20).children.at(2).valueAction = 60;
+					wekFlux = 0.5;
+					windowControlSynth.view.children.at(21).children.at(2).valueAction = 0.5;
+					wekFlatness = 0.5;
+					windowControlSynth.view.children.at(22).children.at(2).valueAction = 0.5;
 				});
 				// key alt + i -> Clear musical data
 				if(modifiers==524288 and: {unicode==108} and: {keycode==34},{
@@ -2138,7 +2172,9 @@ y ... -						Musical keys.
 			//load Preset
 			if(commandeExecute == 'Load Preset',{
 				if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
-					{fonctionUserOperatingSystem.value(9);
+					{
+						numPreset = number.value;
+						fonctionUserOperatingSystem.value(9);
 						windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
 						file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
@@ -2674,7 +2710,7 @@ y ... -						Musical keys.
 			valHi = (ez.value.at(1) / 127);//- previousFreq.at(1) / 127).clip(-1, 1);
 			previousFreq = ez.value;
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
 					window.value.view.children.at(39).children.do({arg subView, subItem;
 						//if(subItem == 2, {subView.activeLo_(subView.lo + valLo); subView.activeHi_(subView.hi + valHi)})
 						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
@@ -2686,7 +2722,7 @@ y ... -						Musical keys.
 		// Freq T
 		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
 					window.value.view.children.at(40).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
@@ -2717,7 +2753,7 @@ y ... -						Musical keys.
 				valHi = (ez.value.at(1));// - previousDuree.at(1)).clip(-1, 1);
 				previousDuree = ez.value;
 				listeWindowSynth.do({|window|
-					if(window.view.children.at(54).value == 1, {
+					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
 						window.value.view.children.at(42).children.do({arg subView, subItem;
 							//if(subItem == 2, {subView.activeLo_(valLo * (timeMaximum / 60)); subView.activeHi_(valHi * (timeMaximum / 60))})
 							if(subItem == 2, {subView.activeLo_(valLo / 60); subView.activeHi_(valHi / 60)})
@@ -2729,7 +2765,7 @@ y ... -						Musical keys.
 		// Duree T
 		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
 					window.value.view.children.at(43).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
@@ -2740,7 +2776,7 @@ y ... -						Musical keys.
 		// Quantization
 		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
 					window.value.view.children.at(44).children.do({arg subView, subItem;
 						//if(subItem == 2, {subView.valueAction_((subView.value + ez.value).mod(100))});
 						if(subItem == 2, {subView.valueAction_((ez.value))});
@@ -2752,7 +2788,7 @@ y ... -						Musical keys.
 		// Root
 		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
 					window.value.view.children.at(80).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_((ez.value).mod(21))});
 					});
@@ -3594,7 +3630,7 @@ y ... -						Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// AutomationSynthMusicData start stop playing
 			startAutomationSynthMusicData = Button(windowSynth,Rect(0, 0, 100, 20));
-			startAutomationSynthMusicData.states = [["MusicData Off", Color.black,  Color.green(0.8, 0.25)],["MusicData On", Color.black, Color.red(0.8, 0.25)]];
+			startAutomationSynthMusicData.states = [["MusicData Off", Color.magenta,  Color.green(0.8, 0.25)],["MusicData On", Color.magenta, Color.red(0.8, 0.25)]];
 			startAutomationSynthMusicData.action = {|view| if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false); /*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/}, {tdefMusicData.play; tempoAutomationSynthMusicData.enabled_(true);jitterAutomationMusicData.enabled_(true)}); fonctionEnabledSlider.value(view.value);
 			};
 			// Tempo AutomationSynthMusicData Synth
@@ -3603,10 +3639,10 @@ y ... -						Musical keys.
 			jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 20, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
 			// Auto Freq
-			automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.black,  Color.green(0.8, 0.25)],["Freq", Color.black, Color.red(0.8, 0.25)]];
+			automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.magenta,  Color.green(0.8, 0.25)],["Freq", Color.magenta, Color.red(0.8, 0.25)]];
 			automationSliderFreq.action = {|view| };
 			// Auto Dur
-			automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.black,  Color.green(0.8, 0.25)],["Dur", Color.black, Color.red(0.8, 0.25)]];
+			automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.magenta,  Color.green(0.8, 0.25)],["Dur", Color.magenta, Color.red(0.8, 0.25)]];
 			automationSliderDur.action = {|view| };
 			// Auto Buffer
 			automationSliderBuffer= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["CtrlBuf", Color.black,  Color.green(0.8, 0.25)],["CtrlBuf", Color.black, Color.red(0.8, 0.25)]];
