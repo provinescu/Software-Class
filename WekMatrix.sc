@@ -1483,8 +1483,8 @@ y ... -						Musical keys.
 							controlQuantaSlider.valueAction = wekOut[18];
 							controlRootSlider.valueAction = wekOut[19];
 							// Preset
-							numPreset = wekOut[20];// Number Preset
-							if(numPreset != lastNumPreset and: {(time - lastTimeWek) > 4},
+							numPreset = (wekOut[20] + 0.5).asInteger.clip(1, 40);// Number Preset
+							if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeMemory},
 								// load new preset
 								{
 									{
@@ -1559,7 +1559,7 @@ y ... -						Musical keys.
 				data = data.add(controlDureeTranSlider.value);
 				data = data.add(controlQuantaSlider.value);
 				data = data.add(controlRootSlider.value);
-				data = data.add(numPreset);//20
+				data = data.add(numPreset.asFloat);//20
 
 				// Automation on off
 				if(flagStreamMFCC == 'off',
@@ -2173,7 +2173,7 @@ y ... -						Musical keys.
 			if(commandeExecute == 'Load Preset',{
 				if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
 					{
-						numPreset = number.value;
+						numPreset = number.value; lastNumPreset = number.value;
 						fonctionUserOperatingSystem.value(9);
 						windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
 						file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");

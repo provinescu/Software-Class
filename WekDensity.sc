@@ -1653,12 +1653,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                     }, {nil});
                 });
                 // DATA FFT
-                userBPM = wekOut[3].abs.clip(7.5, 480) / 60;// User BPM
-                centroid = wekOut[4].abs.midicps.clip(20, 12544);
-                energy = wekOut[5].abs.midicps.clip(20, 12544);
-                flux = wekOut[6].abs.clip(0, 1);
-                flatness = wekOut[7].abs.clip(0, 1);
-                rangeFFT = wekOut[22..23];
+                userBPM = wekOut[3].clip(7.5, 480) / 60;// User BPM
+                centroid = wekOut[4].midicps.clip(20, 12544);
+                energy = wekOut[5].midicps.clip(20, 12544);
+                flux = wekOut[6].clip(0, 1);
+                flatness = wekOut[7].clip(0, 1);
+				rangeFFT = wekOut[22..23].clip(0, 1);
                 // Normalize
                 flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
                 flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
@@ -1720,11 +1720,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                         indexDataBPM.put(0, indexDataBPM.at(0) + 1);
                 });
                 // Data Music
-                rangeFreqintruments = [wekOut[8].abs.clip(0, 127), wekOut[9].abs.clip(0, 127)];
+                rangeFreqintruments = [wekOut[8].clip(0, 127), wekOut[9].clip(0, 127)];
                 rangeDBintruments = [wekOut[10].dbamp.clip(0, 1), wekOut[11].dbamp.clip(0, 1)];
-                rangeDureeintruments = [wekOut[12].abs.clip(0, 60), wekOut[13].abs.clip(0, 60)];
-                stretchDuree = wekOut[14].abs.clip(0.02, 60);
-                quantizationDuree = wekOut[15].abs.clip(1, 100);
+                rangeDureeintruments = [wekOut[12].clip(0, 60), wekOut[13].clip(0, 60)];
+                stretchDuree = wekOut[14].clip(0.02, 60);
+                quantizationDuree = wekOut[15].clip(1, 100);
                 // Synth/Sound/FX
                 indexSynthX = (wekOut[16] + (0.5 * rrand(jitterIndexSynthX.neg, jitterIndexSynthX))).clip(0, 1);
                 indexSynthY = (wekOut[17] + (0.5 * rrand(jitterIndexSynthY.neg, jitterIndexSynthY))).clip(0, 1);
@@ -1733,8 +1733,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                 indexFXX = (wekOut[20] + (0.5 * rrand(jitterIndexFXX.neg, jitterIndexFXX))).clip(0, 1);
                 indexFXY = (wekOut[21] + (0.5 * rrand(jitterIndexFXY.neg, jitterIndexFXY))).clip(0, 1);
                 // Preset
-                numPreset = wekOut[24];// Number Preset
-                if(numPreset != lastNumPreset and: {(time - lastTimeWek) > 4},
+				numPreset = (wekOut[24] + 0.5).asInteger.clip(1, 40);// Number Preset
+                if(numPreset != lastNumPreset and: {(time - lastTimeWek) > memoryTime},
                     // load new preset
                     {
                         {
@@ -1838,7 +1838,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                         inFFT = inFFT.add(indexFXY);
                         inFFT = inFFT.add(rangeFFT[0]);//22
                         inFFT = inFFT.add(rangeFFT[1]);
-                        inFFT = inFFT.add(numPreset);//24
+						inFFT = inFFT.add(numPreset.asFloat);//24
                         // Automation on off
                         if(flagStreamMFCC == 'off',
                             {
@@ -3358,7 +3358,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                 if(char == $z, {number = rrand(0, foldersToScanPreset.size - 1);
                     if(File.exists(pathData ++ foldersToScanPreset.at(number)),
                         {
-                            numPreset = number.value;// Pour Wekinator
+                            numPreset = number.value; lastNumPreset = number.value;
                             file=File(pathData ++ foldersToScanPreset.at(number),"r");
                             windowEar.name = "WekDensity" + typeMasterOut + " | " + foldersToScanPreset.at(number);
                             fonctionLoadPreset.value(file.readAllString.interpret);
@@ -3384,7 +3384,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
             });
             if(shortCutCommande == 'Load Preset', {
                 if(File.exists(pathData ++ "Preset" + number.value.asString ++ ".scd"), {
-                    numPreset = number.value;// Pour Wekinator
+                    numPreset = number.value; lastNumPreset = number.value;
                     listeDataInstruments.do({arg data, index;
                         data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
                     });
