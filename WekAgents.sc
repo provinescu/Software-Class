@@ -5,7 +5,7 @@ WekAgents {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWek;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWek, timeWekPreset;
 
 	*new	{arg path="~/Documents/WekAgents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448;
 
@@ -902,6 +902,7 @@ G                       Init Genome Agent (solo).
 			flagStreamMFCC = 'off';
 			numPreset = 0;
 			lastNumPreset = 0;
+			timeWekPreset = 4;
 
 			//////////////////////////////////////////////////////////
 
@@ -2003,7 +2004,7 @@ G                       Init Genome Agent (solo).
 			/*// Preset
 			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
 
-			if(numPreset != lastNumPreset and: {(time - lastTimeWek) > ~tempsmaxsignal},
+			if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
 				// load new preset
 				{
 					{
@@ -5761,7 +5762,7 @@ G                       Init Genome Agent (solo).
 		~viewsignaux = StaticText(~wp, Rect(10,10, 80, 20)).string_("Signal").stringColor_(Color.yellow);
 		~viewout = StaticText(~wp, Rect(10,10, 80, 20)).string_("Music OUT").stringColor_(Color.yellow);
 		~viewin = StaticText(~wp, Rect(10,10, 80, 20)).string_("Signal IN"+~compteurAnalyse.asString).stringColor_(Color.yellow);
-		~stateOSC = StaticText(~wp, Rect(10, 100, 65, 20)).string_("OSC Off").stringColor_(Color.yellow);
+		~stateOSC = StaticText(~wp, Rect(10, 100, 50, 20)).string_("OSC Off").stringColor_(Color.yellow);
 		~stateOSC.align = \center;
 		~stateOSC.stringColor_(Color.blue).font_(Font("Georgia", 12));
 		~stateOSC.background = Color.grey;
@@ -5784,6 +5785,8 @@ G                       Init Genome Agent (solo).
 				}
 			);
 		});
+		EZKnob(~wp, 75 @ 15, "WTP", ControlSpec(1, 60),
+			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 	}
 
 	automationPanel {

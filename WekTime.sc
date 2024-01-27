@@ -2,7 +2,7 @@
 
 WekTime {
 
-	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWek;
+	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWek, timeWekPreset;
 
 	var pathWekTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter;
 
@@ -287,6 +287,7 @@ f						Switch File for Analyze.
 		flagStreamMFCC = 'off';
 		numPreset = 0;
 		lastNumPreset = 0;
+		timeWekPreset = 4;
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -986,7 +987,7 @@ f						Switch File for Analyze.
 					windowExternalControlGUI.view.children.at(27).children.at(3).value = rangeFFT[1];
 					// Preset
 					numPreset = (wekOut[54] + 0.5).asInteger.clip(1, 40);// Number Preset
-					if(numPreset != lastNumPreset and: {(time - lastTimeWek) > maxDureeOSC},// Memory Time
+					if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},// Memory Time
 						// load new preset
 						{
 							if(File.exists(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
@@ -3250,6 +3251,8 @@ createGUI  {
 			}
 		);
 	});
+		EZKnob(windowExternalControlGUI, 75 @ 15, "WTP", ControlSpec(1, 60),
+            {|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz);
 
 	windowExternalControlGUI.onClose_({nil});
 
@@ -3448,7 +3451,7 @@ createGUI  {
 			{|ez| listeWeightSynth.put(synth, ez.value)}, 0.5,labelWidth: 38, numberWidth: 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8));
 
 		// Choice SynthDef
-		choiceTypeSynthDef = PopUpMenu(windowControlGUI, Rect(synth * 315 + 135, numberSynth * 25 + 75, 100, 20)).background_(Color.grey(0.75, 0.25)).stringColor_(Color.black).items_(changeChoiceSynthDef).action = {arg item;
+		choiceTypeSynthDef = PopUpMenu(windowControlGUI, Rect(synth * 315 + 135, numberSynth * 25 + 75, 100, 20)).background_(Color.magenta).stringColor_(Color.black).items_(changeChoiceSynthDef).action = {arg item;
 			typeSynthDef.put(synth, changeChoiceSynthDef.wrapAt(item.value));
 		};
 
@@ -3465,7 +3468,7 @@ createGUI  {
 		};
 
 		// Type Sequencer
-		PopUpMenu(windowControlGUI, Rect(synth * 315 + 35, numberSynth * 25 + 100, 60, 20)).
+		PopUpMenu(windowControlGUI, Rect(synth * 315 + 35, numberSynth * 25 + 100, 60, 20)).background_(Color.magenta).stringColor_(Color.black).
 		items_(["Seq", "Pitch", "Grain"]).
 		action = {arg item;
 			switch(item.value,
@@ -3476,11 +3479,11 @@ createGUI  {
 		};
 
 		// Setup MidiOSC
-		PopUpMenu(windowControlGUI, Rect(synth * 315 + 100, numberSynth * 25 + 100, 80, 20)).background_(Color.grey(0.75, 0.25)).stringColor_(Color.black).items_(changeChoiceMIDI).action = {arg item;
+		PopUpMenu(windowControlGUI, Rect(synth * 315 + 100, numberSynth * 25 + 100, 80, 20)).background_(Color.magenta).stringColor_(Color.black).items_(changeChoiceMIDI).action = {arg item;
 			modeMIDIOSC.put(synth, changeChoiceMIDI.wrapAt(item.value));
 		};
 
-		Button(windowControlGUI, Rect(synth * 315 + 185, numberSynth * 25 + 100, 100, 20)).states_([["Smp Loop On", Color.black,  Color.green],["Smp Loop Off", Color.black, Color.red]]).action = {|view|
+		Button(windowControlGUI, Rect(synth * 315 + 185, numberSynth * 25 + 100, 100, 20)).states_([["Smp Loop On", Color.magenta,  Color.green(0.8, 0.25)],["Smp Loop Off", Color.magenta, Color.red(0.8, 0.25)]]).action = {|view|
 			switch(view.value,
 				0, {loopSample.put(synth, 0)},
 				1, {loopSample.put(synth, 1)}

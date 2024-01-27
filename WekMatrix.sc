@@ -3,7 +3,7 @@
 
 WekMatrix {
 
-	classvar  < s, numPreset, lastNumPreset, lastTimeWek;
+	classvar  < s, numPreset, lastNumPreset, lastTimeWek, timeWekPreset;
 
 	var synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuWekMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem;
 	var fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider;
@@ -167,6 +167,7 @@ WekMatrix {
 		wekFlatness = 0.5;
 		numPreset = 0;
 		lastNumPreset = 0;
+		timeWekPreset = 4;
 
 		choiceSynth = [
 			'Add a New Synthesizer or FX',
@@ -1484,7 +1485,7 @@ y ... -						Musical keys.
 							controlRootSlider.valueAction = wekOut[19];
 							// Preset
 							numPreset = (wekOut[20] + 0.5).asInteger.clip(1, 40);// Number Preset
-							if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeMemory},
+							if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
 								// load new preset
 								{
 									{
@@ -3130,7 +3131,7 @@ y ... -						Musical keys.
 			{arg range; bandFHZ = range.value.midicps},
 			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true);
 		// Wek
-		Button(windowControl, Rect(0, 0, 95, 15)).states_([["Stream Data Wek", Color.magenta], ["Stream FFT+MFCC", Color.red]]).action_({|view|
+		Button(windowControl, Rect(0, 0, 75, 15)).states_([["Stream Wek", Color.magenta], ["Stream MFCC", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off';
 				},
@@ -3138,7 +3139,7 @@ y ... -						Musical keys.
 				}
 			);
 		});
-		Button(windowControl, Rect(0, 0, 65, 15)).states_([["Duree Wek", Color.magenta], ["Duree Algo", Color.red]]).action_({|view|
+		Button(windowControl, Rect(0, 0, 50, 15)).states_([["Dur Wek", Color.magenta], ["Dur Algo", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagDureeMFCC = 'off';
 				},
@@ -3164,6 +3165,8 @@ y ... -						Musical keys.
 				}
 			);
 		});
+		NumberBox(windowControl, 50 @ 15).background_(Color.magenta).value_(4).action({|nb| timeWekPreset = nb.value});
+
 		// On Close
 		windowControl.onClose_({
 			s.bind{

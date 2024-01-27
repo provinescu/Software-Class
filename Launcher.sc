@@ -115,7 +115,7 @@ Launcher {
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekDensity", "WekMatrix"]).stringColor_(Color.white).action = {|source|
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity"]).stringColor_(Color.white).action = {|source|
 			switch (source.value,
 				0, {
 					nameSoft = "Robot";// 57564
@@ -138,13 +138,28 @@ Launcher {
 					path = "~/Documents/Density/";
 				},
 				5,	{
-					nameSoft = "WekDensity";// 57570
-					path = "~/Documents/WekDensity/";
+					nameSoft = "WekRobot";// 5774
+					path = "~/Documents/WekRobot/";
 					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
 				},
 				6,	{
+					nameSoft = "WekAgents";// 5773
+					path = "~/Documents/WekAgents/";
+					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+				},
+				7,	{
 					nameSoft = "WekMatrix";// 57571
 					path = "~/Documents/WekMatrix/";
+					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+				},
+				8,	{
+					nameSoft = "WekTime";// 57572
+					path = "~/Documents/WekTime/";
+					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+				},
+				9,	{
+					nameSoft = "WekDensity";// 57570
+					path = "~/Documents/WekDensity/";
 					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
 				}
 			);

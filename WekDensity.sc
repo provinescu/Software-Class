@@ -2,7 +2,7 @@
 
 WekDensity {
 
-    classvar <> s, numPreset, lastNumPreset, lastTimeWek;
+    classvar <> s, numPreset, lastNumPreset, lastTimeWek, timeWekPreset;
 
     var tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
     var wekFreq, wekAmp, wekDur, wekCentroid, wekEnergy, wekFlux, wekFlatness;
@@ -246,6 +246,7 @@ WekDensity {
         flagDureeMFCC = 'off';
         numPreset = 0;
         lastNumPreset = 0;
+		timeWekPreset = 4;
 
         // Audio Out
         listeMasterOut = [
@@ -1734,7 +1735,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                 indexFXY = (wekOut[21] + (0.5 * rrand(jitterIndexFXY.neg, jitterIndexFXY))).clip(0, 1);
                 // Preset
 				numPreset = (wekOut[24] + 0.5).asInteger.clip(1, 40);// Number Preset
-                if(numPreset != lastNumPreset and: {(time - lastTimeWek) > memoryTime},
+                if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
                     // load new preset
                     {
                         {
@@ -1782,18 +1783,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                     windowEar.view.children.at(32).children.at(2).valueAction = stretchDuree;
                     windowEar.view.children.at(33).children.at(2).valueAction = quantizationDuree;
                     windowEar.view.children.at(34).children.at(2).valueAction = userBPM * 60;
-                    windowPlotterData.view.children.at(7).children.at(2).lo_(rangeFFT[0]);
-                    windowPlotterData.view.children.at(7).children.at(2).hi_(rangeFFT[1]);
-                    windowPlotterData.view.children.at(7).children.at(1).value = rangeFFT[0];
-                    windowPlotterData.view.children.at(7).children.at(3).value = rangeFFT[1];
+                    windowPlotterData.view.children.at(8).children.at(2).lo_(rangeFFT[0]);
+                    windowPlotterData.view.children.at(8).children.at(2).hi_(rangeFFT[1]);
+                    windowPlotterData.view.children.at(8).children.at(1).value = rangeFFT[0];
+                    windowPlotterData.view.children.at(8).children.at(3).value = rangeFFT[1];
                     /*// Wek Data
-                    windowPlotterData.view.children.at(9).children.at(2).valueAction = wekOut[0];
-                    windowPlotterData.view.children.at(10).children.at(2).valueAction = wekOut[1];
-                    windowPlotterData.view.children.at(11).children.at(2).valueAction = wekOut[2];
-                    windowPlotterData.view.children.at(12).children.at(2).valueAction = wekOut[4];
-                    windowPlotterData.view.children.at(13).children.at(2).valueAction = wekOut[5];
-                    windowPlotterData.view.children.at(14).children.at(2).valueAction = wekOut[6];
-                    windowPlotterData.view.children.at(15).children.at(2).valueAction = wekOut[7];*/
+                    windowPlotterData.view.children.at(10).children.at(2).valueAction = wekOut[0];
+                    windowPlotterData.view.children.at(11).children.at(2).valueAction = wekOut[1];
+                    windowPlotterData.view.children.at(12).children.at(2).valueAction = wekOut[2];
+                    windowPlotterData.view.children.at(13).children.at(2).valueAction = wekOut[4];
+                    windowPlotterData.view.children.at(14).children.at(2).valueAction = wekOut[5];
+                    windowPlotterData.view.children.at(15).children.at(2).valueAction = wekOut[6];
+                    windowPlotterData.view.children.at(16).children.at(2).valueAction = wekOut[7];*/
                 }.defer(0);
                 dureeAnalyzeOSCMusic = Main.elapsedTime;
                 //Post << "Out " <<< msg << Char.nl;
@@ -3752,12 +3753,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
         Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["Stream Data Wek", Color.magenta], ["Stream FFT+MFCC", Color.red]]).action_({|view|
             switch(view.value,
                 0, {flagStreamMFCC = 'off';
-                    //sender.sendMsg("/wekinator/control/stopRunning");
-                    //windowPlotterData.view.children.at(5).value_(0);
                 },
                 1, {flagStreamMFCC = 'on';
-                    //sender.sendMsg("/wekinator/control/stopRunning");
-                    //windowPlotterData.view.children.at(5).value_(0);
                 }
             );
         });
@@ -3788,6 +3785,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
                 }
             );
         });
+		EZKnob(windowPlotterData, 100 @ 15, "WTP", ControlSpec(1, 60),
+            {|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
         // Range FFT
         EZRanger(windowPlotterData , 500 @ 15, "Range FFT", \unipolar,
             {|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
