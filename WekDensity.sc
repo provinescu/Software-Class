@@ -631,7 +631,9 @@ WekDensity {
                                 if(data.at(item).at(1) == "a Slider" or: {data.at(item).at(1) == "a QSlider"} or: {data.at(item).at(1) == "a SCSlider"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
                                 if(data.at(item).at(1) == "a RangeSlider" or: {data.at(item).at(1) == "a QRangeSlider"} or: {data.at(item).at(1) == "a SCRangeSlider"}, {view.children.at(2).activeLo_(0); view.children.at(2).activeHi_(1);
                                     view.children.at(2).activeLo_(data.at(item).at(2).at(2).at(0)); view.children.at(2).activeHi_(data.at(item).at(2).at(2).at(1))});
-                                if(data.at(item).at(1) == "a Knob" or: {data.at(item).at(1) == "a QKnob"} or: {data.at(item).at(1) == "a SCKnob"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
+									if(data.at(item).at(1) == "a Knob" or: {data.at(item).at(1) == "a QKnob"} or: {data.at(item).at(1) == "a SCKnob"} and: {index != 2}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))},
+									{if(item == 7, {nil});
+								});
                                 if(data.at(item).at(0)  == "a UserView" or: {data.at(item).at(0)  == "an UserView"} or: {data.at(item).at(0) == "a QUserView"} or: {data.at(item).at(0) == "a SCUserView"},
                                     {nil});
                             });

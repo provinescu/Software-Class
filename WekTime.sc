@@ -3251,8 +3251,8 @@ createGUI  {
 			}
 		);
 	});
-		EZKnob(windowExternalControlGUI, 75 @ 15, "WTP", ControlSpec(1, 60),
-            {|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz);
+		EZKnob(windowExternalControlGUI, 75 @ 20, "WTP", ControlSpec(1, 60),
+            {|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 
 	windowExternalControlGUI.onClose_({nil});
 

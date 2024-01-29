@@ -1505,7 +1505,7 @@ y ... -						Musical keys.
 							fonctionAutomationPreset.value(listeDataOSC.at(0), centroid, flatness, energy, flux);
 							// Display Data on Control Panel
 							displayOSC.setString("Fhz:" + freq.cpsmidi.asString + "\n" ++ "Amp:" + amp.asString + "\n" ++ "Dur:" + duree.asString + "\n" ++ "Bpm:" + (bpm * 60).asString + "\n" ++ "Flx:" + flux.asString + "\n" ++ "Fla:" +  flatness.asString + "\n" ++ "Fhc:" + centroid.asString + "\n" ++ "Fhe:" + energy.asString + "\n", 0, 500);
-						}.defer(0);
+						}.defer;
 				});
 
 				dureeOSCdata = Main.elapsedTime;

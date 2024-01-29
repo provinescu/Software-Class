@@ -3,7 +3,7 @@
 WekAgents {
 
 
-	classvar  <> s;
+	classvar  < s;
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWek, timeWekPreset;
 
@@ -1919,112 +1919,198 @@ G                       Init Genome Agent (solo).
 					{~geneFreqButton.valueAction = 0},
 					{~geneFreqButton.valueAction = 1}
 				);
-				/*~geneTransFreqRanger.lo = wekOut[14];
-				~geneTransFreqRanger.hi = wekOut[15];
-				~geneTransFreqButton.value = wekOut[16];
-				~geneAmpRanger.lo = wekOut[17];
-				~geneAmpRanger.hi = wekOut[18];
-				~geneAmpButton.value = wekOut[19];
-				~geneDureeRanger.lo = wekOut[20];
-				~geneDureeRanger.hi = wekOut[21];
-				~geneDureeButton.value = wekOut[22];
-				~geneMulDureeRanger.lo = wekOut[23];
-				~geneMulDureeRanger.hi = wekOut[24];
-				~geneMulDureeButton.value = wekOut[25];
-				~genePanRanger.lo = wekOut[26];
-				~genePanRanger.hi = wekOut[27];
-				~genePanButton.value = wekOut[28];
-				~geneBufferRanger.lo = wekOut[29];
-				~geneBufferRanger.hi = wekOut[30];
-				~geneBufferButton.value = wekOut[31];
-				~geneSampleRangerLow.value = wekOut[32];
-				~geneSampleRangerHigh.value = wekOut[33];
-				~geneSampleButton.value = wekOut[34];
-				~geneReverseRanger.lo = wekOut[35];
-				~geneReverseRanger.hi = wekOut[36];
-				~geneReverseButton.value = wekOut[37];
-				~geneLoopRanger.lo = wekOut[38];
-				~geneLoopRanger.hi = wekOut[39];
-				~geneLoopButton.value = wekOut[40];
-				~geneOffsetRanger.lo = wekOut[41];
-				~geneOffsetRanger.hi = wekOut[42];
-				~geneOffsetButton.value = wekOut[43];
-				~geneEnvLevelRanger.lo = wekOut[44];
-				~geneEnvLevelRanger.hi = wekOut[45];
-				~geneEnvLevelButton.value = wekOut[46];
-				~geneEnvDureeRanger.lo = wekOut[47];
-				~geneEnvDureeRanger.hi = wekOut[48];
-				~geneEnvDureeButton.value = wekOut[49];
-				~geneSynthRangerLow.value = wekOut[50];
-				~geneSynthRangerHigh.value = wekOut[51];
-				~geneSynthButton.value = wekOut[52];
-				~geneControlsRanger.lo = wekOut[53];
-				~geneControlsRanger.hi = wekOut[54];
-				~geneControlsButton.value = wekOut[55];
-				~geneAudioOutRanger.lo = wekOut[56];
-				~geneAudioOutRanger.hi = wekOut[57];
-				~geneAudioOutButton.value = wekOut[58];
-				~geneMidiOutRanger.lo = wekOut[59];
-				~geneMidiOutRanger.hi = wekOut[60];
-				~geneMidiOutButton.value = wekOut[61];
-				~geneInputRangerLow.value = wekOut[62];
-				~geneInputRangerHigh.value = wekOut[63];
-				~geneInputButton.value = wekOut[64];
-				~geneLoopMusicRanger.lo = wekOut[65];
-				~geneLoopMusicRanger.hi = wekOut[66];
-				~geneLoopMusicButton.value = wekOut[67];
-				~geneBufferMusicRanger.lo = wekOut[68];
-				~geneBufferMusicRanger.hi = wekOut[69];
-				~geneBufferMusicButton.value = wekOut[70];
-				~geneChordMaxRanger.lo = wekOut[71];
-				~geneChordMaxRanger.hi = wekOut[72];
-				~geneChordMaxButton.value = wekOut[73];
-				~geneChordDurRanger.lo = wekOut[74];
-				~geneChordDurRanger.hi = wekOut[75];
-				~geneChordDurButton.value = wekOut[76];
-				~geneAlgorithm.lo = wekOut[77];
-				~geneAlgorithm.hi = wekOut[78];
-				~geneAlgorithmButton.value = wekOut[79];
-				~geneBand0.value = wekOut[80];
-				~geneBand1.value = wekOut[81];
-				~geneBand2.value = wekOut[82];
-				~geneBand3.value = wekOut[83];
-				~geneBand4.value = wekOut[84];
-				~geneBand5.value = wekOut[85];
-				~geneBand6.value = wekOut[86];
-				~geneBand7.value = wekOut[87];
-				~geneBand8.value = wekOut[88];
-				~geneBand9.value = wekOut[89];
-				~geneBand10.value = wekOut[90];
-				~geneBand11.value = wekOut[91];
-				~geneBand12.value = wekOut[92];
-				~geneBandButton.value = wekOut[93];*/
-			}.defer(0);
+				~geneTransFreqRanger.valueAction = [wekOut[14], wekOut[15]];
+				if(wekOut[16] <= 0.5,
+					{~geneTransFreqButton.valueAction = 0},
+					{~geneTransFreqButton.valueAction = 1}
+				);
+				~geneAmpRanger.valueAction = [wekOut[17], wekOut[18]];
+				if(wekOut[19] <= 0.5,
+					{~geneAmpButton.valueAction = 0},
+					{~geneAmpButton.valueAction = 1}
+				);
+				~geneDureeRanger.valueAction = [wekOut[20], wekOut[21]];
+				if(wekOut[22] <= 0.5,
+					{~geneDureeButton.valueAction = 0},
+					{~geneDureeButton.valueAction = 1}
+				);
+				~geneMulDureeRanger.valueAction = [wekOut[23], wekOut[24]];
+				if(wekOut[25] <= 0.5,
+					{~geneMulDureeButton.valueAction = 0},
+					{~geneMulDureeButton.valueAction = 1}
+				);
+				~genePanRanger.valueAction = [wekOut[26], wekOut[27]];
+				if(wekOut[28] <= 0.5,
+					{~genePanButton.valueAction = 0},
+					{~genePanButton.valueAction = 1}
+				);
+				~geneBufferRanger.valueAction = [wekOut[29], wekOut[30]];
+				if(wekOut[31] <= 0.5,
+					{~geneBufferButton.valueAction = 0},
+					{~geneBufferButton.valueAction = 1}
+				);
+				~geneSampleRangerLow.valueAction_((wekOut[32] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
+				~geneSampleRangerHigh.valueAction_((wekOut[33] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
+				if(wekOut[34] <= 0.5,
+					{~geneSampleButton.valueAction = 0},
+					{~geneSampleButton.valueAction = 1}
+				);
+				~geneReverseRanger.valueAction = [wekOut[35], wekOut[36]];
+				if(wekOut[37] <= 0.5,
+					{~geneReverseButton.valueAction = 0},
+					{~geneReverseButton.valueAction = 1}
+				);
+				~geneLoopRanger.valueAction = [wekOut[38], wekOut[39]];
+				if(wekOut[40] <= 0.5,
+					{~geneLoopButton.valueAction = 0},
+					{~geneLoopButton.valueAction = 1}
+				);
+				~geneOffsetRanger.valueAction = [wekOut[41], wekOut[42]];
+				if(wekOut[43] <= 0.5,
+					{~geneOffsetButton.valueAction = 0},
+					{~geneOffsetButton.valueAction = 1}
+				);
+				~geneEnvLevelRanger.valueAction = [wekOut[44], wekOut[45]];
+				if(wekOut[46] <= 0.5,
+					{~geneEnvLevelButton.valueAction = 0},
+					{~geneEnvLevelButton.valueAction = 1}
+				);
+				~geneEnvDureeRanger.valueAction = [wekOut[47], wekOut[48]];
+				if(wekOut[49] <= 0.5,
+					{~geneEnvDureeButton.valueAction = 0},
+					{~geneEnvDureeButton.valueAction = 1}
+				);
+				~geneSynthRangerLow.valueAction_((wekOut[50] + 0.5).asInteger.clip(0, ~listSynth.size -1));
+				~geneSynthRangerHigh.valueAction_((wekOut[51] + 0.5).asInteger.clip(0, ~listSynth.size -1));
+				if(wekOut[52] <= 0.5,
+					{~geneSynthButton.valueAction = 0},
+					{~geneSynthButton.valueAction = 1}
+				);
+				~geneControlsRanger.valueAction = [wekOut[53], wekOut[54]];
+				if(wekOut[55] <= 0.5,
+					{~geneControlsButton.valueAction = 0},
+					{~geneControlsButton.valueAction = 1}
+				);
+				~geneAudioOutRanger.valueAction = [wekOut[56], wekOut[57]];
+				if(wekOut[58] <= 0.5,
+					{~geneAudioOutButton.valueAction = 0},
+					{~geneAudioOutButton.valueAction = 1}
+				);
+				~geneMidiOutRanger.valueAction = [wekOut[59], wekOut[60]];
+				if(wekOut[61] <= 0.5,
+					{~geneMidiOutButton.valueAction = 0},
+					{~geneMidiOutButton.valueAction = 1}
+				);
+				~geneInputRangerLow.valueAction_((wekOut[62] + 0.5).asInteger.clip(0, 32));
+				~geneInputRangerHigh.valueAction_((wekOut[63] + 0.5).asInteger.clip(0, 32));
+				if(wekOut[64] <= 0.5,
+					{~geneInputButton.valueAction = 0},
+					{~geneInputButton.valueAction = 1}
+				);
+				~geneLoopMusicRanger.valueAction = [wekOut[65], wekOut[66]];
+				if(wekOut[67] <= 0.5,
+					{~geneLoopMusicButton.valueAction = 0},
+					{~geneLoopMusicButton.valueAction = 1}
+				);
+				~geneBufferMusicRanger.valueAction = [wekOut[68], wekOut[69]];
+				if(wekOut[70] <= 0.5,
+					{~geneBufferMusicButton.valueAction = 0},
+					{~geneBufferMusicButton.valueAction = 1}
+				);
+				~geneChordMaxRanger.valueAction = [wekOut[71], wekOut[72]];
+				if(wekOut[73] <= 0.5,
+					{~geneChordMaxButton.valueAction = 0},
+					{~geneChordMaxButton.valueAction = 1}
+				);
+				~geneChordDurRanger.valueAction = [wekOut[74], wekOut[75]];
+				if(wekOut[76] <= 0.5,
+					{~geneChordDurButton.valueAction = 0},
+					{~geneChordDurButton.valueAction = 1}
+				);
+				~geneAlgorithm.valueAction = [wekOut[77], wekOut[78]];
+				if(wekOut[79] <= 0.5,
+					{~geneAlgorithmButton.valueAction = 0},
+					{~geneAlgorithmButton.valueAction = 1}
+				);
+				if(wekOut[80] <= 0.5,
+					{~geneBand0.valueAction = 0},
+					{~geneBand0.valueAction = 1}
+				);
+				if(wekOut[81] <= 0.5,
+					{~geneBand1.valueAction = 0},
+					{~geneBand1.valueAction = 1}
+				);
+				if(wekOut[82] <= 0.5,
+					{~geneBand2.valueAction = 0},
+					{~geneBand2.valueAction = 1}
+				);
+				if(wekOut[83] <= 0.5,
+					{~geneBand3.valueAction = 0},
+					{~geneBand3.valueAction = 1}
+				);
+				if(wekOut[84] <= 0.5,
+					{~geneBand4.valueAction = 0},
+					{~geneBand5.valueAction = 1}
+				);
+				if(wekOut[85] <= 0.5,
+					{~geneBand5.valueAction = 0},
+					{~geneBand5.valueAction = 1}
+				);
+				if(wekOut[86] <= 0.5,
+					{~geneBand6.valueAction = 0},
+					{~geneBand6.valueAction = 1}
+				);
+				if(wekOut[87] <= 0.5,
+					{~geneBand7.valueAction = 0},
+					{~geneBand7.valueAction = 1}
+				);
+				if(wekOut[88] <= 0.5,
+					{~geneBand8.valueAction = 0},
+					{~geneBand8.valueAction = 1}
+				);
+				if(wekOut[89] <= 0.5,
+					{~geneBand9.valueAction = 0},
+					{~geneBand9.valueAction = 1}
+				);
+				if(wekOut[90] <= 0.5,
+					{~geneBand10.valueAction = 0},
+					{~geneBand10.valueAction = 1}
+				);
+				if(wekOut[91] <= 0.5,
+					{~geneBand11.valueAction = 0},
+					{~geneBand11.valueAction = 1}
+				);
+				if(wekOut[92] <= 0.5,
+					{~geneBand12.valueAction = 0},
+					{~geneBand12.valueAction = 1}
+				);
+				if(wekOut[93] <= 0.5,
+					{~geneBandButton.valueAction = 0},
+					{~geneBandButton.valueAction = 1}
+				);
+				// Preset
+				numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
 
-			/*// Preset
-			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
-
-			if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
-				// load new preset
-				{
+				if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
+					// load new preset
 					{
-						if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
-							{
-								lastNumPreset = numPreset;
-								lastTimeWek = time;
-								file=File(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd","r");
-								~loadUnivers.value(file, 'on', 'on');
-								~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
-								file.close;
-						});
-					}.defer(0);
-			});*/
+							if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
+								{
+									lastNumPreset = numPreset;
+									lastTimeWek = time;
+									file=File(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd","r");
+									~loadUnivers.value(file, 'on', 'on');
+									~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
+									file.close;
+							});
+				});
+			}.defer;
 
 		},'/wek/outputs');
 
 		// Analyse AudioIn
 		~oscAudioIn = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-			var freq=0, amp=0, duree=0, mfcc, data;
+			var freq=0, amp=0, duree=0, mfcc, data=[];
 			if(~entreemode == 'Audio' or: {~entreemode == 'File'},
 				{
 					duree = time - ~lastTimeAnalyse;
@@ -2105,108 +2191,108 @@ G                       Init Genome Agent (solo).
 
 					if(flagStreamMFCC != 'wek',
 						{
-							{
-							// Music Controls
-								data = data.add(~synthDefInstrMenu.value.asFloat);// 0
-								data = data.add(~soundsInstrMenu.value.asFloat);
-							data = data.add(~freqInstr.lo);
-							data = data.add(~freqInstr.hi);
-							data = data.add(~freqTransposeInstr.value);
-							data = data.add(~ampInstr.lo);
-							data = data.add(~ampInstr.hi);
-							data = data.add(~dureeInstr.lo);
-							data = data.add(~dureeInstr.hi);
-							data = data.add(~dureeTempoinstr.value);
-							data = data.add(~quantaMusicSlider.value);
-							// Genes
-							data = data.add(~geneFreqRanger.lo);// 11
-							data = data.add(~geneFreqRanger.hi);
-							data = data.add(~geneFreqButton.value.asFloat);
-							/*data = data.add(~geneTransFreqRanger.lo);
-							data = data.add(~geneTransFreqRanger.hi);
-							data = data.add(~geneTransFreqButton.value);
-							data = data.add(~geneAmpRanger.lo);
-							data = data.add(~geneAmpRanger.hi);
-							data = data.add(~geneAmpButton.value);
-							data = data.add(~geneDureeRanger.lo);
-							data = data.add(~geneDureeRanger.hi);
-							data = data.add(~geneDureeButton.value);
-							data = data.add(~geneMulDureeRanger.lo);
-							data = data.add(~geneMulDureeRanger.hi);
-							data = data.add(~geneMulDureeButton.value);
-							data = data.add(~genePanRanger.lo);
-							data = data.add(~genePanRanger.hi);
-							data = data.add(~genePanButton.value);
-							data = data.add(~geneBufferRanger.lo);
-							data = data.add(~geneBufferRanger.hi);
-							data = data.add(~geneBufferButton.value);
-							data = data.add(~geneSampleRangerLow.value);// 32
-							data = data.add(~geneSampleRangerHigh.value);// 33
-							data = data.add(~geneSampleButton.value);// 34
-							data = data.add(~geneReverseRanger.lo);
-							data = data.add(~geneReverseRanger.hi);
-							data = data.add(~geneReverseButton.value);
-							data = data.add(~geneLoopRanger.lo);
-							data = data.add(~geneLoopRanger.hi);
-							data = data.add(~geneLoopButton.value);
-							data = data.add(~geneOffsetRanger.lo);
-							data = data.add(~geneOffsetRanger.hi);
-							data = data.add(~geneOffsetButton.value);
-							data = data.add(~geneEnvLevelRanger.lo);
-							data = data.add(~geneEnvLevelRanger.hi);
-							data = data.add(~geneEnvLevelButton.value);
-							data = data.add(~geneEnvDureeRanger.lo);
-							data = data.add(~geneEnvDureeRanger.hi);
-							data = data.add(~geneEnvDureeButton.value);
-							data = data.add(~geneSynthRangerLow.value);// 50
-							data = data.add(~geneSynthRangerHigh.value);// 51
-							data = data.add(~geneSynthButton.value);// 52
-							data = data.add(~geneControlsRanger.lo);
-							data = data.add(~geneControlsRanger.hi);
-							data = data.add(~geneControlsButton.value);
-							data = data.add(~geneAudioOutRanger.lo);
-							data = data.add(~geneAudioOutRanger.hi);
-							data = data.add(~geneAudioOutButton.value);
-							data = data.add(~geneMidiOutRanger.lo);
-							data = data.add(~geneMidiOutRanger.hi);
-							data = data.add(~geneMidiOutButton.value);
-							data = data.add(~geneInputRangerLow.value);// 62
-							data = data.add(~geneInputRangerHigh.value);// 63
-							data = data.add(~geneInputButton.value);// 64
-							data = data.add(~geneLoopMusicRanger.lo);
-							data = data.add(~geneLoopMusicRanger.hi);
-							data = data.add(~geneLoopMusicButton.value);
-							data = data.add(~geneBufferMusicRanger.lo);
-							data = data.add(~geneBufferMusicRanger.hi);
-							data = data.add(~geneBufferMusicButton.value);
-							data = data.add(~geneChordMaxRanger.lo);
-							data = data.add(~geneChordMaxRanger.hi);
-							data = data.add(~geneChordMaxButton.value);
-							data = data.add(~geneChordDurRanger.lo);
-							data = data.add(~geneChordDurRanger.hi);
-							data = data.add(~geneChordDurButton.value);
-							data = data.add(~geneAlgorithm.lo);
-							data = data.add(~geneAlgorithm.hi);
-							data = data.add(~geneAlgorithmButton.value);
-							data = data.add(~geneBand0.value);// 80
-							data = data.add(~geneBand1.value);
-							data = data.add(~geneBand2.value);
-							data = data.add(~geneBand3.value);
-							data = data.add(~geneBand4.value);
-							data = data.add(~geneBand5.value);
-							data = data.add(~geneBand6.value);
-							data = data.add(~geneBand7.value);
-							data = data.add(~geneBand8.value);
-							data = data.add(~geneBand9.value);
-							data = data.add(~geneBand10.value);
-							data = data.add(~geneBand11.value);
-							data = data.add(~geneBand12.value);
-							data = data.add(~geneBandButton.value);
-							// Preset
-							data = data.add(numPreset.asFloat);// 94*/
-							// Sender
-							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-							}.defer(0);
+								{
+								data = [~synthDefInstrMenu.value.asFloat,//0
+								~soundsInstrMenu.value.asFloat,
+								~freqInstr.lo,
+								~freqInstr.hi,
+								~freqTransposeInstr.value,
+								~ampInstr.lo.clip(-120, 0),
+								~ampInstr.hi,
+								~dureeInstr.lo,
+								~dureeInstr.hi,
+								~dureeTempoinstr.value,
+								~quantaMusicSlider.value,
+								// Music Controls
+								// Genes
+								~geneFreqRanger.lo,// 11
+								~geneFreqRanger.hi,
+								~geneFreqButton.value.asFloat,
+								~geneTransFreqRanger.lo,
+								~geneTransFreqRanger.hi,
+								~geneTransFreqButton.value.asFloat,
+								~geneAmpRanger.lo.clip(-120, 0),
+								~geneAmpRanger.hi,
+								~geneAmpButton.value.asFloat,
+								~geneDureeRanger.lo,
+								~geneDureeRanger.hi,
+								~geneDureeButton.value.asFloat,
+								~geneMulDureeRanger.lo,
+								~geneMulDureeRanger.hi,
+								~geneMulDureeButton.value.asFloat,
+								~genePanRanger.lo,
+								~genePanRanger.hi,
+								~genePanButton.value.asFloat,
+								~geneBufferRanger.lo,
+								~geneBufferRanger.hi,
+								~geneBufferButton.value.asFloat,
+								~geneSampleRangerLow.value.asFloat,// 32
+								~geneSampleRangerHigh.value.asFloat,// 33
+								~geneSampleButton.value.asFloat,// 34
+								~geneReverseRanger.lo,
+								~geneReverseRanger.hi,
+								~geneReverseButton.value.asFloat,
+								~geneLoopRanger.lo,
+								~geneLoopRanger.hi,
+								~geneLoopButton.value.asFloat,
+								~geneOffsetRanger.lo,
+								~geneOffsetRanger.hi,
+								~geneOffsetButton.value.asFloat,
+								~geneEnvLevelRanger.lo,
+								~geneEnvLevelRanger.hi,
+								~geneEnvLevelButton.value.asFloat,
+								~geneEnvDureeRanger.lo,
+								~geneEnvDureeRanger.hi,
+								~geneEnvDureeButton.value.asFloat,
+								~geneSynthRangerLow.value.asFloat,// 50
+								~geneSynthRangerHigh.value.asFloat,// 51
+								~geneSynthButton.value.asFloat,// 52
+								~geneControlsRanger.lo,
+								~geneControlsRanger.hi,
+								~geneControlsButton.value.asFloat,
+								~geneAudioOutRanger.lo,
+								~geneAudioOutRanger.hi,
+								~geneAudioOutButton.value.asFloat,
+								~geneMidiOutRanger.lo,
+								~geneMidiOutRanger.hi,
+								~geneMidiOutButton.value.asFloat,
+								~geneInputRangerLow.value.asFloat,// 62
+								~geneInputRangerHigh.value.asFloat,// 63
+								~geneInputButton.value.asFloat,// 64
+								~geneLoopMusicRanger.lo,
+								~geneLoopMusicRanger.hi,
+								~geneLoopMusicButton.value.asFloat,
+								~geneBufferMusicRanger.lo,
+								~geneBufferMusicRanger.hi,
+								~geneBufferMusicButton.value.asFloat,
+								~geneChordMaxRanger.lo,
+								~geneChordMaxRanger.hi,
+								~geneChordMaxButton.value.asFloat,
+								~geneChordDurRanger.lo,
+								~geneChordDurRanger.hi,
+								~geneChordDurButton.value.asFloat,
+								~geneAlgorithm.lo,
+								~geneAlgorithm.hi,
+								~geneAlgorithmButton.value.asFloat,
+								~geneBand0.value.asFloat,// 80
+								~geneBand1.value.asFloat,
+								~geneBand2.value.asFloat,
+								~geneBand3.value.asFloat,
+								~geneBand4.value.asFloat,
+								~geneBand5.value.asFloat,
+								~geneBand6.value.asFloat,
+								~geneBand7.value.asFloat,
+								~geneBand8.value.asFloat,
+								~geneBand9.value.asFloat,
+								~geneBand10.value.asFloat,
+								~geneBand11.value.asFloat,
+								~geneBand12.value.asFloat,
+								~geneBandButton.value.asFloat,
+								// Preset
+									numPreset.asFloat];// 94*/
+								// Sender
+								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+							}.defer;
 					});
 				},
 				{duree=time - ~lastTimeAnalyse;// duree reel
@@ -2257,110 +2343,110 @@ G                       Init Genome Agent (solo).
 				sender.sendMsg("/wek/inputs", *mfcc[0..]);
 
 				if(flagStreamMFCC != 'wek',
-						{
-							{
-							// Music Controls
-								data = data.add(~synthDefInstrMenu.value.asFloat);// 0
-								data = data.add(~soundsInstrMenu.value.asFloat);
-							data = data.add(~freqInstr.lo);
-							data = data.add(~freqInstr.hi);
-							data = data.add(~freqTransposeInstr.value);
-							data = data.add(~ampInstr.lo);
-							data = data.add(~ampInstr.hi);
-							data = data.add(~dureeInstr.lo);
-							data = data.add(~dureeInstr.hi);
-							data = data.add(~dureeTempoinstr.value);
-							data = data.add(~quantaMusicSlider.value);
-							// Genes
-							data = data.add(~geneFreqRanger.lo);// 11
-							data = data.add(~geneFreqRanger.hi);
-							data = data.add(~geneFreqButton.value.asFloat);
-							/*data = data.add(~geneTransFreqRanger.lo);
-							data = data.add(~geneTransFreqRanger.hi);
-							data = data.add(~geneTransFreqButton.value);
-							data = data.add(~geneAmpRanger.lo);
-							data = data.add(~geneAmpRanger.hi);
-							data = data.add(~geneAmpButton.value);
-							data = data.add(~geneDureeRanger.lo);
-							data = data.add(~geneDureeRanger.hi);
-							data = data.add(~geneDureeButton.value);
-							data = data.add(~geneMulDureeRanger.lo);
-							data = data.add(~geneMulDureeRanger.hi);
-							data = data.add(~geneMulDureeButton.value);
-							data = data.add(~genePanRanger.lo);
-							data = data.add(~genePanRanger.hi);
-							data = data.add(~genePanButton.value);
-							data = data.add(~geneBufferRanger.lo);
-							data = data.add(~geneBufferRanger.hi);
-							data = data.add(~geneBufferButton.value);
-							data = data.add(~geneSampleRangerLow.value);// 32
-							data = data.add(~geneSampleRangerHigh.value);// 33
-							data = data.add(~geneSampleButton.value);// 34
-							data = data.add(~geneReverseRanger.lo);
-							data = data.add(~geneReverseRanger.hi);
-							data = data.add(~geneReverseButton.value);
-							data = data.add(~geneLoopRanger.lo);
-							data = data.add(~geneLoopRanger.hi);
-							data = data.add(~geneLoopButton.value);
-							data = data.add(~geneOffsetRanger.lo);
-							data = data.add(~geneOffsetRanger.hi);
-							data = data.add(~geneOffsetButton.value);
-							data = data.add(~geneEnvLevelRanger.lo);
-							data = data.add(~geneEnvLevelRanger.hi);
-							data = data.add(~geneEnvLevelButton.value);
-							data = data.add(~geneEnvDureeRanger.lo);
-							data = data.add(~geneEnvDureeRanger.hi);
-							data = data.add(~geneEnvDureeButton.value);
-							data = data.add(~geneSynthRangerLow.value);// 50
-							data = data.add(~geneSynthRangerHigh.value);// 51
-							data = data.add(~geneSynthButton.value);// 52
-							data = data.add(~geneControlsRanger.lo);
-							data = data.add(~geneControlsRanger.hi);
-							data = data.add(~geneControlsButton.value);
-							data = data.add(~geneAudioOutRanger.lo);
-							data = data.add(~geneAudioOutRanger.hi);
-							data = data.add(~geneAudioOutButton.value);
-							data = data.add(~geneMidiOutRanger.lo);
-							data = data.add(~geneMidiOutRanger.hi);
-							data = data.add(~geneMidiOutButton.value);
-							data = data.add(~geneInputRangerLow.value);// 62
-							data = data.add(~geneInputRangerHigh.value);// 63
-							data = data.add(~geneInputButton.value);// 64
-							data = data.add(~geneLoopMusicRanger.lo);
-							data = data.add(~geneLoopMusicRanger.hi);
-							data = data.add(~geneLoopMusicButton.value);
-							data = data.add(~geneBufferMusicRanger.lo);
-							data = data.add(~geneBufferMusicRanger.hi);
-							data = data.add(~geneBufferMusicButton.value);
-							data = data.add(~geneChordMaxRanger.lo);
-							data = data.add(~geneChordMaxRanger.hi);
-							data = data.add(~geneChordMaxButton.value);
-							data = data.add(~geneChordDurRanger.lo);
-							data = data.add(~geneChordDurRanger.hi);
-							data = data.add(~geneChordDurButton.value);
-							data = data.add(~geneAlgorithm.lo);
-							data = data.add(~geneAlgorithm.hi);
-							data = data.add(~geneAlgorithmButton.value);
-							data = data.add(~geneBand0.value);// 80
-							data = data.add(~geneBand1.value);
-							data = data.add(~geneBand2.value);
-							data = data.add(~geneBand3.value);
-							data = data.add(~geneBand4.value);
-							data = data.add(~geneBand5.value);
-							data = data.add(~geneBand6.value);
-							data = data.add(~geneBand7.value);
-							data = data.add(~geneBand8.value);
-							data = data.add(~geneBand9.value);
-							data = data.add(~geneBand10.value);
-							data = data.add(~geneBand11.value);
-							data = data.add(~geneBand12.value);
-							data = data.add(~geneBandButton.value);
-							// Preset
-							data = data.add(numPreset.asFloat);// 94*/
-							// Sender
-							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-							}.defer(0);
-					});*/
+				{
+				{
+				// Music Controls
+				data = data.add(~synthDefInstrMenu.value.asFloat);// 0
+				data = data.add(~soundsInstrMenu.value.asFloat);
+				data = data.add(~freqInstr.lo);
+				data = data.add(~freqInstr.hi);
+				data = data.add(~freqTransposeInstr.value);
+				data = data.add(~ampInstr.lo);
+				data = data.add(~ampInstr.hi);
+				data = data.add(~dureeInstr.lo);
+				data = data.add(~dureeInstr.hi);
+				data = data.add(~dureeTempoinstr.value);
+				data = data.add(~quantaMusicSlider.value);
+				// Genes
+				data = data.add(~geneFreqRanger.lo);// 11
+				data = data.add(~geneFreqRanger.hi);
+				data = data.add(~geneFreqButton.value.asFloat);
+				/*data = data.add(~geneTransFreqRanger.lo);
+				data = data.add(~geneTransFreqRanger.hi);
+				data = data.add(~geneTransFreqButton.value);
+				data = data.add(~geneAmpRanger.lo);
+				data = data.add(~geneAmpRanger.hi);
+				data = data.add(~geneAmpButton.value);
+				data = data.add(~geneDureeRanger.lo);
+				data = data.add(~geneDureeRanger.hi);
+				data = data.add(~geneDureeButton.value);
+				data = data.add(~geneMulDureeRanger.lo);
+				data = data.add(~geneMulDureeRanger.hi);
+				data = data.add(~geneMulDureeButton.value);
+				data = data.add(~genePanRanger.lo);
+				data = data.add(~genePanRanger.hi);
+				data = data.add(~genePanButton.value);
+				data = data.add(~geneBufferRanger.lo);
+				data = data.add(~geneBufferRanger.hi);
+				data = data.add(~geneBufferButton.value);
+				data = data.add(~geneSampleRangerLow.value);// 32
+				data = data.add(~geneSampleRangerHigh.value);// 33
+				data = data.add(~geneSampleButton.value);// 34
+				data = data.add(~geneReverseRanger.lo);
+				data = data.add(~geneReverseRanger.hi);
+				data = data.add(~geneReverseButton.value);
+				data = data.add(~geneLoopRanger.lo);
+				data = data.add(~geneLoopRanger.hi);
+				data = data.add(~geneLoopButton.value);
+				data = data.add(~geneOffsetRanger.lo);
+				data = data.add(~geneOffsetRanger.hi);
+				data = data.add(~geneOffsetButton.value);
+				data = data.add(~geneEnvLevelRanger.lo);
+				data = data.add(~geneEnvLevelRanger.hi);
+				data = data.add(~geneEnvLevelButton.value);
+				data = data.add(~geneEnvDureeRanger.lo);
+				data = data.add(~geneEnvDureeRanger.hi);
+				data = data.add(~geneEnvDureeButton.value);
+				data = data.add(~geneSynthRangerLow.value);// 50
+				data = data.add(~geneSynthRangerHigh.value);// 51
+				data = data.add(~geneSynthButton.value);// 52
+				data = data.add(~geneControlsRanger.lo);
+				data = data.add(~geneControlsRanger.hi);
+				data = data.add(~geneControlsButton.value);
+				data = data.add(~geneAudioOutRanger.lo);
+				data = data.add(~geneAudioOutRanger.hi);
+				data = data.add(~geneAudioOutButton.value);
+				data = data.add(~geneMidiOutRanger.lo);
+				data = data.add(~geneMidiOutRanger.hi);
+				data = data.add(~geneMidiOutButton.value);
+				data = data.add(~geneInputRangerLow.value);// 62
+				data = data.add(~geneInputRangerHigh.value);// 63
+				data = data.add(~geneInputButton.value);// 64
+				data = data.add(~geneLoopMusicRanger.lo);
+				data = data.add(~geneLoopMusicRanger.hi);
+				data = data.add(~geneLoopMusicButton.value);
+				data = data.add(~geneBufferMusicRanger.lo);
+				data = data.add(~geneBufferMusicRanger.hi);
+				data = data.add(~geneBufferMusicButton.value);
+				data = data.add(~geneChordMaxRanger.lo);
+				data = data.add(~geneChordMaxRanger.hi);
+				data = data.add(~geneChordMaxButton.value);
+				data = data.add(~geneChordDurRanger.lo);
+				data = data.add(~geneChordDurRanger.hi);
+				data = data.add(~geneChordDurButton.value);
+				data = data.add(~geneAlgorithm.lo);
+				data = data.add(~geneAlgorithm.hi);
+				data = data.add(~geneAlgorithmButton.value);
+				data = data.add(~geneBand0.value);// 80
+				data = data.add(~geneBand1.value);
+				data = data.add(~geneBand2.value);
+				data = data.add(~geneBand3.value);
+				data = data.add(~geneBand4.value);
+				data = data.add(~geneBand5.value);
+				data = data.add(~geneBand6.value);
+				data = data.add(~geneBand7.value);
+				data = data.add(~geneBand8.value);
+				data = data.add(~geneBand9.value);
+				data = data.add(~geneBand10.value);
+				data = data.add(~geneBand11.value);
+				data = data.add(~geneBand12.value);
+				data = data.add(~geneBandButton.value);
+				// Preset
+				data = data.add(numPreset.asFloat);// 94*/
+				// Sender
+				sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+				}.defer(0);
+				});*/
 
 			}, (0..127), ~canalMidiIn.asInteger);
 			~oscMidiIn;
@@ -5785,7 +5871,7 @@ G                       Init Genome Agent (solo).
 				}
 			);
 		});
-		EZKnob(~wp, 75 @ 15, "WTP", ControlSpec(1, 60),
+		EZKnob(~wp, 75 @ 20, "WTP", ControlSpec(1, 60),
 			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 	}
 
