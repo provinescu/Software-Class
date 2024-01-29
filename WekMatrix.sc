@@ -1540,27 +1540,27 @@ y ... -						Musical keys.
 				sender.sendMsg("/wek/inputs", *mfcc[0..]);
 
 				// Send control outputs for wekinator
-				data = data.add(freq);
-				data = data.add(amp);
-				data = data.add(duree);
-				data = data.add(bpm*60);
-				data = data.add(centroid);
-				data = data.add(energy);
-				data = data.add(flux);
-				data = data.add(flatness);
-				data = data.add(controlPanSlider.lo);//8
-				data = data.add(controlPanSlider.hi);
-				data = data.add(controlFreqSlider.lo);
-				data = data.add(controlFreqSlider.hi);
-				data = data.add(controlFreqTranSlider.value);
-				data = data.add(controlAmpSlider.lo);
-				data = data.add(controlAmpSlider.hi);
-				data = data.add(controlDureeSlider.lo);
-				data = data.add(controlDureeSlider.hi);
-				data = data.add(controlDureeTranSlider.value);
-				data = data.add(controlQuantaSlider.value);
-				data = data.add(controlRootSlider.value);
-				data = data.add(numPreset.asFloat);//20
+				data = [freq,
+					amp,
+					duree,
+					bpm*60,
+					centroid,
+					energy,
+					flux,
+					flatness,
+					controlPanSlider.lo,//8
+					controlPanSlider.hi,
+					controlFreqSlider.lo,
+					controlFreqSlider.hi,
+					controlFreqTranSlider.value,
+					controlAmpSlider.lo,
+					controlAmpSlider.hi,
+					controlDureeSlider.lo,
+					controlDureeSlider.hi,
+					controlDureeTranSlider.value,
+					controlQuantaSlider.value,
+					controlRootSlider.value,
+					numPreset.asFloat];//20
 
 				// Automation on off
 				if(flagStreamMFCC == 'off',

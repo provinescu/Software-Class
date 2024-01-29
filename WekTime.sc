@@ -1028,20 +1028,20 @@ f						Switch File for Analyze.
 					if(wekOut[63] <= 0.5,
 						{modeMIDIOSC.put(0, 'Translate')},
 						{modeMIDIOSC.put(0, 'Note')}
-						);// 63 a 66
+					);// 63 a 66
 					if(wekOut[64] <= 0.5,
 						{modeMIDIOSC.put(1, 'Translate')},
 						{modeMIDIOSC.put(1, 'Note')}
-						);// 63 a 66
+					);// 63 a 66
 					if(wekOut[65] <= 0.5,
 						{modeMIDIOSC.put(2, 'Translate')},
 						{modeMIDIOSC.put(2, 'Note')}
-						);// 63 a 66
+					);// 63 a 66
 					if(wekOut[66] <= 0.5,
 						{modeMIDIOSC.put(3, 'Translate')},
 						{modeMIDIOSC.put(3, 'Note')}
-						);// 63 a 66
-		// loop sample
+					);// 63 a 66
+					// loop sample
 					if(wekOut[67] <= 0.5,
 						{loopSample.put(0, 0)},
 						{loopSample.put(0, 1)}
@@ -1058,89 +1058,529 @@ f						Switch File for Analyze.
 						{loopSample.put(3, 0)},
 						{loopSample.put(3, 1)}
 					);
-		}.defer(0);
+				}.defer(0);
 
-},'/wek/outputs');
+			},'/wek/outputs');
 
-// DATA WEK IN + OSC Data FFT
-OSCFunc.newMatching({arg msg, time, addr, recvPort, centroid=0, energy=0, flux=0, flatness=0, bpm=0;
-	var data=[], newRoot, mfcc;
-	if(msg[2] == 1,
-		{
-			centroid = msg.at(3);
-			energy = msg.at(4);
-			flux = msg.at(5);
-			flatness = msg.at(6);
-			bpm = msg.at(7);
-			// Normalize
-			flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
-			flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
-			centroid = (centroid / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
-			energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
-			if(flagTempo == 1, {tempoOSC = bpm;
-				{bpmDisplay.string_(bpm.round(0.01)).stringColor_(Color.red)}.defer},
-			{tempoOSC = 1;
-				{bpmDisplay.string_("BPM").stringColor_(Color.red)}.defer
-			});
-			if(autoRoot == 'on', {
-				newRoot = energy;
-				newRoot = newRoot.cpsoct;
-				newRoot = (newRoot.frac * tuning.size + 0.5).floor;
-				// Setup GUI Value
-				{windowControlGUI.view.children.at(7).children.at(2).valueAction_(newRoot)}.defer;
-			});
-			// Set Bus Flux
-			busOSCtempo.set(bpm);
-			busOSCflux.set(flux);
-			busOSCflatness.set(flatness);
-			busOSCenergy.set(energy);
-			busOSCcentroid.set(centroid);
-			// Setup Automation Preset
-			fonctionAutomationPreset.value(flux, flatness);
-		},
-		{
-			mfcc = msg[3..];
-			mfccData = mfcc;// For MidiOn
-	});
-
-}, '/WekTime_FFT_Data', serverAdresse);
-
-// OSC Data
-OSCFunc.newMatching({arg msg, time, addr, recvPort;
-	var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data, mfcc;
-	if(flagOSC == 1 and: {flagKeyboard == 'off'},
-		{
-			// Music
-			freq=msg.at(3);
-			amp=msg.at(4);
-			ampMIDIOSC = amp.ampdb;
-			duree = (time - lastTime).clip(0.01, maxDureeOSC);
-
-			if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTime) >= durFilter} and: {duree >= durFilter}, {
-
-				// Set Ambitus Freq
-				freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-				freq = freq.midicps;
-
-				// Setup Freq with Scaling and Tuning
-				if(flagScaling != 'off', {
-					pos = 0;
-					oct = freq.cpsoct.round(0.001);
-					ratio = oct.frac;
-					oct = oct.floor;
-					degre = (ratio * tuning.size + 0.5).floor;
-					(scale.degrees.size - 1).do({arg i;
-						difL=abs(degre - scale.degrees.at(i));
-						difH=abs(degre - scale.degrees.at(i+1));
-						if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-							{if(difL <= difH, {pos = i},{pos = i+1})});
-					});
-					freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+			// DATA WEK IN + OSC Data FFT
+			OSCFunc.newMatching({arg msg, time, addr, recvPort, centroid=0, energy=0, flux=0, flatness=0, bpm=0;
+				var data=[], newRoot, mfcc;
+				if(msg[2] == 1,
+					{
+						centroid = msg.at(3);
+						energy = msg.at(4);
+						flux = msg.at(5);
+						flatness = msg.at(6);
+						bpm = msg.at(7);
+						// Normalize
+						flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+						flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+						centroid = (centroid / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
+						energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
+						if(flagTempo == 1, {tempoOSC = bpm;
+							{bpmDisplay.string_(bpm.round(0.01)).stringColor_(Color.red)}.defer},
+						{tempoOSC = 1;
+							{bpmDisplay.string_("BPM").stringColor_(Color.red)}.defer
+						});
+						if(autoRoot == 'on', {
+							newRoot = energy;
+							newRoot = newRoot.cpsoct;
+							newRoot = (newRoot.frac * tuning.size + 0.5).floor;
+							// Setup GUI Value
+							{windowControlGUI.view.children.at(7).children.at(2).valueAction_(newRoot)}.defer;
+						});
+						// Set Bus Flux
+						busOSCtempo.set(bpm);
+						busOSCflux.set(flux);
+						busOSCflatness.set(flatness);
+						busOSCenergy.set(energy);
+						busOSCcentroid.set(centroid);
+						// Setup Automation Preset
+						fonctionAutomationPreset.value(flux, flatness);
+					},
+					{
+						mfcc = msg[3..];
+						mfccData = mfcc;// For MidiOn
 				});
 
-				octave = (freq.cpsmidi / 12).floor;
-				demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-				cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+			}, '/WekTime_FFT_Data', serverAdresse);
+
+			// OSC Data
+			OSCFunc.newMatching({arg msg, time, addr, recvPort;
+				var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data=[], mfcc;
+				if(flagOSC == 1 and: {flagKeyboard == 'off'},
+					{
+						// Music
+						freq=msg.at(3);
+						amp=msg.at(4);
+						ampMIDIOSC = amp.ampdb;
+						duree = (time - lastTime).clip(0.01, maxDureeOSC);
+
+						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTime) >= durFilter} and: {duree >= durFilter}, {
+
+							// Set Ambitus Freq
+							freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+							freq = freq.midicps;
+
+							// Setup Freq with Scaling and Tuning
+							if(flagScaling != 'off', {
+								pos = 0;
+								oct = freq.cpsoct.round(0.001);
+								ratio = oct.frac;
+								oct = oct.floor;
+								degre = (ratio * tuning.size + 0.5).floor;
+								(scale.degrees.size - 1).do({arg i;
+									difL=abs(degre - scale.degrees.at(i));
+									difH=abs(degre - scale.degrees.at(i+1));
+									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+										{if(difL <= difH, {pos = i},{pos = i+1})});
+								});
+								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+							});
+
+							octave = (freq.cpsmidi / 12).floor;
+							demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+							cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+							// Set Bus OSC
+							busOSCfreq.set(freq);
+							busOSCamp.set(amp);
+							busOSCduree.set(duree);
+
+							// Dispatch Band FHZ
+							for(1, numFhzBand, {arg i;
+
+								if(freq > bandFHZ.at(i).at(0) and: {freq < bandFHZ.at(i).at(1)}, {
+									// Add Data
+									if(numberSynth > listeDataBand.at(i).size,
+										{
+											if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
+												{
+													listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+													lastTimeBand.put(i, time);
+												},
+												{
+													listeDataBand.put(i, []);
+													listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+													lastTimeBand.put(i, time);
+											});
+
+										},
+										{
+											listeDataBand.put(i, []);
+											listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+											lastTimeBand.put(i, time);
+									});
+								},
+								{
+									if(i <= numFhzBand, {
+										if((time - lastTimeBand.at(i)) > maxDureeOSC, {
+											listeDataBand.put(i, []);
+											lastTimeBand.put(i, time);
+										});
+									});
+								});
+							});
+
+							// All Data Band = 0
+							if((time - lastTimeBand.at(0)) > maxDureeOSC, {
+								listeDataBand.put(0, []);
+								listeDataBand.put(0, listeDataBand.at(0).add(([freq.cpsmidi, octave, demiTon, cent])));
+								lastTimeBand.put(0, time);
+							},
+							{
+								if(numberSynth > listeDataBand.at(0).size,
+									{
+										if(duree < chordDureeOSC and: {listeDataBand.at(0).size < numberSynth},
+											{
+												listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
+												lastTimeBand.put(0, time);
+											},
+											{
+												listeDataBand.put(0, []);
+												listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
+												lastTimeBand.put(0, time);
+										});
+									},
+									{
+										listeDataBand.put(0, []);
+										listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
+								});
+
+							});
+
+							// Setup Sliders
+							{
+								numberSynth.do({arg synth;
+									if(switchOSCfreq.at(synth) == 1 and: {modeMIDIOSC.at(synth) == 'Note'}, {
+										// New Band
+										indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
+										if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+										if(listeDataBand.at(indexNumFhzBand) != [],
+											{
+												// Octave
+												windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
+												// DemiTon
+												windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
+												// Cent
+												windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
+										});
+									});
+									if(switchOSCamp.at(synth) == 1, {
+										// AMP
+										windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
+									});
+								});
+								// Duree BPM
+								if(switchOSCdur.includes(1),
+									{densityBPM=[duree.reciprocal, duree.reciprocal]},
+									{densityBPM=[windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60]});
+							}.defer;
+							freqBefore=freq;ampBefore=amp;dureeBefore=duree; lastTime = time;
+						});
+						timeOSC = Main.elapsedTime;
+						// Audio Display (For testing)
+						{
+							audioDisplay.string_(amp.round(0.01)).stringColor_(Color.red(amp.value, 1));
+						}.defer;
+						// WEKINATOR
+						mfcc = msg[6..];
+						//Sender
+						sender.sendMsg("/wek/inputs", *mfcc[0..]);
+						if(flagStreamMFCC != 'wek',
+							{
+								// Send control outputs for wekinator 52 data
+								data = [
+									listeOctave[0],//0
+									listeOctave[1],
+									listeOctave[2],
+									listeOctave[3],
+
+									listeDemiTon[0],//4
+									listeDemiTon[1],
+									listeDemiTon[2],
+									listeDemiTon[3],
+
+									listeCent[0],//8
+									listeCent[1],
+									listeCent[2],
+									listeCent[3],
+
+									choiceFilter[0] * (listeFilters.size - 1),//12
+									choiceFilter[1] * (listeFilters.size - 1),
+									choiceFilter[2] * (listeFilters.size - 1),
+									choiceFilter[3] * (listeFilters.size - 1),
+
+									listeCtrl1Filter[0],//16
+									listeCtrl1Filter[1],
+									listeCtrl1Filter[2],
+									listeCtrl1Filter[3],
+									listeCtrl2Filter[0] * 100,
+									listeCtrl2Filter[1] * 100,
+									listeCtrl2Filter[2] * 100,
+									listeCtrl2Filter[3] * 100,
+									listeCtrl3Filter[0] * 100,
+									listeCtrl3Filter[1] * 100,
+									listeCtrl3Filter[2] * 100,
+									listeCtrl3Filter[3] * 100,
+
+									choiceFX[0] * (listeFX.size - 1),//28
+									choiceFX[1] * (listeFX.size - 1),
+									choiceFX[2] * (listeFX.size - 1),
+									choiceFX[3] * (listeFX.size - 1),
+
+									listeCtrl1FX[0] * 100,//32
+									listeCtrl1FX[1] * 100,
+									listeCtrl1FX[2] * 100,
+									listeCtrl1FX[3] * 100,
+									listeCtrl2FX[0] * 100,
+									listeCtrl2FX[1] * 100,
+									listeCtrl2FX[2] * 100,
+									listeCtrl2FX[3] * 100,
+									listeCtrl3FX[0] * 100,
+									listeCtrl3FX[1] * 100,
+									listeCtrl3FX[2] * 100,
+									listeCtrl3FX[3] * 100,
+									listeCtrl4FX[0] * 100,
+									listeCtrl4FX[1] * 100,
+									listeCtrl4FX[2] * 100,
+									listeCtrl4FX[3] * 100,
+									listeCtrl5FX[0] * 100,
+									listeCtrl5FX[1] * 100,
+									listeCtrl5FX[2] * 100,
+									listeCtrl5FX[3] * 100,//51
+									rangeFFT[0],//52
+									rangeFFT[1],//53
+									numPreset.asFloat];//54
+							//synth
+							typeSynthDef.do({arg n, s;
+								changeChoiceSynthDef.do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 55 a 58
+								});
+							});
+							// duree synth
+							listeFlagDureeSynth.do({arg n, s;
+								if(n == 'Seq', {data = data.add(0.asFloat)});// 59 a 62
+								if(n == 'Pitch', {data = data.add(0.5)});
+								if(n == 'Grain', {data = data.add(1.0)});
+							});
+							// mode synth
+							modeMIDIOSC.do({arg n, s;
+								changeChoiceMIDI.do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 63 a 66
+								});
+							});
+							// loop sample
+							data = data.add(loopSample[0].asFloat);//67
+							data = data.add(loopSample[1].asFloat);
+							data = data.add(loopSample[2].asFloat);
+							data = data.add(loopSample[3].asFloat);//70
+
+							// Sender
+							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+					});
+			}, {nil});
+		}, '/WekTime_OSC_Data', serverAdresse);
+
+		// OSC Data
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+			var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data, mfcc;
+			if(flagKeyboard == 'on',
+				{
+					// Music
+					freq=msg.at(3);
+					amp=msg.at(4);
+					ampMIDIOSC = amp.ampdb;
+					duree = msg.at(5).clip(0.01, maxDureeOSC);
+
+					// Set Ambitus Freq
+					freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+					freq = freq.midicps;
+
+					// Setup Freq with Scaling and Tuning
+					if(flagScaling != 'off', {
+						pos = 0;
+						oct = freq.cpsoct.round(0.001);
+						ratio = oct.frac;
+						oct = oct.floor;
+						degre = (ratio * tuning.size + 0.5).floor;
+						(scale.degrees.size - 1).do({arg i;
+							difL=abs(degre - scale.degrees.at(i));
+							difH=abs(degre - scale.degrees.at(i+1));
+							if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+								{if(difL <= difH, {pos = i},{pos = i+1})});
+						});
+						freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+					});
+
+					octave = (freq.cpsmidi / 12).floor;
+					demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+					cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+
+					// Set Bus OSC
+					busOSCfreq.set(freq);
+					busOSCamp.set(amp);
+					busOSCduree.set(duree);
+
+					// Dispatch Band FHZ
+					for(1, numFhzBand, {arg i;
+
+						if(freq > bandFHZ.at(i).at(0) and: {freq < bandFHZ.at(i).at(1)}, {
+							// Add Data
+							if(numberSynth > listeDataBand.at(i).size,
+								{
+									if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
+										{
+											listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+											lastTimeBand.put(i, time);
+										},
+										{
+											listeDataBand.put(i, []);
+											listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+											lastTimeBand.put(i, time);
+									});
+
+								},
+								{
+									listeDataBand.put(i, []);
+									listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+									lastTimeBand.put(i, time);
+							});
+						},
+						{
+							if(i <= numFhzBand, {
+								if((time - lastTimeBand.at(i)) > maxDureeOSC, {
+									listeDataBand.put(i, []);
+									lastTimeBand.put(i, time);
+								});
+							});
+						});
+					});
+
+					// All Data Band = 0
+					if((time - lastTimeBand.at(0)) > maxDureeOSC, {
+						listeDataBand.put(0, []);
+						listeDataBand.put(0, listeDataBand.at(0).add(([freq.cpsmidi, octave, demiTon, cent])));
+						lastTimeBand.put(0, time);
+					},
+					{
+						if(numberSynth > listeDataBand.at(0).size,
+							{
+								if(duree < chordDureeOSC and: {listeDataBand.at(0).size < numberSynth},
+									{
+										listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
+										lastTimeBand.put(0, time);
+									},
+									{
+										listeDataBand.put(0, []);
+										listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
+										lastTimeBand.put(0, time);
+								});
+							},
+							{
+								listeDataBand.put(0, []);
+								listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
+						});
+
+					});
+
+					// Setup Sliders
+					{
+						numberSynth.do({arg synth;
+							if(switchOSCfreq.at(synth) == 1 and: {modeMIDIOSC.at(synth) == 'Note'}, {
+								// New Band
+								indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
+								if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+								if(listeDataBand.at(indexNumFhzBand) != [],
+									{
+										// Octave
+										windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
+										// DemiTon
+										windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
+										// Cent
+										windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
+								});
+							});
+							if(switchOSCamp.at(synth) == 1, {
+								// AMP
+								windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
+							});
+						});
+						// Duree BPM
+						if(switchOSCdur.includes(1), {densityBPM=[duree.reciprocal, duree.reciprocal]}, {densityBPM=[windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60]});
+					}.defer;
+					//timeOSC = Main.elapsedTime;
+					// WEKINATOR
+					sender.sendMsg("/wek/inputs", *mfccData[0..]);
+					if(flagStreamMFCC != 'wek',
+						{
+							// Send control outputs for wekinator 52 data
+							data = data.add(listeOctave[0]);//0
+							data = data.add(listeOctave[1]);
+							data = data.add(listeOctave[2]);
+							data = data.add(listeOctave[3]);
+
+							data = data.add(listeDemiTon[0]);//4
+							data = data.add(listeDemiTon[1]);
+							data = data.add(listeDemiTon[2]);
+							data = data.add(listeDemiTon[3]);
+
+							data = data.add(listeCent[0]);//8
+							data = data.add(listeCent[1]);
+							data = data.add(listeCent[2]);
+							data = data.add(listeCent[3]);
+
+							data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
+							data = data.add(choiceFilter[1] * (listeFilters.size - 1));
+							data = data.add(choiceFilter[2] * (listeFilters.size - 1));
+							data = data.add(choiceFilter[3] * (listeFilters.size - 1));
+
+							data = data.add(listeCtrl1Filter[0]);//16
+							data = data.add(listeCtrl1Filter[1]);
+							data = data.add(listeCtrl1Filter[2]);
+							data = data.add(listeCtrl1Filter[3]);
+							data = data.add(listeCtrl2Filter[0] * 100);
+							data = data.add(listeCtrl2Filter[1] * 100);
+							data = data.add(listeCtrl2Filter[2] * 100);
+							data = data.add(listeCtrl2Filter[3] * 100);
+							data = data.add(listeCtrl3Filter[0] * 100);
+							data = data.add(listeCtrl3Filter[1] * 100);
+							data = data.add(listeCtrl3Filter[2] * 100);
+							data = data.add(listeCtrl3Filter[3] * 100);
+
+							data = data.add(choiceFX[0] * (listeFX.size - 1));//28
+							data = data.add(choiceFX[1] * (listeFX.size - 1));
+							data = data.add(choiceFX[2] * (listeFX.size - 1));
+							data = data.add(choiceFX[3] * (listeFX.size - 1));
+
+							data = data.add(listeCtrl1FX[0] * 100);//32
+							data = data.add(listeCtrl1FX[1] * 100);
+							data = data.add(listeCtrl1FX[2] * 100);
+							data = data.add(listeCtrl1FX[3] * 100);
+							data = data.add(listeCtrl2FX[0] * 100);
+							data = data.add(listeCtrl2FX[1] * 100);
+							data = data.add(listeCtrl2FX[2] * 100);
+							data = data.add(listeCtrl2FX[3] * 100);
+							data = data.add(listeCtrl3FX[0] * 100);
+							data = data.add(listeCtrl3FX[1] * 100);
+							data = data.add(listeCtrl3FX[2] * 100);
+							data = data.add(listeCtrl3FX[3] * 100);
+							data = data.add(listeCtrl4FX[0] * 100);
+							data = data.add(listeCtrl4FX[1] * 100);
+							data = data.add(listeCtrl4FX[2] * 100);
+							data = data.add(listeCtrl4FX[3] * 100);
+							data = data.add(listeCtrl5FX[0] * 100);
+							data = data.add(listeCtrl5FX[1] * 100);
+							data = data.add(listeCtrl5FX[2] * 100);
+							data = data.add(listeCtrl5FX[3] * 100);//51
+							data = data.add(rangeFFT[0]);//52
+							data = data.add(rangeFFT[1]);//53
+							data = data.add(numPreset.asFloat);//54
+							//synth
+							typeSynthDef.do({arg n, s;
+								changeChoiceSynthDef.do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 55 a 58
+								});
+							});
+							// duree synth
+							listeFlagDureeSynth.do({arg n, s;
+								if(n == 'Seq', {data = data.add(0.asFloat)});// 59 a 62
+								if(n == 'Pitch', {data = data.add(0.5)});
+								if(n == 'Grain', {data = data.add(1.0)});
+							});
+							// mode synth
+							modeMIDIOSC.do({arg n, s;
+								changeChoiceMIDI.do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 63 a 66
+								});
+							});
+							// loop sample
+							data = data.add(loopSample[0].asFloat);//67
+							data = data.add(loopSample[1].asFloat);
+							data = data.add(loopSample[2].asFloat);
+							data = data.add(loopSample[3].asFloat);//70
+
+							// Sender
+							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+					});
+			}, {nil});
+		}, '/WekTime_Keyboard_Data', serverAdresse);
+
+		// Setup MIDI Responder
+		// NoteOn
+		MIDIdef.noteOn(\midiNoteOn, {arg amp, freq, canal, src;
+			var octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, duree, indexNumFhzBand, time = Main.elapsedTime, data;
+			if(canal == canalMIDI and: {flagMIDI == 1}, {
+
+				amp = amp / 127;
+				ampMIDIOSC = amp.ampdb;
+				duree = (time - lastDureeMIDI).clip(0.01, maxDureeOSC);
+
+				// Set Ambitus Freq
+				freq = freq / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
+				octave = (freq / 12).floor;
+				demiTon = ((freq / 12).frac * 12 + 0.5).floor;
+				cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
 
 				// Set Bus OSC
 				busOSCfreq.set(freq);
@@ -1150,25 +1590,25 @@ OSCFunc.newMatching({arg msg, time, addr, recvPort;
 				// Dispatch Band FHZ
 				for(1, numFhzBand, {arg i;
 
-					if(freq > bandFHZ.at(i).at(0) and: {freq < bandFHZ.at(i).at(1)}, {
+					if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
 						// Add Data
 						if(numberSynth > listeDataBand.at(i).size,
 							{
 								if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
 									{
-										listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+										listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
 										lastTimeBand.put(i, time);
 									},
 									{
 										listeDataBand.put(i, []);
-										listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+										listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
 										lastTimeBand.put(i, time);
 								});
 
 							},
 							{
 								listeDataBand.put(i, []);
-								listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
+								listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
 								lastTimeBand.put(i, time);
 						});
 					},
@@ -1232,826 +1672,387 @@ OSCFunc.newMatching({arg msg, time, addr, recvPort;
 						});
 					});
 					// Duree BPM
-					if(switchOSCdur.includes(1),
-						{densityBPM=[duree.reciprocal, duree.reciprocal]},
-						{densityBPM=[windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60]});
+					if(switchOSCdur.includes(1), {densityBPM=[duree.reciprocal, duree.reciprocal]}, {densityBPM=[windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60]});
 				}.defer;
-				freqBefore=freq;ampBefore=amp;dureeBefore=duree; lastTime = time;
-			});
-			timeOSC = Main.elapsedTime;
-			// Audio Display (For testing)
-			{
-				audioDisplay.string_(amp.round(0.01)).stringColor_(Color.red(amp.value, 1));
-			}.defer;
-			// WEKINATOR
-			mfcc = msg[6..];
-			//Sender
-			sender.sendMsg("/wek/inputs", *mfcc[0..]);
-			if(flagStreamMFCC != 'wek',
-				{
-					// Send control outputs for wekinator 52 data
-					data = data.add(listeOctave[0]);//0
-					data = data.add(listeOctave[1]);
-					data = data.add(listeOctave[2]);
-					data = data.add(listeOctave[3]);
+				lastDureeMIDI = time;
+				// WEKINATOR
+				//Sender
+				sender.sendMsg("/wek/inputs", *mfccData[0..]);
+				if(flagStreamMFCC != 'wek',
+					{
+						// Send control outputs for wekinator 52 data
+						data = data.add(listeOctave[0]);//0
+						data = data.add(listeOctave[1]);
+						data = data.add(listeOctave[2]);
+						data = data.add(listeOctave[3]);
 
-					data = data.add(listeDemiTon[0]);//4
-					data = data.add(listeDemiTon[1]);
-					data = data.add(listeDemiTon[2]);
-					data = data.add(listeDemiTon[3]);
+						data = data.add(listeDemiTon[0]);//4
+						data = data.add(listeDemiTon[1]);
+						data = data.add(listeDemiTon[2]);
+						data = data.add(listeDemiTon[3]);
 
-					data = data.add(listeCent[0]);//8
-					data = data.add(listeCent[1]);
-					data = data.add(listeCent[2]);
-					data = data.add(listeCent[3]);
+						data = data.add(listeCent[0]);//8
+						data = data.add(listeCent[1]);
+						data = data.add(listeCent[2]);
+						data = data.add(listeCent[3]);
 
-					data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
-					data = data.add(choiceFilter[1] * (listeFilters.size - 1));
-					data = data.add(choiceFilter[2] * (listeFilters.size - 1));
-					data = data.add(choiceFilter[3] * (listeFilters.size - 1));
+						data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
+						data = data.add(choiceFilter[1] * (listeFilters.size - 1));
+						data = data.add(choiceFilter[2] * (listeFilters.size - 1));
+						data = data.add(choiceFilter[3] * (listeFilters.size - 1));
 
-					data = data.add(listeCtrl1Filter[0]);//16
-					data = data.add(listeCtrl1Filter[1]);
-					data = data.add(listeCtrl1Filter[2]);
-					data = data.add(listeCtrl1Filter[3]);
-					data = data.add(listeCtrl2Filter[0] * 100);
-					data = data.add(listeCtrl2Filter[1] * 100);
-					data = data.add(listeCtrl2Filter[2] * 100);
-					data = data.add(listeCtrl2Filter[3] * 100);
-					data = data.add(listeCtrl3Filter[0] * 100);
-					data = data.add(listeCtrl3Filter[1] * 100);
-					data = data.add(listeCtrl3Filter[2] * 100);
-					data = data.add(listeCtrl3Filter[3] * 100);
+						data = data.add(listeCtrl1Filter[0]);//16
+						data = data.add(listeCtrl1Filter[1]);
+						data = data.add(listeCtrl1Filter[2]);
+						data = data.add(listeCtrl1Filter[3]);
+						data = data.add(listeCtrl2Filter[0] * 100);
+						data = data.add(listeCtrl2Filter[1] * 100);
+						data = data.add(listeCtrl2Filter[2] * 100);
+						data = data.add(listeCtrl2Filter[3] * 100);
+						data = data.add(listeCtrl3Filter[0] * 100);
+						data = data.add(listeCtrl3Filter[1] * 100);
+						data = data.add(listeCtrl3Filter[2] * 100);
+						data = data.add(listeCtrl3Filter[3] * 100);
 
-					data = data.add(choiceFX[0] * (listeFX.size - 1));//28
-					data = data.add(choiceFX[1] * (listeFX.size - 1));
-					data = data.add(choiceFX[2] * (listeFX.size - 1));
-					data = data.add(choiceFX[3] * (listeFX.size - 1));
+						data = data.add(choiceFX[0] * (listeFX.size - 1));//28
+						data = data.add(choiceFX[1] * (listeFX.size - 1));
+						data = data.add(choiceFX[2] * (listeFX.size - 1));
+						data = data.add(choiceFX[3] * (listeFX.size - 1));
 
-					data = data.add(listeCtrl1FX[0] * 100);//32
-					data = data.add(listeCtrl1FX[1] * 100);
-					data = data.add(listeCtrl1FX[2] * 100);
-					data = data.add(listeCtrl1FX[3] * 100);
-					data = data.add(listeCtrl2FX[0] * 100);
-					data = data.add(listeCtrl2FX[1] * 100);
-					data = data.add(listeCtrl2FX[2] * 100);
-					data = data.add(listeCtrl2FX[3] * 100);
-					data = data.add(listeCtrl3FX[0] * 100);
-					data = data.add(listeCtrl3FX[1] * 100);
-					data = data.add(listeCtrl3FX[2] * 100);
-					data = data.add(listeCtrl3FX[3] * 100);
-					data = data.add(listeCtrl4FX[0] * 100);
-					data = data.add(listeCtrl4FX[1] * 100);
-					data = data.add(listeCtrl4FX[2] * 100);
-					data = data.add(listeCtrl4FX[3] * 100);
-					data = data.add(listeCtrl5FX[0] * 100);
-					data = data.add(listeCtrl5FX[1] * 100);
-					data = data.add(listeCtrl5FX[2] * 100);
-					data = data.add(listeCtrl5FX[3] * 100);//51
-					data = data.add(rangeFFT[0]);//52
-					data = data.add(rangeFFT[1]);//53
-					data = data.add(numPreset.asFloat);//54
-					//synth
-					typeSynthDef.do({arg n, s;
-						changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 55 a 58
+						data = data.add(listeCtrl1FX[0] * 100);//32
+						data = data.add(listeCtrl1FX[1] * 100);
+						data = data.add(listeCtrl1FX[2] * 100);
+						data = data.add(listeCtrl1FX[3] * 100);
+						data = data.add(listeCtrl2FX[0] * 100);
+						data = data.add(listeCtrl2FX[1] * 100);
+						data = data.add(listeCtrl2FX[2] * 100);
+						data = data.add(listeCtrl2FX[3] * 100);
+						data = data.add(listeCtrl3FX[0] * 100);
+						data = data.add(listeCtrl3FX[1] * 100);
+						data = data.add(listeCtrl3FX[2] * 100);
+						data = data.add(listeCtrl3FX[3] * 100);
+						data = data.add(listeCtrl4FX[0] * 100);
+						data = data.add(listeCtrl4FX[1] * 100);
+						data = data.add(listeCtrl4FX[2] * 100);
+						data = data.add(listeCtrl4FX[3] * 100);
+						data = data.add(listeCtrl5FX[0] * 100);
+						data = data.add(listeCtrl5FX[1] * 100);
+						data = data.add(listeCtrl5FX[2] * 100);
+						data = data.add(listeCtrl5FX[3] * 100);//51
+						data = data.add(rangeFFT[0]);//52
+						data = data.add(rangeFFT[1]);//53
+						data = data.add(numPreset.asFloat);//54
+						//synth
+						typeSynthDef.do({arg n, s;
+							changeChoiceSynthDef.do({arg item, i;
+								if(n == item, {data = data.add(i.asFloat)});// 55 a 58
+							});
 						});
-					});
-					// duree synth
-					listeFlagDureeSynth.do({arg n, s;
+						// duree synth
+						listeFlagDureeSynth.do({arg n, s;
 							if(n == 'Seq', {data = data.add(0.asFloat)});// 59 a 62
 							if(n == 'Pitch', {data = data.add(0.5)});
 							if(n == 'Grain', {data = data.add(1.0)});
 						});
-					// mode synth
-					modeMIDIOSC.do({arg n, s;
-						changeChoiceMIDI.do({arg item, i;
-							if(n == item, {data = data.add(i.asFloat)});// 63 a 66
-						});
-					});
-					// loop sample
-					data = data.add(loopSample[0].asFloat);//67
-					data = data.add(loopSample[1].asFloat);
-					data = data.add(loopSample[2].asFloat);
-					data = data.add(loopSample[3].asFloat);//70
-
-					// Sender
-					sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-			});
-	}, {nil});
-}, '/WekTime_OSC_Data', serverAdresse);
-
-// OSC Data
-OSCFunc.newMatching({arg msg, time, addr, recvPort;
-	var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data, mfcc;
-	if(flagKeyboard == 'on',
-		{
-			// Music
-			freq=msg.at(3);
-			amp=msg.at(4);
-			ampMIDIOSC = amp.ampdb;
-			duree = msg.at(5).clip(0.01, maxDureeOSC);
-
-			// Set Ambitus Freq
-			freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-			freq = freq.midicps;
-
-			// Setup Freq with Scaling and Tuning
-			if(flagScaling != 'off', {
-				pos = 0;
-				oct = freq.cpsoct.round(0.001);
-				ratio = oct.frac;
-				oct = oct.floor;
-				degre = (ratio * tuning.size + 0.5).floor;
-				(scale.degrees.size - 1).do({arg i;
-					difL=abs(degre - scale.degrees.at(i));
-					difH=abs(degre - scale.degrees.at(i+1));
-					if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-						{if(difL <= difH, {pos = i},{pos = i+1})});
-				});
-				freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-			});
-
-			octave = (freq.cpsmidi / 12).floor;
-			demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-			cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
-			// Set Bus OSC
-			busOSCfreq.set(freq);
-			busOSCamp.set(amp);
-			busOSCduree.set(duree);
-
-			// Dispatch Band FHZ
-			for(1, numFhzBand, {arg i;
-
-				if(freq > bandFHZ.at(i).at(0) and: {freq < bandFHZ.at(i).at(1)}, {
-					// Add Data
-					if(numberSynth > listeDataBand.at(i).size,
-						{
-							if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
-								{
-									listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
-									lastTimeBand.put(i, time);
-								},
-								{
-									listeDataBand.put(i, []);
-									listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
-									lastTimeBand.put(i, time);
+						// mode synth
+						modeMIDIOSC.do({arg n, s;
+							changeChoiceMIDI.do({arg item, i;
+								if(n == item, {data = data.add(i.asFloat)});// 63 a 66
 							});
-
-						},
-						{
-							listeDataBand.put(i, []);
-							listeDataBand.put(i, listeDataBand.at(i).add([freq.cpsmidi, octave, demiTon, cent]));
-							lastTimeBand.put(i, time);
-					});
-				},
-				{
-					if(i <= numFhzBand, {
-						if((time - lastTimeBand.at(i)) > maxDureeOSC, {
-							listeDataBand.put(i, []);
-							lastTimeBand.put(i, time);
 						});
-					});
+						// loop sample
+						data = data.add(loopSample[0].asFloat);//67
+						data = data.add(loopSample[1].asFloat);
+						data = data.add(loopSample[2].asFloat);
+						data = data.add(loopSample[3].asFloat);//70
+
+						// Sender
+						sender.sendMsg("/wekinator/control/outputs", *data[0..]);
 				});
 			});
+		}, (0..127), nil);
 
-			// All Data Band = 0
-			if((time - lastTimeBand.at(0)) > maxDureeOSC, {
+		// NoteOff
+		MIDIdef.noteOff(\midiNoteOff, {arg amp, freq, canal, src;
+
+			if(canal == canalMIDI and: {flagMIDI == 1}, {
+				for(1, numFhzBand, {arg i;
+					if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
+						listeDataBand.put(i, []);
+						lastTimeBand.put(i, Main.elapsedTime);
+					});
+				});
 				listeDataBand.put(0, []);
-				listeDataBand.put(0, listeDataBand.at(0).add(([freq.cpsmidi, octave, demiTon, cent])));
-				lastTimeBand.put(0, time);
-			},
-			{
-				if(numberSynth > listeDataBand.at(0).size,
-					{
-						if(duree < chordDureeOSC and: {listeDataBand.at(0).size < numberSynth},
-							{
-								listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
-								lastTimeBand.put(0, time);
-							},
-							{
-								listeDataBand.put(0, []);
-								listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
-								lastTimeBand.put(0, time);
-						});
+				lastTimeBand.put(0, Main.elapsedTime);
+			});
+		}, (0..127), nil);
+
+		// PitchBend
+		MIDIdef.bend(\midiBend, {arg bend, canal, src;
+			if(canal == canalMIDI, {
+				bendMIDI = bend - 8192 / 672;
+			});
+		});
+
+		// Sequencer
+		sequencer = Tdef("Sequencer", {
+			var octave, demiTon, cent, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, freq, freqRate, rate, reverse, amp, duree, dureeSynth, startPos, endPos, buffer, listeDeferBuffer=[], listeJitterStartPos=[], envLevel, envDuree, volumeFilter, ctrl1Filter, ctrl2Filter, ctrl3Filter, volumeFX, ctrl1FX, ctrl2FX, ctrl3FX, ctrl4FX, ctrl5FX, panX, panY, out, synth, flagSolo, listeSynthActif, midiOscFreq, varNumSynth, varWeightSynth, indexNumFhzBand, freqToMidi, freqSynth, weight;
+			// Setup Variable Liste StartPos Synth
+			numberSynth.do({arg synth; listeJitterStartPos = listeJitterStartPos.add(0); listeDeferBuffer = listeDeferBuffer.add(nil)});
+			// Loop Sequencer
+			loop({
+				flagSolo = 'off'; listeSynthActif =[]; varNumSynth=[]; varWeightSynth=[];
+				// Verify timing OSC
+				if((Main.elapsedTime - timeOSC) >= maxDureeOSC and: {flagOSC == 1}, {
+					// Init Array
+					lastTimeBand = [];
+					listeDataBand = [];
+					(numFhzBand + 1).do({arg i;
+						lastTimeBand = lastTimeBand.add(Main.elapsedTime);
+						listeDataBand = listeDataBand.add([]);
+					});
+				});
+				// New Duree
+				duree = rrand(densityBPM.at(0), densityBPM.at(1)).reciprocal;
+				// Setup Mute Solo
+				numberSynth.do({arg synth; if(listeSoloSynth.at(synth).value == 1, {flagSolo = 'on'})});
+				// Set active synth for choice playing
+				numberSynth.do({arg synth; if(listeMuteSynth.at(synth).value != 1 and: {flagSolo != 'on' or:{listeSoloSynth.at(synth).value == 1}}, {varNumSynth=varNumSynth.add(synth); varWeightSynth = varWeightSynth.add(listeWeightSynth.at(synth))},{varWeightSynth = varWeightSynth.add(0)})});
+				// Choice Sequencer Synth
+				switch(typeSequencer,
+					'Rand', {listeSynthActif = listeSynthActif.add(varNumSynth.wrapAt(rrand(0, numberSynth - 1)))},
+					'Seq', {numberSynth.do({arg synth; if(listeSynthStepSequencer.at(synth).wrapAt(indexSequence) == 1, {listeSynthActif = listeSynthActif.add(synth)})}); indexSequence = indexSequence + 1;if(indexSequence >= numberStepSequencer, {indexSequence = 0})},
+					'WeightS', {
+						listeSynthActif = listeSynthActif.add(varWeightSynth.normalizeSum.windex);
 					},
+					'WeightP', {
+						weight = rrand(0.0, 1.0);
+						numberSynth.do({arg synth; if(listeWeightSynth.at(synth) >= weight, {listeSynthActif = listeSynthActif.add(synth)})});
+				});
+				// Check MIDI
+				if(listeSynthActif != [nil],
 					{
-						listeDataBand.put(0, []);
-						listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
-				});
-
-			});
-
-			// Setup Sliders
-			{
-				numberSynth.do({arg synth;
-					if(switchOSCfreq.at(synth) == 1 and: {modeMIDIOSC.at(synth) == 'Note'}, {
-						// New Band
-						indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
-						if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-						if(listeDataBand.at(indexNumFhzBand) != [],
-							{
-								// Octave
-								windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
-								// DemiTon
-								windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
-								// Cent
-								windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
-						});
-					});
-					if(switchOSCamp.at(synth) == 1, {
-						// AMP
-						windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
-					});
-				});
-				// Duree BPM
-				if(switchOSCdur.includes(1), {densityBPM=[duree.reciprocal, duree.reciprocal]}, {densityBPM=[windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60]});
-			}.defer;
-			//timeOSC = Main.elapsedTime;
-			// WEKINATOR
-			sender.sendMsg("/wek/inputs", *mfccData[0..]);
-			if(flagStreamMFCC != 'wek',
-				{
-					// Send control outputs for wekinator 52 data
-					data = data.add(listeOctave[0]);//0
-					data = data.add(listeOctave[1]);
-					data = data.add(listeOctave[2]);
-					data = data.add(listeOctave[3]);
-
-					data = data.add(listeDemiTon[0]);//4
-					data = data.add(listeDemiTon[1]);
-					data = data.add(listeDemiTon[2]);
-					data = data.add(listeDemiTon[3]);
-
-					data = data.add(listeCent[0]);//8
-					data = data.add(listeCent[1]);
-					data = data.add(listeCent[2]);
-					data = data.add(listeCent[3]);
-
-					data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
-					data = data.add(choiceFilter[1] * (listeFilters.size - 1));
-					data = data.add(choiceFilter[2] * (listeFilters.size - 1));
-					data = data.add(choiceFilter[3] * (listeFilters.size - 1));
-
-					data = data.add(listeCtrl1Filter[0]);//16
-					data = data.add(listeCtrl1Filter[1]);
-					data = data.add(listeCtrl1Filter[2]);
-					data = data.add(listeCtrl1Filter[3]);
-					data = data.add(listeCtrl2Filter[0] * 100);
-					data = data.add(listeCtrl2Filter[1] * 100);
-					data = data.add(listeCtrl2Filter[2] * 100);
-					data = data.add(listeCtrl2Filter[3] * 100);
-					data = data.add(listeCtrl3Filter[0] * 100);
-					data = data.add(listeCtrl3Filter[1] * 100);
-					data = data.add(listeCtrl3Filter[2] * 100);
-					data = data.add(listeCtrl3Filter[3] * 100);
-
-					data = data.add(choiceFX[0] * (listeFX.size - 1));//28
-					data = data.add(choiceFX[1] * (listeFX.size - 1));
-					data = data.add(choiceFX[2] * (listeFX.size - 1));
-					data = data.add(choiceFX[3] * (listeFX.size - 1));
-
-					data = data.add(listeCtrl1FX[0] * 100);//32
-					data = data.add(listeCtrl1FX[1] * 100);
-					data = data.add(listeCtrl1FX[2] * 100);
-					data = data.add(listeCtrl1FX[3] * 100);
-					data = data.add(listeCtrl2FX[0] * 100);
-					data = data.add(listeCtrl2FX[1] * 100);
-					data = data.add(listeCtrl2FX[2] * 100);
-					data = data.add(listeCtrl2FX[3] * 100);
-					data = data.add(listeCtrl3FX[0] * 100);
-					data = data.add(listeCtrl3FX[1] * 100);
-					data = data.add(listeCtrl3FX[2] * 100);
-					data = data.add(listeCtrl3FX[3] * 100);
-					data = data.add(listeCtrl4FX[0] * 100);
-					data = data.add(listeCtrl4FX[1] * 100);
-					data = data.add(listeCtrl4FX[2] * 100);
-					data = data.add(listeCtrl4FX[3] * 100);
-					data = data.add(listeCtrl5FX[0] * 100);
-					data = data.add(listeCtrl5FX[1] * 100);
-					data = data.add(listeCtrl5FX[2] * 100);
-					data = data.add(listeCtrl5FX[3] * 100);//51
-					data = data.add(rangeFFT[0]);//52
-					data = data.add(rangeFFT[1]);//53
-					data = data.add(numPreset.asFloat);//54
-					//synth
-					typeSynthDef.do({arg n, s;
-						changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 55 a 58
-						});
-					});
-					// duree synth
-					listeFlagDureeSynth.do({arg n, s;
-							if(n == 'Seq', {data = data.add(0.asFloat)});// 59 a 62
-							if(n == 'Pitch', {data = data.add(0.5)});
-							if(n == 'Grain', {data = data.add(1.0)});
-						});
-					// mode synth
-					modeMIDIOSC.do({arg n, s;
-						changeChoiceMIDI.do({arg item, i;
-							if(n == item, {data = data.add(i.asFloat)});// 63 a 66
-						});
-					});
-					// loop sample
-					data = data.add(loopSample[0].asFloat);//67
-					data = data.add(loopSample[1].asFloat);
-					data = data.add(loopSample[2].asFloat);
-					data = data.add(loopSample[3].asFloat);//70
-
-					// Sender
-					sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-			});
-	}, {nil});
-}, '/WekTime_Keyboard_Data', serverAdresse);
-
-// Setup MIDI Responder
-// NoteOn
-MIDIdef.noteOn(\midiNoteOn, {arg amp, freq, canal, src;
-	var octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, duree, indexNumFhzBand, time = Main.elapsedTime, data;
-	if(canal == canalMIDI and: {flagMIDI == 1}, {
-
-		amp = amp / 127;
-		ampMIDIOSC = amp.ampdb;
-		duree = (time - lastDureeMIDI).clip(0.01, maxDureeOSC);
-
-		// Set Ambitus Freq
-		freq = freq / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-		octave = (freq / 12).floor;
-		demiTon = ((freq / 12).frac * 12 + 0.5).floor;
-		cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
-
-		// Set Bus OSC
-		busOSCfreq.set(freq);
-		busOSCamp.set(amp);
-		busOSCduree.set(duree);
-
-		// Dispatch Band FHZ
-		for(1, numFhzBand, {arg i;
-
-			if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
-				// Add Data
-				if(numberSynth > listeDataBand.at(i).size,
-					{
-						if(duree < chordDureeOSC and: {listeDataBand.at(i).size < numberSynth},
-							{
-								listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
-								lastTimeBand.put(i, time);
-							},
-							{
-								listeDataBand.put(i, []);
-								listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
-								lastTimeBand.put(i, time);
-						});
-
-					},
-					{
-						listeDataBand.put(i, []);
-						listeDataBand.put(i, listeDataBand.at(i).add([freq, octave, demiTon, cent]));
-						lastTimeBand.put(i, time);
-				});
-			},
-			{
-				if(i <= numFhzBand, {
-					if((time - lastTimeBand.at(i)) > maxDureeOSC, {
-						listeDataBand.put(i, []);
-						lastTimeBand.put(i, time);
-					});
-				});
-			});
-		});
-
-		// All Data Band = 0
-		if((time - lastTimeBand.at(0)) > maxDureeOSC, {
-			listeDataBand.put(0, []);
-			listeDataBand.put(0, listeDataBand.at(0).add(([freq.cpsmidi, octave, demiTon, cent])));
-			lastTimeBand.put(0, time);
-		},
-		{
-			if(numberSynth > listeDataBand.at(0).size,
-				{
-					if(duree < chordDureeOSC and: {listeDataBand.at(0).size < numberSynth},
-						{
-							listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
-							lastTimeBand.put(0, time);
-						},
-						{
-							listeDataBand.put(0, []);
-							listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
-							lastTimeBand.put(0, time);
-					});
-				},
-				{
-					listeDataBand.put(0, []);
-					listeDataBand.put(0, listeDataBand.at(0).add([freq.cpsmidi, octave, demiTon, cent]));
-			});
-
-		});
-
-		// Setup Sliders
-		{
-			numberSynth.do({arg synth;
-				if(switchOSCfreq.at(synth) == 1 and: {modeMIDIOSC.at(synth) == 'Note'}, {
-					// New Band
-					indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
-					if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-					if(listeDataBand.at(indexNumFhzBand) != [],
-						{
-							// Octave
-							windowControlGUI.view.children.at((synth * 93 + 41) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(1) / 8);
-							// DemiTon
-							windowControlGUI.view.children.at((synth * 93 + 44) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(2) / 24 + 0.5);
-							// Cent
-							windowControlGUI.view.children.at((synth * 93 + 47) + (numberSynth * numberMaxStepSequencer + 14)).children.at(1).valueAction_(listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(3));
-					});
-				});
-				if(switchOSCamp.at(synth) == 1, {
-					// AMP
-					windowControlGUI.view.children.at((synth * 93 + 50) + (numberSynth * numberMaxStepSequencer + 14)).children.at(2).valueAction_(ampMIDIOSC);
-				});
-			});
-			// Duree BPM
-			if(switchOSCdur.includes(1), {densityBPM=[duree.reciprocal, duree.reciprocal]}, {densityBPM=[windowControlGUI.view.children.at(1).children.at(1).value / 60, windowControlGUI.view.children.at(1).children.at(3).value / 60]});
-		}.defer;
-		lastDureeMIDI = time;
-		// WEKINATOR
-		//Sender
-		sender.sendMsg("/wek/inputs", *mfccData[0..]);
-		if(flagStreamMFCC != 'wek',
-				{
-					// Send control outputs for wekinator 52 data
-					data = data.add(listeOctave[0]);//0
-					data = data.add(listeOctave[1]);
-					data = data.add(listeOctave[2]);
-					data = data.add(listeOctave[3]);
-
-					data = data.add(listeDemiTon[0]);//4
-					data = data.add(listeDemiTon[1]);
-					data = data.add(listeDemiTon[2]);
-					data = data.add(listeDemiTon[3]);
-
-					data = data.add(listeCent[0]);//8
-					data = data.add(listeCent[1]);
-					data = data.add(listeCent[2]);
-					data = data.add(listeCent[3]);
-
-					data = data.add(choiceFilter[0] * (listeFilters.size - 1));//12
-					data = data.add(choiceFilter[1] * (listeFilters.size - 1));
-					data = data.add(choiceFilter[2] * (listeFilters.size - 1));
-					data = data.add(choiceFilter[3] * (listeFilters.size - 1));
-
-					data = data.add(listeCtrl1Filter[0]);//16
-					data = data.add(listeCtrl1Filter[1]);
-					data = data.add(listeCtrl1Filter[2]);
-					data = data.add(listeCtrl1Filter[3]);
-					data = data.add(listeCtrl2Filter[0] * 100);
-					data = data.add(listeCtrl2Filter[1] * 100);
-					data = data.add(listeCtrl2Filter[2] * 100);
-					data = data.add(listeCtrl2Filter[3] * 100);
-					data = data.add(listeCtrl3Filter[0] * 100);
-					data = data.add(listeCtrl3Filter[1] * 100);
-					data = data.add(listeCtrl3Filter[2] * 100);
-					data = data.add(listeCtrl3Filter[3] * 100);
-
-					data = data.add(choiceFX[0] * (listeFX.size - 1));//28
-					data = data.add(choiceFX[1] * (listeFX.size - 1));
-					data = data.add(choiceFX[2] * (listeFX.size - 1));
-					data = data.add(choiceFX[3] * (listeFX.size - 1));
-
-					data = data.add(listeCtrl1FX[0] * 100);//32
-					data = data.add(listeCtrl1FX[1] * 100);
-					data = data.add(listeCtrl1FX[2] * 100);
-					data = data.add(listeCtrl1FX[3] * 100);
-					data = data.add(listeCtrl2FX[0] * 100);
-					data = data.add(listeCtrl2FX[1] * 100);
-					data = data.add(listeCtrl2FX[2] * 100);
-					data = data.add(listeCtrl2FX[3] * 100);
-					data = data.add(listeCtrl3FX[0] * 100);
-					data = data.add(listeCtrl3FX[1] * 100);
-					data = data.add(listeCtrl3FX[2] * 100);
-					data = data.add(listeCtrl3FX[3] * 100);
-					data = data.add(listeCtrl4FX[0] * 100);
-					data = data.add(listeCtrl4FX[1] * 100);
-					data = data.add(listeCtrl4FX[2] * 100);
-					data = data.add(listeCtrl4FX[3] * 100);
-					data = data.add(listeCtrl5FX[0] * 100);
-					data = data.add(listeCtrl5FX[1] * 100);
-					data = data.add(listeCtrl5FX[2] * 100);
-					data = data.add(listeCtrl5FX[3] * 100);//51
-					data = data.add(rangeFFT[0]);//52
-					data = data.add(rangeFFT[1]);//53
-					data = data.add(numPreset.asFloat);//54
-					//synth
-					typeSynthDef.do({arg n, s;
-						changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 55 a 58
-						});
-					});
-					// duree synth
-					listeFlagDureeSynth.do({arg n, s;
-							if(n == 'Seq', {data = data.add(0.asFloat)});// 59 a 62
-							if(n == 'Pitch', {data = data.add(0.5)});
-							if(n == 'Grain', {data = data.add(1.0)});
-						});
-					// mode synth
-					modeMIDIOSC.do({arg n, s;
-						changeChoiceMIDI.do({arg item, i;
-							if(n == item, {data = data.add(i.asFloat)});// 63 a 66
-						});
-					});
-					// loop sample
-					data = data.add(loopSample[0].asFloat);//67
-					data = data.add(loopSample[1].asFloat);
-					data = data.add(loopSample[2].asFloat);
-					data = data.add(loopSample[3].asFloat);//70
-
-					// Sender
-					sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-			});
-	});
-}, (0..127), nil);
-
-// NoteOff
-MIDIdef.noteOff(\midiNoteOff, {arg amp, freq, canal, src;
-
-	if(canal == canalMIDI and: {flagMIDI == 1}, {
-		for(1, numFhzBand, {arg i;
-			if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
-				listeDataBand.put(i, []);
-				lastTimeBand.put(i, Main.elapsedTime);
-			});
-		});
-		listeDataBand.put(0, []);
-		lastTimeBand.put(0, Main.elapsedTime);
-	});
-}, (0..127), nil);
-
-// PitchBend
-MIDIdef.bend(\midiBend, {arg bend, canal, src;
-	if(canal == canalMIDI, {
-		bendMIDI = bend - 8192 / 672;
-	});
-});
-
-// Sequencer
-sequencer = Tdef("Sequencer", {
-	var octave, demiTon, cent, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, freq, freqRate, rate, reverse, amp, duree, dureeSynth, startPos, endPos, buffer, listeDeferBuffer=[], listeJitterStartPos=[], envLevel, envDuree, volumeFilter, ctrl1Filter, ctrl2Filter, ctrl3Filter, volumeFX, ctrl1FX, ctrl2FX, ctrl3FX, ctrl4FX, ctrl5FX, panX, panY, out, synth, flagSolo, listeSynthActif, midiOscFreq, varNumSynth, varWeightSynth, indexNumFhzBand, freqToMidi, freqSynth, weight;
-	// Setup Variable Liste StartPos Synth
-	numberSynth.do({arg synth; listeJitterStartPos = listeJitterStartPos.add(0); listeDeferBuffer = listeDeferBuffer.add(nil)});
-	// Loop Sequencer
-	loop({
-		flagSolo = 'off'; listeSynthActif =[]; varNumSynth=[]; varWeightSynth=[];
-		// Verify timing OSC
-		if((Main.elapsedTime - timeOSC) >= maxDureeOSC and: {flagOSC == 1}, {
-			// Init Array
-			lastTimeBand = [];
-			listeDataBand = [];
-			(numFhzBand + 1).do({arg i;
-				lastTimeBand = lastTimeBand.add(Main.elapsedTime);
-				listeDataBand = listeDataBand.add([]);
-			});
-		});
-		// New Duree
-		duree = rrand(densityBPM.at(0), densityBPM.at(1)).reciprocal;
-		// Setup Mute Solo
-		numberSynth.do({arg synth; if(listeSoloSynth.at(synth).value == 1, {flagSolo = 'on'})});
-		// Set active synth for choice playing
-		numberSynth.do({arg synth; if(listeMuteSynth.at(synth).value != 1 and: {flagSolo != 'on' or:{listeSoloSynth.at(synth).value == 1}}, {varNumSynth=varNumSynth.add(synth); varWeightSynth = varWeightSynth.add(listeWeightSynth.at(synth))},{varWeightSynth = varWeightSynth.add(0)})});
-		// Choice Sequencer Synth
-		switch(typeSequencer,
-			'Rand', {listeSynthActif = listeSynthActif.add(varNumSynth.wrapAt(rrand(0, numberSynth - 1)))},
-			'Seq', {numberSynth.do({arg synth; if(listeSynthStepSequencer.at(synth).wrapAt(indexSequence) == 1, {listeSynthActif = listeSynthActif.add(synth)})}); indexSequence = indexSequence + 1;if(indexSequence >= numberStepSequencer, {indexSequence = 0})},
-			'WeightS', {
-				listeSynthActif = listeSynthActif.add(varWeightSynth.normalizeSum.windex);
-			},
-			'WeightP', {
-				weight = rrand(0.0, 1.0);
-				numberSynth.do({arg synth; if(listeWeightSynth.at(synth) >= weight, {listeSynthActif = listeSynthActif.add(synth)})});
-		});
-		// Check MIDI
-		if(listeSynthActif != [nil],
-			{
-				// Setup MusicData + Filter + FX + Panner + Update Waveform
-				listeSynthActif.do({arg synth;
-					// Set Trigger Recbuf
-					if(listeLoop.at(synth).value == 2, {
-						s.bind(
-							synthAudioRec.at(synth).set(\trigger, 1);
-							s.sync;
-							synthAudioRec.at(synth).set(\trigger, 0);
-							s.sync;
-						)
-					});
-					if(listeBuffer.at(synth).numFrames != nil and: {synth >= 0} and: {synth < numberSynth} and: {flagSolo != 'on' or:{listeSoloSynth.at(synth).value == 1} and:{listeMuteSynth.at(synth).value != 1}}, {
-						// Choose FHZ Band
-						// New Band
-						indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
-						if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-						if(listeActiveAudioRec.at(synth) == 0, {buffer = listeBuffer.at(synth)}, {buffer = listeBufferAudioRec.at(synth)});
-						// Frame Grain
-						startPos =  listeStartPos.at(synth) / buffer.numFrames;
-						endPos =  listeLenght.at(synth) / buffer.numFrames;
-						if(listeActiveJitterWavePos.at(synth) == 1, {
-							startPos = startPos + (0.5 * listeJitterWaveForm.at(synth) * rrand(-1.0, 1.0));
-							startPos = startPos.clip(0.0, 1.0);
-							endPos = startPos + endPos;
-							endPos = endPos.clip(0.0, 1.0);
-						}, {
-							startPos = startPos;
-							endPos = startPos + endPos;
-							endPos = endPos.clip(0.0, 1.0);
-						});
-						listeJitterStartPos.put(synth, startPos);
-						listeDeferBuffer.put(synth, buffer);
-						// Update Display Grain Waveform
-						{
-							if(listeActiveJitterWavePos.at(synth) == 1, {
-								listeGUIsoundFile.at(synth).setSelection(0, [listeJitterStartPos.at(synth) * listeDeferBuffer.at(synth).numFrames, listeLenght.at(synth)])});
-						}.defer;
-						// Envelope
-						envLevel = listeEnvelopeSynth.at(synth).at(0);
-						envDuree = listeEnvelopeSynth.at(synth).at(1);
-						// Octave
-						if(listeActiveJitterOctave.at(synth) == 1, {
-							octave = listeOctave.at(synth)  + ((5 * listeJitterOctave.at(synth) * rrand(-1.0, 1.0)) + 0.5).floor;
-							octave = octave.clip(-5, 5);
-						}, {octave = listeOctave.at(synth)});
-						// DemiTon
-						if(listeActiveJitterDemiTon.at(synth) == 1, {
-							demiTon = listeDemiTon.at(synth) + ((12 * listeJitterDemiTon.at(synth) * rrand(-1.0, 1.0)) + 0.5).floor;
-							demiTon= demiTon.clip(-12, 12);
-						}, {demiTon = listeDemiTon.at(synth)});
-						// Cent
-						if(listeActiveJitterCent.at(synth) == 1, {
-							cent = listeCent.at(synth) + ((100 * listeJitterCent.at(synth) * rrand(-1.0, 1.0)) + 0.5).floor;
-							cent = cent.clip(-100, 100);
-						}, {cent = listeCent.at(synth)});
-						// Amp
-						if(listeActiveJitterAmp.at(synth) == 1, {
-							amp = listeAmp.at(synth) + (40 * listeJitterAmp.at(synth) * rrand(-1.0, 1.0));
-							amp = amp.clip(-inf, 0);
-						}, {amp = listeAmp.at(synth)});
-						// Volume Filter
-						if(listeActiveJitterVolumeFilter.at(synth) == 1, {
-							volumeFilter = listeVolumeFilter.at(synth) + (40 * listeJitterVolumeFilter.at(synth) * rrand(-1.0, 1.0));
-							volumeFilter = volumeFilter.clip(-inf, 0)}, {volumeFilter = listeVolumeFilter.at(synth)});
-						// Ctrl1 Filter
-						if(listeActiveJitterCtrl1Filter.at(synth) == 1, {
-							ctrl1Filter = listeCtrl1Filter.at(synth) * (10 ** (1.5 * listeJitterCtrl1Filter.at(synth) * rrand(-1.0, 1.0)));
-							ctrl1Filter = ctrl1Filter.clip(20, 12544);
-						}, {ctrl1Filter = listeCtrl1Filter.at(synth)});
-						// Ctrl2 Filter
-						if(listeActiveJitterCtrl2Filter.at(synth) == 1, {
-							ctrl2Filter = listeCtrl2Filter.at(synth) * (10 ** (2 * listeJitterCtrl2Filter.at(synth) * rrand(-1.0, 1.0)));
-							ctrl2Filter = ctrl2Filter.clip(0.01, 1);
-						}, {ctrl2Filter = listeCtrl2Filter.at(synth)});
-						// Ctrl3 Filter
-						if(listeActiveJitterCtrl3Filter.at(synth) == 1, {
-							ctrl3Filter = listeCtrl3Filter.at(synth) * (10 ** (2 * listeJitterCtrl3Filter.at(synth) * rrand(-1.0, 1.0)));
-							ctrl3Filter = ctrl3Filter.clip(0.01, 1);
-						}, {ctrl3Filter = listeCtrl3Filter.at(synth)});
-						// Setup Data Synth Filter
-						listeGroupFilter.at(synth).set(\ctrl1, ctrl1Filter, \ctrl2, ctrl2Filter, \ctrl3, ctrl3Filter, \vol, volumeFilter.dbamp);
-						// Volume FX
-						if(listeActiveJitterVolumeFX.at(synth) == 1, {
-							volumeFX = listeVolumeFX.at(synth) + (40 * listeJitterVolumeFX.at(synth) * rrand(-1.0, 1.0));
-							volumeFX = volumeFX.clip(-inf, 0)}, {volumeFX = listeVolumeFX.at(synth)});
-						// Ctrl1 FX
-						if(listeActiveJitterCtrl1FX.at(synth) == 1, {
-							ctrl1FX = listeCtrl1FX.at(synth) * (10 ** (2 * listeJitterCtrl1FX.at(synth) * rrand(-1.0, 1.0)));
-							ctrl1FX = ctrl1FX.clip(0.001, 1);
-						}, {ctrl1FX = listeCtrl1FX.at(synth)});
-						// Ctrl2 FX
-						if(listeActiveJitterCtrl2FX.at(synth) == 1, {
-							ctrl2FX = listeCtrl2FX.at(synth) * (10 ** (2 * listeJitterCtrl2FX.at(synth) * rrand(-1.0, 1.0)));
-							ctrl2FX = ctrl2FX.clip(0.001, 1);
-						}, {ctrl2FX = listeCtrl2FX.at(synth)});
-						// Ctrl3 FX
-						if(listeActiveJitterCtrl3FX.at(synth) == 1, {
-							ctrl3FX = listeCtrl3FX.at(synth) * (10 ** (2 * listeJitterCtrl3FX.at(synth) * rrand(-1.0, 1.0)));
-							ctrl3FX = ctrl3FX.clip(0.001, 1);
-						}, {ctrl3FX = listeCtrl3FX.at(synth)});
-						// Ctrl4 FX
-						if(listeActiveJitterCtrl4FX.at(synth) == 1, {
-							ctrl4FX = listeCtrl4FX.at(synth) * (10 ** (2 * listeJitterCtrl4FX.at(synth) * rrand(-1.0, 1.0)));
-							ctrl4FX = ctrl4FX.clip(0.001, 1);
-						}, {ctrl4FX = listeCtrl4FX.at(synth)});
-						// Ctr4l5 FX
-						if(listeActiveJitterCtrl5FX.at(synth) == 1, {
-							ctrl5FX = listeCtrl5FX.at(synth) * (10 ** (2 * listeJitterCtrl5FX.at(synth) * rrand(-1.0, 1.0)));
-							ctrl5FX = ctrl5FX.clip(0.001, 1);
-						}, {ctrl5FX = listeCtrl5FX.at(synth)});
-						// Setup Data Synth FX
-						listeGroupFX.at(synth).set(\ctrl1, ctrl1FX, \ctrl2, ctrl2FX, \ctrl3, ctrl3FX, \ctrl4, ctrl4FX, \ctrl5, ctrl5FX, \vol, volumeFX.dbamp);
-						// Jitter Panner X
-						{
-							if(listeActiveJitterPanX.at(synth) == 1, {
-								panX = listePanX.at(synth) + (2 * listeJitterPanX.at(synth) * rrand(-1.0, 1.0));
-								panX = panX.clip(-1, 1);
-							},{panX = listePanX.at(synth)});
-							// Jitter Panner Y
-							if(listeActiveJitterPanY.at(synth) == 1, {
-								panY = listePanY.at(synth) + (2 * listeJitterPanY.at(synth) * rrand(-1.0, 1.0));
-								panY = panY.clip(-1, 1);},{panY = listePanY.at(synth)});
-							// Setup Panner
-							listeGroupDolby.at(synth).set(\panX, panX, \panY, panY);
-						}.defer;
-						// Re-Check MIDI
-						if(listeDataBand.at(indexNumFhzBand) == [] or: {modeMIDIOSC.at(synth) == 'Note'},
-							{midiOscFreq = 12.neg},
-							{
-								if(switchOSCfreq.at(synth) == 1,
-									{midiOscFreq = listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(0);// - 60
-										midiOscFreq = 12 * (midiOscFreq / 12).frac;
-									},
-									{midiOscFreq = 12.neg});
-								if(switchOSCamp.at(synth) == 1,
-									{amp = ampMIDIOSC},
-									{nil});
-						});
-						// Setup Freq with Scaling and Tuning
-						freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
-						if(flagScaling != 'off', {
-							pos = 0;
-							oct = freq.midicps.cpsoct.round(0.001);
-							ratio = oct.frac;
-							oct = oct.floor;
-							degre = (ratio * tuning.size + 0.5).floor;
-							(scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - scale.degrees.at(i));
-								difH=abs(degre - scale.degrees.at(i+1));
-								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
+						// Setup MusicData + Filter + FX + Panner + Update Waveform
+						listeSynthActif.do({arg synth;
+							// Set Trigger Recbuf
+							if(listeLoop.at(synth).value == 2, {
+								s.bind(
+									synthAudioRec.at(synth).set(\trigger, 1);
+									s.sync;
+									synthAudioRec.at(synth).set(\trigger, 0);
+									s.sync;
+								)
 							});
-							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-							freq = freq.cpsmidi;
+							if(listeBuffer.at(synth).numFrames != nil and: {synth >= 0} and: {synth < numberSynth} and: {flagSolo != 'on' or:{listeSoloSynth.at(synth).value == 1} and:{listeMuteSynth.at(synth).value != 1}}, {
+								// Choose FHZ Band
+								// New Band
+								indexNumFhzBand = rangeNumFhzBand.at(synth).choose;
+								if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+								if(listeActiveAudioRec.at(synth) == 0, {buffer = listeBuffer.at(synth)}, {buffer = listeBufferAudioRec.at(synth)});
+								// Frame Grain
+								startPos =  listeStartPos.at(synth) / buffer.numFrames;
+								endPos =  listeLenght.at(synth) / buffer.numFrames;
+								if(listeActiveJitterWavePos.at(synth) == 1, {
+									startPos = startPos + (0.5 * listeJitterWaveForm.at(synth) * rrand(-1.0, 1.0));
+									startPos = startPos.clip(0.0, 1.0);
+									endPos = startPos + endPos;
+									endPos = endPos.clip(0.0, 1.0);
+								}, {
+									startPos = startPos;
+									endPos = startPos + endPos;
+									endPos = endPos.clip(0.0, 1.0);
+								});
+								listeJitterStartPos.put(synth, startPos);
+								listeDeferBuffer.put(synth, buffer);
+								// Update Display Grain Waveform
+								{
+									if(listeActiveJitterWavePos.at(synth) == 1, {
+										listeGUIsoundFile.at(synth).setSelection(0, [listeJitterStartPos.at(synth) * listeDeferBuffer.at(synth).numFrames, listeLenght.at(synth)])});
+								}.defer;
+								// Envelope
+								envLevel = listeEnvelopeSynth.at(synth).at(0);
+								envDuree = listeEnvelopeSynth.at(synth).at(1);
+								// Octave
+								if(listeActiveJitterOctave.at(synth) == 1, {
+									octave = listeOctave.at(synth)  + ((5 * listeJitterOctave.at(synth) * rrand(-1.0, 1.0)) + 0.5).floor;
+									octave = octave.clip(-5, 5);
+								}, {octave = listeOctave.at(synth)});
+								// DemiTon
+								if(listeActiveJitterDemiTon.at(synth) == 1, {
+									demiTon = listeDemiTon.at(synth) + ((12 * listeJitterDemiTon.at(synth) * rrand(-1.0, 1.0)) + 0.5).floor;
+									demiTon= demiTon.clip(-12, 12);
+								}, {demiTon = listeDemiTon.at(synth)});
+								// Cent
+								if(listeActiveJitterCent.at(synth) == 1, {
+									cent = listeCent.at(synth) + ((100 * listeJitterCent.at(synth) * rrand(-1.0, 1.0)) + 0.5).floor;
+									cent = cent.clip(-100, 100);
+								}, {cent = listeCent.at(synth)});
+								// Amp
+								if(listeActiveJitterAmp.at(synth) == 1, {
+									amp = listeAmp.at(synth) + (40 * listeJitterAmp.at(synth) * rrand(-1.0, 1.0));
+									amp = amp.clip(-inf, 0);
+								}, {amp = listeAmp.at(synth)});
+								// Volume Filter
+								if(listeActiveJitterVolumeFilter.at(synth) == 1, {
+									volumeFilter = listeVolumeFilter.at(synth) + (40 * listeJitterVolumeFilter.at(synth) * rrand(-1.0, 1.0));
+									volumeFilter = volumeFilter.clip(-inf, 0)}, {volumeFilter = listeVolumeFilter.at(synth)});
+								// Ctrl1 Filter
+								if(listeActiveJitterCtrl1Filter.at(synth) == 1, {
+									ctrl1Filter = listeCtrl1Filter.at(synth) * (10 ** (1.5 * listeJitterCtrl1Filter.at(synth) * rrand(-1.0, 1.0)));
+									ctrl1Filter = ctrl1Filter.clip(20, 12544);
+								}, {ctrl1Filter = listeCtrl1Filter.at(synth)});
+								// Ctrl2 Filter
+								if(listeActiveJitterCtrl2Filter.at(synth) == 1, {
+									ctrl2Filter = listeCtrl2Filter.at(synth) * (10 ** (2 * listeJitterCtrl2Filter.at(synth) * rrand(-1.0, 1.0)));
+									ctrl2Filter = ctrl2Filter.clip(0.01, 1);
+								}, {ctrl2Filter = listeCtrl2Filter.at(synth)});
+								// Ctrl3 Filter
+								if(listeActiveJitterCtrl3Filter.at(synth) == 1, {
+									ctrl3Filter = listeCtrl3Filter.at(synth) * (10 ** (2 * listeJitterCtrl3Filter.at(synth) * rrand(-1.0, 1.0)));
+									ctrl3Filter = ctrl3Filter.clip(0.01, 1);
+								}, {ctrl3Filter = listeCtrl3Filter.at(synth)});
+								// Setup Data Synth Filter
+								listeGroupFilter.at(synth).set(\ctrl1, ctrl1Filter, \ctrl2, ctrl2Filter, \ctrl3, ctrl3Filter, \vol, volumeFilter.dbamp);
+								// Volume FX
+								if(listeActiveJitterVolumeFX.at(synth) == 1, {
+									volumeFX = listeVolumeFX.at(synth) + (40 * listeJitterVolumeFX.at(synth) * rrand(-1.0, 1.0));
+									volumeFX = volumeFX.clip(-inf, 0)}, {volumeFX = listeVolumeFX.at(synth)});
+								// Ctrl1 FX
+								if(listeActiveJitterCtrl1FX.at(synth) == 1, {
+									ctrl1FX = listeCtrl1FX.at(synth) * (10 ** (2 * listeJitterCtrl1FX.at(synth) * rrand(-1.0, 1.0)));
+									ctrl1FX = ctrl1FX.clip(0.001, 1);
+								}, {ctrl1FX = listeCtrl1FX.at(synth)});
+								// Ctrl2 FX
+								if(listeActiveJitterCtrl2FX.at(synth) == 1, {
+									ctrl2FX = listeCtrl2FX.at(synth) * (10 ** (2 * listeJitterCtrl2FX.at(synth) * rrand(-1.0, 1.0)));
+									ctrl2FX = ctrl2FX.clip(0.001, 1);
+								}, {ctrl2FX = listeCtrl2FX.at(synth)});
+								// Ctrl3 FX
+								if(listeActiveJitterCtrl3FX.at(synth) == 1, {
+									ctrl3FX = listeCtrl3FX.at(synth) * (10 ** (2 * listeJitterCtrl3FX.at(synth) * rrand(-1.0, 1.0)));
+									ctrl3FX = ctrl3FX.clip(0.001, 1);
+								}, {ctrl3FX = listeCtrl3FX.at(synth)});
+								// Ctrl4 FX
+								if(listeActiveJitterCtrl4FX.at(synth) == 1, {
+									ctrl4FX = listeCtrl4FX.at(synth) * (10 ** (2 * listeJitterCtrl4FX.at(synth) * rrand(-1.0, 1.0)));
+									ctrl4FX = ctrl4FX.clip(0.001, 1);
+								}, {ctrl4FX = listeCtrl4FX.at(synth)});
+								// Ctr4l5 FX
+								if(listeActiveJitterCtrl5FX.at(synth) == 1, {
+									ctrl5FX = listeCtrl5FX.at(synth) * (10 ** (2 * listeJitterCtrl5FX.at(synth) * rrand(-1.0, 1.0)));
+									ctrl5FX = ctrl5FX.clip(0.001, 1);
+								}, {ctrl5FX = listeCtrl5FX.at(synth)});
+								// Setup Data Synth FX
+								listeGroupFX.at(synth).set(\ctrl1, ctrl1FX, \ctrl2, ctrl2FX, \ctrl3, ctrl3FX, \ctrl4, ctrl4FX, \ctrl5, ctrl5FX, \vol, volumeFX.dbamp);
+								// Jitter Panner X
+								{
+									if(listeActiveJitterPanX.at(synth) == 1, {
+										panX = listePanX.at(synth) + (2 * listeJitterPanX.at(synth) * rrand(-1.0, 1.0));
+										panX = panX.clip(-1, 1);
+									},{panX = listePanX.at(synth)});
+									// Jitter Panner Y
+									if(listeActiveJitterPanY.at(synth) == 1, {
+										panY = listePanY.at(synth) + (2 * listeJitterPanY.at(synth) * rrand(-1.0, 1.0));
+										panY = panY.clip(-1, 1);},{panY = listePanY.at(synth)});
+									// Setup Panner
+									listeGroupDolby.at(synth).set(\panX, panX, \panY, panY);
+								}.defer;
+								// Re-Check MIDI
+								if(listeDataBand.at(indexNumFhzBand) == [] or: {modeMIDIOSC.at(synth) == 'Note'},
+									{midiOscFreq = 12.neg},
+									{
+										if(switchOSCfreq.at(synth) == 1,
+											{midiOscFreq = listeDataBand.at(indexNumFhzBand).wrapAt(synth).at(0);// - 60
+												midiOscFreq = 12 * (midiOscFreq / 12).frac;
+											},
+											{midiOscFreq = 12.neg});
+										if(switchOSCamp.at(synth) == 1,
+											{amp = ampMIDIOSC},
+											{nil});
+								});
+								// Setup Freq with Scaling and Tuning
+								freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
+								if(flagScaling != 'off', {
+									pos = 0;
+									oct = freq.midicps.cpsoct.round(0.001);
+									ratio = oct.frac;
+									oct = oct.floor;
+									degre = (ratio * tuning.size + 0.5).floor;
+									(scale.degrees.size - 1).do({arg i;
+										difL=abs(degre - scale.degrees.at(i));
+										difH=abs(degre - scale.degrees.at(i+1));
+										if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
+											{if(difL <= difH, {pos = i},{pos = i+1})});
+									});
+									freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+									freq = freq.cpsmidi;
+								});
+								// Set Rate
+								freqToMidi = (freq + 0.5).floor;
+								freqSynth = freq.midicps;
+								freqRate = (freq - 48).midicps;
+								rate = 2**freqRate.cpsoct * listeReverse.at(synth);
+								// Set MIDI Off
+								if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {
+									midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
+									// Reset MIDI OUT
+									freqMidi.wrapPut(synth, freqToMidi);
+									// Send MIDI On
+									midiOut.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127);
+									if(flagVST == 'on', {~fxVST.midi.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127)});
+								});
+								// Duree Synth
+								switch(listeFlagDureeSynth.at(synth),
+									'Seq', {dureeSynth = duree},
+									'Pitch', {dureeSynth = abs(endPos - startPos) * (buffer.numFrames / s.sampleRate) * rate.abs.reciprocal},
+									'Grain', {dureeSynth = abs(endPos - startPos) * (buffer.numFrames / s.sampleRate)}
+								);
+								// Playing  A Grain
+								Synth.new(typeSynthDef.at(synth),[
+									\out, listeBusInFilter.at(synth), \buffer, buffer.bufnum, \freq, freqSynth, \rate, rate, \amp, amp.dbamp, \duree, dureeSynth, \startPos, startPos, \endPos, endPos,
+									\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
+									\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \loop, loopSample.at(synth), \hp1, hprec1, \hp2, hprec2], listeGroupSynth.at(synth), \addToHead).map(\oscFreq, busOSCfreq, \oscAmp, busOSCamp, \oscDuree, busOSCduree, \oscTempo, busOSCtempo, \oscFlux, busOSCflux, \oscFlatness, busOSCflatness, \oscEnergy, busOSCenergy, \oscCentroid, busOSCcentroid);
+								//});
+							}, {if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
+								if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
+							})});
 						});
-						// Set Rate
-						freqToMidi = (freq + 0.5).floor;
-						freqSynth = freq.midicps;
-						freqRate = (freq - 48).midicps;
-						rate = 2**freqRate.cpsoct * listeReverse.at(synth);
-						// Set MIDI Off
-						if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {
-							midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
-							if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
-							// Reset MIDI OUT
-							freqMidi.wrapPut(synth, freqToMidi);
-							// Send MIDI On
-							midiOut.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127);
-							if(flagVST == 'on', {~fxVST.midi.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127)});
-						});
-						// Duree Synth
-						switch(listeFlagDureeSynth.at(synth),
-							'Seq', {dureeSynth = duree},
-							'Pitch', {dureeSynth = abs(endPos - startPos) * (buffer.numFrames / s.sampleRate) * rate.abs.reciprocal},
-							'Grain', {dureeSynth = abs(endPos - startPos) * (buffer.numFrames / s.sampleRate)}
-						);
-						// Playing  A Grain
-						Synth.new(typeSynthDef.at(synth),[
-							\out, listeBusInFilter.at(synth), \buffer, buffer.bufnum, \freq, freqSynth, \rate, rate, \amp, amp.dbamp, \duree, dureeSynth, \startPos, startPos, \endPos, endPos,
-							\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-							\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \loop, loopSample.at(synth), \hp1, hprec1, \hp2, hprec2], listeGroupSynth.at(synth), \addToHead).map(\oscFreq, busOSCfreq, \oscAmp, busOSCamp, \oscDuree, busOSCduree, \oscTempo, busOSCtempo, \oscFlux, busOSCflux, \oscFlatness, busOSCflatness, \oscEnergy, busOSCenergy, \oscCentroid, busOSCcentroid);
-						//});
-					}, {if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
-						if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
-					})});
 				});
+				(duree * tempoOSC.reciprocal).wait});
 		});
-		(duree * tempoOSC.reciprocal).wait});
-});
 
-// Create GUI windows
-this.createGUI;
+		// Create GUI windows
+		this.createGUI;
 
-// Init Preset System
-file=File(~pathWekTime ++ "Init Preset" ++ ".scd", "w");
-file.write(fonctionSavePreset.value(windowControlGUI).asCompileString);
-file.close;
+		// Init Preset System
+		file=File(~pathWekTime ++ "Init Preset" ++ ".scd", "w");
+		file.write(fonctionSavePreset.value(windowControlGUI).asCompileString);
+		file.close;
 
-cmdperiodfunc = {
-	s.bind{
-		if(flagRecording == 'on', {
-			fonctionRecOff.value;
-		});
-		windowExternalControlGUI.close;
-		windowControlGUI.close;
-		windowKeyboard.close;
-		windowVST.close;
-		Tdef.removeAll;
-		if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal);
-			if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
-		MIDIIn.disconnect;
-		MIDIdef.freeAll;
-		//s.freeAll;
-	};
-	menuWekTime.remove;
-	//s.quit;
-};
+		cmdperiodfunc = {
+			s.bind{
+				if(flagRecording == 'on', {
+					fonctionRecOff.value;
+				});
+				windowExternalControlGUI.close;
+				windowControlGUI.close;
+				windowKeyboard.close;
+				windowVST.close;
+				Tdef.removeAll;
+				if(flagMidiOut == 'on', {16.do({arg canal; midiOut.allNotesOff(canal);
+					if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});
+				MIDIIn.disconnect;
+				MIDIdef.freeAll;
+				//s.freeAll;
+			};
+			menuWekTime.remove;
+			//s.quit;
+		};
 
-CmdPeriod.doOnce(cmdperiodfunc);
+		CmdPeriod.doOnce(cmdperiodfunc);
 
-});
+	});
 
 }
 
@@ -2524,7 +2525,7 @@ createGUI  {
 		//load Preset
 		if(commandeExecute == 'Load Preset',{
 			if(File.exists(~pathWekTime ++ "Preset" + number.value.asString ++ ".scd"), {
-					numPreset = number.value; lastNumPreset = number.value;
+				numPreset = number.value; lastNumPreset = number.value;
 				file=File(~pathWekTime ++ "Preset" + number.value.asString ++ ".scd","r");
 				fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'off'); file.close;
 				windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
@@ -3251,8 +3252,8 @@ createGUI  {
 			}
 		);
 	});
-		EZKnob(windowExternalControlGUI, 75 @ 20, "WTP", ControlSpec(1, 60),
-            {|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
+	EZKnob(windowExternalControlGUI, 75 @ 20, "WTP", ControlSpec(1, 60),
+		{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 
 	windowExternalControlGUI.onClose_({nil});
 
