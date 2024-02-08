@@ -5,7 +5,7 @@ WekAgents {
 
 	classvar  < s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWek, timeWekPreset;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset;
 
 	*new	{arg path="~/Documents/WekAgents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448;
 
@@ -412,6 +412,13 @@ G                       Init Genome Agent (solo).
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
 					});
 			}),
+			MenuAction("List
+Preset Wek",
+				{
+					SCRequestString("[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]", "listeWekPreset", {arg index;
+						listeWekPreset = index.interpret;
+					});
+			});
 		);
 		MainMenu.register(menuWek.title_("Wekinator"), "WekAgentsTools");
 
@@ -869,7 +876,7 @@ G                       Init Genome Agent (solo).
 			~maximumenfants=3;
 			~vitesseagents=1.0;//granulation temporelle de l'espace
 			~deviance=~dvt=0.0625;// % deviance signaux agents voisins
-			~paraAlgoAnalyseAudio=[[0.5, 0.5], [0.5, 0.5], [0.5, 0.5]];
+			~paraAlgoAnalyseAudio=[[0.5, 0.5], [0.5, 0.5]];
 			~musicOutAgents=[];
 			// Init liste score pour tdef
 			~listeRoutinePlayingScore=[];
@@ -903,13 +910,15 @@ G                       Init Genome Agent (solo).
 			numPreset = 0;
 			lastNumPreset = 0;
 			timeWekPreset = 4;
+			timeWekData = 0.0625;
+			40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 			//////////////////////////////////////////////////////////
 
 			~entreemode='Audio';// Par defaut entree audio
 			~keyCodeSourceIn=0;
 			~flagEntreeMode='Audio';
-			~listemodeentree=['Audio','File','Midi', 'Off'];
+			~listemodeentree=['Audio','File', 'Off'];
 			~sourceOutAgents=[];
 			32.do({arg i;var x;
 				i=i+1;x="Out"+i.asString;~sourceOutAgents=~sourceOutAgents.add(x.asSymbol);
@@ -1836,6 +1845,24 @@ G                       Init Genome Agent (solo).
 					s.sync;
 					if(~flagEntreeMode == 'File' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.value.run(true);~tempoFile.value.run(true)});
 					s.sync;
+					},
+					5, {
+						~audioFile=Synth.newPaused("OSC WekAgents File MIDI",
+							['busFileIn', ~busFileIn.index, \trigger, 0], ~groupeAnalyse, \addToTail);
+						s.sync;
+						~audioIn=Synth.newPaused("OSC WekAgents MIDI",
+							[\trigger, 0], ~groupeAnalyse, \addToTail);
+						s.sync;
+						~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+							['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
+						s.sync;
+						~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+							[\lock, 0], ~groupeAnalyse, \addToTail);
+						s.sync;
+						if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
+						s.sync;
+						if(~flagEntreeMode == 'File' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.value.run(true);~tempoFile.value.run(true)});
+						s.sync;
 					}
 				);
 				~audioIn.setn(\in, ~audioInputAnalyzeButton.value);
@@ -1895,7 +1922,8 @@ G                       Init Genome Agent (solo).
 		~initOSCresponder.value;// Init OSC Responder
 
 		~lastTimeAnalyse=Main.elapsedTime;// Init time analyse
-		lastTimeWek = Main.elapsedTime;
+		lastTimeWekPreset = Main.elapsedTime;
+		lastTimeWekData = Main.elapsedTime;
 		~freqBefore=0; ~ampBefore=0; ~dureeBefore=0; ~freqTampon=nil; ~amptampon=nil;~freqCentroid=0;~flatness=0;~energy=0; ~flux=0;
 
 		// DATA WIKI OUT
@@ -1904,208 +1932,212 @@ G                       Init Genome Agent (solo).
 
 			wekOut = msg[1..];
 
-			{
-				~synthDefInstrMenu.valueAction_((wekOut[0] + 0.5).asInteger.clip(0, ~listSynth.size - 1));//0
-				~soundsInstrMenu.valueAction_((wekOut[1] + 0.5).asInteger.clip(0, ~displaySons.size -1));
-				~freqInstr.valueAction = [wekOut[2], wekOut[3]].clip(0, 127);
-				~freqTransposeInstr.value = wekOut[4].clip(-127, 127);
-				~ampInstr.valueAction = [wekOut[5], wekOut[6]].clip(-120, 0);
-				~dureeInstr.valueAction = [wekOut[7], wekOut[8]].clip(0, 60);
-				~dureeTempoinstr.value = wekOut[9].clip(-16, 60);
-				~quantaMusicSlider.value = wekOut[10].clip(1, 100);
-				// Genes
-				~geneFreqRanger.valueAction = [wekOut[11], wekOut[12]].clip(0, 127);
-				if(wekOut[13] <= 0.5,
-					{~geneFreqButton.valueAction = 0},
-					{~geneFreqButton.valueAction = 1}
-				);
-				~geneTransFreqRanger.valueAction = [wekOut[14], wekOut[15]];
-				if(wekOut[16] <= 0.5,
-					{~geneTransFreqButton.valueAction = 0},
-					{~geneTransFreqButton.valueAction = 1}
-				);
-				~geneAmpRanger.valueAction = [wekOut[17], wekOut[18]];
-				if(wekOut[19] <= 0.5,
-					{~geneAmpButton.valueAction = 0},
-					{~geneAmpButton.valueAction = 1}
-				);
-				~geneDureeRanger.valueAction = [wekOut[20], wekOut[21]];
-				if(wekOut[22] <= 0.5,
-					{~geneDureeButton.valueAction = 0},
-					{~geneDureeButton.valueAction = 1}
-				);
-				~geneMulDureeRanger.valueAction = [wekOut[23], wekOut[24]];
-				if(wekOut[25] <= 0.5,
-					{~geneMulDureeButton.valueAction = 0},
-					{~geneMulDureeButton.valueAction = 1}
-				);
-				~genePanRanger.valueAction = [wekOut[26], wekOut[27]];
-				if(wekOut[28] <= 0.5,
-					{~genePanButton.valueAction = 0},
-					{~genePanButton.valueAction = 1}
-				);
-				~geneBufferRanger.valueAction = [wekOut[29], wekOut[30]];
-				if(wekOut[31] <= 0.5,
-					{~geneBufferButton.valueAction = 0},
-					{~geneBufferButton.valueAction = 1}
-				);
-				~geneSampleRangerLow.valueAction_((wekOut[32] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
-				~geneSampleRangerHigh.valueAction_((wekOut[33] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
-				if(wekOut[34] <= 0.5,
-					{~geneSampleButton.valueAction = 0},
-					{~geneSampleButton.valueAction = 1}
-				);
-				~geneReverseRanger.valueAction = [wekOut[35], wekOut[36]];
-				if(wekOut[37] <= 0.5,
-					{~geneReverseButton.valueAction = 0},
-					{~geneReverseButton.valueAction = 1}
-				);
-				~geneLoopRanger.valueAction = [wekOut[38], wekOut[39]];
-				if(wekOut[40] <= 0.5,
-					{~geneLoopButton.valueAction = 0},
-					{~geneLoopButton.valueAction = 1}
-				);
-				~geneOffsetRanger.valueAction = [wekOut[41], wekOut[42]];
-				if(wekOut[43] <= 0.5,
-					{~geneOffsetButton.valueAction = 0},
-					{~geneOffsetButton.valueAction = 1}
-				);
-				~geneEnvLevelRanger.valueAction = [wekOut[44], wekOut[45]];
-				if(wekOut[46] <= 0.5,
-					{~geneEnvLevelButton.valueAction = 0},
-					{~geneEnvLevelButton.valueAction = 1}
-				);
-				~geneEnvDureeRanger.valueAction = [wekOut[47], wekOut[48]];
-				if(wekOut[49] <= 0.5,
-					{~geneEnvDureeButton.valueAction = 0},
-					{~geneEnvDureeButton.valueAction = 1}
-				);
-				~geneSynthRangerLow.valueAction_((wekOut[50] + 0.5).asInteger.clip(0, ~listSynth.size -1));
-				~geneSynthRangerHigh.valueAction_((wekOut[51] + 0.5).asInteger.clip(0, ~listSynth.size -1));
-				if(wekOut[52] <= 0.5,
-					{~geneSynthButton.valueAction = 0},
-					{~geneSynthButton.valueAction = 1}
-				);
-				~geneControlsRanger.valueAction = [wekOut[53], wekOut[54]];
-				if(wekOut[55] <= 0.5,
-					{~geneControlsButton.valueAction = 0},
-					{~geneControlsButton.valueAction = 1}
-				);
-				~geneAudioOutRanger.valueAction = [wekOut[56], wekOut[57]];
-				if(wekOut[58] <= 0.5,
-					{~geneAudioOutButton.valueAction = 0},
-					{~geneAudioOutButton.valueAction = 1}
-				);
-				~geneMidiOutRanger.valueAction = [wekOut[59], wekOut[60]];
-				if(wekOut[61] <= 0.5,
-					{~geneMidiOutButton.valueAction = 0},
-					{~geneMidiOutButton.valueAction = 1}
-				);
-				~geneInputRangerLow.valueAction_((wekOut[62] + 0.5).asInteger.clip(0, 32));
-				~geneInputRangerHigh.valueAction_((wekOut[63] + 0.5).asInteger.clip(0, 32));
-				if(wekOut[64] <= 0.5,
-					{~geneInputButton.valueAction = 0},
-					{~geneInputButton.valueAction = 1}
-				);
-				~geneLoopMusicRanger.valueAction = [wekOut[65], wekOut[66]];
-				if(wekOut[67] <= 0.5,
-					{~geneLoopMusicButton.valueAction = 0},
-					{~geneLoopMusicButton.valueAction = 1}
-				);
-				~geneBufferMusicRanger.valueAction = [wekOut[68], wekOut[69]];
-				if(wekOut[70] <= 0.5,
-					{~geneBufferMusicButton.valueAction = 0},
-					{~geneBufferMusicButton.valueAction = 1}
-				);
-				~geneChordMaxRanger.valueAction = [wekOut[71], wekOut[72]];
-				if(wekOut[73] <= 0.5,
-					{~geneChordMaxButton.valueAction = 0},
-					{~geneChordMaxButton.valueAction = 1}
-				);
-				~geneChordDurRanger.valueAction = [wekOut[74], wekOut[75]];
-				if(wekOut[76] <= 0.5,
-					{~geneChordDurButton.valueAction = 0},
-					{~geneChordDurButton.valueAction = 1}
-				);
-				~geneAlgorithm.valueAction = [wekOut[77], wekOut[78]];
-				if(wekOut[79] <= 0.5,
-					{~geneAlgorithmButton.valueAction = 0},
-					{~geneAlgorithmButton.valueAction = 1}
-				);
-				if(wekOut[80] <= 0.5,
-					{~geneBand0.valueAction = 0},
-					{~geneBand0.valueAction = 1}
-				);
-				if(wekOut[81] <= 0.5,
-					{~geneBand1.valueAction = 0},
-					{~geneBand1.valueAction = 1}
-				);
-				if(wekOut[82] <= 0.5,
-					{~geneBand2.valueAction = 0},
-					{~geneBand2.valueAction = 1}
-				);
-				if(wekOut[83] <= 0.5,
-					{~geneBand3.valueAction = 0},
-					{~geneBand3.valueAction = 1}
-				);
-				if(wekOut[84] <= 0.5,
-					{~geneBand4.valueAction = 0},
-					{~geneBand5.valueAction = 1}
-				);
-				if(wekOut[85] <= 0.5,
-					{~geneBand5.valueAction = 0},
-					{~geneBand5.valueAction = 1}
-				);
-				if(wekOut[86] <= 0.5,
-					{~geneBand6.valueAction = 0},
-					{~geneBand6.valueAction = 1}
-				);
-				if(wekOut[87] <= 0.5,
-					{~geneBand7.valueAction = 0},
-					{~geneBand7.valueAction = 1}
-				);
-				if(wekOut[88] <= 0.5,
-					{~geneBand8.valueAction = 0},
-					{~geneBand8.valueAction = 1}
-				);
-				if(wekOut[89] <= 0.5,
-					{~geneBand9.valueAction = 0},
-					{~geneBand9.valueAction = 1}
-				);
-				if(wekOut[90] <= 0.5,
-					{~geneBand10.valueAction = 0},
-					{~geneBand10.valueAction = 1}
-				);
-				if(wekOut[91] <= 0.5,
-					{~geneBand11.valueAction = 0},
-					{~geneBand11.valueAction = 1}
-				);
-				if(wekOut[92] <= 0.5,
-					{~geneBand12.valueAction = 0},
-					{~geneBand12.valueAction = 1}
-				);
-				if(wekOut[93] <= 0.5,
-					{~geneBandButton.valueAction = 0},
-					{~geneBandButton.valueAction = 1}
-				);
-				// Preset
-				numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
+			// Preset
+			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
 
-				if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
-					// load new preset
+			if(numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset},
+				// load new preset
+				{
 					{
-							if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
-								{
-									lastNumPreset = numPreset;
-									lastTimeWek = time;
-									file=File(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd","r");
-									~loadUnivers.value(file, 'on', 'on');
-									~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
-									file.close;
-							});
-				});
-			}.defer;
-
+						if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
+							{
+								lastNumPreset = numPreset;
+								lastTimeWekPreset = time;
+								file=File(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd","r");
+								~loadUnivers.value(file, 'on', 'on');
+								~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
+								file.close;
+						});
+					}.defer;
+			});
+			if((time - lastTimeWekData) > timeWekData, {
+				{
+					~synthDefInstrMenu.valueAction_((wekOut[0] + 0.5).asInteger.clip(0, ~listSynth.size - 1));//0
+					~soundsInstrMenu.valueAction_((wekOut[1] + 0.5).asInteger.clip(0, ~displaySons.size -1));
+					~freqInstr.valueAction = [wekOut[2], wekOut[3]].clip(0, 127);
+					~freqTransposeInstr.value = wekOut[4].clip(-127, 127);
+					~ampInstr.valueAction = [wekOut[5], wekOut[6]].clip(-120, 0);
+					~dureeInstr.valueAction = [wekOut[7], wekOut[8]].clip(0, 60);
+					~dureeTempoinstr.value = wekOut[9].clip(-16, 60);
+					~quantaMusicSlider.value = wekOut[10].clip(1, 100);
+					// Genes
+					~geneFreqRanger.valueAction = [wekOut[11], wekOut[12]].clip(0, 127);
+					if(wekOut[13] <= 0.5,
+						{~geneFreqButton.valueAction = 0},
+						{~geneFreqButton.valueAction = 1}
+					);
+					~geneTransFreqRanger.valueAction = [wekOut[14], wekOut[15]];
+					if(wekOut[16] <= 0.5,
+						{~geneTransFreqButton.valueAction = 0},
+						{~geneTransFreqButton.valueAction = 1}
+					);
+					~geneAmpRanger.valueAction = [wekOut[17], wekOut[18]].clip(-120, 0);
+					if(wekOut[19] <= 0.5,
+						{~geneAmpButton.valueAction = 0},
+						{~geneAmpButton.valueAction = 1}
+					);
+					~geneDureeRanger.valueAction = [wekOut[20], wekOut[21]];
+					if(wekOut[22] <= 0.5,
+						{~geneDureeButton.valueAction = 0},
+						{~geneDureeButton.valueAction = 1}
+					);
+					~geneMulDureeRanger.valueAction = [wekOut[23], wekOut[24]];
+					if(wekOut[25] <= 0.5,
+						{~geneMulDureeButton.valueAction = 0},
+						{~geneMulDureeButton.valueAction = 1}
+					);
+					~genePanRanger.valueAction = [wekOut[26], wekOut[27]];
+					if(wekOut[28] <= 0.5,
+						{~genePanButton.valueAction = 0},
+						{~genePanButton.valueAction = 1}
+					);
+					~geneBufferRanger.valueAction = [wekOut[29], wekOut[30]];
+					if(wekOut[31] <= 0.5,
+						{~geneBufferButton.valueAction = 0},
+						{~geneBufferButton.valueAction = 1}
+					);
+					~geneSampleRangerLow.valueAction_((wekOut[32] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
+					~geneSampleRangerHigh.valueAction_((wekOut[33] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
+					if(wekOut[34] <= 0.5,
+						{~geneSampleButton.valueAction = 0},
+						{~geneSampleButton.valueAction = 1}
+					);
+					~geneReverseRanger.valueAction = [wekOut[35], wekOut[36]];
+					if(wekOut[37] <= 0.5,
+						{~geneReverseButton.valueAction = 0},
+						{~geneReverseButton.valueAction = 1}
+					);
+					~geneLoopRanger.valueAction = [wekOut[38], wekOut[39]];
+					if(wekOut[40] <= 0.5,
+						{~geneLoopButton.valueAction = 0},
+						{~geneLoopButton.valueAction = 1}
+					);
+					~geneOffsetRanger.valueAction = [wekOut[41], wekOut[42]];
+					if(wekOut[43] <= 0.5,
+						{~geneOffsetButton.valueAction = 0},
+						{~geneOffsetButton.valueAction = 1}
+					);
+					~geneEnvLevelRanger.valueAction = [wekOut[44], wekOut[45]];
+					if(wekOut[46] <= 0.5,
+						{~geneEnvLevelButton.valueAction = 0},
+						{~geneEnvLevelButton.valueAction = 1}
+					);
+					~geneEnvDureeRanger.valueAction = [wekOut[47], wekOut[48]];
+					if(wekOut[49] <= 0.5,
+						{~geneEnvDureeButton.valueAction = 0},
+						{~geneEnvDureeButton.valueAction = 1}
+					);
+					~geneSynthRangerLow.valueAction_((wekOut[50] + 0.5).asInteger.clip(0, ~listSynth.size -1));
+					~geneSynthRangerHigh.valueAction_((wekOut[51] + 0.5).asInteger.clip(0, ~listSynth.size -1));
+					if(wekOut[52] <= 0.5,
+						{~geneSynthButton.valueAction = 0},
+						{~geneSynthButton.valueAction = 1}
+					);
+					~geneControlsRanger.valueAction = [wekOut[53], wekOut[54]];
+					if(wekOut[55] <= 0.5,
+						{~geneControlsButton.valueAction = 0},
+						{~geneControlsButton.valueAction = 1}
+					);
+					~geneAudioOutRanger.valueAction = [wekOut[56], wekOut[57]];
+					if(wekOut[58] <= 0.5,
+						{~geneAudioOutButton.valueAction = 0},
+						{~geneAudioOutButton.valueAction = 1}
+					);
+					~geneMidiOutRanger.valueAction = [wekOut[59], wekOut[60]];
+					if(wekOut[61] <= 0.5,
+						{~geneMidiOutButton.valueAction = 0},
+						{~geneMidiOutButton.valueAction = 1}
+					);
+					~geneInputRangerLow.valueAction_((wekOut[62] + 0.5).asInteger.clip(0, 32));
+					~geneInputRangerHigh.valueAction_((wekOut[63] + 0.5).asInteger.clip(0, 32));
+					if(wekOut[64] <= 0.5,
+						{~geneInputButton.valueAction = 0},
+						{~geneInputButton.valueAction = 1}
+					);
+					~geneLoopMusicRanger.valueAction = [wekOut[65], wekOut[66]];
+					if(wekOut[67] <= 0.5,
+						{~geneLoopMusicButton.valueAction = 0},
+						{~geneLoopMusicButton.valueAction = 1}
+					);
+					~geneBufferMusicRanger.valueAction = [wekOut[68], wekOut[69]];
+					if(wekOut[70] <= 0.5,
+						{~geneBufferMusicButton.valueAction = 0},
+						{~geneBufferMusicButton.valueAction = 1}
+					);
+					~geneChordMaxRanger.valueAction = [wekOut[71], wekOut[72]];
+					if(wekOut[73] <= 0.5,
+						{~geneChordMaxButton.valueAction = 0},
+						{~geneChordMaxButton.valueAction = 1}
+					);
+					~geneChordDurRanger.valueAction = [wekOut[74], wekOut[75]];
+					if(wekOut[76] <= 0.5,
+						{~geneChordDurButton.valueAction = 0},
+						{~geneChordDurButton.valueAction = 1}
+					);
+					~geneAlgorithm.valueAction = [wekOut[77], wekOut[78]];
+					if(wekOut[79] <= 0.5,
+						{~geneAlgorithmButton.valueAction = 0},
+						{~geneAlgorithmButton.valueAction = 1}
+					);
+					if(wekOut[80] <= 0.5,
+						{~geneBand0.valueAction = 0},
+						{~geneBand0.valueAction = 1}
+					);
+					if(wekOut[81] <= 0.5,
+						{~geneBand1.valueAction = 0},
+						{~geneBand1.valueAction = 1}
+					);
+					if(wekOut[82] <= 0.5,
+						{~geneBand2.valueAction = 0},
+						{~geneBand2.valueAction = 1}
+					);
+					if(wekOut[83] <= 0.5,
+						{~geneBand3.valueAction = 0},
+						{~geneBand3.valueAction = 1}
+					);
+					if(wekOut[84] <= 0.5,
+						{~geneBand4.valueAction = 0},
+						{~geneBand5.valueAction = 1}
+					);
+					if(wekOut[85] <= 0.5,
+						{~geneBand5.valueAction = 0},
+						{~geneBand5.valueAction = 1}
+					);
+					if(wekOut[86] <= 0.5,
+						{~geneBand6.valueAction = 0},
+						{~geneBand6.valueAction = 1}
+					);
+					if(wekOut[87] <= 0.5,
+						{~geneBand7.valueAction = 0},
+						{~geneBand7.valueAction = 1}
+					);
+					if(wekOut[88] <= 0.5,
+						{~geneBand8.valueAction = 0},
+						{~geneBand8.valueAction = 1}
+					);
+					if(wekOut[89] <= 0.5,
+						{~geneBand9.valueAction = 0},
+						{~geneBand9.valueAction = 1}
+					);
+					if(wekOut[90] <= 0.5,
+						{~geneBand10.valueAction = 0},
+						{~geneBand10.valueAction = 1}
+					);
+					if(wekOut[91] <= 0.5,
+						{~geneBand11.valueAction = 0},
+						{~geneBand11.valueAction = 1}
+					);
+					if(wekOut[92] <= 0.5,
+						{~geneBand12.valueAction = 0},
+						{~geneBand12.valueAction = 1}
+					);
+					if(wekOut[93] <= 0.5,
+						{~geneBandButton.valueAction = 0},
+						{~geneBandButton.valueAction = 1}
+					);
+				}.defer;
+				lastTimeWekData = time;
+			});
 		},'/wek/outputs');
 
 		// Analyse AudioIn
@@ -2191,105 +2223,105 @@ G                       Init Genome Agent (solo).
 
 					if(flagStreamMFCC != 'wek',
 						{
-								{
+							{
 								data = [~synthDefInstrMenu.value.asFloat,//0
-								~soundsInstrMenu.value.asFloat,
-								~freqInstr.lo,
-								~freqInstr.hi,
-								~freqTransposeInstr.value,
-								~ampInstr.lo.clip(-120, 0),
-								~ampInstr.hi,
-								~dureeInstr.lo,
-								~dureeInstr.hi,
-								~dureeTempoinstr.value,
-								~quantaMusicSlider.value,
-								// Music Controls
-								// Genes
-								~geneFreqRanger.lo,// 11
-								~geneFreqRanger.hi,
-								~geneFreqButton.value.asFloat,
-								~geneTransFreqRanger.lo,
-								~geneTransFreqRanger.hi,
-								~geneTransFreqButton.value.asFloat,
-								~geneAmpRanger.lo.clip(-120, 0),
-								~geneAmpRanger.hi,
-								~geneAmpButton.value.asFloat,
-								~geneDureeRanger.lo,
-								~geneDureeRanger.hi,
-								~geneDureeButton.value.asFloat,
-								~geneMulDureeRanger.lo,
-								~geneMulDureeRanger.hi,
-								~geneMulDureeButton.value.asFloat,
-								~genePanRanger.lo,
-								~genePanRanger.hi,
-								~genePanButton.value.asFloat,
-								~geneBufferRanger.lo,
-								~geneBufferRanger.hi,
-								~geneBufferButton.value.asFloat,
-								~geneSampleRangerLow.value.asFloat,// 32
-								~geneSampleRangerHigh.value.asFloat,// 33
-								~geneSampleButton.value.asFloat,// 34
-								~geneReverseRanger.lo,
-								~geneReverseRanger.hi,
-								~geneReverseButton.value.asFloat,
-								~geneLoopRanger.lo,
-								~geneLoopRanger.hi,
-								~geneLoopButton.value.asFloat,
-								~geneOffsetRanger.lo,
-								~geneOffsetRanger.hi,
-								~geneOffsetButton.value.asFloat,
-								~geneEnvLevelRanger.lo,
-								~geneEnvLevelRanger.hi,
-								~geneEnvLevelButton.value.asFloat,
-								~geneEnvDureeRanger.lo,
-								~geneEnvDureeRanger.hi,
-								~geneEnvDureeButton.value.asFloat,
-								~geneSynthRangerLow.value.asFloat,// 50
-								~geneSynthRangerHigh.value.asFloat,// 51
-								~geneSynthButton.value.asFloat,// 52
-								~geneControlsRanger.lo,
-								~geneControlsRanger.hi,
-								~geneControlsButton.value.asFloat,
-								~geneAudioOutRanger.lo,
-								~geneAudioOutRanger.hi,
-								~geneAudioOutButton.value.asFloat,
-								~geneMidiOutRanger.lo,
-								~geneMidiOutRanger.hi,
-								~geneMidiOutButton.value.asFloat,
-								~geneInputRangerLow.value.asFloat,// 62
-								~geneInputRangerHigh.value.asFloat,// 63
-								~geneInputButton.value.asFloat,// 64
-								~geneLoopMusicRanger.lo,
-								~geneLoopMusicRanger.hi,
-								~geneLoopMusicButton.value.asFloat,
-								~geneBufferMusicRanger.lo,
-								~geneBufferMusicRanger.hi,
-								~geneBufferMusicButton.value.asFloat,
-								~geneChordMaxRanger.lo,
-								~geneChordMaxRanger.hi,
-								~geneChordMaxButton.value.asFloat,
-								~geneChordDurRanger.lo,
-								~geneChordDurRanger.hi,
-								~geneChordDurButton.value.asFloat,
-								~geneAlgorithm.lo,
-								~geneAlgorithm.hi,
-								~geneAlgorithmButton.value.asFloat,
-								~geneBand0.value.asFloat,// 80
-								~geneBand1.value.asFloat,
-								~geneBand2.value.asFloat,
-								~geneBand3.value.asFloat,
-								~geneBand4.value.asFloat,
-								~geneBand5.value.asFloat,
-								~geneBand6.value.asFloat,
-								~geneBand7.value.asFloat,
-								~geneBand8.value.asFloat,
-								~geneBand9.value.asFloat,
-								~geneBand10.value.asFloat,
-								~geneBand11.value.asFloat,
-								~geneBand12.value.asFloat,
-								~geneBandButton.value.asFloat,
-								// Preset
-									numPreset.asFloat];// 94*/
+									~soundsInstrMenu.value.asFloat,
+									~freqInstr.lo,
+									~freqInstr.hi,
+									~freqTransposeInstr.value,
+									~ampInstr.lo.clip(-120, 0),
+									~ampInstr.hi.clip(-120, 0),
+									~dureeInstr.lo,
+									~dureeInstr.hi,
+									~dureeTempoinstr.value,
+									~quantaMusicSlider.value,
+									// Music Controls
+									// Genes
+									~geneFreqRanger.lo,// 11
+									~geneFreqRanger.hi,
+									~geneFreqButton.value.asFloat,
+									~geneTransFreqRanger.lo,
+									~geneTransFreqRanger.hi,
+									~geneTransFreqButton.value.asFloat,
+									~geneAmpRanger.lo.clip(-120, 0),
+									~geneAmpRanger.hi.clip(-120, 0),
+									~geneAmpButton.value.asFloat,
+									~geneDureeRanger.lo,
+									~geneDureeRanger.hi,
+									~geneDureeButton.value.asFloat,
+									~geneMulDureeRanger.lo,
+									~geneMulDureeRanger.hi,
+									~geneMulDureeButton.value.asFloat,
+									~genePanRanger.lo,
+									~genePanRanger.hi,
+									~genePanButton.value.asFloat,
+									~geneBufferRanger.lo,
+									~geneBufferRanger.hi,
+									~geneBufferButton.value.asFloat,
+									~geneSampleRangerLow.value.asFloat,// 32
+									~geneSampleRangerHigh.value.asFloat,// 33
+									~geneSampleButton.value.asFloat,// 34
+									~geneReverseRanger.lo,
+									~geneReverseRanger.hi,
+									~geneReverseButton.value.asFloat,
+									~geneLoopRanger.lo,
+									~geneLoopRanger.hi,
+									~geneLoopButton.value.asFloat,
+									~geneOffsetRanger.lo,
+									~geneOffsetRanger.hi,
+									~geneOffsetButton.value.asFloat,
+									~geneEnvLevelRanger.lo,
+									~geneEnvLevelRanger.hi,
+									~geneEnvLevelButton.value.asFloat,
+									~geneEnvDureeRanger.lo,
+									~geneEnvDureeRanger.hi,
+									~geneEnvDureeButton.value.asFloat,
+									~geneSynthRangerLow.value.asFloat,// 50
+									~geneSynthRangerHigh.value.asFloat,// 51
+									~geneSynthButton.value.asFloat,// 52
+									~geneControlsRanger.lo,
+									~geneControlsRanger.hi,
+									~geneControlsButton.value.asFloat,
+									~geneAudioOutRanger.lo,
+									~geneAudioOutRanger.hi,
+									~geneAudioOutButton.value.asFloat,
+									~geneMidiOutRanger.lo,
+									~geneMidiOutRanger.hi,
+									~geneMidiOutButton.value.asFloat,
+									~geneInputRangerLow.value.asFloat,// 62
+									~geneInputRangerHigh.value.asFloat,// 63
+									~geneInputButton.value.asFloat,// 64
+									~geneLoopMusicRanger.lo,
+									~geneLoopMusicRanger.hi,
+									~geneLoopMusicButton.value.asFloat,
+									~geneBufferMusicRanger.lo,
+									~geneBufferMusicRanger.hi,
+									~geneBufferMusicButton.value.asFloat,
+									~geneChordMaxRanger.lo,
+									~geneChordMaxRanger.hi,
+									~geneChordMaxButton.value.asFloat,
+									~geneChordDurRanger.lo,
+									~geneChordDurRanger.hi,
+									~geneChordDurButton.value.asFloat,
+									~geneAlgorithm.lo,
+									~geneAlgorithm.hi,
+									~geneAlgorithmButton.value.asFloat,
+									~geneBand0.value.asFloat,// 80
+									~geneBand1.value.asFloat,
+									~geneBand2.value.asFloat,
+									~geneBand3.value.asFloat,
+									~geneBand4.value.asFloat,
+									~geneBand5.value.asFloat,
+									~geneBand6.value.asFloat,
+									~geneBand7.value.asFloat,
+									~geneBand8.value.asFloat,
+									~geneBand9.value.asFloat,
+									~geneBand10.value.asFloat,
+									~geneBand11.value.asFloat,
+									~geneBand12.value.asFloat,
+									~geneBandButton.value.asFloat,
+									// Preset
+									numPreset.asFloat];// 94
 								// Sender
 								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
 							}.defer;
@@ -2304,150 +2336,13 @@ G                       Init Genome Agent (solo).
 		// Analyse Midi-IN
 		~fonctionOSCMidiIn={
 			~oscMidiIn = MIDIdef.noteOn(\midiNoteOn, {arg amp, freq, canal, src;
-				var duree=0, time=Main.elapsedTime, mfcc, data;
-				duree = time - ~lastTimeAnalyse;
 				// Normalise
-				freq=freq/127;
-				amp=amp/127;
-				amp=amp.clip(0.001, 1.0);
-				if(duree > ~dureeanalysemax,
-					{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~compteurAnalyse=0;
-						~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})});
-						~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;
-				});
-				if(~freqTampon !=nil and: {~ampTampon != nil},
-					{if(~listefreq.size <= ~listedatasizein,
-						{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
-							~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
-						},
-						{
-							if(~compteurAnalyse >= ~listedatasizein, {~compteurAnalyse=0;
-								~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})});
-							});
-							~listefreq.wrapPut(~compteurAnalyse,~freqTampon);
-							~listeamp.wrapPut(~compteurAnalyse,~ampTampon);
-							~listeduree.wrapPut(~compteurAnalyse,duree);
-							~listeID.wrapPut(~compteurAnalyse, 1.0.rand);
-							~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
-							~compteurAnalyse=~compteurAnalyse+1});
-				});
-				~freqTampon=freq;~ampTampon=amp;~lastTimeAnalyse=time;
-				if(duree > ~tempsmaxsignal , // ici duree silence
-					{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[]; ~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;~compteurAnalyse=0;
-						~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})}); ~lastTimeAnalyse=time});
-
-				/*// WEKINATOR
-				mfcc = msg[9..];
-
-				//Sender
-				sender.sendMsg("/wek/inputs", *mfcc[0..]);
-
-				if(flagStreamMFCC != 'wek',
-				{
-				{
-				// Music Controls
-				data = data.add(~synthDefInstrMenu.value.asFloat);// 0
-				data = data.add(~soundsInstrMenu.value.asFloat);
-				data = data.add(~freqInstr.lo);
-				data = data.add(~freqInstr.hi);
-				data = data.add(~freqTransposeInstr.value);
-				data = data.add(~ampInstr.lo);
-				data = data.add(~ampInstr.hi);
-				data = data.add(~dureeInstr.lo);
-				data = data.add(~dureeInstr.hi);
-				data = data.add(~dureeTempoinstr.value);
-				data = data.add(~quantaMusicSlider.value);
-				// Genes
-				data = data.add(~geneFreqRanger.lo);// 11
-				data = data.add(~geneFreqRanger.hi);
-				data = data.add(~geneFreqButton.value.asFloat);
-				/*data = data.add(~geneTransFreqRanger.lo);
-				data = data.add(~geneTransFreqRanger.hi);
-				data = data.add(~geneTransFreqButton.value);
-				data = data.add(~geneAmpRanger.lo);
-				data = data.add(~geneAmpRanger.hi);
-				data = data.add(~geneAmpButton.value);
-				data = data.add(~geneDureeRanger.lo);
-				data = data.add(~geneDureeRanger.hi);
-				data = data.add(~geneDureeButton.value);
-				data = data.add(~geneMulDureeRanger.lo);
-				data = data.add(~geneMulDureeRanger.hi);
-				data = data.add(~geneMulDureeButton.value);
-				data = data.add(~genePanRanger.lo);
-				data = data.add(~genePanRanger.hi);
-				data = data.add(~genePanButton.value);
-				data = data.add(~geneBufferRanger.lo);
-				data = data.add(~geneBufferRanger.hi);
-				data = data.add(~geneBufferButton.value);
-				data = data.add(~geneSampleRangerLow.value);// 32
-				data = data.add(~geneSampleRangerHigh.value);// 33
-				data = data.add(~geneSampleButton.value);// 34
-				data = data.add(~geneReverseRanger.lo);
-				data = data.add(~geneReverseRanger.hi);
-				data = data.add(~geneReverseButton.value);
-				data = data.add(~geneLoopRanger.lo);
-				data = data.add(~geneLoopRanger.hi);
-				data = data.add(~geneLoopButton.value);
-				data = data.add(~geneOffsetRanger.lo);
-				data = data.add(~geneOffsetRanger.hi);
-				data = data.add(~geneOffsetButton.value);
-				data = data.add(~geneEnvLevelRanger.lo);
-				data = data.add(~geneEnvLevelRanger.hi);
-				data = data.add(~geneEnvLevelButton.value);
-				data = data.add(~geneEnvDureeRanger.lo);
-				data = data.add(~geneEnvDureeRanger.hi);
-				data = data.add(~geneEnvDureeButton.value);
-				data = data.add(~geneSynthRangerLow.value);// 50
-				data = data.add(~geneSynthRangerHigh.value);// 51
-				data = data.add(~geneSynthButton.value);// 52
-				data = data.add(~geneControlsRanger.lo);
-				data = data.add(~geneControlsRanger.hi);
-				data = data.add(~geneControlsButton.value);
-				data = data.add(~geneAudioOutRanger.lo);
-				data = data.add(~geneAudioOutRanger.hi);
-				data = data.add(~geneAudioOutButton.value);
-				data = data.add(~geneMidiOutRanger.lo);
-				data = data.add(~geneMidiOutRanger.hi);
-				data = data.add(~geneMidiOutButton.value);
-				data = data.add(~geneInputRangerLow.value);// 62
-				data = data.add(~geneInputRangerHigh.value);// 63
-				data = data.add(~geneInputButton.value);// 64
-				data = data.add(~geneLoopMusicRanger.lo);
-				data = data.add(~geneLoopMusicRanger.hi);
-				data = data.add(~geneLoopMusicButton.value);
-				data = data.add(~geneBufferMusicRanger.lo);
-				data = data.add(~geneBufferMusicRanger.hi);
-				data = data.add(~geneBufferMusicButton.value);
-				data = data.add(~geneChordMaxRanger.lo);
-				data = data.add(~geneChordMaxRanger.hi);
-				data = data.add(~geneChordMaxButton.value);
-				data = data.add(~geneChordDurRanger.lo);
-				data = data.add(~geneChordDurRanger.hi);
-				data = data.add(~geneChordDurButton.value);
-				data = data.add(~geneAlgorithm.lo);
-				data = data.add(~geneAlgorithm.hi);
-				data = data.add(~geneAlgorithmButton.value);
-				data = data.add(~geneBand0.value);// 80
-				data = data.add(~geneBand1.value);
-				data = data.add(~geneBand2.value);
-				data = data.add(~geneBand3.value);
-				data = data.add(~geneBand4.value);
-				data = data.add(~geneBand5.value);
-				data = data.add(~geneBand6.value);
-				data = data.add(~geneBand7.value);
-				data = data.add(~geneBand8.value);
-				data = data.add(~geneBand9.value);
-				data = data.add(~geneBand10.value);
-				data = data.add(~geneBand11.value);
-				data = data.add(~geneBand12.value);
-				data = data.add(~geneBandButton.value);
-				// Preset
-				data = data.add(numPreset.asFloat);// 94*/
-				// Sender
-				sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-				}.defer(0);
-				});*/
-
+				s.bind{
+					~groupeAnalyse.set(\note, freq.midicps, \amp, amp / 127, \trigger, 1);
+					s.sync;
+					~groupeAnalyse.set(\note, freq.midicps, \amp, 0, \trigger, 0);
+					s.sync;
+				};
 			}, (0..127), ~canalMidiIn.asInteger);
 			~oscMidiIn;
 		};
@@ -5163,20 +5058,17 @@ G                       Init Genome Agent (solo).
 						~sounds.size.do({arg i; ~recSamples.wrapAt(i).run(true);~recFiles.wrapAt(i).run(false)});
 						~listesamplein=~recSamples;
 						~agents.do({arg i; ~synthRecAudioAgents.wrapAt(i).run(true);~synthRecFileAgents.wrapAt(i).run(false)});
-						MIDIIn.disconnect;
+						//MIDIIn.disconnect;
 					},
 					'File', {~audioIn.value.run(false);~tempoIn.value.run(false);
 						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~audioFile.value.run(true);~tempoFile.value.run(true);~synthPlayFile.value.run(true);~synthPlayFile.set('trigger', 1);nil});
 						~sounds.size.do({arg i; ~recSamples.wrapAt(i).run(false); ~recFiles.wrapAt(i).run(true)});
 						~listesamplein=~recFiles;
 						~agents.do({arg i; ~synthRecAudioAgents.wrapAt(i).run(false);~synthRecFileAgents.wrapAt(i).run(true)});
-						MIDIIn.disconnect;
-					},
-					'Midi', {~audioIn.value.run(false);~audioFile.value.run(false);~synthPlayFile.value.run(false);~tempoIn.value.run(false);~tempoFile.value.run(false);
-						MIDIIn.connect;
+						//MIDIIn.disconnect;
 					},
 					'Off', {~audioIn.value.run(false);~audioFile.value.run(false);~synthPlayFile.value.run(false);
-						MIDIIn.disconnect;
+						//MIDIIn.disconnect;
 					}
 				);
 				// Set on Routines
@@ -5293,7 +5185,6 @@ G                       Init Genome Agent (solo).
 						~synthRecAudioAgents.wrapAt(i).set(\reclevel1, ~levelsValues.wrapAt(0), \reclevel2, ~levelsValues.wrapAt(1));
 					});
 					~flagEntreeMode='Audio';
-					MIDIIn.disconnect;
 					~canalMidiInSlider.enabled_(false);~offsetFileIn.enabled_(false);
 					~volumeFileIn.enabled_(false)},
 				'File', {~audioIn.value.run(false);~tempoIn.value.run(false);~keyCodeSourceIn=1;
@@ -5309,17 +5200,13 @@ G                       Init Genome Agent (solo).
 						~synthRecFileAgents.wrapAt(i).set(\reclevel1, ~levelsValues.wrapAt(0), \reclevel2, ~levelsValues.wrapAt(1));
 					});
 					~flagEntreeMode='File';
-					MIDIIn.disconnect;
+					//MIDIIn.disconnect;
 					~canalMidiInSlider.enabled_(false);~offsetFileIn.enabled_(true);
 					~volumeFileIn.enabled_(true)},
-				'Midi', {MIDIIn.connect;~keyCodeSourceIn=2;
-					~canalMidiInSlider.enabled_(true);~tempoSlider.valueAction = 60;
-					//~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
-				},
 				'Off',{
 					//~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];
 					~keyCodeSourceIn=3;
-					MIDIIn.disconnect;
+					//MIDIIn.disconnect;
 					~canalMidiInSlider.enabled_(false)}
 			);
 			if(~flagMidiOut == 'on', {16.do({arg canal; ~midiOut.allNotesOff(canal); if(flagVST == 'on', {~fxVST.midi.allNotesOff(canal)})})});//MIDI setup off
@@ -5338,7 +5225,7 @@ G                       Init Genome Agent (solo).
 			~agents.do({arg agent; ~canalMidiOutAgent.wrapPut(agent, canal.value - 1)});
 		};
 		~canalMidiOutSlider.enabled_(false);// Attention si MIDI on alors comment this line
-		~algoAnalyse = PopUpMenu(~wp,Rect(10, 10, 100, 20)).items=["Onsets","Pitch", "Pitch2", "KeyTrack", "Keyboard"];
+		~algoAnalyse = PopUpMenu(~wp,Rect(10, 10, 100, 20)).items=["Onsets","Pitch", "Pitch2", "KeyTrack", "Keyboard","MIDI"];
 		~algoAnalyse.action = {arg view;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~algoAnalyse", view.value)});
 			~seuilInSlider.valueAction_(~paraAlgoAnalyseAudio.wrapAt(view.value).wrapAt(0));
@@ -5840,15 +5727,15 @@ G                       Init Genome Agent (solo).
 
 		StaticText(~wp, Rect(10,10, 150, 20)).string_("Mean State System").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
 		~viewgenomes = StaticText(~wp, Rect(10,10, 1000, 20)).string_(~genomes.mean.asString).stringColor_(Color.yellow);
-		~viewpopulation = StaticText(~wp, Rect(10,10, 65, 20)).string_("Crew"+~agents.asString).stringColor_(Color.yellow);
-		~viewagesagents = StaticText(~wp, Rect(10,10, 65, 20)).string_("Age"+~ages.mediane.asString).stringColor_(Color.yellow);
+		~viewpopulation = StaticText(~wp, Rect(10,10, 50, 20)).string_("Crew"+~agents.asString).stringColor_(Color.yellow);
+		~viewagesagents = StaticText(~wp, Rect(10,10, 40, 20)).string_("Age"+~ages.mediane.asString).stringColor_(Color.yellow);
 		~viewviesagents = StaticText(~wp, Rect(10,10, 80, 20)).string_("Life"+~vies.mediane.asString).stringColor_(Color.yellow);
 		~viewenfantsagents = StaticText(~wp, Rect(10,10, 80, 20)).string_("Children"+~enfants.mediane.asString).stringColor_(Color.yellow);
 		~viewvoisins = StaticText(~wp, Rect(10,10, 100, 20)).string_("Neightboring").stringColor_(Color.yellow);
-		~viewsignaux = StaticText(~wp, Rect(10,10, 80, 20)).string_("Signal").stringColor_(Color.yellow);
+		~viewsignaux = StaticText(~wp, Rect(10,10, 60, 20)).string_("Signal").stringColor_(Color.yellow);
 		~viewout = StaticText(~wp, Rect(10,10, 80, 20)).string_("Music OUT").stringColor_(Color.yellow);
 		~viewin = StaticText(~wp, Rect(10,10, 80, 20)).string_("Signal IN"+~compteurAnalyse.asString).stringColor_(Color.yellow);
-		~stateOSC = StaticText(~wp, Rect(10, 100, 50, 20)).string_("OSC Off").stringColor_(Color.yellow);
+		~stateOSC = StaticText(~wp, Rect(10, 80, 40, 20)).string_("osc Off").stringColor_(Color.yellow);
 		~stateOSC.align = \center;
 		~stateOSC.stringColor_(Color.blue).font_(Font("Georgia", 12));
 		~stateOSC.background = Color.grey;
@@ -5857,20 +5744,27 @@ G                       Init Genome Agent (solo).
 		Button(~wp, Rect(0, 0, 70, 20)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
-				1, {sender.sendMsg("/wekinator/control/startRecording")}
+				1, {sender.sendMsg("/wekinator/control/startRecording");
+					~wp.view.children.at(97).valueAction = 0;// run
+				}
 			);
 		});
 		Button(~wp, Rect(0, 0, 70, 20)).states_([["WekTrain On", Color.magenta]]).action_({|view|
-			sender.sendMsg("/wekinator/control/train")
+			sender.sendMsg("/wekinator/control/train");
+			~wp.view.children.at(95).valueAction = 0;// rec
+			~wp.view.children.at(97).valueAction = 0;// run
 		});
 		Button(~wp, Rect(0, 0, 70, 20)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
 				},
 				1, {flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+					~wp.view.children.at(95).valueAction = 0;// rec
 				}
 			);
 		});
+		EZKnob(~wp, 75 @ 20, "WTD", ControlSpec(0.01, 60),
+			{|ez| timeWekData = ez.value}, 0.0625, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 		EZKnob(~wp, 75 @ 20, "WTP", ControlSpec(1, 60),
 			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 	}
@@ -6189,7 +6083,7 @@ G                       Init Genome Agent (solo).
 				});
 				// key h-> switch source in pour analyse ->
 				if(modifiers==0 and: {unicode==104} and: {keycode==4},{~keyCodeSourceIn = ~keyCodeSourceIn + 1;
-					if(~keyCodeSourceIn > 3, {~keyCodeSourceIn=0});
+					if(~keyCodeSourceIn > 2, {~keyCodeSourceIn=0});
 					~entree.valueAction=~keyCodeSourceIn});
 				// key ctrl h-> switch source in pour analyse <-
 				if(modifiers==262144 and: {unicode==8} and: {keycode==4},{~keyCodeSourceIn = ~keyCodeSourceIn - 1;
@@ -6481,7 +6375,9 @@ G                       Init Genome Agent (solo).
 						if(~algoAnalyse.value == 1, {~algoAnalyse.valueAction_(2)}, {
 							if(~algoAnalyse.value == 2, {~algoAnalyse.valueAction_(3)}, {
 								if(~algoAnalyse.value == 3, {~algoAnalyse.valueAction_(4)}, {
-									if(~algoAnalyse.value == 4, {~algoAnalyse.valueAction_(0)});
+									if(~algoAnalyse.value == 4, {~algoAnalyse.valueAction_(5)},
+										if(~algoAnalyse.value == 5, {~algoAnalyse.valueAction_(0)});
+									);
 								});
 							});
 						});
@@ -7925,6 +7821,21 @@ G                       Init Genome Agent (solo).
 					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).add;
 
+			// MIDI
+			SynthDef("OSC WekAgents MIDI",
+				{arg in=0, note=60, amp=0.5, trigger = 0;
+					var input, centroid, flatness, fft, energy, key, flux, array;
+					input= SoundIn.ar(in);
+					fft = FFT(LocalBuf(1024, 1), input);
+					array = MFCC.kr(fft);// 13 a 40 Bands
+					centroid = SpecCentroid.kr(fft);
+					flatness =  SpecFlatness.kr(fft);
+					energy =  SpecPcile.kr(fft);
+					flux =  FFTFlux.kr(fft);
+					note = note.cpsmidi / 127;
+					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+			}).add;
+
 			// New Analyse File
 			SynthDef("OSC WekAgents File Onsets",
 				{arg  busFileIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
@@ -8010,6 +7921,21 @@ G                       Init Genome Agent (solo).
 
 			// Keyboard file
 			SynthDef("OSC WekAgents File Keyboard",
+				{arg busFileIn, note=60, amp=0.5, trigger = 0;
+					var input, centroid, flatness, fft, energy, key, flux, array;
+					input = In.ar(busFileIn);
+					fft = FFT(LocalBuf(1024, 1), input);
+					array = MFCC.kr(fft);// 13 a 40 Bands
+					centroid = SpecCentroid.kr(fft);
+					flatness =  SpecFlatness.kr(fft);
+					energy =  SpecPcile.kr(fft);
+					flux =  FFTFlux.kr(fft);
+					note = note.cpsmidi / 127;
+					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+			}).add;
+
+			// Keyboard file
+			SynthDef("OSC WekAgents File MIDI",
 				{arg busFileIn, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux, array;
 					input = In.ar(busFileIn);

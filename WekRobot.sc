@@ -2,7 +2,7 @@
 
 WekRobot {
 
-	classvar < s, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWek, timeWekPreset;
+	classvar < s, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, listeWekPreset;
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
@@ -300,6 +300,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
 					});
 			}),
+			MenuAction("List
+Preset Wek",
+				{
+					SCRequestString("[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]", "listeWekPreset", {arg index;
+						listeWekPreset = index.interpret;
+					});
+			});
 		);
 		MainMenu.register(menuWek.title_("Wekinator"), "WekRobotTools");
 
@@ -783,6 +790,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			numPreset = 0;
 			lastNumPreset = 0;
 			timeWekPreset = 4;
+			40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 			// Keyboard
 			keyboardTranslateBefore = 0;
@@ -1669,7 +1677,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~initOSCresponder.value;// Init OSC Responder
 
 		~lastTimeAudio=Main.elapsedTime;// Init time analyse
-		lastTimeWek = Main.elapsedTime;
+		lastTimeWekPreset = Main.elapsedTime;
 		~flagEntreeMode='Audio IN';
 		~freqbefore=[];~ampbefore=[];~dureebefore=[];~freqtampon=[];~amptampon=[];~listeaudiofreq=[];~listeaudioamp=[];~listeaudioduree=[];~lastDureeInstrAudio=[];
 		~nombreinstrument.do({arg instr;	~freqbefore=~freqbefore.add(0);~ampbefore=~ampbefore.add(0);~dureebefore=~dureebefore.add(0);~freqtampon=~freqtampon.add(nil);~amptampon=~amptampon.add(nil);~listeaudiofreq=~listeaudiofreq.add([]);~listeaudioamp=~listeaudioamp.add([]);~listeaudioduree=~listeaudioduree.add([]);~lastDureeInstrAudio=~lastDureeInstrAudio.add(~lastTimeAudio)});
@@ -1678,20 +1686,19 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
 			var wekOut, file, preset, v, p;
 
-			msg.postcs;
 			wekOut = msg[1..];
 
 			// Preset
 			numPreset = (wekOut[0] + 0.5).asInteger.clip(1, 40);
 
-			if(numPreset != lastNumPreset and: {(time - lastTimeWek) > timeWekPreset},
+			if(numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset},
 				// load new preset
 				{
 					{
 						if(File.exists(~nompathdata++"instruments"+numPreset.asInteger.asString++".scd"),
 							{
 								lastNumPreset = numPreset;
-								lastTimeWek = time;
+								lastTimeWekPreset = time;
 								~fonctionLoadInstruments.value(numPreset.asInteger);
 						});
 					}.defer(0);
@@ -1704,7 +1711,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			var freq=0, amp=0, duree=0, flag, synth, flagBand, mfcc;
 			if(~flagEntreeMode == 'Audio IN' or: {~flagEntreeMode == 'File IN'},
 				{// Normalise
-					msg.postcs;
 					duree = time - ~lastTimeAudio;
 					freq=msg.wrapAt(3);
 					freq=freq.clip(0,1);
@@ -1841,76 +1847,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~lastTimeMidi=[]; 16.do({arg i; ~lastTimeMidi=~lastTimeMidi.add(Main.elapsedTime)});//Init duree canaux
 		~fonctionOSCMidiIn={
 			~oscMidiIn=MIDIdef.noteOn(\midiNoteOn, {arg amp, freq, canal, src;
-				var duree, time=Main.elapsedTime, synth, flagBand;
-				if(~flagEntreeMidi == 'on', {
-					duree = time - ~lastTimeMidi.wrapAt(canal);
-					freq=freq/127;
-					amp=amp/127;
-					~nombreinstrument.do({arg instr;
-						flagBand = 0;
-						if(~canalmidiin.wrapAt(instr) == canal,
-							{
-								if(~dureeanalysesil.wrapAt(instr) <= duree or: {duree >= ~dureeanalysemax.wrapAt(instr)}, // ici duree silence
-									{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, []);~freqtamponMidi.wrapPut(instr, nil);~amptamponMidi.wrapPut(instr,nil);~freqbeforeMidi.wrapPut(instr,0);~ampbeforeMidi.wrapPut(instr,0);~dureebeforeMidi.wrapPut(instr,0);~lastTimeMidi.wrapPut(canal,  time);~lastDureeInstrMidi.wrapPut(instr, time);
-										// Set MIDI Off
-										if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(instr).value >= 0}, {
-											~freqMidi.wrapAt(instr).size.do({arg index; ~midiOut.notecommandOff(~canalMidiOutInstr.wrapAt(instr), ~freqMidi.wrapAt(instr).wrapAt(index), 0)});
-										});
-										(~numFhzBand + 1).do({arg b;
-											synth = ~lastTimeBand.at(instr); synth.put(b, time);
-											~lastTimeBand.put(instr, synth);
-										});
-								});
-								if(~listemidifreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr) or: {~listemidiamp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~listemididuree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr)} or: {~dureeanalysemax.wrapAt(instr) <= duree},
-									{~listemidifreq.wrapPut(instr, []);~listemidiamp.wrapPut(instr, []);~listemididuree.wrapPut(instr, [])});
-								// MIDI BAND
-								if(~freqtamponMidi.wrapAt(instr) !=nil and: {~amptamponMidi.wrapAt(instr) != nil},
-									{
-										if(~flagSynthBand.at(instr) == 'on' and: {~flagBandSynth.at(instr).sum > 0},
-											{
-												for(1, ~numFhzBand.at(instr), {arg b;
-													if(~flagBandSynth.at(instr).at(b) == 1,
-														{
-															if((time - ~lastTimeBand.at(instr).at(b)) <= ~dureeanalysesil.wrapAt(instr),
-																{
-																	if((~freqtamponMidi.wrapAt(instr) * 127) > ~bandFHZ.at(instr).wrapAt(b).at(0) and: {(~freqtamponMidi.wrapAt(instr) * 127) < ~bandFHZ.at(instr).wrapAt(b).at(1)},
-																		{
-																			~listemidifreq.wrapPut(instr, ~listemidifreq.wrapAt(instr).add(~freqtamponMidi.wrapAt(instr)));
-																			~listemidiamp.wrapPut(instr, ~listemidiamp.wrapAt(instr).add(~amptamponMidi.wrapAt(instr)));
-																			~listemididuree.wrapPut(instr,~listemididuree.wrapAt(instr).add(duree));
-																			~freqbeforeMidi.wrapPut(instr, ~freqtamponMidi.wrapAt(instr));~ampbeforeMidi.wrapPut(instr, ~amptamponMidi.wrapAt(instr));~dureebeforeMidi.wrapPut(instr, ~duree.wrapAt(instr));
-																			synth = ~lastTimeBand.at(instr); synth.put(b, time);
-																			~lastTimeBand.put(instr, synth);
-																		},
-																		{
-																			flagBand = flagBand + 1;
-																			synth = ~lastTimeBand.at(instr); synth.put(b, time);
-																			~lastTimeBand.put(instr, synth);
-																	});
-															});
-													});
-												});
-											},
-											{
-												~listemidifreq.wrapPut(instr, ~listemidifreq.wrapAt(instr).add(~freqtamponMidi.wrapAt(instr)));
-												~listemidiamp.wrapPut(instr, ~listemidiamp.wrapAt(instr).add(~amptamponMidi.wrapAt(instr)));
-												~listemididuree.wrapPut(instr,~listemididuree.wrapAt(instr).add(duree));
-												~freqbeforeMidi.wrapPut(instr, ~freqtamponMidi.wrapAt(instr));~ampbeforeMidi.wrapPut(instr, ~amptamponMidi.wrapAt(instr));~dureebeforeMidi.wrapPut(instr, ~duree.wrapAt(instr));
-										});
-								});
-								~freqtamponMidi.wrapPut(instr, freq);~amptamponMidi.wrapPut(instr, amp);~lastTimeMidi.wrapPut(canal, time);~lastDureeInstrMidi.wrapPut(instr, time);
-						});
-					});
-					/*// WEKINATOR
-					mfcc = msg[5..];
-					//Sender
-					sender.sendMsg("/wek/inputs", *mfcc[0..]);
-
-					if(flagStreamMFCC != 'wek',
-						{
-							sender.sendMsg("/wekinator/control/outputs", numPreset.asFloat);
-					});*/
-				});
+				// Normalise
+				s.bind{
+					~groupeAnalyse.set(\note, freq.midicps, \amp, amp / 127, \trigger, 1);
+					s.sync;
+					~groupeAnalyse.set(\note, freq.midicps, \amp, 0, \trigger, 0);
+					s.sync;
+				};
 			}, (0..127), ~canalmidiin.asInteger);
 			~oscMidiIn;
 		};
@@ -3946,7 +3889,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		})};
 		~wg.view.decorator.nextLine;
 		// algo analyse
-		~algoAnalyse = PopUpMenu(~wg,Rect(0,0,120,18)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.white).items=["Onsets","Pitch","Pitch2","KeyTrack","Keyboard"];
+		~algoAnalyse = PopUpMenu(~wg,Rect(0,0,120,18)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.white).items=["Onsets","Pitch","Pitch2","KeyTrack","Keyboard", "MIDI"];
 		~algoAnalyse.action = {|view| ~writepartitions.value(nil,'control panel normal','off',"~algoAnalyse",view.value);
 			~flagAlgorithm = view.value;
 			~seuilanalyse.valueAction_(~paraAlgoAnalyseAudio.wrapAt(view.value).wrapAt(0));
@@ -4051,6 +3994,25 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~audioFile=Synth.newPaused("OSC WekRobot Keyboard File", [\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
 						~audioIn=Synth.newPaused("OSC WekRobot Keyboard", [\trigger, 0], ~groupeAnalyse, \addToTail);
+						s.sync;
+						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
+						s.sync;
+						if(~flagEntreeMode == 'File IN' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.run(true);~audioIn.value.run(false);~tempoIn.value.run(false);~tempoFile.value.run(true)});
+						s.sync;
+					};
+				},
+				5, {
+					s.bind{
+						~audioIn.value.run(false); ~audioFile.value.run(false);~synthPlayFile.run(false);
+						~tempoIn.value.run(false);~tempoFile.value.run(false);
+						s.sync;
+						~audioIn.free;
+						s.sync;
+						~audioFile.free;
+						s.sync;
+						~audioFile=Synth.newPaused("OSC WekRobot MIDI File", [\trigger, 0], ~groupeAnalyse, \addToTail);
+						s.sync;
+						~audioIn=Synth.newPaused("OSC WekRobot MIDI", [\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
 						s.sync;
@@ -4302,17 +4264,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		Button(~wg, Rect(0, 0, 70, 18)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
-				1, {sender.sendMsg("/wekinator/control/startRecording")}
+				1, {sender.sendMsg("/wekinator/control/startRecording");
+					~wg.view.children.at(36).valueAction = 0;// run
+				}
 			);
 		});
 		Button(~wg, Rect(0, 0, 70, 18)).states_([["WekTrain On", Color.magenta]]).action_({|view|
-			sender.sendMsg("/wekinator/control/train")
+			sender.sendMsg("/wekinator/control/train");
+			~wg.view.children.at(34).valueAction = 0;// run
+			~wg.view.children.at(36).valueAction = 0;// run
 		});
 		Button(~wg, Rect(0, 0, 70, 18)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
 				},
 				1, {flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+					~wg.view.children.at(34).valueAction = 0;// run
 				}
 			);
 		});
@@ -4363,26 +4330,26 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{
 					numPreset = item.value; lastNumPreset = item.value;
 					file=File(~nompathdata++"instruments"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;
-				for(0, ~nombreinstrument-1, {arg ii;
-					~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
-				});
-				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
-				//if(~startsysteme.value==1, {
-				~tempoSystem.schedAbs(duree, {
-					//+ Load datas Control Panel
-					{~readcontrolpanel.value(datas.last.at(0))}.defer;
 					for(0, ~nombreinstrument-1, {arg ii;
-						~routineinstrument.wrapAt(ii).stop;
-						// Set MIDI Off
-						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(ii).value >= 0}, {
-							~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0);
-								if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+						~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
+					});
+					if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
+					//if(~startsysteme.value==1, {
+					~tempoSystem.schedAbs(duree, {
+						//+ Load datas Control Panel
+						{~readcontrolpanel.value(datas.last.at(0))}.defer;
+						for(0, ~nombreinstrument-1, {arg ii;
+							~routineinstrument.wrapAt(ii).stop;
+							// Set MIDI Off
+							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(ii).value >= 0}, {
+								~freqMidi.wrapAt(ii).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0);
+									if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(ii), ~freqMidi.wrapAt(ii).wrapAt(index), 0)});
+								});
 							});
-						});
-						~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
-						{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
-						~routineinstrument.wrapAt(ii).play(quant: Quant.new(1))}); nil});
-				//});
+							~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);
+							{~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on')}.defer;
+							~routineinstrument.wrapAt(ii).play(quant: Quant.new(1))}); nil});
+					//});
 			})});
 		};
 
@@ -5947,6 +5914,16 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
 			}).send(s);
 
+			// MIDI Audio
+			SynthDef("OSC WekRobot MIDI",
+				{arg in=0,note=60, amp=0.5, trigger = 0;
+					var array, input;
+					input= Mix(Limiter.ar(SoundIn.ar(in)));
+					note = note.cpsmidi / 127;
+					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
+					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
+			}).send(s);
+
 			SynthDef("OSC WekRobot File Onsets",
 				{arg bufferplay, busFileIn, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, inputFilter, array;
@@ -6028,6 +6005,16 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			// Keyboard
 			SynthDef("OSC WekRobot Keyboard File",
+				{arg in=0, note=60, amp=0.5, trigger = 0;
+					var input, array;
+					input = In.ar(in);
+					note = note.cpsmidi / 127;
+					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
+					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
+			}).send(s);
+
+			// MIDI
+			SynthDef("OSC WekRobot MIDI File",
 				{arg in=0, note=60, amp=0.5, trigger = 0;
 					var input, array;
 					input = In.ar(in);
