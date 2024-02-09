@@ -1691,7 +1691,7 @@ Preset Wek",
 			// Preset
 			numPreset = (wekOut[0] + 0.5).asInteger.clip(1, 40);
 
-			if(numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset},
+			if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 				// load new preset
 				{
 					{
@@ -4283,7 +4283,7 @@ Preset Wek",
 				}
 			);
 		});
-		EZKnob(~wg, 75 @ 15, "WTP", ControlSpec(1, 60),
+		EZKnob(~wg, 75 @ 15, "WTP", ControlSpec(0, 60),
 			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 
 		~listewindow=~listewindow.add(~windowMasterFX);

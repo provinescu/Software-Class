@@ -1388,7 +1388,7 @@ Preset Wek",
 
 				// Preset
 				numPreset = (wekOut[12] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset},
+				if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{
 						{
@@ -3080,7 +3080,7 @@ Preset Wek",
 		//NumberBox(windowControl, 50 @ 15).background_(Color.magenta).value_(4).action({|nb| timeWekPreset = nb.value});
 		EZKnob(windowControl, 85 @ 15, "WTD", ControlSpec(0.01, 60),
 			{|ez| timeWekData = ez.value}, 0.0625, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
-		EZKnob(windowControl, 85 @ 15, "WTP", ControlSpec(1, 60),
+		EZKnob(windowControl, 85 @ 15, "WTP", ControlSpec(0, 60),
 			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
 
 		// On Close
