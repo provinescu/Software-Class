@@ -3,7 +3,7 @@
 
 WekMatrix {
 
-	classvar  < s, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagStreamMFCC;
+	classvar  < s, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagStreamMFCC, flagWTD, flagWTP;
 
 	var synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuWekMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem;
 	var fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider;
@@ -161,6 +161,8 @@ WekMatrix {
 		lastNumPreset = 0;
 		timeWekPreset = 4;
 		timeWekData = 0.0625;
+		flagWTD = 'on';
+		flagWTP = 'on';
 		40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 		choiceSynth = [
@@ -1082,7 +1084,7 @@ Preset Wek",
 				// Range Band
 				if(item == 36, {data = data.add(rangeBand.value)});
 				// Wek no action
-				if(item == 37 or: {item == 38} or: {item == 39}, {nil});
+				if(item == 37 or: {item == 38} or: {item == 39} or: {item == 40} or: {item == 41} or: {item == 42} or: {item == 43}, {nil});
 			});
 			// Sortie Fonction Save Control
 			data.value;
@@ -1112,7 +1114,7 @@ Preset Wek",
 				if(item == 13 or: {item == 8} or: {item == 14} or: {item == 15},
 					{view.valueAction_(data.at(item).value)});
 				// No Action + Wek No Action
-				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33} or: {item == 37} or: {item == 38} or: {item == 39} or: {item == 40} or: {item == 41},
+				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33} or: {item == 37} or: {item == 38} or: {item == 39} or: {item == 40} or: {item == 41} or: {item == 42} or: {item == 43},
 					{nil});
 				// Range Band
 				if(item == 36, {rangeBand.valueAction = data.at(item).value});
@@ -1388,7 +1390,7 @@ Preset Wek",
 
 				// Preset
 				numPreset = (wekOut[12] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{
 						{
@@ -1404,7 +1406,7 @@ Preset Wek",
 							}, {"cancelled".postln});
 						}.defer(0);
 				});
-				if((time - lastTimeWekData) > timeWekData, {
+				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 					{
 						// Set Master Sliders Controls [pan, freq, transFreq, amp, duree, stretch, quant, root]
 						controlPanSlider.valueAction = wekOut[0..1].clip(-1, 1);
@@ -3077,11 +3079,19 @@ Preset Wek",
 				}
 			);
 		});
-		//NumberBox(windowControl, 50 @ 15).background_(Color.magenta).value_(4).action({|nb| timeWekPreset = nb.value});
-		EZKnob(windowControl, 85 @ 15, "WTD", ControlSpec(0.01, 60),
-			{|ez| timeWekData = ez.value}, 0.0625, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
-		EZKnob(windowControl, 85 @ 15, "WTP", ControlSpec(0, 60),
-			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
+		Button(windowControl, Rect(0, 0, 45, 15)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTD = 'off'},
+				1, {flagWTD = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowControl, 25 @ 15).value_(0.0625).action_({|ez| timeWekData = ez.value});
+
+		Button(windowControl, Rect(0, 0, 45, 15)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTP = 'off'},
+				1, {flagWTP = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowControl, 25 @ 15).value_(4).action_({|ez| timeWekPreset = ez.value});
 
 		// On Close
 		windowControl.onClose_({

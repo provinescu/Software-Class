@@ -2,7 +2,7 @@
 
 WekDensity {
 
-	classvar <> s, numPreset, lastNumPreset, lastTimeWekData, timeWekPreset, timeWekData, lastTimeWekPreset, listeWekPreset;
+	classvar <> s, numPreset, lastNumPreset, lastTimeWekData, timeWekPreset, timeWekData, lastTimeWekPreset, listeWekPreset, flagWTD, flagWTP;
 
 	var tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
 	var wekFreq, wekAmp, wekDur, wekCentroid, wekEnergy, wekFlux, wekFlatness;
@@ -247,6 +247,8 @@ WekDensity {
 		lastNumPreset = 0;
 		timeWekPreset = 4;
 		timeWekData = 0.0625;
+		flagWTD = 'on';
+		flagWTP = 'on';
 		40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 		// Audio Out
@@ -654,10 +656,10 @@ WekDensity {
 							// QPopUpMenu + QButton + EnvelopeView
 							if(data.at(item).at(0)  == "a PopUpMenu" or: {data.at(item).at(0) == "a EnvelopeView"} or: {data.at(item).at(0) == "an EnvelopeView"} or: 	{data.at(item).at(0) == "a Button"} or: {data.at(item).at(0) == "a QPopUpMenu"} or: {data.at(item).at(0) == "a QEnvelopeView"} or: 	{data.at(item).at(0) == "a QButton"} or: {data.at(item).at(0) == "a SCPopUpMenu"} or: {data.at(item).at(0) == "a SCEnvelopeView"} or: {data.at(item).at(0) == "a SCButton"},
 								{
-									if(index == 2 and: {item == 2 or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6}}, {nil},
+									if(index == 2 and: {item == 2 or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 7}}, {nil},
 										{view.valueAction_(data.at(item).at(1))})});
 							// NumberBox
-							if(data.at(item).at(0)  == "a NumberBox" or: {data.at(item).at(0) == "a QNumberBox"} or: {data.at(item).at(0) == "a SCNumberBox"},
+							if(index != 2 and: {data.at(item).at(0)  == "a NumberBox" or: {data.at(item).at(0) == "a QNumberBox"} or: {data.at(item).at(0) == "a SCNumberBox"}},
 								{view.valueAction_(data.at(item).at(1))});
 							// QSoundFileView
 							if(data.at(item).at(0)  == "a SoundFileView" or: {data.at(item).at(0) == "a QSoundFileView"} or: {data.at(item).at(0) == "a SCSoundFileView"},
@@ -1399,7 +1401,7 @@ Preset Wek",
 				wekOut = msg[1..];
 				// Preset
 				numPreset = (wekOut[16] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{
 						{
@@ -1416,7 +1418,7 @@ Preset Wek",
 							});
 						}.defer(0);
 				});
-				if((time - lastTimeWekData) > timeWekData, {
+				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 					// DATA Ctrl Soft
 					rangeFFT = wekOut[14..15].clip(0, 1);
 					// Data Music
@@ -1460,10 +1462,10 @@ Preset Wek",
 						windowEar.view.children.at(31).children.at(3).value = rangeDureeintruments[1];
 						windowEar.view.children.at(32).children.at(2).valueAction = stretchDuree;
 						windowEar.view.children.at(33).children.at(2).valueAction = quantizationDuree;
-						windowPlotterData.view.children.at(7).children.at(2).lo_(rangeFFT[0]);
-						windowPlotterData.view.children.at(7).children.at(2).hi_(rangeFFT[1]);
-						windowPlotterData.view.children.at(7).children.at(1).value = rangeFFT[0];
-						windowPlotterData.view.children.at(7).children.at(3).value = rangeFFT[1];
+						windowPlotterData.view.children.at(9).children.at(2).lo_(rangeFFT[0]);
+						windowPlotterData.view.children.at(9).children.at(2).hi_(rangeFFT[1]);
+						windowPlotterData.view.children.at(9).children.at(1).value = rangeFFT[0];
+						windowPlotterData.view.children.at(9).children.at(3).value = rangeFFT[1];
 					}.defer;
 					lastTimeWekData = time;
 				});
@@ -3708,7 +3710,7 @@ Preset Wek",
 		windowKeyboard.onClose_({nil});
 
 		////// Window Plotter Data /////
-		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness | MFCC", Rect(710, 800, 510, 525), scroll: true);
+		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness | MFCC", Rect(710, 800, 510, 535), scroll: true);
 		windowPlotterData.alpha=1.0;
 		windowPlotterData.front;
 		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
@@ -3718,7 +3720,7 @@ Preset Wek",
 		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0], [0], [0], [0],[0],[0]]; plotterData = [[0], [0], [0],[0],[0],[0],[0],[0]];
 		};
 		// Pbind Data Loop
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).
 		states_([["Pbind Data Loop On", Color.green], ["Pbind Data Loop Off", Color.red]]).
 		action = {arg val;
 			switch (val.value,
@@ -3727,7 +3729,7 @@ Preset Wek",
 			);
 		};
 		windowPlotterData.view.decorator.nextLine;
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
 				1, {sender.sendMsg("/wekinator/control/startRecording");
@@ -3735,12 +3737,12 @@ Preset Wek",
 				}
 			);
 		});
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekTrain On", Color.magenta]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["WekTrain On", Color.magenta]]).action_({|view|
 			sender.sendMsg("/wekinator/control/train");
 			windowPlotterData.view.children.at(2).valueAction = 0;// rec
 			windowPlotterData.view.children.at(4).valueAction = 0;// run
 		});
-		Button(windowPlotterData, Rect(0, 0, 100, 15)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
 				},
@@ -3749,12 +3751,22 @@ Preset Wek",
 				}
 			);
 		});
-		EZKnob(windowPlotterData, 85 @ 15, "WTD", ControlSpec(0.01, 60),
-			{|ez| timeWekData = ez.value}, 0.0625, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
-		EZKnob(windowPlotterData, 85 @ 15, "WTP", ControlSpec(0, 60),
-			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
+		Button(windowPlotterData, Rect(0, 0, 45, 20)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTD = 'off'},
+				1, {flagWTD = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowPlotterData, 25 @ 15).value_(0.0625).action_({|ez| timeWekData = ez.value});
+
+		Button(windowPlotterData, Rect(0, 0, 45, 20)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTP = 'off'},
+				1, {flagWTP = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowPlotterData, 25 @ 20).value_(4).action_({|ez| timeWekPreset = ez.value});
+
 		// Range FFT
-		EZRanger(windowPlotterData , 500 @ 15, "Range FFT", \unipolar,
+		EZRanger(windowPlotterData , 500 @ 20, "Range FFT", \unipolar,
 			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
 		// Plotter
 		plotterDataGUI = Plotter("Analyze Data", Rect(0, 0, 500, 390), windowPlotterData).plotMode_(\steps);

@@ -5,7 +5,7 @@ WekAgents {
 
 	classvar  < s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP;
 
 	*new	{arg path="~/Documents/WekAgents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448;
 
@@ -911,6 +911,8 @@ Preset Wek",
 			lastNumPreset = 0;
 			timeWekPreset = 4;
 			timeWekData = 0.0625;
+			flagWTD = 'on';
+			flagWTP = 'on';
 			40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 			//////////////////////////////////////////////////////////
@@ -1935,7 +1937,7 @@ Preset Wek",
 			// Preset
 			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
 
-			if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 				// load new preset
 				{
 					{
@@ -1950,7 +1952,7 @@ Preset Wek",
 						});
 					}.defer;
 			});
-			if((time - lastTimeWekData) > timeWekData, {
+			if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 				{
 					~synthDefInstrMenu.valueAction_((wekOut[0] + 0.5).asInteger.clip(0, ~listSynth.size - 1));//0
 					~soundsInstrMenu.valueAction_((wekOut[1] + 0.5).asInteger.clip(0, ~displaySons.size -1));
@@ -5763,10 +5765,21 @@ Preset Wek",
 				}
 			);
 		});
-		EZKnob(~wp, 75 @ 20, "WTD", ControlSpec(0.01, 60),
-			{|ez| timeWekData = ez.value}, 0.0625, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
-		EZKnob(~wp, 75 @ 20, "WTP", ControlSpec(0, 60),
-			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
+
+		Button(~wp, Rect(0, 0, 45, 20)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTD = 'off'},
+				1, {flagWTD = 'on'});
+		}).valueAction_(1);
+		NumberBox(~wp, 25 @ 20).value_(0.0625).action_({|ez| timeWekData = ez.value});
+
+		Button(~wp, Rect(0, 0, 45, 20)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTP = 'off'},
+				1, {flagWTP = 'on'});
+		}).valueAction_(1);
+		NumberBox(~wp, 25 @ 20).value_(4).action_({|ez| timeWekPreset = ez.value});
+
 	}
 
 	automationPanel {

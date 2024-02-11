@@ -2,7 +2,7 @@
 
 WekTime {
 
-	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData;
+	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP;
 
 	var pathWekTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter;
 
@@ -289,6 +289,8 @@ f						Switch File for Analyze.
 		lastNumPreset = 0;
 		timeWekPreset = 4;
 		timeWekData = 0.0625;
+		flagWTD = 'on';
+		flagWTP = 'on';
 		40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 		// Musical Data
@@ -954,7 +956,7 @@ f						Switch File for Analyze.
 				wekOut = msg[1..];
 				// Preset 70
 				numPreset = (wekOut[70] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+				if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{
 						{
@@ -967,7 +969,7 @@ f						Switch File for Analyze.
 									windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + numPreset.asInteger.asString});
 						}.defer;
 				});
-				if((time - lastTimeWekData) > timeWekData, {
+				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 					{
 						4.do({arg i;
 							//Octave (247)
@@ -3321,10 +3323,19 @@ Preset Wek",
 				}
 			);
 		});
-		EZKnob(windowExternalControlGUI, 75 @ 20, "WTD", ControlSpec(0.01, 60),
-			{|ez| timeWekData = ez.value}, 0.0625, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
-		EZKnob(windowExternalControlGUI, 75 @ 20, "WTP", ControlSpec(0, 60),
-			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
+		Button(windowExternalControlGUI, Rect(0, 0, 45, 15)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTD = 'off'},
+				1, {flagWTD = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowExternalControlGUI, 25 @ 15).value_(0.0625).action_({|ez| timeWekData = ez.value});
+
+		Button(windowExternalControlGUI, Rect(0, 0, 45, 15)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTP = 'off'},
+				1, {flagWTP = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowExternalControlGUI, 25 @ 15).value_(4).action_({|ez| timeWekPreset = ez.value});
 
 		windowExternalControlGUI.onClose_({nil});
 

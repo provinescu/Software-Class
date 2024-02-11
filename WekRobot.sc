@@ -2,7 +2,7 @@
 
 WekRobot {
 
-	classvar < s, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, listeWekPreset;
+	classvar < s, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, listeWekPreset, flagWTP;
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
@@ -790,6 +790,7 @@ Preset Wek",
 			numPreset = 0;
 			lastNumPreset = 0;
 			timeWekPreset = 4;
+			flagWTP = 'on';
 			40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 
 			// Keyboard
@@ -1691,7 +1692,7 @@ Preset Wek",
 			// Preset
 			numPreset = (wekOut[0] + 0.5).asInteger.clip(1, 40);
 
-			if(timeWekPreset >= 1 and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 				// load new preset
 				{
 					{
@@ -4283,8 +4284,12 @@ Preset Wek",
 				}
 			);
 		});
-		EZKnob(~wg, 75 @ 15, "WTP", ControlSpec(0, 60),
-			{|ez| timeWekPreset = ez.value}, 4, labelWidth: 25, layout: \horz).setColors(background: Color.magenta);
+		Button(~wg, Rect(0, 0, 45, 18)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTP = 'off'},
+				1, {flagWTP = 'on'});
+		}).valueAction_(1);
+		NumberBox(~wg, 25 @ 18).value_(4).action_({|ez| timeWekPreset = ez.value});
 
 		~listewindow=~listewindow.add(~windowMasterFX);
 		~listewindow=~listewindow.add(~wp);
