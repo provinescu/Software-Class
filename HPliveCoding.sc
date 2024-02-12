@@ -80,6 +80,7 @@ HPliveCoding {
 		~wEditCoding.hasHorizontalScroller_(true);
 		~wEditCoding.autohidesScrollers_(true);
 		~wEditCoding.resize_(5);
+		~wEditCoding.setFont(Font("Courier", 24), 0, 24);
 		~wEditCoding.string_("// Coding (bus ~busFileIn.index == 16)
 Server.default.bind{
 SynthDef('SynthCoding'.asString, {
