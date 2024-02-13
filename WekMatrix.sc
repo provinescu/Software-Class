@@ -35,7 +35,7 @@ WekMatrix {
 		recChannels = r;
 		switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
-		//Server.default = s = Server(name,NetAddr("localhost",57571), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",57572), Server.default.options);
 		s = Server.default;
 		s.options.memSize = 2**20;
 		s.options.numWireBufs = 128;

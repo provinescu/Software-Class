@@ -30,7 +30,7 @@ WekAgents {
 		~recChannels = r;
 		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
-		//Server.default = s = Server(name,NetAddr("localhost",57565), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",575671), Server.default.options);
 
 		s = Server.default;
 

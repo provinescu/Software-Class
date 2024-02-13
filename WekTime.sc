@@ -43,7 +43,7 @@ WekTime {
 		orientationMC = ori;
 
 		// Setup Server Options
-		//Server.default = s = Server(name,NetAddr("localhost",57572), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",57573), Server.default.options);
 		s = Server.default;
 		s.options.memSize = 2 ** 20;
 		s.options.inDevice_(devIn);
@@ -530,7 +530,7 @@ f						Switch File for Analyze.
 			var a, b, c, d, e, f, control;
 
 			// Smooth Release
-			listeGroupSynth.do({arg g; g.dump; g.release(4)});
+			listeGroupSynth.do({arg g; g; g.release(4)});
 			listeGroupFilter.do({arg f; f.release(4)});
 			listeGroupFX.do({arg x; x.release(4)});
 
