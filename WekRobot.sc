@@ -1688,23 +1688,20 @@ Preset Wek",
 			var wekOut, file, preset, v, p;
 
 			wekOut = msg[1..];
-
+			{
 			// Preset
 			numPreset = (wekOut[0] + 0.5).asInteger.clip(1, 40);
-
 			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 				// load new preset
 				{
-					{
 						if(File.exists(~nompathdata++"instruments"+numPreset.asInteger.asString++".scd"),
 							{
 								lastNumPreset = numPreset;
 								lastTimeWekPreset = time;
 								~fonctionLoadInstruments.value(numPreset.asInteger);
 						});
-					}.defer(0);
 			});
-
+			}.defer(0);
 		},'/wek/outputs');
 
 		// Analyse AudioIn
@@ -1836,7 +1833,6 @@ Preset Wek",
 					{
 						~audioDisplay.string_(msg.wrapAt(4).value.round(0.01)).stringColor_(Color.red(msg.wrapAt(3).value, 1));
 					}.defer;
-
 			});
 		}, '/WekRobot_Analyse_Audio', ~serverAdresse);
 

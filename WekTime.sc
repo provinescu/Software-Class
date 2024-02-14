@@ -954,23 +954,8 @@ f						Switch File for Analyze.
 			OSCFunc.newMatching({arg msg, time, addr, recvPort;
 				var wekOut;
 				wekOut = msg[1..];
-				// Preset 70
-				numPreset = (wekOut[70] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-					// load new preset
-					{
-						{
-							if(File.exists(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
-								{
-									lastNumPreset = numPreset;
-									lastTimeWekPreset = time;
-									file=File(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd","r");
-									fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
-									windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + numPreset.asInteger.asString});
-						}.defer;
-				});
+				{
 				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
-					{
 						4.do({arg i;
 							//Octave (247)
 							listeOctave.put(i, wekOut[0+i].clip(-4, 4));//0
@@ -1107,10 +1092,22 @@ f						Switch File for Analyze.
 							{loopSample.put(3, 1);
 								windowControlGUI.view.children.at(3 * 93 + 212).valueAction_(1);
 							});
-					}.defer;
 					lastTimeWekData = time;
 				});
-
+					// Preset 70
+				numPreset = (wekOut[70] + 0.5).asInteger.clip(1, 40);// Number Preset
+				if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+					// load new preset
+					{
+							if(File.exists(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
+								{
+									lastNumPreset = numPreset;
+									lastTimeWekPreset = time;
+									file=File(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd","r");
+									fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
+									windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + numPreset.asInteger.asString});
+				});
+				}.defer(0);
 			},'/wek/outputs');
 
 			// DATA WEK IN + OSC Data FFT

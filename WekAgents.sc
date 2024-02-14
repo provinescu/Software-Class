@@ -30,7 +30,7 @@ WekAgents {
 		~recChannels = r;
 		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
-		//Server.default = s = Server(name,NetAddr("localhost",575671), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost",57571), Server.default.options);
 
 		s = Server.default;
 
@@ -1933,27 +1933,8 @@ Preset Wek",
 			var wekOut, file, preset, v, p;
 
 			wekOut = msg[1..];
-
-			// Preset
-			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
-
-			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-				// load new preset
-				{
-					{
-						if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
-							{
-								lastNumPreset = numPreset;
-								lastTimeWekPreset = time;
-								file=File(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd","r");
-								~loadUnivers.value(file, 'on', 'on');
-								~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
-								file.close;
-						});
-					}.defer;
-			});
+			{
 			if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
-				{
 					~synthDefInstrMenu.valueAction_((wekOut[0] + 0.5).asInteger.clip(0, ~listSynth.size - 1));//0
 					~soundsInstrMenu.valueAction_((wekOut[1] + 0.5).asInteger.clip(0, ~displaySons.size -1));
 					~freqInstr.valueAction = [wekOut[2], wekOut[3]].clip(0, 127);
@@ -2137,9 +2118,25 @@ Preset Wek",
 						{~geneBandButton.valueAction = 0},
 						{~geneBandButton.valueAction = 1}
 					);
-				}.defer;
 				lastTimeWekData = time;
 			});
+				// Preset
+			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
+
+			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+				// load new preset
+				{
+						if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
+							{
+								lastNumPreset = numPreset;
+								lastTimeWekPreset = time;
+								file=File(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd","r");
+								~loadUnivers.value(file, 'on', 'on');
+								~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
+								file.close;
+						});
+			});
+			}.defer(0);
 		},'/wek/outputs');
 
 		// Analyse AudioIn

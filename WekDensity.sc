@@ -1399,25 +1399,7 @@ Preset Wek",
 			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 				var wekOut, instrumentName, soundName, fxName, file;
 				wekOut = msg[1..];
-				// Preset
-				numPreset = (wekOut[16] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-					// load new preset
-					{
-						{
-							if(File.exists(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd"), {
-								lastNumPreset = numPreset;
-								lastTimeWekPreset = time;
-								listeDataInstruments.do({arg data, index;
-									data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
-								});
-								windowEar.name = "WekDensity" + " | " + "Preset" + numPreset.asInteger.asString;
-								file=File(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
-								fonctionLoadPreset.value(file.readAllString.interpret);
-								file.close;
-							});
-						}.defer(0);
-				});
+				{
 				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 					// DATA Ctrl Soft
 					rangeFFT = wekOut[14..15].clip(0, 1);
@@ -1434,7 +1416,6 @@ Preset Wek",
 					indexSoundY = (wekOut[11] + (0.5 * rrand(jitterIndexSoundY.neg, jitterIndexSoundY))).clip(0, 1);
 					indexFXX = (wekOut[12] + (0.5 * rrand(jitterIndexFXX.neg, jitterIndexFXX))).clip(0, 1);
 					indexFXY = (wekOut[13] + (0.5 * rrand(jitterIndexFXY.neg, jitterIndexFXY))).clip(0, 1);
-					{
 						windowEar.view.children.at(56).x_(indexSynthX); windowEar.view.children.at(56).y_(indexSynthY);
 						windowEar.view.children.at(58).x_(indexSoundX); windowEar.view.children.at(58).y_(indexSoundY);
 						windowEar.view.children.at(60).x_(indexFXX); windowEar.view.children.at(60).y_(indexFXY);
@@ -1466,9 +1447,26 @@ Preset Wek",
 						windowPlotterData.view.children.at(9).children.at(2).hi_(rangeFFT[1]);
 						windowPlotterData.view.children.at(9).children.at(1).value = rangeFFT[0];
 						windowPlotterData.view.children.at(9).children.at(3).value = rangeFFT[1];
-					}.defer;
 					lastTimeWekData = time;
 				});
+					// Preset
+				numPreset = (wekOut[16] + 0.5).asInteger.clip(1, 40);// Number Preset
+				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+					// load new preset
+					{
+							if(File.exists(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd"), {
+								lastNumPreset = numPreset;
+								lastTimeWekPreset = time;
+								listeDataInstruments.do({arg data, index;
+									data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
+								});
+								windowEar.name = "WekDensity" + " | " + "Preset" + numPreset.asInteger.asString;
+								file=File(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
+								fonctionLoadPreset.value(file.readAllString.interpret);
+								file.close;
+							});
+				});
+				}.defer(0);
 			},'/wek/outputs');
 
 			// OSC Music Data

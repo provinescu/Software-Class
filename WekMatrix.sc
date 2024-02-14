@@ -1387,27 +1387,8 @@ Preset Wek",
 				var file, wekOut;
 
 				wekOut = msg[1..];
-
-				// Preset
-				numPreset = (wekOut[12] + 0.5).asInteger.clip(1, 40);// Number Preset
-				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-					// load new preset
-					{
-						{
-							if(File.exists(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
-								{
-									lastNumPreset = numPreset;
-									lastTimeWekPreset = time;
-									fonctionUserOperatingSystem.value(9);
-									windowControl.name="WekMatrix Control" + " | " + "Preset" + numPreset.asInteger.asString;
-									file=File(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
-									fonctionLoadPreset.value(file.readAllString.interpret);
-									file.close;listeWindows.at(3).front;indexWindows=3;
-							}, {"cancelled".postln});
-						}.defer(0);
-				});
-				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
-					{
+				{
+					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 						// Set Master Sliders Controls [pan, freq, transFreq, amp, duree, stretch, quant, root]
 						controlPanSlider.valueAction = wekOut[0..1].clip(-1, 1);
 						controlFreqSlider.valueAction = wekOut[2..3].clip(0, 127);
@@ -1417,10 +1398,25 @@ Preset Wek",
 						controlDureeTranSlider.valueAction = wekOut[9].clip(-100, 100);
 						controlQuantaSlider.valueAction = wekOut[10].clip(1, 100);
 						controlRootSlider.valueAction = wekOut[11].clip(-21, 21);
-					}.defer;
-					lastTimeWekData = time;
-				});
-
+						lastTimeWekData = time;
+					});
+					// Preset
+					numPreset = (wekOut[12] + 0.5).asInteger.clip(1, 40);// Number Preset
+					if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+						// load new preset
+						{
+								if(File.exists(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
+								{
+									lastNumPreset = numPreset;
+									lastTimeWekPreset = time;
+									fonctionUserOperatingSystem.value(9);
+									windowControl.name="WekMatrix Control" + " | " + "Preset" + numPreset.asInteger.asString;
+									file=File(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
+									fonctionLoadPreset.value(file.readAllString.interpret);
+									file.close;listeWindows.at(3).front;indexWindows=3;
+							});
+					});
+				}.defer(0);
 			},'/wek/outputs');
 
 			// OSC pour Audio et File
