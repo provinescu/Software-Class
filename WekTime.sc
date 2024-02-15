@@ -967,8 +967,8 @@ f						Switch File for Analyze.
 							listeCent.put(i, wekOut[8+i].clip(-100, 100));//8
 							windowControlGUI.view.children.at(i * 93 + 253).children.at(2).valueAction_(wekOut[8+i].clip(-100, 100));
 							//Filter (260)
-							choiceFilter.put(i, (wekOut[12+i] + 0.5).clip(0, (listeFilters.size - 1)).asInteger);
-							windowControlGUI.view.children.at(i * 93 + 260).valueAction_((wekOut[12+i] + 0.5).clip(0, 40).asInteger);//12 Filter
+							choiceFilter.put(i, wekOut[12+i].clip(0, (listeFilters.size - 1)).asInteger);
+							windowControlGUI.view.children.at(i * 93 + 260).valueAction_(wekOut[12+i].clip(0, 40).asInteger);//12 Filter
 							//CtrlFilter (264)
 							listeCtrl1Filter.put(i, wekOut[16+i].clip(20, 12544));//16
 							windowControlGUI.view.children.at(i * 93 + 264).children.at(2).valueAction_(wekOut[16+i].clip(20, 12544));
@@ -977,8 +977,8 @@ f						Switch File for Analyze.
 							listeCtrl3Filter.put(i, wekOut[24+i].clip(0.01, 100) / 100);//24
 							windowControlGUI.view.children.at(i * 93 + 270).children.at(2).valueAction_(wekOut[24+i].clip(0.01, 100));
 							//FX (274)
-							choiceFX.put(i, (wekOut[28+i] + 0.5).clip(0, (listeFX.size - 1)).asInteger);
-							windowControlGUI.view.children.at(i * 93 + 274).valueAction_((wekOut[28+i] + 0.5).clip(0, 7).asInteger);//28 FX
+							choiceFX.put(i, wekOut[28+i].clip(0, (listeFX.size - 1)).asInteger);
+							windowControlGUI.view.children.at(i * 93 + 274).valueAction_(wekOut[28+i].clip(0, 7).asInteger);//28 FX
 							//CtrlFX (278)
 							listeCtrl1FX.put(i, wekOut[32+i].clip(0.01, 100) / 100);//32
 							windowControlGUI.view.children.at(i * 93 + 278).children.at(2).valueAction_(wekOut[32+i].clip(0.01, 100));
@@ -998,38 +998,38 @@ f						Switch File for Analyze.
 						windowExternalControlGUI.view.children.at(27).children.at(3).value = rangeFFT[1];
 						//synth
 						changeChoiceSynthDef.do({arg item, i;// 54 a 57
-							if((wekOut[54] + 0.5).clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[54].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(0, item);
 								windowControlGUI.view.children.at(0 * 93 + 208).valueAction_(i.asInteger);
 							});
-							if((wekOut[55] + 0.5).clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[55].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(1, item);
 								windowControlGUI.view.children.at(1 * 93 + 208).valueAction_(i.asInteger);
 							});
-							if((wekOut[56] + 0.5).clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[56].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(2, item);
 								windowControlGUI.view.children.at(2 * 93 + 208).valueAction_(i.asInteger);
 							});
-							if((wekOut[57] + 0.5).clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[57].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(3, item);
 								windowControlGUI.view.children.at(3 * 93 + 208).valueAction_(i.asInteger);
 							});
 						});
 						// duree synth
 						['Seq', 'Pitch', 'Grain'].do({arg item, i;// 58 a 61
-							if((wekOut[58] + 0.5).clip(0, 2).asInteger == i, {
+							if(wekOut[58].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(0, item;
 								windowControlGUI.view.children.at(0 * 93 + 210).valueAction_(i.asInteger);
 							)});
-							if((wekOut[59] + 0.5).clip(0, 2).asInteger == i, {
+							if(wekOut[59].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(1, item);
 								windowControlGUI.view.children.at(1 * 93 + 210).valueAction_(i.asInteger);
 							});
-							if((wekOut[60] + 0.5).clip(0, 2).asInteger == i, {
+							if(wekOut[60].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(2, item);
 								windowControlGUI.view.children.at(2 * 93 + 210).valueAction_(i.asInteger);
 							});
-							if((wekOut[61] + 0.5).clip(0, 2).asInteger == i, {
+							if(wekOut[61].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(3, item);
 								windowControlGUI.view.children.at(3 * 93 + 210).valueAction_(i.asInteger);
 							});
@@ -1095,7 +1095,7 @@ f						Switch File for Analyze.
 					lastTimeWekData = time;
 				});
 					// Preset 70
-				numPreset = (wekOut[70] + 0.5).asInteger.clip(1, 40);// Number Preset
+				numPreset = wekOut[70].asInteger.clip(1, 40);// Number Preset
 				if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{

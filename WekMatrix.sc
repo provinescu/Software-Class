@@ -1401,7 +1401,7 @@ Preset Wek",
 						lastTimeWekData = time;
 					});
 					// Preset
-					numPreset = (wekOut[12] + 0.5).asInteger.clip(1, 40);// Number Preset
+					numPreset = wekOut[12].asInteger.clip(1, 40);// Number Preset
 					if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 						// load new preset
 						{

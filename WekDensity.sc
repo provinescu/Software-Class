@@ -1419,14 +1419,14 @@ Preset Wek",
 						windowEar.view.children.at(56).x_(indexSynthX); windowEar.view.children.at(56).y_(indexSynthY);
 						windowEar.view.children.at(58).x_(indexSoundX); windowEar.view.children.at(58).y_(indexSoundY);
 						windowEar.view.children.at(60).x_(indexFXX); windowEar.view.children.at(60).y_(indexFXY);
-						instrumentName = synthOrchestra.at((indexSynthX * (synthOrchestra.size - 1) + 0.5).floor);
-						instrumentName = instrumentName.at((indexSynthY * (instrumentName.size - 1) + 0.5).floor);
+						instrumentName = synthOrchestra.at(indexSynthX * (synthOrchestra.size - 1).floor);
+						instrumentName = instrumentName.at(indexSynthY * (instrumentName.size - 1).floor);
 						displayInstrument.string = (indexSynthX.asStringPrec(2) + indexSynthY.asStringPrec(2) + instrumentName);
-						soundName = soundOrchestra.at((indexSoundX * (soundOrchestra.size - 1) + 0.5).floor);
-						soundName = soundName.at((indexSoundY * (soundName.size - 1) + 0.5).floor);
+						soundName = soundOrchestra.at(indexSoundX * (soundOrchestra.size - 1).floor);
+						soundName = soundName.at(indexSoundY * (soundName.size - 1).floor);
 						displaySound.string = (indexSoundX.asStringPrec(2) +  indexSoundY.asStringPrec(2) + PathName.new(soundName).fileName);
-						fxName = fxOrchestra.at((indexFXX * (fxOrchestra.size - 1) + 0.5).floor);
-						fxName = fxName.at((indexFXY * (fxName.size - 1) + 0.5).floor);
+						fxName = fxOrchestra.at(indexFXX * (fxOrchestra.size - 1).floor);
+						fxName = fxName.at(indexFXY * (fxName.size - 1).floor);
 						displayFX.string = (indexFXX.asStringPrec(2) + indexFXY.asStringPrec(2) + fxName);
 						//Music
 						windowEar.view.children.at(29).children.at(2).lo_(rangeFreqintruments[0]/127);
@@ -1450,7 +1450,7 @@ Preset Wek",
 					lastTimeWekData = time;
 				});
 					// Preset
-				numPreset = (wekOut[16] + 0.5).asInteger.clip(1, 40);// Number Preset
+				numPreset = wekOut[16].asInteger.clip(1, 40);// Number Preset
 				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{

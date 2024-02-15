@@ -1690,7 +1690,7 @@ Preset Wek",
 			wekOut = msg[1..];
 			{
 			// Preset
-			numPreset = (wekOut[0] + 0.5).asInteger.clip(1, 40);
+			numPreset = wekOut[0].asInteger.clip(1, 40);
 			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 				// load new preset
 				{

@@ -1935,8 +1935,8 @@ Preset Wek",
 			wekOut = msg[1..];
 			{
 			if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
-					~synthDefInstrMenu.valueAction_((wekOut[0] + 0.5).asInteger.clip(0, ~listSynth.size - 1));//0
-					~soundsInstrMenu.valueAction_((wekOut[1] + 0.5).asInteger.clip(0, ~displaySons.size -1));
+					~synthDefInstrMenu.valueAction_(wekOut[0].asInteger.clip(0, ~listSynth.size - 1));//0
+					~soundsInstrMenu.valueAction_(wekOut[1].asInteger.clip(0, ~displaySons.size -1));
 					~freqInstr.valueAction = [wekOut[2], wekOut[3]].clip(0, 127);
 					~freqTransposeInstr.value = wekOut[4].clip(-127, 127);
 					~ampInstr.valueAction = [wekOut[5], wekOut[6]].clip(-120, 0);
@@ -1979,8 +1979,8 @@ Preset Wek",
 						{~geneBufferButton.valueAction = 0},
 						{~geneBufferButton.valueAction = 1}
 					);
-					~geneSampleRangerLow.valueAction_((wekOut[32] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
-					~geneSampleRangerHigh.valueAction_((wekOut[33] + 0.5).asInteger.clip(0, ~displaySons.size - 1));
+					~geneSampleRangerLow.valueAction_(wekOut[32].asInteger.clip(0, ~displaySons.size - 1));
+					~geneSampleRangerHigh.valueAction_(wekOut[33].asInteger.clip(0, ~displaySons.size - 1));
 					if(wekOut[34] <= 0.5,
 						{~geneSampleButton.valueAction = 0},
 						{~geneSampleButton.valueAction = 1}
@@ -2010,8 +2010,8 @@ Preset Wek",
 						{~geneEnvDureeButton.valueAction = 0},
 						{~geneEnvDureeButton.valueAction = 1}
 					);
-					~geneSynthRangerLow.valueAction_((wekOut[50] + 0.5).asInteger.clip(0, ~listSynth.size -1));
-					~geneSynthRangerHigh.valueAction_((wekOut[51] + 0.5).asInteger.clip(0, ~listSynth.size -1));
+					~geneSynthRangerLow.valueAction_(wekOut[50].asInteger.clip(0, ~listSynth.size -1));
+					~geneSynthRangerHigh.valueAction_(wekOut[51].asInteger.clip(0, ~listSynth.size -1));
 					if(wekOut[52] <= 0.5,
 						{~geneSynthButton.valueAction = 0},
 						{~geneSynthButton.valueAction = 1}
@@ -2031,8 +2031,8 @@ Preset Wek",
 						{~geneMidiOutButton.valueAction = 0},
 						{~geneMidiOutButton.valueAction = 1}
 					);
-					~geneInputRangerLow.valueAction_((wekOut[62] + 0.5).asInteger.clip(0, 32));
-					~geneInputRangerHigh.valueAction_((wekOut[63] + 0.5).asInteger.clip(0, 32));
+					~geneInputRangerLow.valueAction_(wekOut[62].asInteger.clip(0, 32));
+					~geneInputRangerHigh.valueAction_(wekOut[63].asInteger.clip(0, 32));
 					if(wekOut[64] <= 0.5,
 						{~geneInputButton.valueAction = 0},
 						{~geneInputButton.valueAction = 1}
@@ -2121,7 +2121,7 @@ Preset Wek",
 				lastTimeWekData = time;
 			});
 				// Preset
-			numPreset = (wekOut[94] + 0.5).asInteger.clip(1, 40);
+			numPreset = wekOut[94].asInteger.clip(1, 40);
 
 			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 				// load new preset
