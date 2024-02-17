@@ -143,7 +143,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~listeSamplePourAnalyse = [];
 						~listeNameSamplePourAnalyse = [];
 						~bufferanalysefile.free;
-						~synthPlayFile.set(\trigger, 0);
+						~synthPlayFile.set(\trig, 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -174,16 +174,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 						s.sync;
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File IN'}, {~synthPlayFile.run(true);
-							s.sync;~synthPlayFile.set('trigger', 1);s.sync});
+							s.sync;~synthPlayFile.set('trig', 1);s.sync});
 			}},{"cancelled".postln})}),
 			MenuAction("Loop On", {~synthPlayFile.set('loop', 1)}),
 			MenuAction("Loop Off", {~synthPlayFile.set('loop', 0)}),
 			MenuAction("Restart for Analyze on Grid Tempo", {s.bind{
-				~synthPlayFile.set('trigger', 0);
+				~synthPlayFile.set('trig', 0);
 				s.sync;
 				~synthPlayFile.run(false);
 				s.sync;
-				~tempoSystem.schedAbs(~tempoSystem.nextBar, {~synthPlayFile.run(true);~synthPlayFile.set('trigger', 1);nil});
+				~tempoSystem.schedAbs(~tempoSystem.nextBar, {~synthPlayFile.run(true);~synthPlayFile.set('trig', 1);nil});
 				s.sync;
 			}});
 		);
@@ -2364,7 +2364,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~listeNameSamplePourAnalyse = [];
 						~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -2394,7 +2394,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						s.sync;
 						~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File IN'}, {~synthPlayFile.run(true);
-							s.sync;~synthPlayFile.set('trigger', 1);s.sync});
+							s.sync;~synthPlayFile.set('trig', 1);s.sync});
 					};
 				},{"cancelled".postln})},
 				{19}, {
@@ -3767,7 +3767,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~audioIn.run(false);~audioFile.run(true);
 					~tempoIn.value.run(false);~tempoFile.value.run(true);
 					~tempoSystem.schedAbs(~tempoSystem.nextBar, {~synthPlayFile.run(true); nil});
-					~synthPlayFile.set(\trigger, 1);
+					~synthPlayFile.set(\trig, 1);
 					~nombrebuffer.do({arg i;
 						~listesampleinAudio.wrapAt(i).run(false);
 						~listesampleinFile.wrapAt(i).run(true);
@@ -3833,7 +3833,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					s.sync;
 					~tempoSystem.schedAbs(~tempoSystem.nextBar, {~synthPlayFile.run(true);nil});
 					s.sync;
-					~synthPlayFile.set(\trigger, 1);
+					~synthPlayFile.set(\trig, 1);
 					s.sync;
 					~nombrebuffer.do({arg i;
 						~listesampleinAudio.wrapAt(i).run(false);
@@ -3849,7 +3849,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			});
 		},
 		{s.bind{
-			~synthPlayFile.set(\trigger, 0);
+			~synthPlayFile.set(\trig, 0);
 			s.sync;
 			~audioIn.run(false);~audioFile.run(false);~synthPlayFile.run(false);
 			~tempoIn.value.run(false);~tempoFile.value.run(false);
@@ -4007,11 +4007,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		~offsetFileIn=EZSlider(~wg, 140 @ 18, "File offset", ControlSpec(0, 1, \lin, 0),
 			{|ez| ~writepartitions.value(nil,'control panel normal','off',"~offsetFileIn",ez.value);
 				s.bind{
-					~synthPlayFile.set(\trigger, -1);
+					~synthPlayFile.set(\trig, -1);
 					s.sync;
 					~synthPlayFile.set(\offset, ez.value);
 					s.sync;
-					~synthPlayFile.set(\trigger, 1);
+					~synthPlayFile.set(\trig, 1);
 					s.sync};
 		}, 0, labelWidth: 55, numberWidth: 35);
 
@@ -4565,7 +4565,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 						~writepartitions.value(nil,'key','off',"Dialog.openPanel({ arg paths;
 ~samplePourAnalyse=paths;
 s.bind{
-~synthPlayFile.set(\trigger, 0);
+~synthPlayFile.set(\trig, 0);
 s.sync;
 ~file = SoundFile.new;
 s.sync;
@@ -4593,12 +4593,12 @@ s.sync;
 s.sync;
 ~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 s.sync;
-~synthPlayFile.set(\trigger, 1);
+~synthPlayFile.set(\trig, 1);
 s.sync}},{'cancelled'.asString.postln})",nil);
 						Dialog.openPanel({ arg paths;
 							~samplePourAnalyse=paths;
 							s.bind{
-								~synthPlayFile.set(\trigger, 0);
+								~synthPlayFile.set(\trig, 0);
 								s.sync;
 								~synthPlayFile.run(false);
 								s.sync;
@@ -4629,7 +4629,7 @@ s.sync}},{'cancelled'.asString.postln})",nil);
 								~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 								s.sync;
 								if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File IN'}, {~synthPlayFile.run(true);
-									s.sync;~synthPlayFile.set('trigger', 1);s.sync});
+									s.sync;~synthPlayFile.set('trig', 1);s.sync});
 							};
 							~listeSamplePourAnalyse = ~listeSamplePourAnalyse.add(~bufferanalysefile);
 							~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(paths.asString);
@@ -5000,13 +5000,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				i=i-1;
 				if(~listeSamplePourAnalyse.at(i) != nil, {
 					s.bind{
-						~synthPlayFile.set(\trigger, 0);
+						~synthPlayFile.set(\trig, 0);
 						s.sync;
 						~audioFile.set(\trigger, 0);
 						s.sync;
 						~synthPlayFile.set(\bufferplay, ~listeSamplePourAnalyse.at(i));
 						~audioFile.set(\bufferplay, ~listeSamplePourAnalyse.at(i));
-						~synthPlayFile.set(\trigger, 1);
+						~synthPlayFile.set(\trig, 1);
 						s.sync;
 						~audioFile.set(\trigger, 1);
 						s.sync;
@@ -5921,9 +5921,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			// Synth lecture file pour analyse AudioIn
 			SynthDef("Robot Play File",
-				{arg out=0, bufferplay, busFileIn, trigger=0, offset=0, loop=1, volume=0;
+				{arg out=0, bufferplay, busFileIn, trig=0, offset=0, loop=1, volume=0;
 					var input;
-					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay)*offset , loop);
+					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trig, BufFrames.kr(bufferplay)*offset , loop);
 					Out.ar(out, input * volume);
 					Out.ar(busFileIn, Mix(input));
 			}).send(s);

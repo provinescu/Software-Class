@@ -190,7 +190,7 @@ G                       Init Genome Agent (solo).
 						~listeNameSamplePourAnalyse = [];
 						~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -223,11 +223,11 @@ G                       Init Genome Agent (solo).
 						~textFileAnalyze.string_(paths.asString);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 							~synthPlayFile.run(true);
-							~synthPlayFile.set(\trigger, 0);
+							~synthPlayFile.set(\trig, 0);
 							s.sync;
 							~audioFile.set(\trigger, 0);
 							s.sync;
-							~synthPlayFile.set(\trigger, 1);
+							~synthPlayFile.set(\trig, 1);
 							s.sync;
 							~audioFile.set(\trigger, 1);
 							s.sync;
@@ -241,11 +241,11 @@ G                       Init Genome Agent (solo).
 			MenuAction("Synchro on Temporal Grid (Tempo BPM / BeatsPerBar)", {
 				if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 					s.bind{
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
-						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~synthPlayFile.run(true);~synthPlayFile.set('trigger', 1);nil});
+						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~synthPlayFile.run(true);~synthPlayFile.set('trig', 1);nil});
 						s.sync;
 					};
 			})});
@@ -480,7 +480,7 @@ Preset Wek",
 						~listeNameSamplePourAnalyse = [];
 						~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -513,7 +513,7 @@ Preset Wek",
 						~textFileAnalyze.string_(paths.asString);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {~synthPlayFile.run(true);
 							s.sync;
-							~synthPlayFile.set('trigger', 1);
+							~synthPlayFile.set('trig', 1);
 							s.sync;
 
 						});
@@ -682,7 +682,7 @@ Preset Wek",
 					//Init Path
 					FileDialog.new({arg path;
 						var p, fileSynth="List Synth.scd",  fileSound="List Sounds.scd", fileFX="List FX.scd";
-						p = ~nompathdata = path.at(0).asString ++"/";
+						p = ~nompathdata = path.wrapAt(0).asString ++"/";
 						/*~nompathdata = PathName.new(paths);
 						p = ~nompathdata = ~nompathdata.pathOnly;*/
 						~nomFenetre = "Control Panel"+~algoMusic+~nompathdata.asString;
@@ -2343,7 +2343,7 @@ Preset Wek",
 					s.sync;
 				};
 			}, (0..127), ~canalMidiIn.asInteger);
-			~oscMidiIn;
+			//~oscMidiIn;
 		};
 		~fonctionOSCMidiIn.value;
 
@@ -2454,7 +2454,7 @@ Preset Wek",
 		this.shortCuts;// Raccourcis clavier
 		this.windowsPanel;// init shortcut font etc...
 
-		~wp.view.children.at(0).focus;
+		~wp.view.children.wrapAt(0).focus;
 		~wp.front;
 
 		// Init
@@ -2780,7 +2780,7 @@ Preset Wek",
 							if(~flagGeneBand == 'on', {geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 							//
 							for(1, ~numFhzBand, {arg i;
-								if(fhz > ~bandFHZ.wrapAt(i).at(0) and: {fhz < ~bandFHZ.wrapAt(i).at(1)} and: {geneFHZ.wrapAt(i) == 1}, {
+								if(fhz > ~bandFHZ.wrapAt(i).wrapAt(0) and: {fhz < ~bandFHZ.wrapAt(i).wrapAt(1)} and: {geneFHZ.wrapAt(i) == 1}, {
 									// Add Data en fonction des bandes activent chez l'agent
 									if(~listeagentID.wrapAt(agent).includes(~listeID.wrapAt(signal)).not,
 										{~listeagentID.wrapPut(agent,~listeagentID.wrapAt(agent).add(~listeID.wrapAt(signal)));
@@ -2837,7 +2837,7 @@ Preset Wek",
 								if(~flagGeneBand == 'on',
 									{geneFHZ = ~genomes.wrapAt(agent).wrapAt(46)}, {geneFHZ = ~agentsBand.wrapAt(agent)});
 								for(1, ~numFhzBand, {arg i;
-									if(fhz > ~bandFHZ.wrapAt(i).at(0) and: {fhz < ~bandFHZ.wrapAt(i).at(1)} and: {geneFHZ.wrapAt(i) == 1}, {
+									if(fhz > ~bandFHZ.wrapAt(i).wrapAt(0) and: {fhz < ~bandFHZ.wrapAt(i).wrapAt(1)} and: {geneFHZ.wrapAt(i) == 1}, {
 										signaux=signaux.add(signal);
 										if(~listeagentID.wrapAt(agent).includes(~listeID.wrapAt(signal)).not,
 											{~listeagentID.wrapPut(agent,~listeagentID.wrapAt(agent).add(~listeID.wrapAt(signal)));
@@ -3640,7 +3640,7 @@ Preset Wek",
 			loop({
 				~listEffets.size.do({arg i;var val;
 					if(~playSynthEffets.wrapAt(i) == 1, {
-						if(~listeFXTime.at(i).value <= 0.01,
+						if(~listeFXTime.wrapAt(i).value <= 0.01,
 							{
 								// Pan
 								if(rrand(0.0, 1.0) <= 0.25, {
@@ -3654,11 +3654,11 @@ Preset Wek",
 									~listSynthEffets.wrapAt(i).set(\control1, val.wrapAt(0), \control2, val.wrapAt(1), \control3, val.wrapAt(2), \control4, val.wrapAt(3), \control5, val.wrapAt(4), \control6, val.wrapAt(5), \control7, val.wrapAt(6), \control8, val.wrapAt(7));
 								});
 								// Reset Time
-								~listeFXTime.put(i, ~automationSpeedEffets.at(i).value.reciprocal);
+								~listeFXTime.put(i, ~automationSpeedEffets.wrapAt(i).value.reciprocal);
 							},
 							{
 								// Dec time effet
-								~listeFXTime.put(i, ~listeFXTime.at(i) - 0.01);
+								~listeFXTime.put(i, ~listeFXTime.wrapAt(i) - 0.01);
 						});
 					});
 				});
@@ -3672,7 +3672,7 @@ Preset Wek",
 			loop({
 				~listVerb.size.do({arg i;var val;
 					if(~playSynthVerb.wrapAt(i) == 1, {
-						if(~listeVerbTime.at(i).value <= 0.01,
+						if(~listeVerbTime.wrapAt(i).value <= 0.01,
 							{
 								// Pan
 								if(rrand(0.0, 1.0) <= 0.25, {
@@ -3686,11 +3686,11 @@ Preset Wek",
 									~listSynthVerb.wrapAt(i).set(\control1, val.wrapAt(0), \control2, val.wrapAt(1), \control3, val.wrapAt(2), \control4, val.wrapAt(3), \control5, val.wrapAt(4), \control6, val.wrapAt(5), \control7, val.wrapAt(6), \control8, val.wrapAt(7));
 								});
 								// Reset Time
-								~listeVerbTime.put(i, ~automationSpeedVerb.at(i).value.reciprocal);
+								~listeVerbTime.put(i, ~automationSpeedVerb.wrapAt(i).value.reciprocal);
 							},
 							{
 								// Dec time effet
-								~listeVerbTime.put(i, ~listeVerbTime.at(i) - 0.01);
+								~listeVerbTime.put(i, ~listeVerbTime.wrapAt(i) - 0.01);
 						});
 					});
 				});
@@ -4215,8 +4215,8 @@ Preset Wek",
 		~genePanRanger.enabled_(false);
 		~wg.view.decorator.nextLine;
 		~geneBufferRanger=EZRanger(~wg, 300 @ 18, "Time Buffer Sound", ControlSpec(0.01, ~tempsmaxsignal, \exp, 0), {|view| if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneBufferRanger", view.value)})}, [0.015625, ~tempsmaxsignal], false, 125, 40).setColors(Color.grey(0.3), Color.magenta);
-		~geneBufferRanger.view.children.at(1).decimals = 4;
-		~geneBufferRanger.view.children.at(3).decimals = 4;
+		~geneBufferRanger.view.children.wrapAt(1).decimals = 4;
+		~geneBufferRanger.view.children.wrapAt(3).decimals = 4;
 		~geneBufferButton=Button(~wg,Rect(0, 0, 25, 18)).states=[["On", Color.magenta, Color.green(0.8, 0.25)],["Off", Color.magenta, Color.red(0.8, 0.25)]];
 		~geneBufferButton.action = {arg action;
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneBufferButton", action.value)});
@@ -5060,7 +5060,7 @@ Preset Wek",
 						//MIDIIn.disconnect;
 					},
 					'File', {~audioIn.value.run(false);~tempoIn.value.run(false);
-						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~audioFile.value.run(true);~tempoFile.value.run(true);~synthPlayFile.value.run(true);~synthPlayFile.set('trigger', 1);nil});
+						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~audioFile.value.run(true);~tempoFile.value.run(true);~synthPlayFile.value.run(true);~synthPlayFile.set('trig', 1);nil});
 						~sounds.size.do({arg i; ~recSamples.wrapAt(i).run(false); ~recFiles.wrapAt(i).run(true)});
 						~listesamplein=~recFiles;
 						~agents.do({arg i; ~synthRecAudioAgents.wrapAt(i).run(false);~synthRecFileAgents.wrapAt(i).run(true)});
@@ -5092,7 +5092,7 @@ Preset Wek",
 				~routineAutomationVerb.play(quant: Quant.new(~nombreBeatsBare));
 			},
 			{// Stop les Tdef
-				~synthPlayFile.set('trigger', 0);
+				~synthPlayFile.set('trig', 0);
 				~sounds.size.do({arg i; ~recSamples.wrapAt(i).run(false);~recFiles.wrapAt(i).run(false)});
 				~routineVirtual.stop;~routineData.stop;~routineAutomation.stop;~routineAgents.stop;
 				~routineMetronome.stop;~metronomeGUI.value_(0);
@@ -5416,11 +5416,11 @@ Preset Wek",
 		~offsetFileIn=EZKnob(~wp, 80 @ 80, "Offset FileIn", ControlSpec(0, 1, \lin, 0),
 			{|ez|
 				s.bind{
-					~synthPlayFile.set(\trigger, -1);
+					~synthPlayFile.set(\trig, -1);
 					s.sync;
 					~synthPlayFile.set(\offset, ez.value);
 					s.sync;
-					~synthPlayFile.set(\trigger, 1);
+					~synthPlayFile.set(\trig, 1);
 					s.sync};
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~offsetFileIn", ez.value)})}, 0, labelWidth: 70,unitWidth: 0, layout: 'vert');
 		~offsetFileIn.enabled_(false);
@@ -5744,21 +5744,21 @@ Preset Wek",
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
 				1, {sender.sendMsg("/wekinator/control/startRecording");
-					~wp.view.children.at(97).valueAction = 0;// run
+					~wp.view.children.wrapAt(97).valueAction = 0;// run
 				}
 			);
 		});
 		Button(~wp, Rect(0, 0, 70, 20)).states_([["WekTrain On", Color.magenta]]).action_({|view|
 			sender.sendMsg("/wekinator/control/train");
-			~wp.view.children.at(95).valueAction = 0;// rec
-			~wp.view.children.at(97).valueAction = 0;// run
+			~wp.view.children.wrapAt(95).valueAction = 0;// rec
+			~wp.view.children.wrapAt(97).valueAction = 0;// run
 		});
 		Button(~wp, Rect(0, 0, 70, 20)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
 				},
 				1, {flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
-					~wp.view.children.at(95).valueAction = 0;// rec
+					~wp.view.children.wrapAt(95).valueAction = 0;// rec
 				}
 			);
 		});
@@ -5946,8 +5946,8 @@ Preset Wek",
 		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
 			{|ez| ~groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
 		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
-			{|ez| ~groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
-		windowVST.view.children.at(0).focus;
+			{|ez| ~groupeMasterFX.set(\panLo, ez.value.wrapAt(0), \panHi, ez.value.wrapAt(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.wrapAt(0).focus;
 		windowVST.front;
 
 	}
@@ -6129,7 +6129,7 @@ Preset Wek",
 					s.bind{
 						//~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -6164,15 +6164,15 @@ Preset Wek",
 						~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(PathName.new(paths).fileName);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 							~synthPlayFile.run(true);
-							~synthPlayFile.set(\trigger, 0);
+							~synthPlayFile.set(\trig, 0);
 							s.sync;
-							~audioFile.set(\trigger, 0);
+							~audioFile.set(\trig, 0);
 							s.sync;
 							~synthPlayFile.set(\bufferplay, ~listeSamplePourAnalyse.last);
 							~audioFile.set(\bufferplay, ~listeSamplePourAnalyse.last);
-							~synthPlayFile.set(\trigger, 1);
+							~synthPlayFile.set(\trig, 1);
 							s.sync;
-							~audioFile.set(\trigger, 1);
+							~audioFile.set(\trig, 1);
 							s.sync;
 						});
 					};
@@ -6747,13 +6747,13 @@ Preset Wek",
 			if(commande == 'Switch File for Analyze', {
 				if(~listeSamplePourAnalyse.wrapAt(number - 1) != nil, {
 					s.bind{
-						~synthPlayFile.set(\trigger, 0);
+						~synthPlayFile.set(\trig, 0);
 						s.sync;
 						~audioFile.set(\trigger, 0);
 						s.sync;
 						~synthPlayFile.set(\bufferplay, ~listeSamplePourAnalyse.wrapAt(number - 1));
 						~audioFile.set(\bufferplay, ~listeSamplePourAnalyse.wrapAt(number - 1));
-						~synthPlayFile.set(\trigger, 1);
+						~synthPlayFile.set(\trig, 1);
 						s.sync;
 						~audioFile.set(\trigger, 1);
 						s.sync;
@@ -7676,7 +7676,7 @@ Preset Wek",
 			})});
 			if(score != nil,
 				{
-					event = score.at(index);
+					event = score.wrapAt(index);
 					time = event.wrapAt(0);
 					cmd = event.wrapAt(1);
 					val = event.wrapAt(2);
@@ -7995,9 +7995,9 @@ Preset Wek",
 
 			// Synth lecture file pour analyse AudioIn
 			SynthDef("WekAgents Play File",
-				{arg out=0, bufferplay, busFileIn, trigger=0, offset=0, loop=1, volume=0;
+				{arg out=0, bufferplay, busFileIn, trig=0, offset=0, loop=1, volume=0;
 					var input;
-					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay)*offset , loop);
+					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trig, BufFrames.kr(bufferplay)*offset , loop);
 					Out.ar(out, input * volume); // Amp File Out
 					Out.ar(busFileIn, Mix(input)); // Pour recordings buffers agents
 			}).send(s);

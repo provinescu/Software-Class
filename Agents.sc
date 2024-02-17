@@ -185,7 +185,7 @@ G                       Init Genome Agent (solo).
 						~listeNameSamplePourAnalyse = [];
 						~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -218,11 +218,11 @@ G                       Init Genome Agent (solo).
 						~textFileAnalyze.string_(paths.asString);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 							~synthPlayFile.run(true);
-							~synthPlayFile.set(\trigger, 0);
+							~synthPlayFile.set(\trig, 0);
 							s.sync;
 							~audioFile.set(\trigger, 0);
 							s.sync;
-							~synthPlayFile.set(\trigger, 1);
+							~synthPlayFile.set(\trig, 1);
 							s.sync;
 							~audioFile.set(\trigger, 1);
 							s.sync;
@@ -236,11 +236,11 @@ G                       Init Genome Agent (solo).
 			MenuAction("Synchro on Temporal Grid (Tempo BPM / BeatsPerBar)", {
 				if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 					s.bind{
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
-						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~synthPlayFile.run(true);~synthPlayFile.set('trigger', 1);nil});
+						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~synthPlayFile.run(true);~synthPlayFile.set('trig', 1);nil});
 						s.sync;
 					};
 			})});
@@ -456,7 +456,7 @@ G                       Init Genome Agent (solo).
 						~listeNameSamplePourAnalyse = [];
 						~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -489,7 +489,7 @@ G                       Init Genome Agent (solo).
 						~textFileAnalyze.string_(paths.asString);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {~synthPlayFile.run(true);
 							s.sync;
-							~synthPlayFile.set('trigger', 1);
+							~synthPlayFile.set('trig', 1);
 							s.sync;
 
 						});
@@ -4706,7 +4706,7 @@ G                       Init Genome Agent (solo).
 						MIDIIn.disconnect;
 					},
 					'File', {~audioIn.value.run(false);~tempoIn.value.run(false);
-						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~audioFile.value.run(true);~tempoFile.value.run(true);~synthPlayFile.value.run(true);~synthPlayFile.set('trigger', 1);nil});
+						~tempoMusicPlay.schedAbs(~tempoMusicPlay.nextBar, {~audioFile.value.run(true);~tempoFile.value.run(true);~synthPlayFile.value.run(true);~synthPlayFile.set('trig', 1);nil});
 						~sounds.size.do({arg i; ~recSamples.wrapAt(i).run(false); ~recFiles.wrapAt(i).run(true)});
 						~listesamplein=~recFiles;
 						~agents.do({arg i; ~synthRecAudioAgents.wrapAt(i).run(false);~synthRecFileAgents.wrapAt(i).run(true)});
@@ -4741,7 +4741,7 @@ G                       Init Genome Agent (solo).
 				~routineAutomationVerb.play(quant: Quant.new(~nombreBeatsBare));
 			},
 			{// Stop les Tdef
-				~synthPlayFile.set('trigger', 0);
+				~synthPlayFile.set('trig', 0);
 				~sounds.size.do({arg i; ~recSamples.wrapAt(i).run(false);~recFiles.wrapAt(i).run(false)});
 				~routineVirtual.stop;~routineData.stop;~routineAutomation.stop;~routineAgents.stop;
 				~routineMetronome.stop;~metronomeGUI.value_(0);
@@ -5070,11 +5070,11 @@ G                       Init Genome Agent (solo).
 		~offsetFileIn=EZKnob(~wp, 80 @ 80, "Offset FileIn", ControlSpec(0, 1, \lin, 0),
 			{|ez|
 				s.bind{
-					~synthPlayFile.set(\trigger, -1);
+					~synthPlayFile.set(\trig, -1);
 					s.sync;
 					~synthPlayFile.set(\offset, ez.value);
 					s.sync;
-					~synthPlayFile.set(\trigger, 1);
+					~synthPlayFile.set(\trig, 1);
 					s.sync};
 				if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~offsetFileIn", ez.value)})}, 0, labelWidth: 70,unitWidth: 0, layout: 'vert');
 		~offsetFileIn.enabled_(false);
@@ -5744,7 +5744,7 @@ G                       Init Genome Agent (solo).
 					s.bind{
 						//~bufferanalysefile.free;
 						s.sync;
-						~synthPlayFile.set('trigger', 0);
+						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
 						s.sync;
@@ -5779,13 +5779,13 @@ G                       Init Genome Agent (solo).
 						~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(PathName.new(paths).fileName);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 							~synthPlayFile.run(true);
-							~synthPlayFile.set(\trigger, 0);
+							~synthPlayFile.set(\trig, 0);
 							s.sync;
 							~audioFile.set(\trigger, 0);
 							s.sync;
 							~synthPlayFile.set(\bufferplay, ~listeSamplePourAnalyse.last);
 							~audioFile.set(\bufferplay, ~listeSamplePourAnalyse.last);
-							~synthPlayFile.set(\trigger, 1);
+							~synthPlayFile.set(\trig, 1);
 							s.sync;
 							~audioFile.set(\trigger, 1);
 							s.sync;
@@ -6359,13 +6359,13 @@ G                       Init Genome Agent (solo).
 			if(commande == 'Switch File for Analyze', {
 				if(~listeSamplePourAnalyse.wrapAt(number - 1) != nil, {
 					s.bind{
-						~synthPlayFile.set(\trigger, 0);
+						~synthPlayFile.set(\trig, 0);
 						s.sync;
 						~audioFile.set(\trigger, 0);
 						s.sync;
 						~synthPlayFile.set(\bufferplay, ~listeSamplePourAnalyse.wrapAt(number - 1));
 						~audioFile.set(\bufferplay, ~listeSamplePourAnalyse.wrapAt(number - 1));
-						~synthPlayFile.set(\trigger, 1);
+						~synthPlayFile.set(\trig, 1);
 						s.sync;
 						~audioFile.set(\trigger, 1);
 						s.sync;
@@ -7568,9 +7568,9 @@ G                       Init Genome Agent (solo).
 
 			// Synth lecture file pour analyse AudioIn
 			SynthDef("Agents Play File",
-				{arg out=0, bufferplay, busFileIn, trigger=0, offset=0, loop=1, volume=0;
+				{arg out=0, bufferplay, busFileIn, trig=0, offset=0, loop=1, volume=0;
 					var input;
-					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay)*offset , loop);
+					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trig, BufFrames.kr(bufferplay)*offset , loop);
 					Out.ar(out, input * volume); // Amp File Out
 					Out.ar(busFileIn, Mix(input)); // Pour recordings buffers agents
 			}).send(s);
