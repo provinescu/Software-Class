@@ -13234,7 +13234,6 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control2 * 2).clip(0.0625, 2.0), 1.0, control3 * BufFrames.kr(localBuf), 1);
 					effet = FFT(LocalBuf(1024, 1), effet);
-					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_MagFreeze(effet, SinOsc.kr(control2 * control4.reciprocal));
 					effet= IFFT(effet);
 
@@ -13264,7 +13263,6 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
 					effet = FFT(LocalBuf(512, 1), effet);
-					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_PlayBuf(effet, localBuf, control2, control3 * BufFrames.kr(localBuf), 1, 1);
 					effet= IFFT(effet);
 
@@ -13294,7 +13292,6 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
 					effet = FFT(LocalBuf(1024, 1), effet);
-					PV_RecordBuf(effet, localBuf, 0, 1, 1);
 					effet = PV_BinPlayBuf(effet, localBuf, control2, control6 * BufFrames.kr(localBuf), control3 * 16, control4 * 8 + 1, control5 * 63 + 1, 1, 1);
 					effet= IFFT(effet);
 

@@ -12020,7 +12020,6 @@ Preset Wek",
 				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, ctrl3 * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(1024, 1), chain);
-				PV_RecordBuf(chain, local, 0, 1, 1);
 				chain = PV_MagFreeze(chain, SinOsc.kr(ctrl2 * duree.reciprocal));
 				chain= IFFT(chain);
 				chain = chain * amp;
@@ -12065,7 +12064,6 @@ Preset Wek",
 				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, 0, 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(512, 1), chain);
-				PV_RecordBuf(chain, local, 0, 1, 1);
 				chain = PV_PlayBuf(chain, local, ctrl2, ctrl3 * BufFrames.kr(local), 1, 1);
 				chain= IFFT(chain);
 				chain = chain * amp;
@@ -12110,7 +12108,6 @@ Preset Wek",
 				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, 0, 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(512, 1), chain);
-				PV_RecordBuf(chain, local, 0, 1, 1);
 				chain = PV_BinPlayBuf(chain, local, ctrl2, ctrl6 * BufFrames.kr(local), ctrl3 * 16, ctrl4 * 8 + 1, ctrl5 * 63 + 1, 1, 1);
 				chain= IFFT(chain);
 				chain = chain * amp;
