@@ -13175,7 +13175,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, 2);// + ou - local;
 					LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
@@ -13203,7 +13203,7 @@ G                       Init Genome Agent (solo).
 					// Input
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2.reciprocal) + (control3*4), Dust.kr(control4.reciprocal), Logistic.kr(control5 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(localBuf), 1, 0.333, 0.5) + local * amp;
 
@@ -13230,7 +13230,7 @@ G                       Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control2 * 2).clip(0.0625, 2.0), 1.0, control3 * BufFrames.kr(localBuf), 1);
 					effet = FFT(LocalBuf(1024, 1), effet);
@@ -13260,7 +13260,7 @@ G                       Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
 					effet = FFT(LocalBuf(512, 1), effet);
@@ -13290,7 +13290,7 @@ G                       Init Genome Agent (solo).
 				{arg out = 0, in, busverb, control1=0.03125, control2=0.0625, control3=0.125, control4=0.25, control5=0.25, control6=0.25, control7=0.25, control8=0.25, pan=0, amp=0.0;
 					var ineffet, effet, ambisonic, localBuf;
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0333, loop: 0, trigger: Impulse.kr(control1));
+					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, (control1 * 2).clip(0.0625, 2.0), 1.0, 0, 1);
 					effet = FFT(LocalBuf(1024, 1), effet);
