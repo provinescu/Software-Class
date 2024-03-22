@@ -3,17 +3,15 @@ Launcher {
 
 	classvar  < s;
 
-	var <> name, ni, o, r, f, w, devIn, devOut, listDevIn, listDevOut, path, nameSoft, driverBlock, widthMC, orientationMC, flagMC, wek;
+	var <> name, ni, o, r, f, w, devIn, devOut, listDevIn, listDevOut, path, nameSoft, driverBlock, widthMC, orientationMC, flagMC, wek, wekPort, scPort;
 
-	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, wek=6448;
+	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, wek=6448, wekPort = 12000, scPort = 57110;
 
-		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek);
+		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
 	}
 
-	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek;
-
-		// Load Provinescu Software HP All In One avec adr Server 57569
+	init	{arg path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
 
 		// Init
 		QtGUI.palette = QPalette.dark;// light / system
@@ -31,6 +29,8 @@ Launcher {
 		orientationMC = 0.5;
 		flagMC = 0;
 		wek = 6448;
+		wekPort = 12000;
+		scPort = 57110;
 
 		// Output Panel
 		w = Window("HP Software", Rect(666, 333, 210, 450), scroll: true);
@@ -39,7 +39,8 @@ Launcher {
 		w.view.decorator = FlowLayout(w.view.bounds);
 
 		//Server
-		StaticText(w, Rect(0, 0, 200, 20)).string_("Server").stringColor_(Color.yellow);
+		StaticText(w, Rect(0, 0, 50, 20)).string_("Server").stringColor_(Color.yellow);
+		NumberBox(w, 50@20).value_(57110).action_{arg ez; scPort = ez.value.asInteger};
 		w.view.decorator.nextLine;
 		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Internal", "Local"]).stringColor_(Color.white).action = {|source| if(source.value == 0,
 			{Server.default = Server.internal},
@@ -138,29 +139,39 @@ Launcher {
 					path = "~/Documents/Density/";
 				},
 				5,	{
-					nameSoft = "WekRobot";// 5774
+					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 1)");
+					nameSoft = "WekRobot";// 5770
 					path = "~/Documents/WekRobot/";
-					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+					SCRequestString("12000", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
+					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
 				6,	{
-					nameSoft = "WekAgents";// 5773
+					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 95)");
+					nameSoft = "WekAgents";// 5771
 					path = "~/Documents/WekAgents/";
-					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+					SCRequestString("12000", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
+					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
 				7,	{
-					nameSoft = "WekMatrix";// 57571
+					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 13)");
+					nameSoft = "WekMatrix";// 57572
 					path = "~/Documents/WekMatrix/";
-					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+					SCRequestString("12000", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
+					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
 				8,	{
-					nameSoft = "WekTime";// 57572
+					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 71)");
+					nameSoft = "WekTime";// 57573
 					path = "~/Documents/WekTime/";
-					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+					SCRequestString("12000", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
+					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
 				9,	{
-					nameSoft = "WekDensity";// 57570
+					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 17)");
+					nameSoft = "WekDensity";// 57574
 					path = "~/Documents/WekDensity/";
-					SCRequestString("6448", "Wekinator Port", {arg strg; wek = strg.asFloat});
+					SCRequestString("12000", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
+					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				}
 			);
 		};
@@ -173,11 +184,11 @@ Launcher {
 		Button(w,Rect(0, 0, 200, 20)).states_([["Working Folder", Color.white]]).action = {arg start;
 			FileDialog.new({ arg paths;
 				paths = paths.at(0).asString ++"/"++ nameSoft;
-				nameSoft.interpret.new(paths, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC, nameSoft, wek);
+				nameSoft.interpret.new(paths, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC, nameSoft, wek, wekPort, scPort);
 				//Server.default.makeGui;
 			},
 			{
-				nameSoft.interpret.new(path, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC, nameSoft, wek);
+				nameSoft.interpret.new(path, ni, o, r, f, devIn, devOut, driverBlock, widthMC, orientationMC, flagMC, nameSoft, wek, wekPort, scPort);
 				//Server.default.makeGui;
 			}, fileMode: 2);
 			w.close;

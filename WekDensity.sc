@@ -15,13 +15,13 @@ WekDensity {
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
 	var dimIn, flagStreamMFCC, loopMusic, responder;
 
-	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448;
+	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448, wekPort=12000, scPort=57110;
 
-		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek);
+		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
 	}
 
-	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek;
+	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
 
 		//// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -53,7 +53,9 @@ WekDensity {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		//Server.default = s = Server(name,NetAddr("localhost",57574), Server.default.options);
+		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		thisProcess.openUDPPort(wekPort.asInteger); // Sender Port Wekinator + Enter Port change 6448 to an another for example 6449
+
 		s = Server.default;
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);
@@ -1200,10 +1202,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		menuAlgo = Menu(
 			MenuAction("Wekinator Port",
 				{
-					SCRequestString("6448", "Wekinator Port", {arg index, port;
+					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;
 						sender.free;
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
+					});
+			}),
+			MenuAction("Wek Send Port",
+				{
+					SCRequestString("12000", "Wek Out Port", {arg index, port;
+						port = index.asInteger;
+						thisProcess.openUDPPort(port);
+						thisProcess.openPorts.postcs;
 					});
 			}),
 			MenuAction("List

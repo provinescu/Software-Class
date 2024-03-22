@@ -6,13 +6,13 @@ WekRobot {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
-	*new {arg path="~/Documents/WekRobot/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekRobot", wek=6448;
+	*new {arg path="~/Documents/WekRobot/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekRobot", wek=6448, wekPort=12000, scPort=57110;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
 	}
 
-	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek;
+	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -24,7 +24,8 @@ WekRobot {
 		if(File.exists(~nompathdata).not) {systemCmd("mkdir" + ~nompathdata)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
-		//Server.default = s = Server(name,NetAddr("localhost",57570), Server.default.options);
+		Server.default = s = Server(name,NetAddr("localhost", scPort.asInteger), Server.default.options);
+		thisProcess.openUDPPort(wekPort.asInteger); // Sender Port Wekinator + Enter Port change 6448 to an another for example 6449
 
 		s = Server.default;
 		s.options.memSize = 2**20;
@@ -294,10 +295,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		menuWek = Menu(
 			MenuAction("Wekinator Port",
 				{
-					SCRequestString("6448", "Wekinator Port", {arg index, port;
+					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;
 						sender.free;
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
+					});
+			}),
+			MenuAction("Wek Send Port",
+				{
+					SCRequestString("12000", "Wek Out Port", {arg index, port;
+						port = index.asInteger;
+						thisProcess.openUDPPort(port);
+						thisProcess.openPorts.postcs;
 					});
 			}),
 			MenuAction("List
