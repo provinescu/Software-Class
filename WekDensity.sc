@@ -15,7 +15,7 @@ WekDensity {
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
 	var dimIn, flagStreamMFCC, loopMusic, responder;
 
-	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448, wekPort=12000, scPort=57110;
+	*new {arg path = "~/Documents/WekDensity/", ni = 8, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448, wekPort=57120, scPort=57110;
 
 		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
@@ -1208,9 +1208,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
 					});
 			}),
-			MenuAction("Wek Send Port",
+			MenuAction("Wek Out Port",
 				{
-					SCRequestString("12000", "Wek Out Port", {arg index, port;
+					SCRequestString("57120", "Wek Out Port", {arg index, port;
 						port = index.asInteger;
 						thisProcess.openUDPPort(port);
 						thisProcess.openPorts.postcs;

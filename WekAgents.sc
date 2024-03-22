@@ -7,7 +7,7 @@ WekAgents {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP;
 
-	*new	{arg path="~/Documents/WekAgents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448, wekPort=12000, scPort=57110;
+	*new	{arg path="~/Documents/WekAgents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448, wekPort=57120, scPort=57110;
 
 		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
@@ -413,9 +413,9 @@ G                       Init Genome Agent (solo).
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
 					});
 			}),
-			MenuAction("Wek Send Port",
+			MenuAction("Wek Out Port",
 				{
-					SCRequestString("12000", "Wek Out Port", {arg index, port;
+					SCRequestString("57120", "Wek Out Port", {arg index, port;
 						port = index.asInteger;
 						thisProcess.openUDPPort(port);
 						thisProcess.openPorts.postcs;

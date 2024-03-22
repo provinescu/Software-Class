@@ -18,7 +18,7 @@ WekTime {
 	var lastTimeAutomation, thresholdAutomation, lastTime, typeAudio, midiOut, choiceCanalMidiOut, flagMidiOut, freqMidi, synthCanalMidiOut, listeFileAnalyze, listeNameFileAnalyze, listeFlagDureeSynth, loopSample, sampleMenu, loopMenu, typeMasterOut, menuFile, menuRecording, menuPreset, menuSynth, menuHelp, menuAlgo, menuScale, menuOSC, busOSCfreq, busOSCamp, busOSCduree, busOSCtempo, busOSCflatness, busOSCflux, busOSCenergy, busOSCcentroid, tempoOSC, oscTempo, flagTempo, synthOSCFFT, fonctionInitBand, numFhzBand, lastTimeBand, bandFHZ, fonctionBand, flagIndexBand;
 	var rangeNumFhzBand, listeDataBand, flagMIDI, listeGroupFX, listeGroupFilter, listeBusSynth, listeLoop, listeRecLevel, listePreLevel, audioDisplay, autoRoot, bpmDisplay, ambitusFreq, windowVST, flagVST, groupeLimiter, widthMC, orientationMC, numberAudioIn, rangeFFT, rangeBand;
 
-	*new	{arg path="~/Documents/WekTime/", ni=26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekTime", wek=6448, wekPort=12000, scPort=57110;
+	*new	{arg path="~/Documents/WekTime/", ni=26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekTime", wek=6448, wekPort=57120, scPort=57110;
 
 		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag=0, wek, wekPort, scPort);
 
@@ -2356,9 +2356,9 @@ f						Switch File for Analyze.
 						sender = NetAddr.new("127.0.0.1", port);// Wekinator
 					});
 			}),
-			MenuAction("Wek Send Port",
+			MenuAction("Wek Out Port",
 				{
-					SCRequestString("12000", "Wek Out Port", {arg index, port;
+					SCRequestString("57120", "Wek Out Port", {arg index, port;
 						port = index.asInteger;
 						thisProcess.openUDPPort(port);
 						thisProcess.openPorts.postcs;
