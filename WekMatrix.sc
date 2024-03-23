@@ -594,7 +594,7 @@ y ... -						Musical keys.
 		MainMenu.register(menuOSC.title_("OSC"), "WekMatrixTools");
 
 		menuAlgo = Menu(
-			MenuAction("Wekinator Port",
+			MenuAction("Wek In Port",
 				{
 					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;

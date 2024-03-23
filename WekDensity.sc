@@ -1200,7 +1200,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTools");
 
 		menuAlgo = Menu(
-			MenuAction("Wekinator Port",
+			MenuAction("Wek In Port",
 				{
 					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;

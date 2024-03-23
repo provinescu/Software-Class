@@ -2348,7 +2348,7 @@ f						Switch File for Analyze.
 		MainMenu.register(menuOSC.title_("OSC"), "WekTimeTools");
 
 		menuAlgo = Menu(
-			MenuAction("Wekinator Port",
+			MenuAction("Wek In Port",
 				{
 					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;

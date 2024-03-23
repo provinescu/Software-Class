@@ -405,7 +405,7 @@ G                       Init Genome Agent (solo).
 		MainMenu.register(~menuSoft.title_("Soft"), "WekAgentsTools");
 
 		menuWek = Menu(
-			MenuAction("Wekinator Port",
+			MenuAction("Wek In Port",
 				{
 					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;

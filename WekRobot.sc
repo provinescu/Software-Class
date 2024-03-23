@@ -293,7 +293,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		MainMenu.register(~menuMidi.title_("MIDI"), "WekRobotTools");
 
 		menuWek = Menu(
-			MenuAction("Wekinator Port",
+			MenuAction("Wek In Port",
 				{
 					SCRequestString("6448", "Wek In Port", {arg index, port;
 						port = index.asInteger;

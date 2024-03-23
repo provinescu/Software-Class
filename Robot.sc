@@ -6,13 +6,13 @@ Robot {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn;
 
-	*new {arg path="~/Documents/Robot/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Robot";
+	*new {arg path="~/Documents/Robot/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Robot", wek=6448, wekPort=57120, scPort=57110;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort);
 
 	}
 
-	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag;
+	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -24,7 +24,7 @@ Robot {
 		if(File.exists(~nompathdata).not) {systemCmd("mkdir" + ~nompathdata)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
-		//Server.default = s = Server(name,NetAddr("localhost",57564), Server.default.options);
+		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
 
 		s = Server.default;
 		s.options.memSize = 2**20;
