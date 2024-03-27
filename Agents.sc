@@ -30,7 +30,7 @@ Agents {
 		~recChannels = r;
 		~switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
-		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
 
 		s = Server.default;
 
@@ -7047,7 +7047,7 @@ G                       Init Genome Agent (solo).
 			~randomPanEffets.value_(~automationPanEffets.wrapAt(datafile.wrapAt(99)));
 			~randomControlsEffets.value_(~automationControlsEffets.wrapAt(datafile.wrapAt(99)));
 			~speedEffets.valueAction_(datafile.wrapAt(205));
-			~startAutomation.valueAction_(datafile.wrapAt(104));
+			/*~startAutomation.valueAction_(datafile.wrapAt(104));
 			~flagInitAutomation=datafile.wrapAt(103);if(~flagInitAutomation=='on',{~initAutomation.valueAction_(1)},{~initAutomation.valueAction_(0)});
 			~flagUniversAutomation=datafile.wrapAt(106);if(~flagUniversAutomation=='on',{~universAutomation.valueAction_(1)},{~universAutomation.valueAction_(0)});
 			~flagMondesAgentsAutomation=datafile.wrapAt(107);if(~flagMondesAgentsAutomation=='on',{~mondesAgentsAutomation.valueAction_(1)},{~mondesAgentsAutomation.valueAction_(0)});
@@ -7055,7 +7055,7 @@ G                       Init Genome Agent (solo).
 			~flagGenesMAutomation=datafile.wrapAt(109);if(~flagGenesMAutomation=='on',{~genesMAutomation.valueAction_(1)},{~genesMAutomation.valueAction_(0)});
 			~flagGenesSAutomation=datafile.wrapAt(110);if(~flagGenesSAutomation=='on',{~genesSAutomation.valueAction_(1)},{~genesSAutomation.valueAction_(0)});
 			~flagSynthMusiqueAutomation=datafile.wrapAt(111);if(~flagSynthMusiqueAutomation=='on',{~synthMusiqueAutomation.valueAction_(1)},{~synthMusiqueAutomation.valueAction_(0)});
-			~flagSynthAgentsAutomation=datafile.wrapAt(112);if(~flagSynthAgentsAutomation=='on',{~synthAgentsAutomation.valueAction_(1)},{~synthAgentsAutomation.valueAction_(0)});
+			~flagSynthAgentsAutomation=datafile.wrapAt(112);if(~flagSynthAgentsAutomation=='on',{~synthAgentsAutomation.valueAction_(1)},{~synthAgentsAutomation.valueAction_(0)});*/
 			~densite.valueAction_(datafile.wrapAt(113));
 			~controlsSynth=datafile.wrapAt(114);
 			~controlsSynthMenu.valueAction_(~controlsSynth.wrapAt(datafile.wrapAt(79)));
