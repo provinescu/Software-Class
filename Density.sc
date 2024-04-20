@@ -48,7 +48,7 @@ Density {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
 		s = Server.default;
 		s.options.memSize = 2**20;
 		s.options.inDevice_(devIn);

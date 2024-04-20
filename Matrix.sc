@@ -31,7 +31,7 @@ Matrix {
 		recChannels = r;
 		switchAudioOut = f;// Type Format stereo, ambisonic, etc...
 
-		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
 		s = Server.default;
 		s.options.memSize = 2**20;
 		s.options.numWireBufs = 128;
@@ -1791,7 +1791,7 @@ y ... -						Musical keys.
 					// Stretch
 					if(rrand(0.0, 100.0) < pourcentDurT.value, {controlDureeTranSlider.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign)});
 					// Quant
-					if(rrand(0.0, 100.0) < pourcentQuant.value, {controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor) * dissymetrie.sign)});
+					if(rrand(0.0, 100.0) < pourcentQuant.value, {controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor))});
 					// Root
 					if(rrand(0.0, 100.0) < pourcentRoot.value, {controlRootSlider.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor)});
 					//

@@ -24,7 +24,7 @@ WekRobot {
 		if(File.exists(~nompathdata).not) {systemCmd("mkdir" + ~nompathdata)};
 		if(File.exists(thisProcess.platform.recordingsDir).not) {systemCmd("mkdir" + thisProcess.platform.recordingsDir.quote)};
 
-		Server.default = s = Server(name,NetAddr("localhost", scPort.asInteger), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost", scPort.asInteger), Server.default.options);
 		thisProcess.openUDPPort(wekPort.asInteger); // Sender Port Wekinator + Enter Port change 6448 to an another for example 6449
 
 		s = Server.default;

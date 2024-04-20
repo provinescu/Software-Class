@@ -53,7 +53,7 @@ WekDensity {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
 		thisProcess.openUDPPort(wekPort.asInteger); // Sender Port Wekinator + Enter Port change 6448 to an another for example 6449
 
 		s = Server.default;
