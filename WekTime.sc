@@ -961,37 +961,37 @@ f						Switch File for Analyze.
 						4.do({arg i;
 							//Octave (247)
 							listeOctave.put(i, wekOut[0+i].clip(-4, 4));//0
-							windowControlGUI.view.children.at(i * 93 + 247).children.at(2).valueAction_(wekOut[0+i].clip(-4, 4));
+							windowControlGUI.view.children.at(i * 93 + 247).children.at(2).value_(wekOut[0+i].clip(-4, 4));
 							//Demiton (250)
 							listeDemiTon.put(i, wekOut[4+i].clip(-12, 12));//4
-							windowControlGUI.view.children.at(i * 93 + 250).children.at(2).valueAction_(wekOut[4+i].clip(-12, 12));
+							windowControlGUI.view.children.at(i * 93 + 250).children.at(2).value_(wekOut[4+i].clip(-12, 12));
 							//Cent (253)
 							listeCent.put(i, wekOut[8+i].clip(-100, 100));//8
-							windowControlGUI.view.children.at(i * 93 + 253).children.at(2).valueAction_(wekOut[8+i].clip(-100, 100));
+							windowControlGUI.view.children.at(i * 93 + 253).children.at(2).value_(wekOut[8+i].clip(-100, 100));
 							//Filter (260)
 							choiceFilter.put(i, wekOut[12+i].clip(0, (listeFilters.size - 1)).asInteger);
-							windowControlGUI.view.children.at(i * 93 + 260).valueAction_(wekOut[12+i].clip(0, 40).asInteger);//12 Filter
+							windowControlGUI.view.children.at(i * 93 + 260).value_(wekOut[12+i].clip(0, 40).asInteger);//12 Filter
 							//CtrlFilter (264)
 							listeCtrl1Filter.put(i, wekOut[16+i].clip(20, 12544));//16
-							windowControlGUI.view.children.at(i * 93 + 264).children.at(2).valueAction_(wekOut[16+i].clip(20, 12544));
+							windowControlGUI.view.children.at(i * 93 + 264).children.at(2).value_(wekOut[16+i].clip(20, 12544));
 							listeCtrl2Filter.put(i, wekOut[20+i].clip(0.01, 100) / 100);//20
-							windowControlGUI.view.children.at(i * 93 + 267).children.at(2).valueAction_(wekOut[20+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 267).children.at(2).value_(wekOut[20+i].clip(0.01, 100));
 							listeCtrl3Filter.put(i, wekOut[24+i].clip(0.01, 100) / 100);//24
-							windowControlGUI.view.children.at(i * 93 + 270).children.at(2).valueAction_(wekOut[24+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 270).children.at(2).value_(wekOut[24+i].clip(0.01, 100));
 							//FX (274)
 							choiceFX.put(i, wekOut[28+i].clip(0, (listeFX.size - 1)).asInteger);
-							windowControlGUI.view.children.at(i * 93 + 274).valueAction_(wekOut[28+i].clip(0, 7).asInteger);//28 FX
+							windowControlGUI.view.children.at(i * 93 + 274).value_(wekOut[28+i].clip(0, 7).asInteger);//28 FX
 							//CtrlFX (278)
 							listeCtrl1FX.put(i, wekOut[32+i].clip(0.01, 100) / 100);//32
-							windowControlGUI.view.children.at(i * 93 + 278).children.at(2).valueAction_(wekOut[32+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 278).children.at(2).value_(wekOut[32+i].clip(0.01, 100));
 							listeCtrl2FX.put(i, wekOut[36+i].clip(0.01, 100) / 100);//36
-							windowControlGUI.view.children.at(i * 93 + 281).children.at(2).valueAction_(wekOut[36+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 281).children.at(2).value_(wekOut[36+i].clip(0.01, 100));
 							listeCtrl3FX.put(i, wekOut[40+i].clip(0.01, 100) / 100);//40
-							windowControlGUI.view.children.at(i * 93 + 284).children.at(2).valueAction_(wekOut[40+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 284).children.at(2).value_(wekOut[40+i].clip(0.01, 100));
 							listeCtrl4FX.put(i, wekOut[44+i].clip(0.01, 100) / 100);//44
-							windowControlGUI.view.children.at(i * 93 + 287).children.at(2).valueAction_(wekOut[44+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 287).children.at(2).value_(wekOut[44+i].clip(0.01, 100));
 							listeCtrl5FX.put(i, wekOut[48+i].clip(0.01, 100) / 100);//48
-							windowControlGUI.view.children.at(i * 93 + 290).children.at(2).valueAction_(wekOut[48+i].clip(0.01, 100));
+							windowControlGUI.view.children.at(i * 93 + 290).children.at(2).value_(wekOut[48+i].clip(0.01, 100));
 						});
 						rangeFFT = wekOut[52..53].clip(0, 1);
 						windowExternalControlGUI.view.children.at(27).children.at(2).lo_(rangeFFT[0]);
@@ -1002,97 +1002,97 @@ f						Switch File for Analyze.
 						changeChoiceSynthDef.do({arg item, i;// 54 a 57
 							if(wekOut[54].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(0, item);
-								windowControlGUI.view.children.at(0 * 93 + 208).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(0 * 93 + 208).value_(i.asInteger);
 							});
 							if(wekOut[55].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(1, item);
-								windowControlGUI.view.children.at(1 * 93 + 208).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(1 * 93 + 208).value_(i.asInteger);
 							});
 							if(wekOut[56].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(2, item);
-								windowControlGUI.view.children.at(2 * 93 + 208).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(2 * 93 + 208).value_(i.asInteger);
 							});
 							if(wekOut[57].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(3, item);
-								windowControlGUI.view.children.at(3 * 93 + 208).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(3 * 93 + 208).value_(i.asInteger);
 							});
 						});
 						// duree synth
 						['Seq', 'Pitch', 'Grain'].do({arg item, i;// 58 a 61
 							if(wekOut[58].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(0, item;
-								windowControlGUI.view.children.at(0 * 93 + 210).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(0 * 93 + 210).value_(i.asInteger);
 							)});
 							if(wekOut[59].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(1, item);
-								windowControlGUI.view.children.at(1 * 93 + 210).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(1 * 93 + 210).value_(i.asInteger);
 							});
 							if(wekOut[60].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(2, item);
-								windowControlGUI.view.children.at(2 * 93 + 210).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(2 * 93 + 210).value_(i.asInteger);
 							});
 							if(wekOut[61].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(3, item);
-								windowControlGUI.view.children.at(3 * 93 + 210).valueAction_(i.asInteger);
+								windowControlGUI.view.children.at(3 * 93 + 210).value_(i.asInteger);
 							});
 						});
 						// mode synth 62 a 65
 						if(wekOut[62] <= 0.5,
 							{modeMIDIOSC.put(0, 'Translate');
-								windowControlGUI.view.children.at(0 * 93 + 211).valueAction_(0);
+								windowControlGUI.view.children.at(0 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(0, 'Note');
-								windowControlGUI.view.children.at(0 * 93 + 211).valueAction_(1);
+								windowControlGUI.view.children.at(0 * 93 + 211).value_(1);
 						});
 						if(wekOut[63] <= 0.5,
 							{modeMIDIOSC.put(1, 'Translate');
-								windowControlGUI.view.children.at(1 * 93 + 211).valueAction_(0);
+								windowControlGUI.view.children.at(1 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(1, 'Note');
-								windowControlGUI.view.children.at(1 * 93 + 211).valueAction_(1);
+								windowControlGUI.view.children.at(1 * 93 + 211).value_(1);
 							});
 						if(wekOut[64] <= 0.5,
 							{modeMIDIOSC.put(2, 'Translate');
-								windowControlGUI.view.children.at(2 * 93 + 211).valueAction_(0);
+								windowControlGUI.view.children.at(2 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(2, 'Note');
-								windowControlGUI.view.children.at(2 * 93 + 211).valueAction_(1);
+								windowControlGUI.view.children.at(2 * 93 + 211).value_(1);
 							});
 						if(wekOut[65] <= 0.5,
 							{modeMIDIOSC.put(3, 'Translate');
-								windowControlGUI.view.children.at(3 * 93 + 211).valueAction_(0);
+								windowControlGUI.view.children.at(3 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(3, 'Note');
-								windowControlGUI.view.children.at(3 * 93 + 211).valueAction_(1);
+								windowControlGUI.view.children.at(3 * 93 + 211).value_(1);
 							});
 						// loop sample 66 a 69
 						if(wekOut[66] <= 0.5,
 							{loopSample.put(0, 0);
-							windowControlGUI.view.children.at(0 * 93 + 212).valueAction_(0);
+							windowControlGUI.view.children.at(0 * 93 + 212).value_(0);
 							},
 							{loopSample.put(0, 1);
-								windowControlGUI.view.children.at(0 * 93 + 212).valueAction_(1);
+								windowControlGUI.view.children.at(0 * 93 + 212).value_(1);
 							});
 						if(wekOut[67] <= 0.5,
 							{loopSample.put(1, 0);
-								windowControlGUI.view.children.at(1 * 93 + 212).valueAction_(0);
+								windowControlGUI.view.children.at(1 * 93 + 212).value_(0);
 							},
 							{loopSample.put(1, 1);
-								windowControlGUI.view.children.at(1 * 93 + 212).valueAction_(1);
+								windowControlGUI.view.children.at(1 * 93 + 212).value_(1);
 							});
 						if(wekOut[68] <= 0.5,
 							{loopSample.put(2, 0);
-								windowControlGUI.view.children.at(2 * 93 + 212).valueAction_(0);
+								windowControlGUI.view.children.at(2 * 93 + 212).value_(0);
 							},
 							{loopSample.put(2, 1);
-								windowControlGUI.view.children.at(2 * 93 + 212).valueAction_(1);
+								windowControlGUI.view.children.at(2 * 93 + 212).value_(1);
 							});
 						if(wekOut[69] <= 0.5,
 							{loopSample.put(3, 0);
-								windowControlGUI.view.children.at(3 * 93 + 212).valueAction_(0);
+								windowControlGUI.view.children.at(3 * 93 + 212).value_(0);
 							},
 							{loopSample.put(3, 1);
-								windowControlGUI.view.children.at(3 * 93 + 212).valueAction_(1);
+								windowControlGUI.view.children.at(3 * 93 + 212).value_(1);
 							});
 					lastTimeWekData = time;
 				});
@@ -3330,19 +3330,19 @@ Preset Wek",
 				}
 			);
 		});
-		Button(windowExternalControlGUI, Rect(0, 0, 45, 15)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
+		Button(windowExternalControlGUI, Rect(0, 0, 45, 20)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagWTD = 'off'},
 				1, {flagWTD = 'on'});
 		}).valueAction_(1);
-		NumberBox(windowExternalControlGUI, 25 @ 15).value_(0.0625).action_({|ez| timeWekData = ez.value});
+		NumberBox(windowExternalControlGUI, 25 @ 20).value_(0.0625).action_({|ez| timeWekData = ez.value});
 
-		Button(windowExternalControlGUI, Rect(0, 0, 45, 15)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+		Button(windowExternalControlGUI, Rect(0, 0, 45, 20)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagWTP = 'off'},
 				1, {flagWTP = 'on'});
 		}).valueAction_(1);
-		NumberBox(windowExternalControlGUI, 25 @ 15).value_(4).action_({|ez| timeWekPreset = ez.value});
+		NumberBox(windowExternalControlGUI, 25 @ 20).value_(4).action_({|ez| timeWekPreset = ez.value});
 
 		windowExternalControlGUI.onClose_({nil});
 
