@@ -1409,6 +1409,37 @@ Preset Wek",
 						controlQuantaSlider.valueAction = wekOut[10].clip(1, 100);
 						controlRootSlider.valueAction = wekOut[11].clip(-21, 21);
 						lastTimeWekData = time;
+						// Set Data to Synth
+						{
+							listeWindowSynth.do({|window|
+								if(window.view.children.at(54).value == 1, {
+									// Freq
+									window.value.view.children.at(39).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.activeLo_(wekOut[2].clip(0, 127) / 127); subView.activeHi_(wekOut[3].clip(0, 127) / 127)})
+									});
+									// Freq T
+									window.value.view.children.at(40).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.valueAction_(wekOut[4].clip(-127, 127))});
+									});
+									// Duree
+									window.value.view.children.at(42).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.activeLo_(wekOut[7].clip(0, 60) / 60); subView.activeHi_(wekOut[8].clip(0, 60) / 60)})
+									});
+									// Duree T
+									window.value.view.children.at(43).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.valueAction_(wekOut[9].clip(-100, 100))});
+									});
+									// Quant
+									window.value.view.children.at(44).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.valueAction_(wekOut[10].clip(1, 100))});
+									});
+									// Root
+									window.value.view.children.at(80).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.valueAction_((wekOut[11].clip(-21, 21)).mod(21))});
+									});
+								});
+							});
+						}.defer(0);
 					});
 					// Preset
 					numPreset = wekOut[12].asInteger.clip(1, 40);// Number Preset
