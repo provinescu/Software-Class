@@ -1400,10 +1400,10 @@ Preset Wek",
 				{
 					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 						// Set Master Sliders Controls [pan, freq, transFreq, amp, duree, stretch, quant, root]
-						controlPanSlider.valueAction = wekOut[0..1].clip(-1, 1);
+						//controlPanSlider.valueAction = wekOut[0..1].clip(-1, 1);
 						controlFreqSlider.valueAction = wekOut[2..3].clip(0, 127);
 						controlFreqTranSlider.valueAction = wekOut[4].clip(-127, 127);
-						controlAmpSlider.valueAction = wekOut[5..6].clip(-120, 0);
+						//controlAmpSlider.valueAction = wekOut[5..6].clip(-120, 0);
 						controlDureeSlider.valueAction = wekOut[7..8].clip(0, 60);
 						controlDureeTranSlider.valueAction = wekOut[9].clip(-100, 100);
 						controlQuantaSlider.valueAction = wekOut[10].clip(1, 100);
@@ -2678,13 +2678,13 @@ Preset Wek",
 			valLo = (ez.value.at(0));
 			valHi = (ez.value.at(1));
 			previousPan = ez.value;
-			listeWindowSynth.do({|window|
+			/*listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
 					window.value.view.children.at(38).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.activeLo_(valLo + 1 / 2); subView.activeHi_(valHi + 1 / 2)})
 					});
 				});
-			});
+			});*/
 		},[-1, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
@@ -2719,13 +2719,13 @@ Preset Wek",
 			valLo = (ez.value.at(0) / 2).dbamp;
 			valHi = (ez.value.at(1) / 2).dbamp;
 			previousAmp = ez.value;
-			listeWindowSynth.do({|window|
+			/*listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
 					window.value.view.children.at(41).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
 					});
 				});
-			});
+			});*/
 		},[-inf, 0],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
