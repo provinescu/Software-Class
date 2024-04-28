@@ -1407,7 +1407,7 @@ Preset Wek",
 						controlDureeSlider.valueAction = wekOut[7..8].clip(0, 60);
 						controlDureeTranSlider.valueAction = wekOut[9].clip(-100, 100);
 						controlQuantaSlider.valueAction = wekOut[10].clip(1, 100);
-						controlRootSlider.valueAction = wekOut[11].clip(-21, 21);
+						controlRootSlider.valueAction = wekOut[11].clip(0, 21);
 						lastTimeWekData = time;
 						// Set Data to Synth
 						{
@@ -1435,7 +1435,7 @@ Preset Wek",
 									});
 									// Root
 									window.value.view.children.at(80).children.do({arg subView, subItem;
-										if(subItem == 2, {subView.valueAction_((wekOut[11].clip(-21, 21)).mod(21))});
+										if(subItem == 2, {subView.valueAction_(wekOut[11].clip(0, 21))});
 									});
 								});
 							});
@@ -2765,11 +2765,11 @@ Preset Wek",
 		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
-		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(-21, 21, \lin, 1), {|ez|
+		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
 					window.value.view.children.at(80).children.do({arg subView, subItem;
-						if(subItem == 2, {subView.valueAction_((ez.value).mod(21))});
+						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
 				});
 			});
