@@ -33,7 +33,7 @@ Time {
 		orientationMC = ori;
 
 		// Setup Server Options
-		Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		//Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
 		s = Server.default;
 		s.options.memSize = 2 ** 20;
 		s.options.inDevice_(devIn);
