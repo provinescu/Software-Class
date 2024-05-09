@@ -36,7 +36,7 @@ HPliveCoding {
 				// Do Nothing
 				0, {nil},
 				// Load Coding
-				1, {Dialog.getPaths({ arg paths;
+				1, {Dialog.openPanel({ arg paths;
 					paths.do({ arg p; var file, coding;
 						~wCoding.name="Live Coding Editor for Agents by HP"+p;
 						~wEditCoding.open(p);
@@ -48,7 +48,7 @@ HPliveCoding {
 					file.write(~wEditCoding.string);file.close;
 				},{"cancelled".postln})}
 			);
-			~menuCoding.valueAction_(0);
+			~menuCoding.value_(0);
 		};
 		~menuCoding.focus;
 		// Evaluate Coding

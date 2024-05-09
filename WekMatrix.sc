@@ -55,6 +55,8 @@ WekMatrix {
 		widthMC = wid;
 		orientationMC = ori;
 
+		thisProcess.openUDPPort(NetAddr.langPort);
+
 		// Safety Limiter
 		Safety(s);
 		//s.makeGui;
@@ -1390,6 +1392,52 @@ Preset Wek",
 			ardourOSC = NetAddr("127.0.0.1", 3819);// define NetAddr on local machine with Ardour's port number
 
 			freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime; lastTimeWekData = Main.elapsedTime; lastTimeWekPreset = Main.elapsedTime;
+
+			// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'wekmatrix'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
+											{fonctionUserOperatingSystem.value(9);
+												windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
+												file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
+												fonctionLoadPreset.value(file.readAllString.interpret);
+												file.close;listeWindows.at(3).front;indexWindows=3;
+										}, {"cancelled".postln});
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+							{
+							windowControl.view.children.at(1).valueAction_(0);
+							}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+							{
+							windowControl.view.children.at(1).valueAction_(1);
+							}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: NetAddr.langPort);
 
 			// DATA WIKI OUT
 			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;

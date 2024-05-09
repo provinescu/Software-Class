@@ -60,6 +60,8 @@ Density {
 		widthMC = wid;
 		orientationMC = ori;
 
+		thisProcess.openUDPPort(NetAddr.langPort);
+
 		Safety(s);
 		//s.makeGui;
 
@@ -846,6 +848,54 @@ Density {
 	run {
 
 		"Please Wait... Loading Density...".postln;
+
+		// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'density'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										if(File.exists(pathData ++ "Preset" + number.value.asString ++ ".scd"), {
+											listeDataInstruments.do({arg data, index;
+												data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
+											});
+											windowEar.name = "Density" + " | " + "Preset" + number.asString;
+											file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
+											fonctionLoadPreset.value(file.readAllString.interpret);
+											file.close;
+										}, {"cancelled".postln});
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+							{
+							startSystem.valueAction_(0);
+							}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+							{
+							startSystem.valueAction_(1);
+							}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: NetAddr.langPort);
 
 		// Run Soft
 		s.waitForBoot({

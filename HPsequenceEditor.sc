@@ -43,7 +43,7 @@ HPsequenceEditor {
 				// Save Sequences
 				4, {~userOperatingSystem.valueAction_(13)},
 				// Load Sequence
-				1, {Dialog.getPaths({ arg paths;
+				1, {Dialog.openPanel({ arg paths;
 					paths.do({ arg p; var file, seq;
 						file=File(p,"r");
 						seq = file.readAllString.interpret;file.close;
@@ -52,7 +52,7 @@ HPsequenceEditor {
 				3, {Dialog.savePanel({arg path; var file, seq;
 					file=File(path++".scd","w");file.write([~listeagentfreq.wrapAt(~agentSequence-1),~listeagentamp.wrapAt(~agentSequence-1),~listeagentduree.wrapAt(~agentSequence-1)].asCompileString);file.close},{"cancelled".postln})}
 			);
-			~menuSequence.valueAction_(0);
+			~menuSequence.value_(0);
 		};
 		~menuSequence.focus;
 		// Choix de l'agent et routine automation display

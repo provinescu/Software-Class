@@ -37,7 +37,7 @@ HPscoreEditor {
 				// Do Nothing
 				0, {nil},
 				// Load score
-				1, {Dialog.getPaths({ arg paths;
+				1, {Dialog.openPanel({ arg paths;
 					paths.do({ arg p; var file, score;
 						~routineScore.value(~scorePlaying).stop;~routineScore.value(~scorePlaying).remove;
 						file=File(p,"r");
@@ -53,7 +53,7 @@ HPscoreEditor {
 					file.write(~wEditScore.string);file.close;
 				},{"cancelled".postln})}
 			);
-			~menuScore.valueAction_(0);
+			~menuScore.value_(0);
 		};
 		~menuScore.focus;
 		// Routine score display

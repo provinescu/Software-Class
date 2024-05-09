@@ -47,6 +47,8 @@ Agents {
 		~widthMC = wid;
 		~orientationMC = ori;
 
+		thisProcess.openUDPPort(NetAddr.langPort);
+
 		Safety(s);
 		//s.makeGui;
 
@@ -1833,6 +1835,52 @@ G                       Init Genome Agent (solo).
 		~masterAppAddr = NetAddr.localAddr;
 		~slaveAppAddr = NetAddr.localAddr;
 		~oscStateFlag = 'off';
+
+		// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'agents'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										if(File.exists(~nompathdata++"preset"+number.value.asString++".scd"),
+											{
+												file=File(~nompathdata++"preset"+number.value.asString++".scd","r");
+												~loadUnivers.value(file, 'on', 'on');
+												~wp.name=~nomFenetre+~algoMusic+"preset"+number.value.asString++".scd";
+												file.close;
+										});
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+							{
+							~startsysteme.valueAction_(0);
+							}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+							{
+							~startsysteme.valueAction_(1);
+							}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: NetAddr.langPort);
 
 		// OSC analyse tempo
 		~oscTempoIn = OSCFunc.newMatching({arg msg, time, addr, recvPort;

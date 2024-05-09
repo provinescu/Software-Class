@@ -48,6 +48,8 @@ Robot {
 		widthMC = wid;
 		orientationMC = ori;
 
+		thisProcess.openUDPPort(NetAddr.langPort);
+
 		Safety(s);
 		//s.makeGui;
 
@@ -777,6 +779,46 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 	}
 
 	run {
+
+		// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'robot'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										~fonctionLoadInstruments.value(number);
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+							{
+							~startsysteme.valueAction_(0);
+							}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+							{
+							~startsysteme.valueAction_(1);
+							}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: NetAddr.langPort);
 
 		s.bind{
 

@@ -63,6 +63,8 @@ WekTime {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
+		thisProcess.openUDPPort(NetAddr.langPort);
+
 		Safety(s);
 		//s.makeGui;
 
@@ -77,6 +79,50 @@ WekTime {
 	}
 
 	run	{
+
+		// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'wektime'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										if(File.exists(~pathWekTime ++ "Preset" + number.value.asString ++ ".scd"), {
+											file=File(~pathWekTime ++ "Preset" + number.value.asString ++ ".scd","r");
+											fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
+											windowControlGUI.name="Time a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + number.asString}, {"cancelled".postln});
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+							{
+							windowExternalControlGUI.view.children.at(0).valueAction_(0);
+							}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+							{
+							windowExternalControlGUI.view.children.at(0).valueAction_(1);
+							}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: NetAddr.langPort);
+
 		fonctionCollectFolders = {
 			// Collect all Preset
 			foldersToScanAll = PathName.new(~pathWekTime).files.collect{ |path| var file;

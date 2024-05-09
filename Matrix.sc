@@ -49,6 +49,8 @@ Matrix {
 		widthMC = wid;
 		orientationMC = ori;
 
+		thisProcess.openUDPPort(NetAddr.langPort);
+
 		// Safety Limiter
 		Safety(s);
 		//s.makeGui;
@@ -65,6 +67,52 @@ Matrix {
 	}
 
 	run	{
+
+		// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'matrix'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										if(File.exists(pathMatrix ++ "Preset" + number.value.asString ++ ".scd"),
+											{fonctionUserOperatingSystem.value(9);
+												windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
+												file=File(pathMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
+												fonctionLoadPreset.value(file.readAllString.interpret);
+												file.close;listeWindows.at(3).front;indexWindows=3;
+										}, {"cancelled".postln});
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+							{
+							windowControl.view.children.at(1).valueAction_(0);
+							}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+							{
+							windowControl.view.children.at(1).valueAction_(1);
+							}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: NetAddr.langPort);
 
 		fonctionCollectFolders = {
 			flagCollectFolders = 'on';
