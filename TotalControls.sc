@@ -29,12 +29,12 @@ TotalControls {
 		// Standalone
 		10.do({arg i;
 			netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57130+i));
-			thisProcess.openUDPPort(57130+i);
+			//thisProcess.openUDPPort(57130+i);
 		});
 		// Provinescu
 		10.do({arg i;
 			netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57150+i));
-			thisProcess.openUDPPort(57150+i);
+			//thisProcess.openUDPPort(57150+i);
 		});
 
 		items = 0;
@@ -328,21 +328,21 @@ TotalControls {
 			});
 		};
 
-		// OSCFunc Score
+		/*// OSCFunc Score
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
 			var cmd = 'on', item=0;
 			[msg, time, addr, recvPort].postcs;
 			msg.removeAt(0);
-			while({cmd != nil},
+			/*while({cmd != nil},
 				{
-					/*cmd = msg[item].postln;
+					cmd = msg[item].postln;
 					cmd = msg[item+1].postln;
 					cmd = msg[item+2].postln;
-					"send".postcs;*/
+					"send".postcs;
 					item = item + 3;
 					cmd = msg[item];
-			});
-		}, \score, recvPort: NetAddr.langPort);
+			});*/
+		}, \score, recvPort: NetAddr.langPort);*/
 
 	}
 
