@@ -21,21 +21,15 @@ TotalControls {
 		QtGUI.palette = QPalette.dark;// light / system
 
 		flagManualPlaying = 'off';
-		// Standalone
-		// Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134, WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
-		// Provinescu
-		// Robot = 57150, Agents = 57151, Matrix = 57152, Time = 57153, Density = 57154, WekRobot = 57155, WekAgents = 57156, WekMatrix = 57157, WekTime = 57158, WekDensity = 57159
+		// Standalone Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134, WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
+		// Provinescu All Soft = 57140
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", NetAddr.langPort));
 		// Standalone
 		10.do({arg i;
 			netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57130+i));
-			//thisProcess.openUDPPort(57130+i);
 		});
 		// Provinescu
-		10.do({arg i;
-			netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57150+i));
-			//thisProcess.openUDPPort(57150+i);
-		});
+		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57140));
 
 		items = 0;
 		nextTime = 0;
