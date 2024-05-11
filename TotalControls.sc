@@ -5,7 +5,7 @@ TotalControls {
 	classvar s;
 
 	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes;
-	var nextTime;
+	var nextTime, loopScore, windows, numView;
 
 	*new	{arg path=nil;
 
@@ -34,6 +34,8 @@ TotalControls {
 		items = 0;
 		nextTime = 0;
 		scorePlaying = [];
+		loopScore = 'off';
+		numView = 5;// valid score
 
 		this.edit;
 
@@ -55,7 +57,7 @@ TotalControls {
 					Dialog.openPanel({ arg path;
 						file=File(path,"r");
 						score = file.readAllString;
-						wScore.name="Score Editor/Player for HP Software "+ path;
+						wScore.name="Score Editor/Player and ShortCut Control for HP Software "+ path;
 						scorePlaying = score.interpret;
 						wEditScore.string_(score);
 						file.close;
@@ -73,20 +75,33 @@ TotalControls {
 		};
 
 		//Score
-		wScore = Window("TotalControls (Score Editor/Player for HP Software)", Rect(250, 250, 625, 500));
+		wScore = Window("TotalControls (Score Editor/Player and ShortCut Control for HP Software)", Rect(250, 250, 625, 500));
 		wScore.view.decorator = FlowLayout(wScore.view.bounds);
-		StaticText(wScore, Rect(0, 0, 500, 24)).string_("TotalControls (A Score Editor/Player)").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 14));
+		StaticText(wScore, Rect(0, 0, 500, 24)).string_("TotalControls (A Score Editor/Player and ShortCut Control)").stringColor_(Color.white(1.0,1.0));
 		wScore.view.decorator.nextLine;
 		// Load Score
-		menuScore = PopUpMenu(wScore,Rect(0, 0, 125, 20)).background_(Color.grey(0.5, 0.8)).items = ["Score menu", "Load Score", "Save Score"];
+		menuScore = PopUpMenu(wScore,Rect(0, 0, 110, 20)).background_(Color.grey(0.5, 0.8)).items = ["Score menu", "Load Score", "Save Score"];
 		menuScore.action={arg item;
 			foncLoadSaveScore.value(item.value);
 			menuScore.value_(0);
 		};
 		menuScore.focus;
+		// Button Score Loop Score
+		Button(wScore,Rect(10, 10, 105, 18)).states_([ ["Loop Score On", Color.black, Color.green(0.8, 0.25)], ["Loop Score Off", Color.black, Color.red(0.8, 0.25)]]).action_({arg view;
+			if(view.value == 0, {
+				"Loop Score Off".postln;
+				loopScore = 'off';
+			},
+			{
+				"Loop Score On".postln;
+				loopScore = 'on';
+			});
+		});
 		// Button Score
 		startManualScore = Button(wScore,Rect(10, 10, 125, 18)).states=[ ["Manual Stop Score", Color.black, Color.green(0.8, 0.25)], ["Manual Play Score", Color.black, Color.red(0.8, 0.25)]];
 		startManualScore.action = {arg view;
+			numView = 3;// manual score
+			startTdefScore.value_(0);
 			if(view.value == 0, {
 				// Stop Score
 				"Stop Manual Score".postln;
@@ -101,8 +116,10 @@ TotalControls {
 				flagManualPlaying = 'on';
 			});
 		};
-		startTdefScore = Button(wScore,Rect(10, 10, 125, 18)).states=[["Tdef Stop Score", Color.black, Color.yellow(0.8, 0.25)], ["Tdef Play Score", Color.black, Color.red(0.8, 0.25)]];
+		startTdefScore = Button(wScore,Rect(10, 10, 110, 18)).states=[["Tdef Stop Score", Color.black, Color.yellow(0.8, 0.25)], ["Tdef Play Score", Color.black, Color.red(0.8, 0.25)]];
 		startTdefScore.action = {arg view;
+			numView = 5;// valid score
+			startManualScore.value_(0);
 			if(view.value == 0, {
 				// Stop Score
 				"Stop Tdef Score".postln;
@@ -120,7 +137,7 @@ TotalControls {
 				routineScore.value(scorePlaying).play;
 			});
 		};
-		validScore = Button(wScore,Rect(0, 0, 125, 20)).states=[["Validation Score", Color.black, Color.blue(0.8, 0.25)]];
+		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Validation Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
 			items = 0;
 			flagManualPlaying = 'off';
@@ -128,13 +145,14 @@ TotalControls {
 			scorePlaying.postcs;
 		};
 		wScore.view.decorator.nextLine;
-		StaticText(wScore, Rect(0, 0, 175, 24)).string_("Score").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 48));
+		StaticText(wScore, Rect(0, 0, 175, 24)).string_("SCORE").stringColor_(Color.white(1.0,1.0));
 		wScore.view.decorator.nextLine;
 		wEditScore = TextView(wScore, Rect(0, 0, 600, 400));
 		wEditScore.hasVerticalScroller_(true);
 		wEditScore.hasHorizontalScroller_(true);
 		wEditScore.autohidesScrollers_(true);
 		wEditScore.resize_(5);
+		wEditScore.font_(Font("Helvetica", 18));
 		wEditScore.string_("[[ 1, ['agents', 'preset', 1] ],
 [ 2, ['agents', 'preset', 2, 'all', 'preset', 3, 'density', 'preset', 1] ],
 [ 1, ['end', 0, 0] ]]");
@@ -143,21 +161,15 @@ TotalControls {
 
 		wScore.front;
 
-		//Setup Font
-		wScore.view.do({arg view;
-			view.children.do({arg subView;
-				subView.font = Font("Helvetica", 14);
-			});
-		});
-
 		// PROCESSUS Read Score
 		routineScore = {arg score;
 			var time=0.0417, cmd, val;
 			Tdef(\ScorePlay,
 				{
 					loop({
+						{windows.value(numView)}.defer(2);
 						// Items
-						cmd = score.at(items);
+						cmd = score.at(items).postcs;
 						// Time
 						time = cmd.at(0);
 						if(time  < 0.0417, {time=0.0417});
@@ -168,14 +180,28 @@ TotalControls {
 							netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
 						},
 						{
-							{startTdefScore.valueAction_(0)}.defer;
-							thisThread.stop;
-							thisThread.remove;
+							if(loopScore == 'off',
+								{
+									{startTdefScore.valueAction_(0)}.defer(2);
+									thisThread.stop;
+									thisThread.remove;
+								},
+								{
+									items = 1.neg;
+								}
+							);
 						});
 						items = items + 1;
+						{windows.value(numView)}.defer(2);
 						time.wait;
 					});
 			}).play;
+		};
+
+		windows = {arg num;
+			wScore.front;
+			wScore.view.children.at(num.value).focus;
+			wScore.front;
 		};
 
 		wScore.view.keyDownAction = {arg view, char, modifiers, unicode, keycode;
@@ -272,8 +298,9 @@ TotalControls {
 				{
 					if(flagManualPlaying == 'on',
 						{
+							{windows.value(3)}.defer(2);
 							// Items
-							cmd = scorePlaying.at(items);
+							cmd = scorePlaying.at(items).postcs;
 							// Time
 							time = cmd.at(0);
 							// Commande
@@ -283,8 +310,16 @@ TotalControls {
 								netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
 							},
 							{
-								startManualScore.valueAction_(0);
+								if(loopScore == 'off',
+									{
+										startManualScore.valueAction_(0);
+									},
+									{
+										items = 1.neg;
+									}
+								);
 							});
+							{windows.value(3)}.defer(2);
 							items = items + 1;
 					});
 			});
@@ -296,16 +331,18 @@ TotalControls {
 				{
 					cmd =cmd.add("all");
 					cmd = cmd.add("stop");
-					cmd = cmd.add(0);
+					cmd = cmd.add(0).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
+					{windows.value(5)}.defer(2);
 			});
 			// key o -> load Preset
 			if(char == $p,
 				{
 					cmd =cmd.add("all");
 					cmd = cmd.add("start");
-					cmd = cmd.add(0);
+					cmd = cmd.add(0).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
+					{windows.value(5)}.defer(2);
 			});
 		};
 
@@ -317,25 +354,26 @@ TotalControls {
 				{
 					cmd =cmd.add("all");
 					cmd = cmd.add("preset");
-					cmd = cmd.add(number);
+					cmd = cmd.add(number).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
+					{windows.value(5)}.defer(2);
 			});
 		};
 
 		/*// OSCFunc Score
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
-			var cmd = 'on', item=0;
-			[msg, time, addr, recvPort].postcs;
-			msg.removeAt(0);
-			/*while({cmd != nil},
-				{
-					cmd = msg[item].postln;
-					cmd = msg[item+1].postln;
-					cmd = msg[item+2].postln;
-					"send".postcs;
-					item = item + 3;
-					cmd = msg[item];
-			});*/
+		var cmd = 'on', item=0;
+		[msg, time, addr, recvPort].postcs;
+		msg.removeAt(0);
+		/*while({cmd != nil},
+		{
+		cmd = msg[item].postln;
+		cmd = msg[item+1].postln;
+		cmd = msg[item+2].postln;
+		"send".postcs;
+		item = item + 3;
+		cmd = msg[item];
+		});*/
 		}, \score, recvPort: NetAddr.langPort);*/
 
 	}
