@@ -15,8 +15,6 @@ TotalControls {
 
 	init	{arg path;
 
-		//Server.default = s = Server("TotalControls", NetAddr("localhost", 57563), Server.default.options);
-
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
 
@@ -42,10 +40,6 @@ TotalControls {
 	}
 
 	edit {
-
-		/*s.waitForBoot({
-		nil;
-		});*/
 
 		foncLoadSaveScore = {arg flag;
 			var path, file, score;
@@ -152,7 +146,7 @@ TotalControls {
 		wEditScore.hasHorizontalScroller_(true);
 		wEditScore.autohidesScrollers_(true);
 		wEditScore.resize_(5);
-		wEditScore.font_(Font("Helvetica", 18));
+		wEditScore.font_(Font("Time", 14));
 		wEditScore.string_("[[ 1, ['agents', 'preset', 1] ],
 [ 2, ['agents', 'preset', 2, 'all', 'preset', 3, 'density', 'preset', 1] ],
 [ 1, ['end', 0, 0] ]]");
@@ -203,6 +197,8 @@ TotalControls {
 			wScore.view.children.at(num.value).focus;
 			wScore.front;
 		};
+
+		wScore.view.children.at(5).focus;
 
 		wScore.view.keyDownAction = {arg view, char, modifiers, unicode, keycode;
 
