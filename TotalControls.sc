@@ -147,9 +147,9 @@ TotalControls {
 		wEditScore.autohidesScrollers_(true);
 		wEditScore.resize_(5);
 		wEditScore.font_(Font("Time", 14));
-		wEditScore.string_("[[ 1, ['agents', 'preset', 1] ],
-[ 2, ['agents', 'preset', 2, 'all', 'preset', 3, 'density', 'preset', 1] ],
-[ 1, ['end', 0, 0] ]]");
+		wEditScore.string_("[[ 1, ['all', 'preset', 1] ],
+//[ 2, ['matrix', 'preset', 2, 'agents', 'preset', 3, 'density', 'preset', 1] ],
+[ 1, ['end'] ]]");
 
 		wScore.onClose_({});
 
@@ -198,6 +198,7 @@ TotalControls {
 			wScore.front;
 		};
 
+		wScore.view.children.at(5).valueAction_(1);
 		wScore.view.children.at(5).focus;
 
 		wScore.view.keyDownAction = {arg view, char, modifiers, unicode, keycode;
