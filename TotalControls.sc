@@ -152,9 +152,10 @@ TotalControls {
 		wEditScore.autohidesScrollers_(true);
 		wEditScore.resize_(5);
 		wEditScore.font_(Font("Time", 14));
-		wEditScore.string_("[[ 1, ['all', 'preset', 1] ],
-//[ 2, ['matrix', 'preset', 2, 'agents', 'preset', 3, 'density', 'preset', 1] ],
-[ 1, ['end'] ]]");
+		wEditScore.string_("[
+[ 1, ['all', 'preset', 1] ],
+[ 2, ['matrix', 'preset', 2, 'agents', 'preset', 3, 'density', 'preset', 1] ]
+]");
 
 		wScore.onClose_({});
 
@@ -166,7 +167,7 @@ TotalControls {
 			Tdef(\ScorePlay,
 				{
 					loop({
-						{windows.value(numView)}.defer(1);
+						{windows.value(numView)}.defer(2);
 						// Items
 						cmd = score.at(items).postcs;
 						if(cmd != nil,
@@ -178,13 +179,13 @@ TotalControls {
 								val = cmd.at(1);
 								netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
 								items = items + 1;
-								{windows.value(numView)}.defer(1);
+								{windows.value(numView)}.defer(2);
 								time.wait;
 							},
 							{
 								if(loopScore == 'off',
 									{
-										{startTdefScore.valueAction_(0)}.defer(1);
+										{startTdefScore.valueAction_(0)}.defer(2);
 										thisThread.stop;
 										thisThread.remove;
 									},
@@ -299,7 +300,7 @@ TotalControls {
 				{
 					if(flagManualPlaying == 'on',
 						{
-							{windows.value(3)}.defer(1);
+							{windows.value(3)}.defer(2);
 							// Items
 							cmd = scorePlaying.at(items).postcs;
 							if(cmd != nil,
@@ -309,7 +310,7 @@ TotalControls {
 									// Commande
 									val = cmd.at(1);
 									netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-									{windows.value(3)}.defer(1);
+									{windows.value(3)}.defer(2);
 									items = items + 1;
 								},
 								{
@@ -326,7 +327,7 @@ TotalControls {
 											// Commande
 											val = cmd.at(1);
 											netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-											{windows.value(3)}.defer(1);
+											{windows.value(3)}.defer(2);
 											items = items + 1;
 									});
 							});
@@ -335,23 +336,25 @@ TotalControls {
 			// key l -> load Preset
 			if(char == $l,
 				{commande = 'load preset'});
-			// key o -> load Preset
+			// key o -> stop soft
 			if(char == $o,
 				{
+					{windows.value(numView.value)}.defer(2);
 					cmd =cmd.add("all");
 					cmd = cmd.add("stop");
 					cmd = cmd.add(0).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-					{windows.value(numView.value)}.defer(1);
+					{windows.value(numView.value)}.defer(2);
 			});
-			// key o -> load Preset
+			// key o -> start soft
 			if(char == $p,
 				{
+					{windows.value(numView.value)}.defer(2);
 					cmd =cmd.add("all");
 					cmd = cmd.add("start");
 					cmd = cmd.add(0).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-					{windows.value(numView.value)}.defer(1);
+					{windows.value(numView.value)}.defer(2);
 			});
 		};
 
@@ -361,11 +364,13 @@ TotalControls {
 			//load Preset
 			if(commandeExecute == 'load preset',
 				{
+
+					{windows.value(numView.value)}.defer(2);
 					cmd =cmd.add("all");
 					cmd = cmd.add("preset");
 					cmd = cmd.add(number).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-					{windows.value(numView.value)}.defer(1);
+					{windows.value(numView.value)}.defer(2);
 			});
 		};
 
