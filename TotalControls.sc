@@ -153,8 +153,26 @@ TotalControls {
 		wEditScore.resize_(5);
 		wEditScore.font_(Font("Time", 14));
 		wEditScore.string_("[
-[ 1, ['all', 'preset', 1] ],
-[ 2, ['matrix', 'preset', 2, 'agents', 'preset', 3, 'density', 'preset', 1] ]
+[ 1, ['all', 'stop'] ],
+
+[ 2, ['all', 'preset', 1, 'agents', 'start',] ],
+[ 2, ['matrix', 'start',] ],
+[ 2, ['wektime', 'start'] ],
+
+[ 1, ['all', 'stop'] ],
+
+[ 2, ['all', 'preset', 2, 'wektime', 'start',] ],
+[ 2, ['agents', 'start',] ],
+[ 2, ['matrix', 'start'] ],
+
+[ 1, ['all', 'stop'] ],
+
+[ 2, ['all', 'preset', 3, 'agents', 'start',] ],
+[ 2, ['matrix', 'start',] ],
+[ 2, ['wektime', 'start'] ],
+
+[ 1, ['all', 'stop'] ],
+
 ]");
 
 		wScore.onClose_({});
@@ -163,39 +181,110 @@ TotalControls {
 
 		// PROCESSUS Read Score
 		routineScore = {arg score;
-			var time=0.0417, cmd, val;
+			var time=0.0417, cmd=[], val, item = 0, scoreVal = [], number;
 			Tdef(\ScorePlay,
 				{
 					loop({
-						{windows.value(numView)}.defer(2);
-						// Items
-						cmd = score.at(items).postcs;
+						{windows.value(3)}.defer(2);
+						cmd = scorePlaying.at(items).postcs;
 						if(cmd != nil,
 							{
 								// Time
-								time = cmd.at(0);
+								time = cmd.at(0).postcs;
 								if(time  < 0.0417, {time=0.0417});
 								// Commande
-								val = cmd.at(1);
-								netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-								items = items + 1;
-								{windows.value(numView)}.defer(2);
-								time.wait;
+								cmd = cmd.at(1).postcs;
+								val = cmd.at(item).postcs;
+								while({val != nil},
+									{
+										if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'},
+											{
+												scoreVal = scoreVal.add(val);
+												val = cmd[item+1].postln;
+												scoreVal = scoreVal.add(val);
+												// Preset
+												if(val == 'preset',
+													{
+														number = cmd[item+2].asInteger.postln;
+														scoreVal = scoreVal.add(number);
+														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
+														{windows.value(3)}.defer(2);
+														item = item + 3;
+												});
+												// Start Stop
+												if(val == 'stop' or: {val == 'start'}, {
+													netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
+													{windows.value(3)}.defer(2);
+													item = item + 2;
+												});
+											},
+											{
+												"Bad Command".postln;
+												{startManualScore.valueAction_(0)}.defer(2);
+											};
+										);
+										// Commande
+										val = cmd.at(item);
+									},
+									{
+										cmd = scorePlaying.at(items).postcs;
+										// Time
+										time = cmd.at(0).postcs;
+										// Commande
+										cmd = cmd.at(1).postcs;
+										val = cmd.at(item).postcs;
+								});
+								items= items + 1;
+								item = 0;
 							},
 							{
 								if(loopScore == 'off',
 									{
-										{startTdefScore.valueAction_(0)}.defer(2);
+										{startManualScore.valueAction_(0)}.defer(2);
 										thisThread.stop;
 										thisThread.remove;
 									},
 									{
 										items = 0;
+										item = 0;
 								});
 						});
+						time.wait;
 					});
 			}).play;
 		};
+		/////////////////
+
+		/*loop({
+		{windows.value(numView)}.defer(2);
+		// Items
+		cmd = score.at(items).postcs;
+		if(cmd != nil,
+		{
+		// Time
+		time = cmd.at(0);
+		if(time  < 0.0417, {time=0.0417});
+		// Commande
+		val = cmd.at(1);
+		netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
+		items = items + 1;
+		{windows.value(numView)}.defer(2);
+		time.wait;
+		},
+		{
+		if(loopScore == 'off',
+		{
+		{startTdefScore.valueAction_(0)}.defer(2);
+		thisThread.stop;
+		thisThread.remove;
+		},
+		{
+		items = 0;
+		});
+		});
+		});
+		}).play;
+		};*/
 
 		windows = {arg num;
 			wScore.front;
@@ -208,7 +297,7 @@ TotalControls {
 
 		wScore.view.keyDownAction = {arg view, char, modifiers, unicode, keycode;
 
-			var cmd, val, time;
+			var val, time, cmd = 'on', item = 0, scoreVal=[], number;
 
 			//[view, char, modifiers, unicode, keycode].postcs;
 
@@ -301,36 +390,100 @@ TotalControls {
 					if(flagManualPlaying == 'on',
 						{
 							{windows.value(3)}.defer(2);
-							// Items
+
+							/////
 							cmd = scorePlaying.at(items).postcs;
 							if(cmd != nil,
 								{
 									// Time
-									time = cmd.at(0);
+									time = cmd.at(0).postcs;
 									// Commande
-									val = cmd.at(1);
-									netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-									{windows.value(3)}.defer(2);
-									items = items + 1;
+									cmd = cmd.at(1).postcs;
+									val = cmd.at(item).postcs;
+									while({val != nil},
+										{
+											if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'},
+												{
+													scoreVal = scoreVal.add(val);
+													val = cmd[item+1].postln;
+													scoreVal = scoreVal.add(val);
+													// Preset
+													if(val == 'preset',
+														{
+															number = cmd[item+2].asInteger.postln;
+															scoreVal = scoreVal.add(number);
+															netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
+															{windows.value(3)}.defer(2);
+															item = item + 3;
+													});
+													// Start Stop
+													if(val == 'stop' or: {val == 'start'}, {
+														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
+														{windows.value(3)}.defer(2);
+														item = item + 2;
+													});
+												},
+												{
+													"Bad Command".postln;
+													{startManualScore.valueAction_(0)}.defer(2);
+												};
+											);
+											// Commande
+											val = cmd.at(item);
+										},
+										{
+											cmd = scorePlaying.at(items).postcs;
+											// Time
+											time = cmd.at(0).postcs;
+											// Commande
+											cmd = cmd.at(1).postcs;
+											val = cmd.at(item).postcs;
+									});
 								},
 								{
 									if(loopScore == 'off',
 										{
-											startManualScore.valueAction_(0);
+											{startManualScore.valueAction_(0)}.defer(2);
+											items = 0;
 										},
 										{
 											items = 0;
-											// Items
-											cmd = scorePlaying.at(items).postcs;
-											// Time
-											time = cmd.at(0);
-											// Commande
-											val = cmd.at(1);
-											netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-											{windows.value(3)}.defer(2);
-											items = items + 1;
 									});
 							});
+							items = items + 1;
+							/////
+
+							// Old Version
+							/*// Items
+							cmd = scorePlaying.at(items).postcs;
+							if(cmd != nil,
+							{
+							// Time
+							time = cmd.at(0);
+							// Commande
+							val = cmd.at(1);
+							netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
+							{windows.value(3)}.defer(2);
+							items = items + 1;
+							},
+							{
+							if(loopScore == 'off',
+							{
+							startManualScore.valueAction_(0);
+							},
+							{
+							items = 0;
+							// Items
+							cmd = scorePlaying.at(items).postcs;
+							// Time
+							time = cmd.at(0);
+							// Commande
+							val = cmd.at(1);
+							netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
+							{windows.value(3)}.defer(2);
+							items = items + 1;
+							});
+							});*/
 					});
 			});
 			// key l -> load Preset
