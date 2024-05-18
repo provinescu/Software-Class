@@ -5,7 +5,7 @@ TotalControls {
 	classvar s;
 
 	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes;
-	var nextTime, loopScore, windows, numView;
+	var loopScore, windows, numView;
 
 	*new	{arg path=nil;
 
@@ -30,7 +30,6 @@ TotalControls {
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57140));
 
 		items = 0;
-		nextTime = 0;
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// valid score
@@ -78,6 +77,7 @@ TotalControls {
 		menuScore.action={arg item;
 			foncLoadSaveScore.value(item.value);
 			menuScore.value_(0);
+			items = 0;
 		};
 		menuScore.focus;
 		// Button Score Loop Score
@@ -103,7 +103,6 @@ TotalControls {
 				"Stop Manual Score".postln;
 				flagManualPlaying = 'off';
 				items = 0;
-				nextTime = 0;
 			},
 			{
 				// Play Score
@@ -124,7 +123,6 @@ TotalControls {
 				routineScore.value(scorePlaying).clear;
 				routineScore.value(scorePlaying).remove;
 				items = 0;
-				nextTime = 0;
 				wScore.view.children.at(numView.value).focus;
 			},
 			{
@@ -187,6 +185,7 @@ TotalControls {
 					loop({
 						{windows.value(3)}.defer(2);
 						cmd = scorePlaying.at(items).postcs;
+						scoreVal = [];
 						if(cmd != nil,
 							{
 								// Time
@@ -444,7 +443,6 @@ TotalControls {
 									if(loopScore == 'off',
 										{
 											{startManualScore.valueAction_(0)}.defer(2);
-											items = 0;
 										},
 										{
 											items = 0;
