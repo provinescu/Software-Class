@@ -189,32 +189,36 @@ TotalControls {
 						if(cmd != nil,
 							{
 								// Time
-								time = cmd.at(0).postcs;
+								time = cmd.at(0);
 								if(time  < 0.0417, {time=0.0417});
 								// Commande
-								cmd = cmd.at(1).postcs;
-								val = cmd.at(item).postcs;
+								cmd = cmd.at(1);
+								val = cmd.at(item);
 								while({val != nil},
 									{
 										if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'},
 											{
 												scoreVal = scoreVal.add(val);
-												val = cmd[item+1].postln;
+												val = cmd[item+1];
 												scoreVal = scoreVal.add(val);
 												// Preset
 												if(val == 'preset',
 													{
-														number = cmd[item+2].asInteger.postln;
+														number = cmd[item+2].asInteger;
 														scoreVal = scoreVal.add(number);
+														scoreVal.postcs;
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 														{windows.value(3)}.defer(2);
 														item = item + 3;
+														scoreVal = [];
 												});
 												// Start Stop
 												if(val == 'stop' or: {val == 'start'}, {
+													scoreVal.postcs;
 													netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 													{windows.value(3)}.defer(2);
 													item = item + 2;
+													scoreVal = [];
 												});
 											},
 											{
@@ -226,12 +230,12 @@ TotalControls {
 										val = cmd.at(item);
 									},
 									{
-										cmd = scorePlaying.at(items).postcs;
+										cmd = scorePlaying.at(items);
 										// Time
-										time = cmd.at(0).postcs;
+										time = cmd.at(0);
 										// Commande
-										cmd = cmd.at(1).postcs;
-										val = cmd.at(item).postcs;
+										cmd = cmd.at(1);
+										val = cmd.at(item);
 								});
 								items= items + 1;
 								item = 0;
@@ -395,31 +399,33 @@ TotalControls {
 							if(cmd != nil,
 								{
 									// Time
-									time = cmd.at(0).postcs;
+									time = cmd.at(0);
 									// Commande
-									cmd = cmd.at(1).postcs;
-									val = cmd.at(item).postcs;
+									cmd = cmd.at(1);
+									val = cmd.at(item);
 									while({val != nil},
 										{
 											if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'},
 												{
 													scoreVal = scoreVal.add(val);
-													val = cmd[item+1].postln;
+													val = cmd[item+1];
 													scoreVal = scoreVal.add(val);
 													// Preset
 													if(val == 'preset',
 														{
-															number = cmd[item+2].asInteger.postln;
+															number = cmd[item+2].asInteger;
 															scoreVal = scoreVal.add(number);
 															netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 															{windows.value(3)}.defer(2);
 															item = item + 3;
+															scoreVal = [];
 													});
 													// Start Stop
 													if(val == 'stop' or: {val == 'start'}, {
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 														{windows.value(3)}.defer(2);
 														item = item + 2;
+														scoreVal = [];
 													});
 												},
 												{
@@ -431,12 +437,12 @@ TotalControls {
 											val = cmd.at(item);
 										},
 										{
-											cmd = scorePlaying.at(items).postcs;
+											cmd = scorePlaying.at(items);
 											// Time
-											time = cmd.at(0).postcs;
+											time = cmd.at(0);
 											// Commande
-											cmd = cmd.at(1).postcs;
-											val = cmd.at(item).postcs;
+											cmd = cmd.at(1);
+											val = cmd.at(item);
 									});
 								},
 								{
