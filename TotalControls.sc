@@ -184,7 +184,7 @@ TotalControls {
 			Tdef(\ScorePlay,
 				{
 					loop({
-						{windows.value(3)}.defer(2);
+						{windows.value(5)}.defer(2);
 						cmd = scorePlaying.at(items).postcs;
 						scoreVal = [];
 						if(cmd != nil,
@@ -209,7 +209,7 @@ TotalControls {
 														scoreVal = scoreVal.add(number);
 														scoreVal.postcs;
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
-														{windows.value(3)}.defer(2);
+														{windows.value(5)}.defer(2);
 														item = item + 3;
 														scoreVal = [];
 												});
@@ -217,7 +217,7 @@ TotalControls {
 												if(val == 'stop' or: {val == 'start'}, {
 													scoreVal.postcs;
 													netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
-													{windows.value(3)}.defer(2);
+													{windows.value(5)}.defer(2);
 													item = item + 2;
 													scoreVal = [];
 												});
