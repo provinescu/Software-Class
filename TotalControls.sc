@@ -21,6 +21,7 @@ TotalControls {
 		flagManualPlaying = 'off';
 		// Standalone Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134, WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
 		// Provinescu All Soft = 57140
+		// SuperCollider
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", NetAddr.langPort));
 		// Standalone
 		10.do({arg i;
@@ -256,38 +257,6 @@ TotalControls {
 					});
 			}).play;
 		};
-		/////////////////
-
-		/*loop({
-		{windows.value(numView)}.defer(2);
-		// Items
-		cmd = score.at(items).postcs;
-		if(cmd != nil,
-		{
-		// Time
-		time = cmd.at(0);
-		if(time  < 0.0417, {time=0.0417});
-		// Commande
-		val = cmd.at(1);
-		netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-		items = items + 1;
-		{windows.value(numView)}.defer(2);
-		time.wait;
-		},
-		{
-		if(loopScore == 'off',
-		{
-		{startTdefScore.valueAction_(0)}.defer(2);
-		thisThread.stop;
-		thisThread.remove;
-		},
-		{
-		items = 0;
-		});
-		});
-		});
-		}).play;
-		};*/
 
 		windows = {arg num;
 			wScore.front;
@@ -415,6 +384,7 @@ TotalControls {
 														{
 															number = cmd[item+2].asInteger;
 															scoreVal = scoreVal.add(number);
+															scoreVal.postcs;
 															netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 															{windows.value(3)}.defer(2);
 															item = item + 3;
@@ -422,6 +392,7 @@ TotalControls {
 													});
 													// Start Stop
 													if(val == 'stop' or: {val == 'start'}, {
+														scoreVal.postcs;
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 														{windows.value(3)}.defer(2);
 														item = item + 2;
@@ -455,39 +426,6 @@ TotalControls {
 									});
 							});
 							items = items + 1;
-							/////
-
-							// Old Version
-							/*// Items
-							cmd = scorePlaying.at(items).postcs;
-							if(cmd != nil,
-							{
-							// Time
-							time = cmd.at(0);
-							// Commande
-							val = cmd.at(1);
-							netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-							{windows.value(3)}.defer(2);
-							items = items + 1;
-							},
-							{
-							if(loopScore == 'off',
-							{
-							startManualScore.valueAction_(0);
-							},
-							{
-							items = 0;
-							// Items
-							cmd = scorePlaying.at(items).postcs;
-							// Time
-							time = cmd.at(0);
-							// Commande
-							val = cmd.at(1);
-							netScoreAddr.do({arg net; net.sendMsg(\score, *val)});
-							{windows.value(3)}.defer(2);
-							items = items + 1;
-							});
-							});*/
 					});
 			});
 			// key l -> load Preset
@@ -531,7 +469,7 @@ TotalControls {
 			});
 		};
 
-		/*// OSCFunc Score
+		// OSCFunc Score
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
 		var cmd = 'on', item=0;
 		[msg, time, addr, recvPort].postcs;
@@ -545,7 +483,7 @@ TotalControls {
 		item = item + 3;
 		cmd = msg[item];
 		});*/
-		}, \score, recvPort: NetAddr.langPort);*/
+		}, \score, recvPort: NetAddr.langPort);
 
 	}
 
