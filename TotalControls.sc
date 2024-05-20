@@ -469,7 +469,7 @@ TotalControls {
 			});
 		};
 
-		// OSCFunc Score
+		/*// OSCFunc Score
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
 		var cmd = 'on', item=0;
 		[msg, time, addr, recvPort].postcs;
@@ -483,7 +483,7 @@ TotalControls {
 		item = item + 3;
 		cmd = msg[item];
 		});*/
-		}, \score, recvPort: NetAddr.langPort);
+		}, \score, recvPort: NetAddr.langPort);*/
 
 	}
 
