@@ -435,19 +435,19 @@ TotalControls {
 			if(char == $o,
 				{
 					{windows.value(numView.value)}.defer(2);
+					cmd=[];
 					cmd =cmd.add("all");
 					cmd = cmd.add("stop");
-					cmd = cmd.add(0).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
 			});
-			// key o -> start soft
+			// key p -> start soft
 			if(char == $p,
 				{
 					{windows.value(numView.value)}.defer(2);
+					cmd=[];
 					cmd =cmd.add("all");
 					cmd = cmd.add("start");
-					cmd = cmd.add(0).postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
 			});
