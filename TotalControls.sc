@@ -185,7 +185,7 @@ TotalControls {
 				{
 					loop({
 						{windows.value(5)}.defer(2);
-						cmd = scorePlaying.at(items).postcs;
+						cmd = scorePlaying.at(items);
 						scoreVal = [];
 						if(cmd != nil,
 							{
@@ -364,7 +364,7 @@ TotalControls {
 							{windows.value(3)}.defer(2);
 
 							/////
-							cmd = scorePlaying.at(items).postcs;
+							cmd = scorePlaying.at(items);
 							if(cmd != nil,
 								{
 									// Time
@@ -437,7 +437,7 @@ TotalControls {
 					{windows.value(numView.value)}.defer(2);
 					cmd=[];
 					cmd =cmd.add("all");
-					cmd = cmd.add("stop");
+					cmd = cmd.add("stop").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
 			});
@@ -447,7 +447,7 @@ TotalControls {
 					{windows.value(numView.value)}.defer(2);
 					cmd=[];
 					cmd =cmd.add("all");
-					cmd = cmd.add("start");
+					cmd = cmd.add("start").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
 			});
