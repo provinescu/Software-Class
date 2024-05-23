@@ -78,7 +78,7 @@ TotalControls {
 		menuScore.action={arg item;
 			foncLoadSaveScore.value(item.value);
 			menuScore.value_(0);
-			items = 0;
+			//items = 0;
 		};
 		menuScore.focus;
 		// Button Score Loop Score
@@ -103,11 +103,15 @@ TotalControls {
 				// Stop Score
 				"Stop Manual Score".postln;
 				flagManualPlaying = 'off';
-				items = 0;
+				//items = 0;
 			},
 			{
+				"Stop Tdef Score".postln;
+				routineScore.value(scorePlaying).stop;
+				routineScore.value(scorePlaying).clear;
+				routineScore.value(scorePlaying).remove;
 				// Play Score
-				items = 0;
+				//items = 0;
 				"Start Manual Score".postln;
 				flagManualPlaying = 'on';
 				wScore.view.children.at(numView.value).focus;
@@ -123,19 +127,19 @@ TotalControls {
 				routineScore.value(scorePlaying).stop;
 				routineScore.value(scorePlaying).clear;
 				routineScore.value(scorePlaying).remove;
-				items = 0;
+				//items = 0;
 				wScore.view.children.at(numView.value).focus;
 			},
 			{
 				// Play Score
-				items = 0;
+				//items = 0;
 				"Start Tdef Score".postln;
 				routineScore.value(scorePlaying).reset;
 				routineScore.value(scorePlaying).play;
 				wScore.view.children.at(numView.value).focus;
 			});
 		};
-		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Validation Score", Color.black, Color.blue(0.8, 0.25)]];
+		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Val+Init Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
 			items = 0;
 			flagManualPlaying = 'off';
@@ -247,6 +251,7 @@ TotalControls {
 										{startManualScore.valueAction_(0)}.defer(2);
 										thisThread.stop;
 										thisThread.remove;
+										items = 0;
 									},
 									{
 										items = 0;
@@ -420,6 +425,7 @@ TotalControls {
 									if(loopScore == 'off',
 										{
 											{startManualScore.valueAction_(0)}.defer(2);
+											items = 0;
 										},
 										{
 											items = 0;
