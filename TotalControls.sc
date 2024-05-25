@@ -228,7 +228,7 @@ TotalControls {
 											},
 											{
 												"Bad Command".postln;
-												{startManualScore.valueAction_(0)}.defer(2);
+												{startTdefScore.valueAction_(0)}.defer(2);
 											};
 										);
 										// Commande
