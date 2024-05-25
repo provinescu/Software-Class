@@ -248,10 +248,11 @@ TotalControls {
 							{
 								if(loopScore == 'off',
 									{
-										{startManualScore.valueAction_(0)}.defer(2);
+										items = 0;
+										item = 0;
+										{startTdefScore.value_(0)}.defer(2);
 										thisThread.stop;
 										thisThread.remove;
-										items = 0;
 									},
 									{
 										items = 0;
@@ -424,11 +425,13 @@ TotalControls {
 								{
 									if(loopScore == 'off',
 										{
-											{startManualScore.valueAction_(0)}.defer(2);
+											{startManualScore.value_(0)}.defer(2);
 											items = 0;
+											item = 0;
 										},
 										{
 											items = 0;
+											item = 0;
 									});
 							});
 							items = items + 1;
