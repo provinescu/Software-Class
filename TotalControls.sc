@@ -5,7 +5,7 @@ TotalControls {
 	classvar s;
 
 	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes;
-	var loopScore, windows, numView;
+	var loopScore, windows, numView, fonctionCommandes2;
 
 	*new	{arg path=nil;
 
@@ -147,7 +147,79 @@ TotalControls {
 			scorePlaying.postcs;
 		};
 		wScore.view.decorator.nextLine;
-		StaticText(wScore, Rect(0, 0, 175, 24)).string_("SCORE").stringColor_(Color.white(1.0,1.0));
+
+		// Ici les ShortCuts
+
+		StaticText(wScore, Rect(0, 0, 50, 20)).string_("SCORE").stringColor_(Color.white(1.0,1.0));
+		Button(wScore,Rect(0, 0, 250, 20)).states_([["Display Score Commandes + ShortCuts", Color.black, Color.red(0.8, 0.25)]]).
+		action_(
+			{
+				TextView().name_("Display Commandes + ShortCuts").string_(
+					"ShortCuts:
+
+esc stop all soft
+s play all soft
+
+r robot preset
+R wekrobot preset
+alt+r robot start
+ctrl+r robot stop
+alt+R wekrobot start
+ctrl+R wekrobot stop
+
+a agent preset
+A wekagent preset
+alt+a agents start
+ctrl+a agents stop
+alt+A wekagents start
+ctrl+A wekagents stop
+
+m matrix preset
+M wekmatrix preset
+alt+m matrix start
+ctrl+m matrix stop
+alt+M wekmatrix start
+ctrl+M wekmatrix stop
+
+t time preset
+T wektime preset
+alt+t time start
+ctrl+t time stop
+alt+T wektime start
+ctrl+T wektime stop
+
+d density preset
+D wekdensity preset
+alt+d density start
+ctrl+d density stop
+alt+D wekdensity start
+ctrl+D wekdensity stop
+
+p provinescu preset
+alt+p provinescu start
+ctrl+p provinescu stop
+
+Score Commandes:
+
+'all'
+'robot'
+'wekrobot'
+'agent'
+'wekagent'
+'matrix'
+'wekmatrix'
+'time'
+'wektime'
+'density'
+'wekdensity'
+'provinescu'
+'preset'
+'start'
+'stop'
+"
+				).front;
+			}
+		);
 		wScore.view.decorator.nextLine;
 		wEditScore = TextView(wScore, Rect(0, 0, 600, 400));
 		wEditScore.hasVerticalScroller_(true);
@@ -437,11 +509,13 @@ TotalControls {
 							items = items + 1;
 					});
 			});
-			// key l -> load Preset
-			if(char == $l,
-				{commande = 'load preset'});
-			// key o -> stop soft
-			if(char == $o,
+			// key l -> load Preset for all soft
+			if(char == $l and: {modifiers==0},
+				{
+					commande = ["all", "preset"];
+			});
+			// key esc -> stop all soft
+			if(char == 27.asAscii and: {modifiers==0},
 				{
 					{windows.value(numView.value)}.defer(2);
 					cmd=[];
@@ -450,8 +524,8 @@ TotalControls {
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
 			});
-			// key p -> start soft
-			if(char == $p,
+			// key s -> start all soft
+			if(char == $s and: {modifiers==0},
 				{
 					{windows.value(numView.value)}.defer(2);
 					cmd=[];
@@ -460,23 +534,218 @@ TotalControls {
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
 			});
+			// ROBOT
+			// key r -> robot preset
+			if(char == $r and: {modifiers==0},
+				{
+					commande = ["robot", "preset"];
+			});
+			// key R -> wekrobot preset
+			if(char == $R and: {modifiers==131072},
+				{
+					commande = ["wekrobot", "preset"];
+			});
+			// key alt+r -> robot start
+			if(char == $r and: {modifiers==524288},
+				{
+					commande = ["robot", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+r -> robot stop
+			if(char == 18.asAscii and: {modifiers==262144},
+				{
+					commande = ["robot", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// key alt+R -> wekrobot start
+			if(char == $R and: {modifiers==655360},
+				{
+					commande = ["wekrobot", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+R -> wekrobot stop
+			if(char == 18.asAscii and: {modifiers==393216},
+				{
+					commande = ["wekrobot", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// AGENTS
+			// key a -> agents preset
+			if(char == $a and: {modifiers==0},
+				{
+					commande = ["agents", "preset"];
+			});
+			// key A -> wekagents preset
+			if(char == $A and: {modifiers==131072},
+				{
+					commande = ["wekagents", "preset"];
+			});
+			// key alt+a -> agents start
+			if(char == $a and: {modifiers==524288},
+				{
+					commande = ["agents", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+a -> agents stop
+			if(char == 1.asAscii and: {modifiers==262144},
+				{
+					commande = ["agents", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// key alt+A -> wekagents start
+			if(char == $A and: {modifiers==655360},
+				{
+					commande = ["wekagents", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+A -> wekagens stop
+			if(char == 1.asAscii and: {modifiers==393216},
+				{
+					commande = ["wekagents", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// MATRIX
+			// key m -> matrix preset
+			if(char == $m and: {modifiers==0},
+				{
+					commande = ["matrix", "preset"];
+			});
+			// key M -> wekagent preset
+			if(char == $M and: {modifiers==131072},
+				{
+					commande = ["wekmatrix", "preset"];
+			});
+			// key alt+m -> agent start
+			if(char == $m and: {modifiers==524288},
+				{
+					commande = ["matrix", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+m -> agent stop
+			if(char == $\r and: {modifiers==262144},
+				{
+					commande = ["matrix", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// key alt+M -> wekagent start
+			if(char == $M and: {modifiers==655360},
+				{
+					commande = ["wekmatrix", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+M -> wekagent stop
+			if(char == $\r and: {modifiers==393216},
+				{
+					commande = ["wekmatrix", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// TIME
+			// key t -> time preset
+			if(char == $t and: {modifiers==0},
+				{
+					commande = ["time", "preset"];
+			});
+			// key T -> wekagent preset
+			if(char == $T and: {modifiers==131072},
+				{
+					commande = ["wektime", "preset"];
+			});
+			// key alt+t -> agent start
+			if(char == $t and: {modifiers==524288},
+				{
+					commande = ["time", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+t -> agent stop
+			if(char == 20.asAscii and: {modifiers==262144},
+				{
+					commande = ["time", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// key alt+T -> wekagent start
+			if(char == $T and: {modifiers==655360},
+				{
+					commande = ["wektime", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+T -> wekagent stop
+			if(char == 20.asAscii and: {modifiers==393216},
+				{
+					commande = ["wektime", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// DENSITY
+			// key d -> density preset
+			if(char == $d and: {modifiers==0},
+				{
+					commande = ["density", "preset"];
+			});
+			// key D -> wekagent preset
+			if(char == $D and: {modifiers==131072},
+				{
+					commande = ["wekdensity", "preset"];
+			});
+			// key alt+d -> agent start
+			if(char == $d and: {modifiers==524288},
+				{
+					commande = ["density", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+d -> agent stop
+			if(char == 4.asAscii and: {modifiers==262144},
+				{
+					commande = ["density", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// key alt+D -> wekagent start
+			if(char == $D and: {modifiers==655360},
+				{
+					commande = ["wekdensity", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+D -> wekagent stop
+			if(char == 4.asAscii and: {modifiers==393216},
+				{
+					commande = ["wekdensity", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// PROVINESCU
+			// key p -> provinescu preset
+			if(char == $p and: {modifiers==0},
+				{
+					commande = ["provinescu", "preset"];
+			});
+			// key alt+p -> provinescu start
+			if(char == $p and: {modifiers==524288},
+				{
+					commande = ["provinescu", "start"];
+					fonctionCommandes2.value(commande);
+			});
+			// key ctrl+p -> provinescu stop
+			if(char == 16.asAscii and: {modifiers==262144},
+				{
+					commande = ["provinescu", "stop"];
+					fonctionCommandes2.value(commande);
+			});
 		};
 
 		// Fonction Commandes
 		fonctionCommandes = {arg commandeExecute, number;
 			var cmd=[];
-			//load Preset
-			if(commandeExecute == 'load preset',
-				{
-
-					{windows.value(numView.value)}.defer(2);
-					cmd =cmd.add("all");
-					cmd = cmd.add("preset");
-					cmd = cmd.add(number).postcs;
-					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-					{windows.value(numView.value)}.defer(2);
-			});
+			{windows.value(numView.value)}.defer(2);
+			cmd = commandeExecute.add(number).postcs;
+			netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
+			{windows.value(numView.value)}.defer(2);
+			commande = [];
 		};
+		// Fonction Commandes Special
+		fonctionCommandes2 = {arg commandeExecute;
+			{windows.value(numView.value)}.defer(2);
+			commandeExecute.postcs;
+			netScoreAddr.do({arg net; net.sendMsg(\score, *commandeExecute)});
+			{windows.value(numView.value)}.defer(2);
+			commande = [];
+		}
 
 		/*// OSCFunc Score
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
