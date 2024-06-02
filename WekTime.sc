@@ -2,7 +2,7 @@
 
 WekTime {
 
-	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP;
+	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP, numSequencer;
 
 	var pathWekTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter;
 
@@ -63,7 +63,7 @@ WekTime {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		thisProcess.openUDPPort(NetAddr.langPort);
+		thisProcess.openUDPPort(57138);
 
 		Safety(s);
 		//s.makeGui;
@@ -121,7 +121,7 @@ WekTime {
 					item = item + 3;
 					cmd = msg[item];
 			});
-		}, \score, recvPort: NetAddr.langPort);
+		}, \score, recvPort: 57138);
 
 		fonctionCollectFolders = {
 			// Collect all Preset
@@ -340,6 +340,7 @@ f						Switch File for Analyze.
 		flagWTD = 'on';
 		flagWTP = 'on';
 		40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
+		numSequencer = 0;
 
 		// Musical Data
 		numberSynth.do({arg synth;
@@ -1000,150 +1001,180 @@ f						Switch File for Analyze.
 
 			// DATA WIKI OUT
 			OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
 				var wekOut;
+
 				wekOut = msg[1..];
+
 				{
 				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
-						4.do({arg i;
-							//Octave (247)
-							listeOctave.put(i, wekOut[0+i].clip(-4, 4));//0
-							windowControlGUI.view.children.at(i * 93 + 247).children.at(2).value_(wekOut[0+i].clip(-4, 4));
-							//Demiton (250)
-							listeDemiTon.put(i, wekOut[4+i].clip(-12, 12));//4
-							windowControlGUI.view.children.at(i * 93 + 250).children.at(2).value_(wekOut[4+i].clip(-12, 12));
-							//Cent (253)
-							listeCent.put(i, wekOut[8+i].clip(-100, 100));//8
-							windowControlGUI.view.children.at(i * 93 + 253).children.at(2).value_(wekOut[8+i].clip(-100, 100));
-							//Filter (260)
-							choiceFilter.put(i, wekOut[12+i].clip(0, (listeFilters.size - 1)).asInteger);
-							windowControlGUI.view.children.at(i * 93 + 260).value_(wekOut[12+i].clip(0, 40).asInteger);//12 Filter
-							//CtrlFilter (264)
-							listeCtrl1Filter.put(i, wekOut[16+i].clip(20, 12544));//16
-							windowControlGUI.view.children.at(i * 93 + 264).children.at(2).value_(wekOut[16+i].clip(20, 12544));
-							listeCtrl2Filter.put(i, wekOut[20+i].clip(0.01, 100) / 100);//20
-							windowControlGUI.view.children.at(i * 93 + 267).children.at(2).value_(wekOut[20+i].clip(0.01, 100));
-							listeCtrl3Filter.put(i, wekOut[24+i].clip(0.01, 100) / 100);//24
-							windowControlGUI.view.children.at(i * 93 + 270).children.at(2).value_(wekOut[24+i].clip(0.01, 100));
-							//FX (274)
-							choiceFX.put(i, wekOut[28+i].clip(0, (listeFX.size - 1)).asInteger);
-							windowControlGUI.view.children.at(i * 93 + 274).value_(wekOut[28+i].clip(0, 7).asInteger);//28 FX
-							//CtrlFX (278)
-							listeCtrl1FX.put(i, wekOut[32+i].clip(0.01, 100) / 100);//32
-							windowControlGUI.view.children.at(i * 93 + 278).children.at(2).value_(wekOut[32+i].clip(0.01, 100));
-							listeCtrl2FX.put(i, wekOut[36+i].clip(0.01, 100) / 100);//36
-							windowControlGUI.view.children.at(i * 93 + 281).children.at(2).value_(wekOut[36+i].clip(0.01, 100));
-							listeCtrl3FX.put(i, wekOut[40+i].clip(0.01, 100) / 100);//40
-							windowControlGUI.view.children.at(i * 93 + 284).children.at(2).value_(wekOut[40+i].clip(0.01, 100));
-							listeCtrl4FX.put(i, wekOut[44+i].clip(0.01, 100) / 100);//44
-							windowControlGUI.view.children.at(i * 93 + 287).children.at(2).value_(wekOut[44+i].clip(0.01, 100));
-							listeCtrl5FX.put(i, wekOut[48+i].clip(0.01, 100) / 100);//48
-							windowControlGUI.view.children.at(i * 93 + 290).children.at(2).value_(wekOut[48+i].clip(0.01, 100));
-						});
-						rangeFFT = wekOut[52..53].clip(0, 1);
+						switch(wekOut[0].clip(0, 3),
+							0, {typeSequencer = 'Rand'},
+							1, {typeSequencer = 'Seq'; indexSequence = 0},
+							2, {typeSequencer = 'WeightS'},
+							3, {typeSequencer = 'WeightP'});
+						windowControlGUI.view.children.at(0).value_(wekOut[0]);
+						densityBPM = wekOut[1..2].clip(1, 1000);
+						windowControlGUI.view.children.at(1).children.at(1).value_(densityBPM[0] * 60);
+						windowControlGUI.view.children.at(1).children.at(3).value_(densityBPM[1] * 60);
+
+						windowControlGUI.view.children.at(1).children.at(2).lo_(densityBPM[0] / 1000
+						);
+						windowControlGUI.view.children.at(1).children.at(2).hi_(densityBPM[1] / 1000
+						);
+						numberStepSequencer = wekOut[3].clip(0, 48);
+						windowControlGUI.view.children.at(2).children.at(2).value_(numberStepSequencer);
+						ambitusFreq = wekOut[4..5].clip(0, 127);
+						windowControlGUI.view.children.at(3).children.at(1).value_(ambitusFreq[0]);
+						windowControlGUI.view.children.at(3).children.at(3).value_(ambitusFreq[1]);
+						windowControlGUI.view.children.at(3).children.at(2).lo_(ambitusFreq[0] / 127);
+						windowControlGUI.view.children.at(3).children.at(2).hi_(ambitusFreq[1] / 127);
+						rangeFFT = wekOut[6..7].clip(0, 1);
 						windowExternalControlGUI.view.children.at(27).children.at(2).lo_(rangeFFT[0]);
 						windowExternalControlGUI.view.children.at(27).children.at(2).hi_(rangeFFT[1]);
 						windowExternalControlGUI.view.children.at(27).children.at(1).value = rangeFFT[0];
 						windowExternalControlGUI.view.children.at(27).children.at(3).value = rangeFFT[1];
+						//Weight Synth
+						listeWeightSynth = wekOut[8..11].clip(0, 1);
+						4.do({arg i;
+							windowControlGUI.view.children.at(i * 93 + 207).children.at(2).value_(listeWeightSynth[i]);
+						});
+
 						//synth
-						changeChoiceSynthDef.do({arg item, i;// 54 a 57
-							if(wekOut[54].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+						changeChoiceSynthDef.do({arg item, i;// 12 a 15
+							if(wekOut[12].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(0, item);
 								windowControlGUI.view.children.at(0 * 93 + 208).value_(i.asInteger);
 							});
-							if(wekOut[55].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[13].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(1, item);
 								windowControlGUI.view.children.at(1 * 93 + 208).value_(i.asInteger);
 							});
-							if(wekOut[56].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[14].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(2, item);
 								windowControlGUI.view.children.at(2 * 93 + 208).value_(i.asInteger);
 							});
-							if(wekOut[57].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
+							if(wekOut[15].clip(0, changeChoiceSynthDef.size - 1).asInteger == i, {
 								typeSynthDef.put(3, item);
 								windowControlGUI.view.children.at(3 * 93 + 208).value_(i.asInteger);
 							});
 						});
 						// duree synth
-						['Seq', 'Pitch', 'Grain'].do({arg item, i;// 58 a 61
-							if(wekOut[58].clip(0, 2).asInteger == i, {
+						['Seq', 'Pitch', 'Grain'].do({arg item, i;// 16 a 19
+							if(wekOut[16].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(0, item;
-								windowControlGUI.view.children.at(0 * 93 + 210).value_(i.asInteger);
+									windowControlGUI.view.children.at(0 * 93 + 210).value_(i.asInteger);
 							)});
-							if(wekOut[59].clip(0, 2).asInteger == i, {
+							if(wekOut[17].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(1, item);
 								windowControlGUI.view.children.at(1 * 93 + 210).value_(i.asInteger);
 							});
-							if(wekOut[60].clip(0, 2).asInteger == i, {
+							if(wekOut[18].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(2, item);
 								windowControlGUI.view.children.at(2 * 93 + 210).value_(i.asInteger);
 							});
-							if(wekOut[61].clip(0, 2).asInteger == i, {
+							if(wekOut[19].clip(0, 2).asInteger == i, {
 								listeFlagDureeSynth.put(3, item);
 								windowControlGUI.view.children.at(3 * 93 + 210).value_(i.asInteger);
 							});
 						});
-						// mode synth 62 a 65
-						if(wekOut[62] <= 0.5,
+						// mode synth 20 a 23
+						if(wekOut[20] <= 0.5,
 							{modeMIDIOSC.put(0, 'Translate');
 								windowControlGUI.view.children.at(0 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(0, 'Note');
 								windowControlGUI.view.children.at(0 * 93 + 211).value_(1);
 						});
-						if(wekOut[63] <= 0.5,
+						if(wekOut[21] <= 0.5,
 							{modeMIDIOSC.put(1, 'Translate');
 								windowControlGUI.view.children.at(1 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(1, 'Note');
 								windowControlGUI.view.children.at(1 * 93 + 211).value_(1);
-							});
-						if(wekOut[64] <= 0.5,
+						});
+						if(wekOut[22] <= 0.5,
 							{modeMIDIOSC.put(2, 'Translate');
 								windowControlGUI.view.children.at(2 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(2, 'Note');
 								windowControlGUI.view.children.at(2 * 93 + 211).value_(1);
-							});
-						if(wekOut[65] <= 0.5,
+						});
+						if(wekOut[23] <= 0.5,
 							{modeMIDIOSC.put(3, 'Translate');
 								windowControlGUI.view.children.at(3 * 93 + 211).value_(0);
 							},
 							{modeMIDIOSC.put(3, 'Note');
 								windowControlGUI.view.children.at(3 * 93 + 211).value_(1);
-							});
-						// loop sample 66 a 69
-						if(wekOut[66] <= 0.5,
+						});
+						// loop sample 24 a 27
+						if(wekOut[24] <= 0.5,
 							{loopSample.put(0, 0);
-							windowControlGUI.view.children.at(0 * 93 + 212).value_(0);
+								windowControlGUI.view.children.at(0 * 93 + 212).value_(0);
 							},
 							{loopSample.put(0, 1);
 								windowControlGUI.view.children.at(0 * 93 + 212).value_(1);
-							});
-						if(wekOut[67] <= 0.5,
+						});
+						if(wekOut[25] <= 0.5,
 							{loopSample.put(1, 0);
 								windowControlGUI.view.children.at(1 * 93 + 212).value_(0);
 							},
 							{loopSample.put(1, 1);
 								windowControlGUI.view.children.at(1 * 93 + 212).value_(1);
-							});
-						if(wekOut[68] <= 0.5,
+						});
+						if(wekOut[26] <= 0.5,
 							{loopSample.put(2, 0);
 								windowControlGUI.view.children.at(2 * 93 + 212).value_(0);
 							},
 							{loopSample.put(2, 1);
 								windowControlGUI.view.children.at(2 * 93 + 212).value_(1);
-							});
-						if(wekOut[69] <= 0.5,
+						});
+						if(wekOut[27] <= 0.5,
 							{loopSample.put(3, 0);
 								windowControlGUI.view.children.at(3 * 93 + 212).value_(0);
 							},
 							{loopSample.put(3, 1);
 								windowControlGUI.view.children.at(3 * 93 + 212).value_(1);
-							});
+						});
+						4.do({arg i;
+							//Octave (247)
+							listeOctave.put(i, wekOut[28+i].clip(-4, 4));//28
+							windowControlGUI.view.children.at(i * 93 + 247).children.at(2).valueAction_(wekOut[28+i].clip(-4, 4));
+							//Demiton (250)
+							listeDemiTon.put(i, wekOut[32+i].clip(-12, 12));//32
+							windowControlGUI.view.children.at(i * 93 + 250).children.at(2).valueAction_(wekOut[32+i].clip(-12, 12));
+							//Cent (253)
+							listeCent.put(i, wekOut[36+i].clip(-100, 100));//36
+							windowControlGUI.view.children.at(i * 93 + 253).children.at(2).valueAction_(wekOut[36+i].clip(-100, 100));
+							//Filter (260)
+							choiceFilter.put(i, wekOut[40+i].clip(0, (listeFilters.size - 1)).asInteger);
+							windowControlGUI.view.children.at(i * 93 + 260).value_(wekOut[40+i].clip(0, 40).asInteger);//40 Filter
+							//CtrlFilter (264)
+							listeCtrl1Filter.put(i, wekOut[44+i].clip(20, 12544));//44
+							windowControlGUI.view.children.at(i * 93 + 264).children.at(2).valueAction_(wekOut[44+i].clip(20, 12544));
+							listeCtrl2Filter.put(i, wekOut[48+i].clip(0.01, 100) / 100);//48
+							windowControlGUI.view.children.at(i * 93 + 267).children.at(2).valueAction_(wekOut[48+i].clip(0.01, 100));
+							listeCtrl3Filter.put(i, wekOut[52+i].clip(0.01, 100) / 100);//52
+							windowControlGUI.view.children.at(i * 93 + 270).children.at(2).valueAction_(wekOut[52+i].clip(0.01, 100));
+							//FX (274)
+							choiceFX.put(i, wekOut[56+i].clip(0, (listeFX.size - 1)).asInteger);
+							windowControlGUI.view.children.at(i * 93 + 274).value_(wekOut[56+i].clip(0, 7).asInteger);//56 FX
+							//CtrlFX (278)
+							listeCtrl1FX.put(i, wekOut[60+i].clip(0.01, 100) / 100);//60
+							windowControlGUI.view.children.at(i * 93 + 278).children.at(2).valueAction_(wekOut[60+i].clip(0.01, 100));
+							listeCtrl2FX.put(i, wekOut[64+i].clip(0.01, 100) / 100);//64
+							windowControlGUI.view.children.at(i * 93 + 281).children.at(2).valueAction_(wekOut[64+i].clip(0.01, 100));
+							listeCtrl3FX.put(i, wekOut[68+i].clip(0.01, 100) / 100);//68
+							windowControlGUI.view.children.at(i * 93 + 284).children.at(2).valueAction_(wekOut[68+i].clip(0.01, 100));
+							listeCtrl4FX.put(i, wekOut[72+i].clip(0.01, 100) / 100);//72
+							windowControlGUI.view.children.at(i * 93 + 287).children.at(2).valueAction_(wekOut[72+i].clip(0.01, 100));
+							listeCtrl5FX.put(i, wekOut[76+i].clip(0.01, 100) / 100);//76
+							windowControlGUI.view.children.at(i * 93 + 290).children.at(2).valueAction_(wekOut[76+i].clip(0.01, 100));
+						});
 					lastTimeWekData = time;
 				});
-					// Preset 70
-				numPreset = wekOut[70].asInteger.clip(1, 40);// Number Preset
+					// Preset 80
+				numPreset = wekOut[80].asInteger.clip(1, 40);// Number Preset
 				if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
 					// load new preset
 					{
@@ -1343,96 +1374,93 @@ f						Switch File for Analyze.
 						mfcc = msg[6..];
 						//Sender
 						sender.sendMsg("/wek/inputs", *mfcc[0..]);
-						if(flagStreamMFCC != 'wek',
+
+							if(flagStreamMFCC != 'wek',
 							{
-								// Send control outputs for wekinator 52 data
-								data = [
-									listeOctave[0],//0
-									listeOctave[1],
-									listeOctave[2],
-									listeOctave[3],
-
-									listeDemiTon[0],//4
-									listeDemiTon[1],
-									listeDemiTon[2],
-									listeDemiTon[3],
-
-									listeCent[0],//8
-									listeCent[1],
-									listeCent[2],
-									listeCent[3],
-
-									choiceFilter[0] * (listeFilters.size - 1),//12
-									choiceFilter[1] * (listeFilters.size - 1),
-									choiceFilter[2] * (listeFilters.size - 1),
-									choiceFilter[3] * (listeFilters.size - 1),
-
-									listeCtrl1Filter[0],//16
-									listeCtrl1Filter[1],
-									listeCtrl1Filter[2],
-									listeCtrl1Filter[3],
-									listeCtrl2Filter[0] * 100,
-									listeCtrl2Filter[1] * 100,
-									listeCtrl2Filter[2] * 100,
-									listeCtrl2Filter[3] * 100,
-									listeCtrl3Filter[0] * 100,
-									listeCtrl3Filter[1] * 100,
-									listeCtrl3Filter[2] * 100,
-									listeCtrl3Filter[3] * 100,
-
-									choiceFX[0] * (listeFX.size - 1),//28
-									choiceFX[1] * (listeFX.size - 1),
-									choiceFX[2] * (listeFX.size - 1),
-									choiceFX[3] * (listeFX.size - 1),
-
-									listeCtrl1FX[0] * 100,//32
-									listeCtrl1FX[1] * 100,
-									listeCtrl1FX[2] * 100,
-									listeCtrl1FX[3] * 100,
-									listeCtrl2FX[0] * 100,
-									listeCtrl2FX[1] * 100,
-									listeCtrl2FX[2] * 100,
-									listeCtrl2FX[3] * 100,
-									listeCtrl3FX[0] * 100,
-									listeCtrl3FX[1] * 100,
-									listeCtrl3FX[2] * 100,
-									listeCtrl3FX[3] * 100,
-									listeCtrl4FX[0] * 100,
-									listeCtrl4FX[1] * 100,
-									listeCtrl4FX[2] * 100,
-									listeCtrl4FX[3] * 100,
-									listeCtrl5FX[0] * 100,
-									listeCtrl5FX[1] * 100,
-									listeCtrl5FX[2] * 100,
-									listeCtrl5FX[3] * 100,//51
-									rangeFFT[0],//52
-									rangeFFT[1]];//53
-
+								// Send control outputs for wekinator 81 data
+								data = data.add(numSequencer);//0
+								data = data.add(densityBPM[0]);
+								data = data.add(densityBPM[1]);
+								data = data.add(numberStepSequencer);
+								data = data.add(ambitusFreq[0]);
+								data = data.add(ambitusFreq[1]);
+								data = data.add(rangeFFT[0]);
+								data = data.add(rangeFFT[1]);
+								//Weight Synth
+								listeWeightSynth.do({arg weight, i;//8 11
+									data = data.add(weight);
+								});
 								//synth
 								typeSynthDef.do({arg n, s;
 									changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 54 a 57
+										if(n == item, {data = data.add(i.asFloat)});// 12 a 15
 									});
 								});
 								// duree synth
 								listeFlagDureeSynth.do({arg n, s;
 									['Seq', 'Pitch', 'Grain'].do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 58 61
+										if(n == item, {data = data.add(i.asFloat)});// 16 19
 									});
 								});
 								// mode synth
 								modeMIDIOSC.do({arg n, s;
 									changeChoiceMIDI.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 62 65
+										if(n == item, {data = data.add(i.asFloat)});// 20 23
 									});
 								});
 								// loop sample
-								data = data.add(loopSample[0].asFloat);//66
-								data = data.add(loopSample[1].asFloat);
-								data = data.add(loopSample[2].asFloat);
-								data = data.add(loopSample[3].asFloat);//69
+								loopSample.do({arg loop, i;
+									data = data.add(loop);//24 27
+								});
+								//Octave
+								listeOctave.do({arg oct, i;//28 31
+									data = data.add(oct);
+								});
+								//SemiTone
+								listeDemiTon.do({arg demi, i;//32 35
+									data = data.add(demi);
+								});
+								//Cent
+								listeCent.do({arg cent, i;//36 39
+									data = data.add(cent);
+								});
+								// Filter
+								choiceFilter.do({arg filt, i;//40 43
+									data = data.add(filt * (listeFilters.size - 1));
+								});
+								//Ctrl filter
+								listeCtrl1Filter.do({arg ctrl, i;//44 47
+									data = data.add(ctrl);
+								});
+								listeCtrl2Filter.do({arg ctrl, i;//48 51
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl3Filter.do({arg ctrl, i;//52 55
+									data = data.add(ctrl * 100);
+								});
+								//FX
+								choiceFX.do({arg fx, i;//56 59
+									data = data.add(fx * (listeFX.size - 1));
+								});
+								// Ctrl FX
+								listeCtrl1FX.do({arg ctrl, i;//60 63
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl2FX.do({arg ctrl, i;//64 67
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl3FX.do({arg ctrl, i;//68 71
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl4FX.do({arg ctrl, i;//72 75
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl5FX.do({arg ctrl, i;//76 79
+									data = data.add(ctrl * 100);
+								});
+
 								// preset
-								data = data.add(numPreset.asFloat);//70
+								data = data.add(numPreset.asFloat);//80
 
 								// Sender
 								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
@@ -1572,94 +1600,90 @@ f						Switch File for Analyze.
 						sender.sendMsg("/wek/inputs", *mfccData[0..]);
 						if(flagStreamMFCC != 'wek',
 							{
-								// Send control outputs for wekinator 52 data
-								data = [
-									listeOctave[0],//0
-									listeOctave[1],
-									listeOctave[2],
-									listeOctave[3],
-
-									listeDemiTon[0],//4
-									listeDemiTon[1],
-									listeDemiTon[2],
-									listeDemiTon[3],
-
-									listeCent[0],//8
-									listeCent[1],
-									listeCent[2],
-									listeCent[3],
-
-									choiceFilter[0] * (listeFilters.size - 1),//12
-									choiceFilter[1] * (listeFilters.size - 1),
-									choiceFilter[2] * (listeFilters.size - 1),
-									choiceFilter[3] * (listeFilters.size - 1),
-
-									listeCtrl1Filter[0],//16
-									listeCtrl1Filter[1],
-									listeCtrl1Filter[2],
-									listeCtrl1Filter[3],
-									listeCtrl2Filter[0] * 100,
-									listeCtrl2Filter[1] * 100,
-									listeCtrl2Filter[2] * 100,
-									listeCtrl2Filter[3] * 100,
-									listeCtrl3Filter[0] * 100,
-									listeCtrl3Filter[1] * 100,
-									listeCtrl3Filter[2] * 100,
-									listeCtrl3Filter[3] * 100,
-
-									choiceFX[0] * (listeFX.size - 1),//28
-									choiceFX[1] * (listeFX.size - 1),
-									choiceFX[2] * (listeFX.size - 1),
-									choiceFX[3] * (listeFX.size - 1),
-
-									listeCtrl1FX[0] * 100,//32
-									listeCtrl1FX[1] * 100,
-									listeCtrl1FX[2] * 100,
-									listeCtrl1FX[3] * 100,
-									listeCtrl2FX[0] * 100,
-									listeCtrl2FX[1] * 100,
-									listeCtrl2FX[2] * 100,
-									listeCtrl2FX[3] * 100,
-									listeCtrl3FX[0] * 100,
-									listeCtrl3FX[1] * 100,
-									listeCtrl3FX[2] * 100,
-									listeCtrl3FX[3] * 100,
-									listeCtrl4FX[0] * 100,
-									listeCtrl4FX[1] * 100,
-									listeCtrl4FX[2] * 100,
-									listeCtrl4FX[3] * 100,
-									listeCtrl5FX[0] * 100,
-									listeCtrl5FX[1] * 100,
-									listeCtrl5FX[2] * 100,
-									listeCtrl5FX[3] * 100,//51
-									rangeFFT[0],//52
-									rangeFFT[1]];//53
-
+								// Send control outputs for wekinator 81 data
+								data = data.add(numSequencer);//0
+								data = data.add(densityBPM[0]);
+								data = data.add(densityBPM[1]);
+								data = data.add(numberStepSequencer);
+								data = data.add(ambitusFreq[0]);
+								data = data.add(ambitusFreq[1]);
+								data = data.add(rangeFFT[0]);
+								data = data.add(rangeFFT[1]);
+								//Weight Synth
+								listeWeightSynth.do({arg weight, i;//8 11
+									data = data.add(weight);
+								});
 								//synth
 								typeSynthDef.do({arg n, s;
 									changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 54 a 57
+										if(n == item, {data = data.add(i.asFloat)});// 12 a 15
 									});
 								});
 								// duree synth
 								listeFlagDureeSynth.do({arg n, s;
 									['Seq', 'Pitch', 'Grain'].do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 58 61
+										if(n == item, {data = data.add(i.asFloat)});// 16 19
 									});
 								});
 								// mode synth
 								modeMIDIOSC.do({arg n, s;
 									changeChoiceMIDI.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 62 65
+										if(n == item, {data = data.add(i.asFloat)});// 20 23
 									});
 								});
 								// loop sample
-								data = data.add(loopSample[0].asFloat);//66
-								data = data.add(loopSample[1].asFloat);
-								data = data.add(loopSample[2].asFloat);
-								data = data.add(loopSample[3].asFloat);//69
+								loopSample.do({arg loop, i;
+									data = data.add(loop);//24 27
+								});
+								//Octave
+								listeOctave.do({arg oct, i;//28 31
+									data = data.add(oct);
+								});
+								//SemiTone
+								listeDemiTon.do({arg demi, i;//32 35
+									data = data.add(demi);
+								});
+								//Cent
+								listeCent.do({arg cent, i;//36 39
+									data = data.add(cent);
+								});
+								// Filter
+								choiceFilter.do({arg filt, i;//40 43
+									data = data.add(filt * (listeFilters.size - 1));
+								});
+								//Ctrl filter
+								listeCtrl1Filter.do({arg ctrl, i;//44 47
+									data = data.add(ctrl);
+								});
+								listeCtrl2Filter.do({arg ctrl, i;//48 51
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl3Filter.do({arg ctrl, i;//52 55
+									data = data.add(ctrl * 100);
+								});
+								//FX
+								choiceFX.do({arg fx, i;//56 59
+									data = data.add(fx * (listeFX.size - 1));
+								});
+								// Ctrl FX
+								listeCtrl1FX.do({arg ctrl, i;//60 63
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl2FX.do({arg ctrl, i;//64 67
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl3FX.do({arg ctrl, i;//68 71
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl4FX.do({arg ctrl, i;//72 75
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl5FX.do({arg ctrl, i;//76 79
+									data = data.add(ctrl * 100);
+								});
+
 								// preset
-								data = data.add(numPreset.asFloat);//70
+								data = data.add(numPreset.asFloat);//80
 
 								// Sender
 								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
@@ -1781,94 +1805,90 @@ f						Switch File for Analyze.
 					sender.sendMsg("/wek/inputs", *mfccData[0..]);
 					if(flagStreamMFCC != 'wek',
 							{
-								// Send control outputs for wekinator 52 data
-								data = [
-									listeOctave[0],//0
-									listeOctave[1],
-									listeOctave[2],
-									listeOctave[3],
-
-									listeDemiTon[0],//4
-									listeDemiTon[1],
-									listeDemiTon[2],
-									listeDemiTon[3],
-
-									listeCent[0],//8
-									listeCent[1],
-									listeCent[2],
-									listeCent[3],
-
-									choiceFilter[0] * (listeFilters.size - 1),//12
-									choiceFilter[1] * (listeFilters.size - 1),
-									choiceFilter[2] * (listeFilters.size - 1),
-									choiceFilter[3] * (listeFilters.size - 1),
-
-									listeCtrl1Filter[0],//16
-									listeCtrl1Filter[1],
-									listeCtrl1Filter[2],
-									listeCtrl1Filter[3],
-									listeCtrl2Filter[0] * 100,
-									listeCtrl2Filter[1] * 100,
-									listeCtrl2Filter[2] * 100,
-									listeCtrl2Filter[3] * 100,
-									listeCtrl3Filter[0] * 100,
-									listeCtrl3Filter[1] * 100,
-									listeCtrl3Filter[2] * 100,
-									listeCtrl3Filter[3] * 100,
-
-									choiceFX[0] * (listeFX.size - 1),//28
-									choiceFX[1] * (listeFX.size - 1),
-									choiceFX[2] * (listeFX.size - 1),
-									choiceFX[3] * (listeFX.size - 1),
-
-									listeCtrl1FX[0] * 100,//32
-									listeCtrl1FX[1] * 100,
-									listeCtrl1FX[2] * 100,
-									listeCtrl1FX[3] * 100,
-									listeCtrl2FX[0] * 100,
-									listeCtrl2FX[1] * 100,
-									listeCtrl2FX[2] * 100,
-									listeCtrl2FX[3] * 100,
-									listeCtrl3FX[0] * 100,
-									listeCtrl3FX[1] * 100,
-									listeCtrl3FX[2] * 100,
-									listeCtrl3FX[3] * 100,
-									listeCtrl4FX[0] * 100,
-									listeCtrl4FX[1] * 100,
-									listeCtrl4FX[2] * 100,
-									listeCtrl4FX[3] * 100,
-									listeCtrl5FX[0] * 100,
-									listeCtrl5FX[1] * 100,
-									listeCtrl5FX[2] * 100,
-									listeCtrl5FX[3] * 100,//51
-									rangeFFT[0],//52
-									rangeFFT[1]];//53
-
+								// Send control outputs for wekinator 81 data
+								data = data.add(numSequencer);//0
+								data = data.add(densityBPM[0]);
+								data = data.add(densityBPM[1]);
+								data = data.add(numberStepSequencer);
+								data = data.add(ambitusFreq[0]);
+								data = data.add(ambitusFreq[1]);
+								data = data.add(rangeFFT[0]);
+								data = data.add(rangeFFT[1]);
+								//Weight Synth
+								listeWeightSynth.do({arg weight, i;//8 11
+									data = data.add(weight);
+								});
 								//synth
 								typeSynthDef.do({arg n, s;
 									changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 54 a 57
+										if(n == item, {data = data.add(i.asFloat)});// 12 a 15
 									});
 								});
 								// duree synth
 								listeFlagDureeSynth.do({arg n, s;
 									['Seq', 'Pitch', 'Grain'].do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 58 61
+										if(n == item, {data = data.add(i.asFloat)});// 16 19
 									});
 								});
 								// mode synth
 								modeMIDIOSC.do({arg n, s;
 									changeChoiceMIDI.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 62 65
+										if(n == item, {data = data.add(i.asFloat)});// 20 23
 									});
 								});
 								// loop sample
-								data = data.add(loopSample[0].asFloat);//66
-								data = data.add(loopSample[1].asFloat);
-								data = data.add(loopSample[2].asFloat);
-								data = data.add(loopSample[3].asFloat);//69
+								loopSample.do({arg loop, i;
+									data = data.add(loop);//24 27
+								});
+								//Octave
+								listeOctave.do({arg oct, i;//28 31
+									data = data.add(oct);
+								});
+								//SemiTone
+								listeDemiTon.do({arg demi, i;//32 35
+									data = data.add(demi);
+								});
+								//Cent
+								listeCent.do({arg cent, i;//36 39
+									data = data.add(cent);
+								});
+								// Filter
+								choiceFilter.do({arg filt, i;//40 43
+									data = data.add(filt * (listeFilters.size - 1));
+								});
+								//Ctrl filter
+								listeCtrl1Filter.do({arg ctrl, i;//44 47
+									data = data.add(ctrl);
+								});
+								listeCtrl2Filter.do({arg ctrl, i;//48 51
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl3Filter.do({arg ctrl, i;//52 55
+									data = data.add(ctrl * 100);
+								});
+								//FX
+								choiceFX.do({arg fx, i;//56 59
+									data = data.add(fx * (listeFX.size - 1));
+								});
+								// Ctrl FX
+								listeCtrl1FX.do({arg ctrl, i;//60 63
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl2FX.do({arg ctrl, i;//64 67
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl3FX.do({arg ctrl, i;//68 71
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl4FX.do({arg ctrl, i;//72 75
+									data = data.add(ctrl * 100);
+								});
+								listeCtrl5FX.do({arg ctrl, i;//76 79
+									data = data.add(ctrl * 100);
+								});
+
 								// preset
-								data = data.add(numPreset.asFloat);//70
+								data = data.add(numPreset.asFloat);//80
 
 								// Sender
 								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
@@ -2606,6 +2626,7 @@ Preset Wek",
 					if(File.exists(~pathWekTime ++ foldersToScanPreset.at(number)),
 						{file=File(~pathWekTime ++ foldersToScanPreset.at(number),"r");
 							windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " + foldersToScanPreset.at(number);
+							numPreset = number.value; lastNumPreset = number.value;
 							fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close}, {"cancelled".postln});
 				});
 				// Key Z -> load Synthesizer aleatoire
@@ -3401,7 +3422,8 @@ Preset Wek",
 		windowControlGUI.front;
 
 		// Choice
-		choiceTypeSequencer = PopUpMenu(windowControlGUI, Rect(5, 5, 70, 20)).background_(Color.grey).stringColor_(Color.black).items_(changeChoiceTrigger).action = {arg item;
+		choiceTypeSequencer = PopUpMenu(windowControlGUI, Rect(5, 5, 70, 20)).background_(Color.magenta).stringColor_(Color.black).items_(changeChoiceTrigger).action = {arg item;
+			numSequencer = item.value;
 			switch(item.value,
 				0, {typeSequencer = 'Rand'},
 				1, {typeSequencer = 'Seq'; indexSequence = 0},
@@ -3413,18 +3435,18 @@ Preset Wek",
 		EZRanger(windowControlGUI, Rect(75, 5, 225, 20), "BPM", ControlSpec(1, 60000, \exp, 0),
 			{|ez| densityBPM=ez.value / 60;
 				if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
-		}, [30, 120], false, 30, 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8));
+		}, [30, 120], false, 30, 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8)).setColors(Color.grey(0.3), Color.magenta);
 
 		// Step Trigger
 		EZSlider(windowControlGUI, Rect(305, 5, 90, 20), "Step", ControlSpec(1, numberMaxStepSequencer, \exp, 1),
 			{|ez| numberStepSequencer = ez.value;
 				//indexSequence = 0;
 				//if(indexSequence >= numberMaxStepSequencer, {indexSequence = 0});
-		}, numberMaxStepSequencer, false, 20, 25).setColors(knobColor: Color.new(0.582, 0, 0), sliderBackground: Color.grey, stringColor:  Color.red(0.8, 0.8));
+		}, numberMaxStepSequencer, false, 20, 25).setColors(knobColor: Color.new(0.582, 0, 0), sliderBackground: Color.grey, stringColor:  Color.red(0.8, 0.8)).setColors(Color.grey(0.3), Color.magenta);
 
 		// Ambitus Freq
 		EZRanger(windowControlGUI, Rect(395, 5, 180, 20), "Ambitus", ControlSpec(0, 127, \lin, 0),
-			{|ez| ambitusFreq = ez.value}, [0, 127], false, 40, 30).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8));
+			{|ez| ambitusFreq = ez.value}, [0, 127], false, 40, 30).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8)).setColors(Color.grey(0.3), Color.magenta);
 
 		// BPM In Display
 		bpmDisplay = StaticText(windowControlGUI, Rect(580, 5, 30, 20)).string_("BPM").background_(Color.white).stringColor_(Color.red);
