@@ -142,7 +142,6 @@ TotalControls {
 		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Val+Init Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
 			items = 0;
-			flagManualPlaying = 'off';
 			scorePlaying  = wEditScore.string.interpret;
 			scorePlaying.postcs;
 		};
