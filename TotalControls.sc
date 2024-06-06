@@ -5,7 +5,7 @@ TotalControls {
 	classvar s;
 
 	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes;
-	var loopScore, windows, numView, fonctionCommandes2;
+	var loopScore, windows, numView, fonctionCommandes2, startItems;
 
 	*new	{arg path=nil;
 
@@ -31,6 +31,7 @@ TotalControls {
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57140));
 
 		items = 0;
+		startItems = 0;
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// valid score
@@ -142,6 +143,7 @@ TotalControls {
 		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Val+Init Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
 			items = 0;
+			wScore.view.children.at(8).children.at(1).value_(0);
 			scorePlaying  = wEditScore.string.interpret;
 			scorePlaying.postcs;
 		};
@@ -219,7 +221,13 @@ Score Commandes:
 				).front;
 			}
 		);
+
+			// Start Items Score
+			EZNumber(wScore, 160@20, "Start Items Score", ControlSpec(0, 100, 'lin', 1),
+				{arg i; items = i.value; startItems = i.value}, 0, true, 100, 50);
+
 		wScore.view.decorator.nextLine;
+
 		wEditScore = TextView(wScore, Rect(0, 0, 600, 400));
 		wEditScore.hasVerticalScroller_(true);
 		wEditScore.hasHorizontalScroller_(true);
@@ -319,14 +327,14 @@ Score Commandes:
 							{
 								if(loopScore == 'off',
 									{
-										items = 0;
+										items = startItems;
 										item = 0;
-										{startTdefScore.value_(0)}.defer(2);
+										{startTdefScore.valueAction_(0)}.defer(2);
 										thisThread.stop;
 										thisThread.remove;
 									},
 									{
-										items = 0;
+										items = startItems;
 										item = 0;
 								});
 						});
@@ -496,12 +504,12 @@ Score Commandes:
 								{
 									if(loopScore == 'off',
 										{
-											{startManualScore.value_(0)}.defer(2);
-											items = 0;
+											{startManualScore.valueAction_(0)}.defer(2);
+											items = startItems;
 											item = 0;
 										},
 										{
-											items = 0;
+											items = startItems;
 											item = 0;
 									});
 							});
