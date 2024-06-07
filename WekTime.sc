@@ -1014,7 +1014,7 @@ f						Switch File for Analyze.
 							2, {typeSequencer = 'WeightS'},
 							3, {typeSequencer = 'WeightP'});
 						windowControlGUI.view.children.at(0).value_(wekOut[0]);
-						densityBPM = wekOut[1..2].clip(1, 1000);
+						densityBPM = wekOut[1..2].clip(0.016, 1000);
 						windowControlGUI.view.children.at(1).children.at(1).value_(densityBPM[0] * 60);
 						windowControlGUI.view.children.at(1).children.at(3).value_(densityBPM[1] * 60);
 
