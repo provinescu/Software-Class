@@ -160,6 +160,7 @@ TotalControls {
 
 esc stop all soft
 s play all soft
+< next commande manual score
 
 r robot preset
 R wekrobot preset
@@ -442,7 +443,7 @@ Score Commandes:
 			if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(commande, 40)});
 
 			// key enter next score titem
-			if(unicode == 13 and: {keycode == 36},
+			if(char == $< and: {modifiers == 0},
 				{
 					if(flagManualPlaying == 'on',
 						{
@@ -500,6 +501,7 @@ Score Commandes:
 											cmd = cmd.at(1);
 											val = cmd.at(item);
 									});
+									items = items + 1;
 								},
 								{
 									if(loopScore == 'off',
@@ -513,7 +515,6 @@ Score Commandes:
 											item = 0;
 									});
 							});
-							items = items + 1;
 					});
 			});
 			// key l -> load Preset for all soft
