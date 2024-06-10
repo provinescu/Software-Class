@@ -223,9 +223,9 @@ Score Commandes:
 			}
 		);
 
-			// Start Items Score
-			EZNumber(wScore, 160@20, "Start Items Score", ControlSpec(0, 100, 'lin', 1),
-				{arg i; items = i.value; startItems = i.value}, 0, true, 100, 50);
+		// Start Items Score
+		EZNumber(wScore, 160@20, "Start Items Score", ControlSpec(0, 100, 'lin', 1),
+			{arg i; items = i.value; startItems = i.value}, 0, true, 100, 50);
 
 		wScore.view.decorator.nextLine;
 
@@ -268,7 +268,7 @@ Score Commandes:
 			Tdef(\ScorePlay,
 				{
 					loop({
-						{windows.value(5)}.defer(2);
+						{windows.value(5)}.defer(1);
 						cmd = scorePlaying.at(items);
 						scoreVal = [];
 						if(cmd != nil,
@@ -293,7 +293,7 @@ Score Commandes:
 														scoreVal = scoreVal.add(number);
 														scoreVal.postcs;
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
-														{windows.value(5)}.defer(2);
+														{windows.value(5)}.defer(1);
 														item = item + 3;
 														scoreVal = [];
 												});
@@ -301,14 +301,18 @@ Score Commandes:
 												if(val == 'stop' or: {val == 'start'}, {
 													scoreVal.postcs;
 													netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
-													{windows.value(5)}.defer(2);
+													{windows.value(5)}.defer(1);
 													item = item + 2;
 													scoreVal = [];
 												});
 											},
 											{
 												"Bad Command".postln;
-												{startTdefScore.valueAction_(0)}.defer(2);
+												items = startItems;
+												item = 0;
+												{startTdefScore.valueAction_(0)}.defer(1);
+												thisThread.stop;
+												thisThread.remove;
 											};
 										);
 										// Commande
@@ -330,7 +334,7 @@ Score Commandes:
 									{
 										items = startItems;
 										item = 0;
-										{startTdefScore.valueAction_(0)}.defer(2);
+										{startTdefScore.valueAction_(0)}.defer(1);
 										thisThread.stop;
 										thisThread.remove;
 									},
@@ -447,7 +451,7 @@ Score Commandes:
 				{
 					if(flagManualPlaying == 'on',
 						{
-							{windows.value(3)}.defer(2);
+							{windows.value(3)}.defer(1);
 
 							/////
 							cmd = scorePlaying.at(items);
@@ -472,7 +476,7 @@ Score Commandes:
 															scoreVal = scoreVal.add(number);
 															scoreVal.postcs;
 															netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
-															{windows.value(3)}.defer(2);
+															{windows.value(3)}.defer(1);
 															item = item + 3;
 															scoreVal = [];
 													});
@@ -480,14 +484,15 @@ Score Commandes:
 													if(val == 'stop' or: {val == 'start'}, {
 														scoreVal.postcs;
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
-														{windows.value(3)}.defer(2);
+														{windows.value(3)}.defer(1);
 														item = item + 2;
 														scoreVal = [];
 													});
 												},
 												{
 													"Bad Command".postln;
-													{startManualScore.valueAction_(0)}.defer(2);
+													item = item + 1;
+													{startManualScore.valueAction_(0)}.defer(1);
 												};
 											);
 											// Commande
@@ -506,7 +511,7 @@ Score Commandes:
 								{
 									if(loopScore == 'off',
 										{
-											{startManualScore.valueAction_(0)}.defer(2);
+											{startManualScore.valueAction_(0)}.defer(1);
 											items = startItems;
 											item = 0;
 										},
@@ -525,22 +530,22 @@ Score Commandes:
 			// key esc -> stop all soft
 			if(char == 27.asAscii and: {modifiers==0},
 				{
-					{windows.value(numView.value)}.defer(2);
+					{windows.value(numView.value)}.defer(1);
 					cmd=[];
 					cmd =cmd.add("all");
 					cmd = cmd.add("stop").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-					{windows.value(numView.value)}.defer(2);
+					{windows.value(numView.value)}.defer(1);
 			});
 			// key s -> start all soft
 			if(char == $s and: {modifiers==0},
 				{
-					{windows.value(numView.value)}.defer(2);
+					{windows.value(numView.value)}.defer(1);
 					cmd=[];
 					cmd =cmd.add("all");
 					cmd = cmd.add("start").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-					{windows.value(numView.value)}.defer(2);
+					{windows.value(numView.value)}.defer(1);
 			});
 			// ROBOT
 			// key r -> robot preset
@@ -740,18 +745,18 @@ Score Commandes:
 		// Fonction Commandes
 		fonctionCommandes = {arg commandeExecute, number;
 			var cmd=[];
-			{windows.value(numView.value)}.defer(2);
+			{windows.value(numView.value)}.defer(1);
 			cmd = commandeExecute.add(number).postcs;
 			netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-			{windows.value(numView.value)}.defer(2);
+			{windows.value(numView.value)}.defer(1);
 			commande = [];
 		};
 		// Fonction Commandes Special
 		fonctionCommandes2 = {arg commandeExecute;
-			{windows.value(numView.value)}.defer(2);
+			{windows.value(numView.value)}.defer(1);
 			commandeExecute.postcs;
 			netScoreAddr.do({arg net; net.sendMsg(\score, *commandeExecute)});
-			{windows.value(numView.value)}.defer(2);
+			{windows.value(numView.value)}.defer(1);
 			commande = [];
 		}
 
