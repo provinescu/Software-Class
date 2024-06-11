@@ -88,11 +88,13 @@ Matrix {
 									number = msg[item+2].asInteger.postln;
 									{
 										if(File.exists(pathMatrix ++ "Preset" + number.value.asString ++ ".scd"),
-											{fonctionUserOperatingSystem.value(9);
+											{
+												fonctionUserOperatingSystem.value(9);
 												windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
 												file=File(pathMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 												fonctionLoadPreset.value(file.readAllString.interpret);
-												file.close;listeWindows.at(3).front;indexWindows=3;
+												file.close;
+												//listeWindows.at(3).front;indexWindows=3;
 										}, {"cancelled".postln});
 									}.defer;
 							});

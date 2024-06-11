@@ -1417,7 +1417,8 @@ Preset Wek",
 												windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
 												file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 												fonctionLoadPreset.value(file.readAllString.interpret);
-												file.close;listeWindows.at(3).front;indexWindows=3;
+												file.close;
+												//listeWindows.at(3).front;indexWindows=3;
 										}, {"cancelled".postln});
 									}.defer;
 							});
