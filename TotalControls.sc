@@ -160,6 +160,7 @@ TotalControls {
 
 esc stop all soft
 s play all soft
+l Load preset for all soft
 < next commande manual score
 
 r robot preset
@@ -446,7 +447,7 @@ Score Commandes:
 			if(modifiers==655360 and: {unicode==212} and: {keycode==25},{fonctionCommandes.value(commande, 39)});
 			if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(commande, 40)});
 
-			// key enter next score titem
+			// key < next score titem
 			if(char == $< and: {modifiers == 0},
 				{
 					if(flagManualPlaying == 'on',
