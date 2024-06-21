@@ -2,7 +2,7 @@
 
 WekTime {
 
-	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP, numSequencer;
+	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP, numSequencer, wekBPM;
 
 	var pathWekTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter;
 
@@ -194,6 +194,7 @@ f						Switch File for Analyze.
 			'WeightP',
 		];
 		densityBPM = [30, 120] / 60;
+		wekBPM = [30, 120] / 60;
 		indexSequence = 0;
 		changeChoiceMIDI = [
 			'Translate',
@@ -1379,8 +1380,8 @@ f						Switch File for Analyze.
 							{
 								// Send control outputs for wekinator 81 data
 								data = data.add(numSequencer);//0
-								data = data.add(densityBPM[0]);
-								data = data.add(densityBPM[1]);
+								data = data.add(wekBPM[0]);
+								data = data.add(wekBPM[1]);
 								data = data.add(numberStepSequencer);
 								data = data.add(ambitusFreq[0]);
 								data = data.add(ambitusFreq[1]);
@@ -1602,8 +1603,8 @@ f						Switch File for Analyze.
 							{
 								// Send control outputs for wekinator 81 data
 								data = data.add(numSequencer);//0
-								data = data.add(densityBPM[0]);
-								data = data.add(densityBPM[1]);
+								data = data.add(wekBPM[0]);
+								data = data.add(wekBPM[1]);
 								data = data.add(numberStepSequencer);
 								data = data.add(ambitusFreq[0]);
 								data = data.add(ambitusFreq[1]);
@@ -1807,8 +1808,8 @@ f						Switch File for Analyze.
 							{
 								// Send control outputs for wekinator 81 data
 								data = data.add(numSequencer);//0
-								data = data.add(densityBPM[0]);
-								data = data.add(densityBPM[1]);
+								data = data.add(wekBPM[0]);
+								data = data.add(wekBPM[1]);
 								data = data.add(numberStepSequencer);
 								data = data.add(ambitusFreq[0]);
 								data = data.add(ambitusFreq[1]);
@@ -3433,7 +3434,7 @@ Preset Wek",
 
 		// Frequence BPM
 		EZRanger(windowControlGUI, Rect(75, 5, 225, 20), "BPM", ControlSpec(1, 60000, \exp, 0),
-			{|ez| densityBPM=ez.value / 60;
+			{|ez| densityBPM=ez.value / 60; wekBPM = ez.value / 60;
 				if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
 		}, [30, 120], false, 30, 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8)).setColors(Color.grey(0.3), Color.magenta);
 
