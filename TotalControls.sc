@@ -52,10 +52,11 @@ TotalControls {
 					Dialog.openPanel({ arg path;
 						file=File(path,"r");
 						score = file.readAllString;
-						wScore.name="Score Editor/Player and ShortCut Control for HP Software "+ path;
 						scorePlaying = score.interpret;
 						wEditScore.string_(score);
 						file.close;
+						//wScore.name="Score Editor/Player and ShortCuts Controls for HP Software " + path.asPathName.fileName;
+						wScore.view.children.at(0).string = "Score Editor/Player and ShortCuts Controls for HP Software | " + path.asPathName.fileName;
 					}, {"cancelled".postln});
 				},
 				// Save score
@@ -63,6 +64,8 @@ TotalControls {
 					Dialog.savePanel({arg path;
 						file=File(path++".scd","w");
 						file.write(wEditScore.string);file.close;
+						//wScore.name="Score Editor/Player and ShortCuts Controls for HP Software " + path.asPathName.fileName;
+						wScore.view.children.at(0).string = "Score Editor/Player and ShortCuts Controls for HP Software | " + path.asPathName.fileName;
 					},
 					{"cancelled".postln});
 				}
@@ -70,9 +73,9 @@ TotalControls {
 		};
 
 		//Score
-		wScore = Window("TotalControls (Score Editor/Player and ShortCut Control for HP Software)", Rect(250, 250, 625, 500));
+		wScore = Window("TotalControls (Score Editor/Player and ShortCuts Controls for HP Software)", Rect(250, 250, 625, 525));
 		wScore.view.decorator = FlowLayout(wScore.view.bounds);
-		StaticText(wScore, Rect(0, 0, 500, 24)).string_("TotalControls (A Score Editor/Player and ShortCut Control)").stringColor_(Color.white(1.0,1.0));
+		StaticText(wScore, Rect(0, 0, 500, 24)).string_("TotalControls (A Score Editor/Player and ShortCuts Controls)").stringColor_(Color.white(1.0,1.0));
 		wScore.view.decorator.nextLine;
 		// Load Score
 		menuScore = PopUpMenu(wScore,Rect(0, 0, 110, 20)).background_(Color.grey(0.5, 0.8)).items = ["Score menu", "Load Score", "Save Score"];
@@ -155,7 +158,7 @@ TotalControls {
 		Button(wScore,Rect(0, 0, 250, 20)).states_([["Display Score Commandes + ShortCuts", Color.black, Color.red(0.8, 0.25)]]).
 		action_(
 			{
-				TextView().name_("Display Commandes + ShortCuts").string_(
+				TextView().name_("Commandes + ShortCuts").string_(
 					"ShortCuts:
 
 esc stop all soft
@@ -227,6 +230,10 @@ Score Commandes:
 		// Start Items Score
 		EZNumber(wScore, 160@20, "Start Items Score", ControlSpec(0, 100, 'lin', 1),
 			{arg i; items = i.value; startItems = i.value}, 0, true, 100, 50);
+		wScore.view.decorator.nextLine;
+		// Play Items Score
+		TextView(wScore, Rect(0, 0, 600, 20)).string_("Current");
+		//NumberBox(wScore, 35@20).value_(0);
 
 		wScore.view.decorator.nextLine;
 
@@ -269,8 +276,11 @@ Score Commandes:
 			Tdef(\ScorePlay,
 				{
 					loop({
-						{windows.value(5)}.defer(2);
 						cmd = scorePlaying.at(items);
+						{
+							windows.value(5);
+							wScore.view.children.at(9).string_("Current "++items.asString + scorePlaying.at(items));
+						}.defer;
 						scoreVal = [];
 						if(cmd != nil,
 							{
@@ -452,10 +462,11 @@ Score Commandes:
 				{
 					if(flagManualPlaying == 'on',
 						{
-							{windows.value(3)}.defer(2);
-
-							/////
 							cmd = scorePlaying.at(items);
+							{
+								windows.value(3);
+								wScore.view.children.at(9).string_("Current "++items.asString + scorePlaying.at(items));
+							}.defer;
 							if(cmd != nil,
 								{
 									// Time
