@@ -121,15 +121,15 @@ WekDensity {
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							startSystem.valueAction_(0);
-							}.defer;
+								{
+									startSystem.valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							startSystem.valueAction_(1);
-							}.defer;
+								{
+									startSystem.valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -1460,22 +1460,22 @@ Preset Wek",
 				var wekOut, instrumentName, soundName, fxName, file;
 				wekOut = msg[1..];
 				{
-				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
-					// DATA Ctrl Soft
-					rangeFFT = wekOut[14..15].clip(0, 1);
-					// Data Music
-					rangeFreqintruments = [wekOut[0].clip(0, 127), wekOut[1].clip(0, 127)];
-					rangeDBintruments = [wekOut[2].dbamp.clip(0, 1), wekOut[3].dbamp.clip(0, 1)];
-					rangeDureeintruments = [wekOut[4].clip(0, 60), wekOut[5].clip(0, 60)];
-					stretchDuree = wekOut[6].clip(0.02, 60);
-					quantizationDuree = wekOut[7].clip(1, 100);
-					// Synth/Sound/FX
-					indexSynthX = (wekOut[8] + (0.5 * rrand(jitterIndexSynthX.neg, jitterIndexSynthX))).clip(0, 1);
-					indexSynthY = (wekOut[9] + (0.5 * rrand(jitterIndexSynthY.neg, jitterIndexSynthY))).clip(0, 1);
-					indexSoundX = (wekOut[10] + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
-					indexSoundY = (wekOut[11] + (0.5 * rrand(jitterIndexSoundY.neg, jitterIndexSoundY))).clip(0, 1);
-					indexFXX = (wekOut[12] + (0.5 * rrand(jitterIndexFXX.neg, jitterIndexFXX))).clip(0, 1);
-					indexFXY = (wekOut[13] + (0.5 * rrand(jitterIndexFXY.neg, jitterIndexFXY))).clip(0, 1);
+					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
+						// DATA Ctrl Soft
+						rangeFFT = wekOut[14..15].clip(0, 1);
+						// Data Music
+						rangeFreqintruments = [wekOut[0].clip(0, 127), wekOut[1].clip(0, 127)];
+						rangeDBintruments = [wekOut[2].dbamp.clip(0, 1), wekOut[3].dbamp.clip(0, 1)];
+						rangeDureeintruments = [wekOut[4].clip(0, 60), wekOut[5].clip(0, 60)];
+						stretchDuree = wekOut[6].clip(0.02, 60);
+						quantizationDuree = wekOut[7].clip(1, 100);
+						// Synth/Sound/FX
+						indexSynthX = (wekOut[8] + (0.5 * rrand(jitterIndexSynthX.neg, jitterIndexSynthX))).clip(0, 1);
+						indexSynthY = (wekOut[9] + (0.5 * rrand(jitterIndexSynthY.neg, jitterIndexSynthY))).clip(0, 1);
+						indexSoundX = (wekOut[10] + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
+						indexSoundY = (wekOut[11] + (0.5 * rrand(jitterIndexSoundY.neg, jitterIndexSoundY))).clip(0, 1);
+						indexFXX = (wekOut[12] + (0.5 * rrand(jitterIndexFXX.neg, jitterIndexFXX))).clip(0, 1);
+						indexFXY = (wekOut[13] + (0.5 * rrand(jitterIndexFXY.neg, jitterIndexFXY))).clip(0, 1);
 						windowEar.view.children.at(56).x_(indexSynthX); windowEar.view.children.at(56).y_(indexSynthY);
 						windowEar.view.children.at(58).x_(indexSoundX); windowEar.view.children.at(58).y_(indexSoundY);
 						windowEar.view.children.at(60).x_(indexFXX); windowEar.view.children.at(60).y_(indexFXY);
@@ -1507,13 +1507,13 @@ Preset Wek",
 						windowPlotterData.view.children.at(9).children.at(2).hi_(rangeFFT[1]);
 						windowPlotterData.view.children.at(9).children.at(1).value = rangeFFT[0];
 						windowPlotterData.view.children.at(9).children.at(3).value = rangeFFT[1];
-					lastTimeWekData = time;
-				});
+						lastTimeWekData = time;
+					});
 					// Preset
-				numPreset = wekOut[16].asInteger.clip(1, 40);// Number Preset
-				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-					// load new preset
-					{
+					numPreset = wekOut[16].asInteger.clip(1, 40);// Number Preset
+					if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+						// load new preset
+						{
 							if(File.exists(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd"), {
 								lastNumPreset = numPreset;
 								lastTimeWekPreset = time;
@@ -1525,7 +1525,7 @@ Preset Wek",
 								fonctionLoadPreset.value(file.readAllString.interpret);
 								file.close;
 							});
-				});
+					});
 				}.defer(0);
 			},'/wek/outputs');
 
@@ -1791,10 +1791,10 @@ Preset Wek",
 															midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
 															if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
 															// Reset MIDI OUT
-															listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
+															listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).ceil.cpsmidi);
 															// Send MIDI On
-															midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
-															if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
+															midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).ceil.cpsmidi, ampStream.at(0) * 127);
+															if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).ceil.cpsmidi, ampStream.at(0) * 127)});
 														});
 												});
 										});

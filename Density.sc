@@ -881,15 +881,15 @@ Density {
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							startSystem.valueAction_(0);
-							}.defer;
+								{
+									startSystem.valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							startSystem.valueAction_(1);
-							}.defer;
+								{
+									startSystem.valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -1407,10 +1407,10 @@ Density {
 																	midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
 																	if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
 																	// Reset MIDI OUT
-																	listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
+																	listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).ceil.cpsmidi);
 																	// Send MIDI On
-																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
-																	if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
+																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).ceil.cpsmidi, ampStream.at(0) * 127);
+																	if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).ceil.cpsmidi, ampStream.at(0) * 127)});
 																});
 														});
 												});
