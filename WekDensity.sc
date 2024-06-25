@@ -1791,10 +1791,10 @@ Preset Wek",
 															midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
 															if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
 															// Reset MIDI OUT
-															listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).ceil.cpsmidi);
+															listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
 															// Send MIDI On
-															midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).ceil.cpsmidi, ampStream.at(0) * 127);
-															if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).ceil.cpsmidi, ampStream.at(0) * 127)});
+															midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
+															if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
 														});
 												});
 										});
@@ -1998,7 +1998,7 @@ Preset Wek",
 										if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 											{if(difL <= difH, {position = i},{position = i+1})});
 									});
-									note = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0);
+									note = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
 								});
 							});
 						});
@@ -2112,7 +2112,7 @@ Preset Wek",
 										if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 											{if(difL <= difH, {position = i},{position = i+1})});
 									});
-									note = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0);
+									note = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
 								});
 							});
 						});
@@ -2153,7 +2153,7 @@ Preset Wek",
 									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 										{if(difL <= difH, {position = i},{position = i+1})});
 								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0);
+								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
 							});
 						});
 						// Amp Transformation
@@ -2253,7 +2253,7 @@ Preset Wek",
 									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 										{if(difL <= difH, {position = i},{position = i+1})});
 								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0);
+								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
 							});
 						});
 						// Set Range Amp
@@ -2377,7 +2377,7 @@ Preset Wek",
 									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 										{if(difL <= difH, {position = i},{position = i+1})});
 								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0);
+								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
 							});
 						});
 						// Set Range Amp
@@ -2469,7 +2469,7 @@ Preset Wek",
 									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 										{if(difL <= difH, {position = i},{position = i+1})});
 								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0);
+								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
 							});
 						});
 						// Amp Transformation

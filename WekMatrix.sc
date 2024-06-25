@@ -4456,7 +4456,7 @@ Preset Wek",
 							if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 								{if(difL <= difH, {pos = i},{pos = i+1})});
 						});
-						freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+						freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
 					});
 					//Reset 1 Trigger Recording
 					bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
@@ -4549,7 +4549,7 @@ Preset Wek",
 														if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 															{if(difL <= difH, {pos = i},{pos = i+1})});
 													});
-													freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+													freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
 												});
 												// SETUP MIDI OFF
 												lastFreqMidi = lastFreqMidi.add(freq);
@@ -4706,7 +4706,7 @@ Preset Wek",
 															if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 																{if(difL <= difH, {pos = i},{pos = i+1})});
 														});
-														freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+														freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
 													});
 													// SETUP MIDI OFF
 													lastFreqMidi = lastFreqMidi.add(freq);
@@ -4858,7 +4858,7 @@ Preset Wek",
 																		if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 																			{if(difL <= difH, {pos = i},{pos = i+1})});
 																	});
-																	freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+																	freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
 																});
 																// SETUP MIDI OFF
 																lastFreqMidi = lastFreqMidi.add(freq);

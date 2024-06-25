@@ -1035,9 +1035,10 @@ f						Switch File for Analyze.
 								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
 							});
 
+							freq = freq.round(0.001);
 							octave = (freq.cpsmidi / 12).floor;
-							demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-							cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+							demiTon = ((freq.cpsmidi / 12).frac * 12).floor;
+							cent = ((freq.cpsmidi / 12).frac * 12).frac * 2;
 
 							// Set Bus OSC
 							busOSCfreq.set(freq);
@@ -1174,9 +1175,10 @@ f						Switch File for Analyze.
 							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
 						});
 
+						freq = freq.round(0.001);
 						octave = (freq.cpsmidi / 12).floor;
-						demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
-						cent = ((freq.cpsmidi / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+						demiTon = ((freq.cpsmidi / 12).frac * 12).floor;
+						cent = ((freq.cpsmidi / 12).frac * 12).frac * 2;
 
 						// Set Bus OSC
 						busOSCfreq.set(freq);
@@ -1599,10 +1601,10 @@ f						Switch File for Analyze.
 												{if(difL <= difH, {pos = i},{pos = i+1})});
 										});
 										freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-										freq = freq.cpsmidi;
+										freq = freq.cpsmidi.round(0.001);
 									});
 									// Set Rate
-									freqToMidi = (freq + 0.5).floor;
+									freqToMidi = freq.floor;
 									freqSynth = freq.midicps;
 									freqRate = (freq - 48).midicps;
 									rate = 2**freqRate.cpsoct * listeReverse.at(synth);

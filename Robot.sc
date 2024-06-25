@@ -2213,6 +2213,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 										{if(difL <= difH, {pos = d},{pos = d + 1})});
 								});
 								item = ~scale.at(i).degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+								item = item.round(0.001);
 							});
 						});
 						// Set MIDI Off
@@ -2223,7 +2224,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							// Reset MIDI OUT
 							~freqMidi.wrapPut(i, []);
 							// MidiOut
-							~freqMidi.wrapPut(i, (freq.cpsmidi + 0.5).floor);// Liste freqMidi agents
+							~freqMidi.wrapPut(i, freq.cpsmidi.floor);// Liste freqMidi agents
 						});
 						// Accords
 						~freq.wrapPut(i,freq);

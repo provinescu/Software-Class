@@ -3526,7 +3526,7 @@ Preset Wek",
 								if(degre >= ~scale.degrees.wrapAt(i) and: {degre <= ~scale.degrees.wrapAt(i+1)},
 									{if(difL <= difH, {pos = i},{pos = i+1})});
 							});
-							item = ~scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
+							item = ~scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
 							item = item.cpsmidi;
 						});
 					});
@@ -3543,7 +3543,7 @@ Preset Wek",
 						});// MIDI OFF
 						// Reset MIDI OUT
 						~freqMidi.wrapPut(agent, []);
-						~freqMidi.wrapPut(agent, (freq + 0.5).floor);// Liste freqMidi agents
+						~freqMidi.wrapPut(agent, freq.floor);// Liste freqMidi agents
 					});
 					//Set fhz
 					freq=freq.midicps.flat;
