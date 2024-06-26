@@ -1263,10 +1263,9 @@ f						Switch File for Analyze.
 									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 										{if(difL <= difH, {pos = i},{pos = i+1})});
 								});
-								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
 							});
 
-							freq = freq.round(0.001);
 							octave = (freq.cpsmidi / 12).floor;
 							demiTon = ((freq.cpsmidi / 12).frac * 12).floor;
 							cent = ((freq.cpsmidi / 12).frac * 12).frac * 2;
@@ -1498,10 +1497,9 @@ f						Switch File for Analyze.
 								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 									{if(difL <= difH, {pos = i},{pos = i+1})});
 							});
-							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
+							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
 						});
 
-						freq = freq.round(0.001);
 						octave = (freq.cpsmidi / 12).floor;
 						demiTon = ((freq.cpsmidi / 12).frac * 12).floor;
 						cent = ((freq.cpsmidi / 12).frac * 12).frac * 2;
@@ -2111,8 +2109,8 @@ f						Switch File for Analyze.
 											if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
 												{if(difL <= difH, {pos = i},{pos = i+1})});
 										});
-										freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0);
-										freq = freq.cpsmidi.round(0.001);
+										freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
+										freq = freq.cpsmidi;
 									});
 									// Set Rate
 									freqToMidi = freq.floor;
