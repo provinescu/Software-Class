@@ -63,7 +63,7 @@ WekTime {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		thisProcess.openUDPPort(57138);
+		thisProcess.openUDPPort(NetAddr.langPort);
 
 		Safety(s);
 		//s.makeGui;
