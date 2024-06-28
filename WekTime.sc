@@ -121,7 +121,7 @@ WekTime {
 					item = item + 3;
 					cmd = msg[item];
 			});
-		}, \score, recvPort: 57138);
+		}, \score, recvPort: NetAddr.langPort);
 
 		fonctionCollectFolders = {
 			// Collect all Preset
