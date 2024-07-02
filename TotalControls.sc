@@ -146,6 +146,7 @@ TotalControls {
 		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Val+Init Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
 			items = 0;
+			startItems = 0;
 			wScore.view.children.at(8).children.at(1).value_(0);
 			scorePlaying  = wEditScore.string.interpret;
 			scorePlaying.postcs;
@@ -164,7 +165,7 @@ TotalControls {
 esc stop all soft
 s play all soft
 l Load preset for all soft
-< next commande manual score
+< or - next commande manual score
 
 r robot preset
 R wekrobot preset
@@ -279,7 +280,7 @@ Score Commandes:
 						cmd = scorePlaying.at(items);
 						{
 							windows.value(5);
-							wScore.view.children.at(9).string_("Current "++items.asString + scorePlaying.at(items));
+							wScore.view.children.at(9).string_("Next "++items.asString + scorePlaying.at(items));
 						}.defer;
 						scoreVal = [];
 						if(cmd != nil,
@@ -292,7 +293,7 @@ Score Commandes:
 								val = cmd.at(item);
 								while({val != nil},
 									{
-										if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'},
+										if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'} or: {val == 'provinescu'},
 											{
 												scoreVal = scoreVal.add(val);
 												val = cmd[item+1];
@@ -458,7 +459,7 @@ Score Commandes:
 			if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(commande, 40)});
 
 			// key < next score titem
-			if(char == $< and: {modifiers == 0},
+			if(char == $< and: {modifiers == 0} or: {char == $- and: {modifiers == 0}},
 				{
 					if(flagManualPlaying == 'on',
 						{
@@ -476,7 +477,7 @@ Score Commandes:
 									val = cmd.at(item);
 									while({val != nil},
 										{
-											if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'},
+											if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'} or: {val == 'provinescu'},
 												{
 													scoreVal = scoreVal.add(val);
 													val = cmd[item+1];
@@ -519,11 +520,13 @@ Score Commandes:
 											val = cmd.at(item);
 									});
 									items = items + 1;
+									item = 0;
 								},
 								{
 									if(loopScore == 'off',
 										{
 											{startManualScore.valueAction_(0)}.defer(2);
+											flagManualPlaying = 'off';
 											items = startItems;
 											item = 0;
 										},
