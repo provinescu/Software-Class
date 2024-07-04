@@ -90,15 +90,15 @@ Time {
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							windowExternalControlGUI.view.children.at(0).valueAction_(0);
-							}.defer;
+								{
+									windowExternalControlGUI.view.children.at(0).valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							windowExternalControlGUI.view.children.at(0).valueAction_(1);
-							}.defer;
+								{
+									windowExternalControlGUI.view.children.at(0).valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -1017,22 +1017,29 @@ f						Switch File for Analyze.
 
 							// Set Ambitus Freq
 							freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-							freq = freq.midicps;
-
 							// Setup Freq with Scaling and Tuning
 							if(flagScaling != 'off', {
-								pos = 0;
-								oct = freq.cpsoct.round(0.001);
-								ratio = oct.frac;
+								oct = freq / 12;
+								ratio = (oct.frac * 12).round(0.1);
 								oct = oct.floor;
-								degre = (ratio * tuning.size + 0.5).floor;
-								(scale.degrees.size - 1).do({arg i;
-									difL=abs(degre - scale.degrees.at(i));
-									difH=abs(degre - scale.degrees.at(i+1));
-									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-										{if(difL <= difH, {pos = i},{pos = i+1})});
-								});
-								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
+								pos = scale.degrees.indexOfEqual(ratio);
+								if(pos == nil,
+									{
+										pos = scale.degrees.indexOfGreaterThan(ratio);
+										if(pos == nil,
+											{
+												pos = scale.degrees.last;
+											},
+											{
+												pos = scale.degrees.at(pos);
+											}
+										);
+									},
+									{
+										pos = scale.degrees.at(pos);
+									}
+								);
+								freq = (oct * 12 + pos).midicps;
 							});
 
 							octave = (freq.cpsmidi / 12).floor;
@@ -1156,22 +1163,29 @@ f						Switch File for Analyze.
 
 						// Set Ambitus Freq
 						freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-						freq = freq.midicps;
-
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling != 'off', {
-							pos = 0;
-							oct = freq.cpsoct.round(0.001);
-							ratio = oct.frac;
+							oct = freq / 12;
+							ratio = (oct.frac * 12).round(0.1);
 							oct = oct.floor;
-							degre = (ratio * tuning.size + 0.5).floor;
-							(scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - scale.degrees.at(i));
-								difH=abs(degre - scale.degrees.at(i+1));
-								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
-							});
-							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
+							pos = scale.degrees.indexOfEqual(ratio);
+							if(pos == nil,
+								{
+									pos = scale.degrees.indexOfGreaterThan(ratio);
+									if(pos == nil,
+										{
+											pos = scale.degrees.last;
+										},
+										{
+											pos = scale.degrees.at(pos);
+										}
+									);
+								},
+								{
+									pos = scale.degrees.at(pos);
+								}
+							);
+							freq = (oct * 12 + pos).midicps;
 						});
 
 						octave = (freq.cpsmidi / 12).floor;
@@ -1587,19 +1601,27 @@ f						Switch File for Analyze.
 									// Setup Freq with Scaling and Tuning
 									freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
 									if(flagScaling != 'off', {
-										pos = 0;
-										oct = freq.midicps.cpsoct.round(0.001);
-										ratio = oct.frac;
+										oct = freq / 12;
+										ratio = (oct.frac * 12).round(0.1);
 										oct = oct.floor;
-										degre = (ratio * tuning.size + 0.5).floor;
-										(scale.degrees.size - 1).do({arg i;
-											difL=abs(degre - scale.degrees.at(i));
-											difH=abs(degre - scale.degrees.at(i+1));
-											if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-												{if(difL <= difH, {pos = i},{pos = i+1})});
-										});
-										freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
-										freq = freq.cpsmidi;
+										pos = scale.degrees.indexOfEqual(ratio);
+										if(pos == nil,
+											{
+												pos = scale.degrees.indexOfGreaterThan(ratio);
+												if(pos == nil,
+													{
+														pos = scale.degrees.last;
+													},
+													{
+														pos = scale.degrees.at(pos);
+													}
+												);
+											},
+											{
+												pos = scale.degrees.at(pos);
+											}
+										);
+										freq = oct * 12 + pos;
 									});
 									// Set Rate
 									freqToMidi = freq.floor;

@@ -1394,51 +1394,51 @@ Preset Wek",
 			freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime; lastTimeWekData = Main.elapsedTime; lastTimeWekPreset = Main.elapsedTime;
 
 			// OSCFunc Score
-		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+			OSCFunc.newMatching({arg msg, time, addr, recvPort;
 
-			var array, cmd = 'on', number, file, item = 0;
+				var array, cmd = 'on', number, file, item = 0;
 
-			msg.removeAt(0);
-			msg.postcs;
+				msg.removeAt(0);
+				msg.postcs;
 
-			while({cmd != nil},
-				{
-					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'wekmatrix'},
-						{
-							cmd = msg[item+1].postln;
-							// Preset
-							if(cmd == 'preset',
-								{
-									number = msg[item+2].asInteger.postln;
+				while({cmd != nil},
+					{
+						cmd = msg[item].postln;
+						if(cmd == 'all' or: {cmd == 'wekmatrix'},
+							{
+								cmd = msg[item+1].postln;
+								// Preset
+								if(cmd == 'preset',
 									{
-										if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
-											{fonctionUserOperatingSystem.value(9);
-												windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
-												file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
-												fonctionLoadPreset.value(file.readAllString.interpret);
-												file.close;
-												//listeWindows.at(3).front;indexWindows=3;
-										}, {"cancelled".postln});
+										number = msg[item+2].asInteger.postln;
+										{
+											if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
+												{fonctionUserOperatingSystem.value(9);
+													windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
+													file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
+													fonctionLoadPreset.value(file.readAllString.interpret);
+													file.close;
+													//listeWindows.at(3).front;indexWindows=3;
+											}, {"cancelled".postln});
+										}.defer;
+								});
+								// Stop
+								if(cmd == 'stop', {
+									{
+										windowControl.view.children.at(1).valueAction_(0);
 									}.defer;
-							});
-							// Stop
-							if(cmd == 'stop', {
-							{
-							windowControl.view.children.at(1).valueAction_(0);
-							}.defer;
-							});
-							// Start
-							if(cmd == 'start', {
-							{
-							windowControl.view.children.at(1).valueAction_(1);
-							}.defer;
-							});
-					});
-					item = item + 3;
-					cmd = msg[item];
-			});
-		}, \score, recvPort: NetAddr.langPort);
+								});
+								// Start
+								if(cmd == 'start', {
+									{
+										windowControl.view.children.at(1).valueAction_(1);
+									}.defer;
+								});
+						});
+						item = item + 3;
+						cmd = msg[item];
+				});
+			}, \score, recvPort: NetAddr.langPort);
 
 			// DATA WIKI OUT
 			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -2728,11 +2728,11 @@ Preset Wek",
 			valHi = (ez.value.at(1));
 			previousPan = ez.value;
 			/*listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
-					window.value.view.children.at(38).children.do({arg subView, subItem;
-						if(subItem == 2, {subView.activeLo_(valLo + 1 / 2); subView.activeHi_(valHi + 1 / 2)})
-					});
-				});
+			if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
+			window.value.view.children.at(38).children.do({arg subView, subItem;
+			if(subItem == 2, {subView.activeLo_(valLo + 1 / 2); subView.activeHi_(valHi + 1 / 2)})
+			});
+			});
 			});*/
 		},[-1, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
@@ -2769,11 +2769,11 @@ Preset Wek",
 			valHi = (ez.value.at(1) / 2).dbamp;
 			previousAmp = ez.value;
 			/*listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
-					window.value.view.children.at(41).children.do({arg subView, subItem;
-						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
-					});
-				});
+			if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
+			window.value.view.children.at(41).children.do({arg subView, subItem;
+			if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
+			});
+			});
 			});*/
 		},[-inf, 0],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
@@ -4442,21 +4442,30 @@ Preset Wek",
 				if(synthNumber > choiceSynth.indexOf('FX ('), {
 					// FX Synth (special treatment)
 					//// Set Music Data
-					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 					// Setup Freq with Scaling and Tuning
 					if(flagScaling != 'off', {
-						pos = 0;
-						octave = freq.cpsoct.round(0.001);
-						ratio = octave.frac;
-						octave = octave.floor;
-						degre = (ratio * tuning.size + 0.5).floor;
-						(scale.degrees.size - 1).do({arg i;
-							difL=abs(degre - scale.degrees.at(i));
-							difH=abs(degre - scale.degrees.at(i+1));
-							if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-								{if(difL <= difH, {pos = i},{pos = i+1})});
-						});
-						freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+						pos = nil;
+						octave = (freq / 12).floor;
+						degre = ((freq / 12).frac * 12).round(0.1);
+						pos = scale.degrees.indexOfEqual(degre);
+						if(pos == nil,
+							{
+								pos = scale.degrees.indexOfGreaterThan(degre);
+								if(pos == nil,
+									{
+										pos = scale.degrees.last;
+									},
+									{
+										pos = scale.degrees.at(pos);
+									}
+								);
+							},
+							{
+								pos = scale.degrees.at(pos);
+							}
+						);
+						freq = (octave * 12 + pos).midicps;
 					});
 					//Reset 1 Trigger Recording
 					bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
@@ -4535,21 +4544,30 @@ Preset Wek",
 											// Playing
 											listeFreq.size.do({arg index;
 												freq = listeFreq.at(index);
-												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 												// Setup Freq with Scaling and Tuning
 												if(flagScaling != 'off', {
-													pos = 0;
-													octave = freq.cpsoct.round(0.001);
-													ratio = octave.frac;
-													octave = octave.floor;
-													degre = (ratio * tuning.size + 0.5).floor;
-													(scale.degrees.size - 1).do({arg i;
-														difL=abs(degre - scale.degrees.at(i));
-														difH=abs(degre - scale.degrees.at(i+1));
-														if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-															{if(difL <= difH, {pos = i},{pos = i+1})});
-													});
-													freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+													pos = nil;
+													octave = (freq / 12).floor;
+													degre = ((freq / 12).frac * 12).round(0.1);
+													pos = scale.degrees.indexOfEqual(degre);
+													if(pos == nil,
+														{
+															pos = scale.degrees.indexOfGreaterThan(degre);
+															if(pos == nil,
+																{
+																	pos = scale.degrees.last;
+																},
+																{
+																	pos = scale.degrees.at(pos);
+																}
+															);
+														},
+														{
+															pos = scale.degrees.at(pos);
+														}
+													);
+													freq = (octave * 12 + pos).midicps;
 												});
 												// SETUP MIDI OFF
 												lastFreqMidi = lastFreqMidi.add(freq);
@@ -4692,21 +4710,30 @@ Preset Wek",
 												// Playing
 												listeFreq.size.do({arg index;
 													freq = listeFreq.at(index);
-													freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+													freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 													// Setup Freq with Scaling and Tuning
 													if(flagScaling != 'off', {
-														pos = 0;
-														octave = freq.cpsoct.round(0.001);
-														ratio = octave.frac;
-														octave = octave.floor;
-														degre = (ratio * tuning.size + 0.5).floor;
-														(scale.degrees.size - 1).do({arg i;
-															difL=abs(degre - scale.degrees.at(i));
-															difH=abs(degre - scale.degrees.at(i+1));
-															if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-																{if(difL <= difH, {pos = i},{pos = i+1})});
-														});
-														freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+														pos = nil;
+														octave = (freq / 12).floor;
+														degre = ((freq / 12).frac * 12).round(0.1);
+														pos = scale.degrees.indexOfEqual(degre);
+														if(pos == nil,
+															{
+																pos = scale.degrees.indexOfGreaterThan(degre);
+																if(pos == nil,
+																	{
+																		pos = scale.degrees.last;
+																	},
+																	{
+																		pos = scale.degrees.at(pos);
+																	}
+																);
+															},
+															{
+																pos = scale.degrees.at(pos);
+															}
+														);
+														freq = (octave * 12 + pos).midicps;
 													});
 													// SETUP MIDI OFF
 													lastFreqMidi = lastFreqMidi.add(freq);
@@ -4844,21 +4871,30 @@ Preset Wek",
 															// Playing
 															listeFreq.size.do({arg index;
 																freq = listeFreq.at(index);
-																freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+																freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 																// Setup Freq with Scaling and Tuning
 																if(flagScaling != 'off', {
-																	pos = 0;
-																	octave = freq.cpsoct.round(0.001);
-																	ratio = octave.frac;
-																	octave = octave.floor;
-																	degre = (ratio * tuning.size + 0.5).floor;
-																	(scale.degrees.size - 1).do({arg i;
-																		difL=abs(degre - scale.degrees.at(i));
-																		difH=abs(degre - scale.degrees.at(i+1));
-																		if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-																			{if(difL <= difH, {pos = i},{pos = i+1})});
-																	});
-																	freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+																	pos = nil;
+																	octave = (freq / 12).floor;
+																	degre = ((freq / 12).frac * 12).round(0.1);
+																	pos = scale.degrees.indexOfEqual(degre);
+																	if(pos == nil,
+																		{
+																			pos = scale.degrees.indexOfGreaterThan(degre);
+																			if(pos == nil,
+																				{
+																					pos = scale.degrees.last;
+																				},
+																				{
+																					pos = scale.degrees.at(pos);
+																				}
+																			);
+																		},
+																		{
+																			pos = scale.degrees.at(pos);
+																		}
+																	);
+																	freq = (octave * 12 + pos).midicps;
 																});
 																// SETUP MIDI OFF
 																lastFreqMidi = lastFreqMidi.add(freq);

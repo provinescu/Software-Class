@@ -1512,18 +1512,27 @@ Density {
 						if(flagScaling == 'on', {
 							newFreq = newFreq.collect({arg item, index;
 								item.asArray.collect({arg note, index;
-									position = 0;
-									octave = note.cpsoct.round(0.001);
-									ratio = octave.frac;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
 									octave = octave.floor;
-									degre = (ratio * tuning.size + 0.5).floor;
-									(scale.degrees.size - 1).do({arg i; var difL, difH;
-										difL=abs(degre - scale.degrees.at(i));
-										difH=abs(degre - scale.degrees.at(i+1));
-										if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-											{if(difL <= difH, {position = i},{position = i+1})});
-									});
-									note = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
 								});
 							});
 						});
@@ -1626,18 +1635,27 @@ Density {
 						if(flagScaling == 'on', {
 							newFreq = newFreq.collect({arg item, index;
 								item.asArray.collect({arg note, index;
-									position = 0;
-									octave = note.cpsoct.round(0.001);
-									ratio = octave.frac;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
 									octave = octave.floor;
-									degre = (ratio * tuning.size + 0.5).floor;
-									(scale.degrees.size - 1).do({arg i; var difL, difH;
-										difL=abs(degre - scale.degrees.at(i));
-										difH=abs(degre - scale.degrees.at(i+1));
-										if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-											{if(difL <= difH, {position = i},{position = i+1})});
-									});
-									note = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
 								});
 							});
 						});
@@ -1648,49 +1666,6 @@ Density {
 					'Kohonen', {
 						/*// FFT
 						# flux, flatness, centroid, energy, bpm = data.at(0);*/
-						// Freq Transformation
-						// Training Kohonen Freq
-						maxTraining = freq.size;
-						maxTraining.do({arg i; kohonenF.training(freq.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
-						// Calculate Kohonen Freq
-						freq = freq.collect({arg item, index, z;
-							item = kohonenF.training(item.asArray, 1, 1, 1);
-							item.at(0).at(1) / 127;// Vecteur
-						});
-						// Setup Range Freq
-						freq = freq.collect({arg item, index;
-							if(item < 0, {item = 0});
-							if(item > 1, {item = 1});
-							item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
-							item.midicps;
-						});
-						// Setup Freq with Scaling and Tuning
-						if(flagScaling == 'on', {
-							freq = freq.collect({arg item, index;
-								position = 0;
-								octave = item.cpsoct.round(0.001);
-								ratio = octave.frac;
-								octave = octave.floor;
-								degre = (ratio * tuning.size + 0.5).floor;
-								(scale.degrees.size - 1).do({arg i; var difL, difH;
-									difL=abs(degre - scale.degrees.at(i));
-									difH=abs(degre - scale.degrees.at(i+1));
-									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-										{if(difL <= difH, {position = i},{position = i+1})});
-								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
-							});
-						});
-						// Amp Transformation
-						// Training Kohonen Amp
-						maxTraining.do({arg i; kohonenA.training(amp.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
-						// Calculate Kohonen Amp
-						amp = amp.collect({arg item, index;
-							item = kohonenA.training(item.asArray, 1, 1, 1);
-							item.at(0).at(1) / 127;// Vecteur
-						});
-						// Set Range Amp
-						amp = amp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 						// Duree Transformation
 						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Training Kohonen Duree
@@ -1742,12 +1717,64 @@ Density {
 							if(item <= 0, {item = quantizationDuree.reciprocal});
 							newDuree.put(index, item);
 						});
+						// Freq Transformation
+						// Training Kohonen Freq
+						maxTraining = newFreq.size;
+						maxTraining.do({arg i; kohonenF.training(newFreq.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
+						// Calculate Kohonen Freq
+						newFreq = newFreq.collect({arg item, index, z;
+							item = kohonenF.training(item.asArray, 1, 1, 1);
+							item.at(0).at(1) / 127;// Vecteur
+						});
+						// Setup Range Freq
+						newFreq = newFreq.collect({arg item, index;
+							if(item < 0, {item = 0});
+							if(item > 1, {item = 1});
+							item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+							item.midicps;
+						});
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						// Training Kohonen Amp
+						maxTraining.do({arg i; kohonenA.training(newAmp.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
+						// Calculate Kohonen Amp
+						newAmp = newAmp.collect({arg item, index;
+							item = kohonenA.training(item.asArray, 1, 1, 1);
+							item.at(0).at(1) / 127;// Vecteur
+						});
+						// Set Range Amp
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 					},
 					'Genetic', {
 						// FFT
 						# flux, flatness, centroid, energy, bpm = data.at(0);
-						// NewDuree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Freq Transformation
 						// Calculation algo new musical pattern
 						freq.size.do({arg i, f, a, d;
@@ -1761,28 +1788,6 @@ Density {
 						freq = listF;
 						amp = listA;
 						duree = listD;
-						// Setup Range Freq
-						freq = freq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
-						freq = freq.midicps;
-						// Setup Freq with Scaling and Tuning
-						if(flagScaling == 'on', {
-							freq = freq.collect({arg item, index;
-								position = 0;
-								octave = item.cpsoct.round(0.001);
-								ratio = octave.frac;
-								octave = octave.floor;
-								degre = (ratio * tuning.size + 0.5).floor;
-								(scale.degrees.size - 1).do({arg i; var difL, difH;
-									difL=abs(degre - scale.degrees.at(i));
-									difH=abs(degre - scale.degrees.at(i+1));
-									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-										{if(difL <= difH, {position = i},{position = i+1})});
-								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
-							});
-						});
-						// Set Range Amp
-						amp = amp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
@@ -1826,6 +1831,39 @@ Density {
 							if(item <= 0, {item = quantizationDuree.reciprocal});
 							newDuree.put(index, item);
 						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Set Range Amp
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 					},
 					'Euclide', {
 						// Distances Euclidiennes 3D -> Vecteur 1D
@@ -1885,29 +1923,6 @@ Density {
 							duree = duree + (ecartSemiQ * dissymetrie.sign)
 						});
 						duree = duree.mod(1);
-						// Setup Range Freq
-						freq = freq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
-						freq = freq.midicps;
-						// Setup Freq with Scaling and Tuning
-						if(flagScaling == 'on', {
-							freq = freq.collect({arg item, index;
-								position = 0;
-								octave = item.cpsoct.round(0.001);
-								ratio = octave.frac;
-								octave = octave.floor;
-								degre = (ratio * tuning.size + 0.5).floor;
-								(scale.degrees.size - 1).do({arg i; var difL, difH;
-									difL=abs(degre - scale.degrees.at(i));
-									difH=abs(degre - scale.degrees.at(i+1));
-									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-										{if(difL <= difH, {position = i},{position = i+1})});
-								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
-							});
-						});
-						// Set Range Amp
-						amp = amp / listeDataInstruments.size.max(1);
-						amp = amp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
@@ -1952,13 +1967,45 @@ Density {
 							if(item <= 0, {item = quantizationDuree.reciprocal});
 							newDuree.put(index, item);
 						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Set Range Amp
+						newAmp = newAmp / listeDataInstruments.size.max(1);
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 					},
 					'Neural', {
 						freqNeu=[];
 						ampNeu=[];
 						durNeu=[];
-						// FFT
-						# flux, flatness, centroid, energy, bpm = data.at(0);
 						// Freq Transformation
 						// Training Neural
 						//maxTraining = freq.size;
@@ -1975,32 +2022,7 @@ Density {
 						freq = freqNeu;
 						amp = ampNeu;
 						duree = durNeu;
-						/*// Setup Range Freq
-						freq = freq.collect({arg item, index;
-						item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
-						item.midicps;
-						});*/
-						// Setup Freq with Scaling and Tuning
-						if(flagScaling == 'on', {
-							freq = freq.collect({arg item, index;
-								position = 0;
-								octave = item.cpsoct.round(0.001);
-								ratio = octave.frac;
-								octave = octave.floor;
-								degre = (ratio * tuning.size + 0.5).floor;
-								(scale.degrees.size - 1).do({arg i; var difL, difH;
-									difL=abs(degre - scale.degrees.at(i));
-									difH=abs(degre - scale.degrees.at(i+1));
-									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-										{if(difL <= difH, {position = i},{position = i+1})});
-								});
-								item = scale.degreeToFreq(position, (octave + 1 * 12).midicps, 0).round(0.001);
-							});
-						});
-						// Amp Transformation
-						amp = amp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 						// Duree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						if(flagChord == 'on', {
 							// Check Duree for Chords
 							duree.do({arg duree, index, newFHZ;
@@ -2043,6 +2065,41 @@ Density {
 							if(item <= 0, {item = quantizationDuree.reciprocal});
 							newDuree.put(index, item);
 						});
+						/*// Setup Range Freq
+						freq = freq.collect({arg item, index;
+						item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+						item.midicps;
+						});*/
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 					}
 				);
 				// Out

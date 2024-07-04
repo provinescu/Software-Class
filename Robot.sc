@@ -2200,22 +2200,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						);
 						// Set Tuning and Scaling
 						if(~flagScaling.at(i) != 'off', {
-							freq = freq.collect({arg item, index;
-								pos = 0;
-								octave = item.cpsoct.round(0.001);
-								ratio = octave.frac;
-								octave = octave.floor;
-								degre = (ratio * ~tuning.at(i).size + 0.5).floor;
-								(~scale.at(i).degrees.size - 1).do({arg d;
-									difL=abs(degre - ~scale.at(i).degrees.at(d));
-									difH=abs(degre - ~scale.at(i).degrees.at(d+1));
-									if(degre >= ~scale.at(i).degrees.at(d) and: {degre <= ~scale.at(i).degrees.at(d+1)},
-										{if(difL <= difH, {pos = d},{pos = d + 1})});
-								});
-								item = ~scale.at(i).degreeToFreq(pos, (octave + 1 * 12).midicps, 0);
-								item = item.round(0.001);
-							});
+						freq = freq.collect({arg item, index;
+							octave = item.cpsmidi / 12;
+							ratio = (octave.frac * 12).round(0.1);
+							octave = octave.floor;
+							degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+							if(degre == nil,
+								{
+									degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+									if(degre == nil,
+										{
+											degre = ~scale.at(i).degrees.last;
+										},
+										{
+											degre = ~scale.at(i).degrees.at(degre);
+										}
+									);
+								},
+								{
+									degre = ~scale.at(i).degrees.at(degre);
+								}
+							);
+								item = (octave * 12 + degre).midicps;
 						});
+					});
 						// Set MIDI Off
 						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 							~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);

@@ -100,15 +100,15 @@ Matrix {
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							windowControl.view.children.at(1).valueAction_(0);
-							}.defer;
+								{
+									windowControl.view.children.at(1).valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							windowControl.view.children.at(1).valueAction_(1);
-							}.defer;
+								{
+									windowControl.view.children.at(1).valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -4546,21 +4546,30 @@ y ... -						Musical keys.
 				if(synthNumber > choiceSynth.indexOf('FX ('), {
 					// FX Synth (special treatment)
 					//// Set Music Data
-					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 					// Setup Freq with Scaling and Tuning
 					if(flagScaling != 'off', {
-						pos = 0;
-						octave = freq.cpsoct.round(0.001);
-						ratio = octave.frac;
-						octave = octave.floor;
-						degre = (ratio * tuning.size + 0.5).floor;
-						(scale.degrees.size - 1).do({arg i;
-							difL=abs(degre - scale.degrees.at(i));
-							difH=abs(degre - scale.degrees.at(i+1));
-							if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-								{if(difL <= difH, {pos = i},{pos = i+1})});
-						});
-						freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+						pos = nil;
+						octave = (freq / 12).floor;
+						degre = ((freq / 12).frac * 12).round(0.1);
+						pos = scale.degrees.indexOfEqual(degre);
+						if(pos == nil,
+							{
+								pos = scale.degrees.indexOfGreaterThan(degre);
+								if(pos == nil,
+									{
+										pos = scale.degrees.last;
+									},
+									{
+										pos = scale.degrees.at(pos);
+									}
+								);
+							},
+							{
+								pos = scale.degrees.at(pos);
+							}
+						);
+						freq = (octave * 12 + pos).midicps;
 					});
 					//Reset 1 Trigger Recording
 					bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
@@ -4639,21 +4648,30 @@ y ... -						Musical keys.
 											// Playing
 											listeFreq.size.do({arg index;
 												freq = listeFreq.at(index);
-												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 												// Setup Freq with Scaling and Tuning
 												if(flagScaling != 'off', {
-													pos = 0;
-													octave = freq.cpsoct.round(0.001);
-													ratio = octave.frac;
-													octave = octave.floor;
-													degre = (ratio * tuning.size + 0.5).floor;
-													(scale.degrees.size - 1).do({arg i;
-														difL=abs(degre - scale.degrees.at(i));
-														difH=abs(degre - scale.degrees.at(i+1));
-														if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-															{if(difL <= difH, {pos = i},{pos = i+1})});
-													});
-													freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+													pos = nil;
+													octave = (freq / 12).floor;
+													degre = ((freq / 12).frac * 12).round(0.1);
+													pos = scale.degrees.indexOfEqual(degre);
+													if(pos == nil,
+														{
+															pos = scale.degrees.indexOfGreaterThan(degre);
+															if(pos == nil,
+																{
+																	pos = scale.degrees.last;
+																},
+																{
+																	pos = scale.degrees.at(pos);
+																}
+															);
+														},
+														{
+															pos = scale.degrees.at(pos);
+														}
+													);
+													freq = (octave * 12 + pos).midicps;
 												});
 												// SETUP MIDI OFF
 												lastFreqMidi = lastFreqMidi.add(freq);
@@ -4796,21 +4814,30 @@ y ... -						Musical keys.
 												// Playing
 												listeFreq.size.do({arg index;
 													freq = listeFreq.at(index);
-													freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+													freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 													// Setup Freq with Scaling and Tuning
 													if(flagScaling != 'off', {
-														pos = 0;
-														octave = freq.cpsoct.round(0.001);
-														ratio = octave.frac;
-														octave = octave.floor;
-														degre = (ratio * tuning.size + 0.5).floor;
-														(scale.degrees.size - 1).do({arg i;
-															difL=abs(degre - scale.degrees.at(i));
-															difH=abs(degre - scale.degrees.at(i+1));
-															if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-																{if(difL <= difH, {pos = i},{pos = i+1})});
-														});
-														freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+														pos = nil;
+														octave = (freq / 12).floor;
+														degre = ((freq / 12).frac * 12).round(0.1);
+														pos = scale.degrees.indexOfEqual(degre);
+														if(pos == nil,
+															{
+																pos = scale.degrees.indexOfGreaterThan(degre);
+																if(pos == nil,
+																	{
+																		pos = scale.degrees.last;
+																	},
+																	{
+																		pos = scale.degrees.at(pos);
+																	}
+																);
+															},
+															{
+																pos = scale.degrees.at(pos);
+															}
+														);
+														freq = (octave * 12 + pos).midicps;
 													});
 													// SETUP MIDI OFF
 													lastFreqMidi = lastFreqMidi.add(freq);
@@ -4948,21 +4975,30 @@ y ... -						Musical keys.
 															// Playing
 															listeFreq.size.do({arg index;
 																freq = listeFreq.at(index);
-																freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT).midicps;
+																freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
 																// Setup Freq with Scaling and Tuning
 																if(flagScaling != 'off', {
-																	pos = 0;
-																	octave = freq.cpsoct.round(0.001);
-																	ratio = octave.frac;
-																	octave = octave.floor;
-																	degre = (ratio * tuning.size + 0.5).floor;
-																	(scale.degrees.size - 1).do({arg i;
-																		difL=abs(degre - scale.degrees.at(i));
-																		difH=abs(degre - scale.degrees.at(i+1));
-																		if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-																			{if(difL <= difH, {pos = i},{pos = i+1})});
-																	});
-																	freq = scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
+																	pos = nil;
+																	octave = (freq / 12).floor;
+																	degre = ((freq / 12).frac * 12).round(0.1);
+																	pos = scale.degrees.indexOfEqual(degre);
+																	if(pos == nil,
+																		{
+																			pos = scale.degrees.indexOfGreaterThan(degre);
+																			if(pos == nil,
+																				{
+																					pos = scale.degrees.last;
+																				},
+																				{
+																					pos = scale.degrees.at(pos);
+																				}
+																			);
+																		},
+																		{
+																			pos = scale.degrees.at(pos);
+																		}
+																	);
+																	freq = (octave * 12 + pos).midicps;
 																});
 																// SETUP MIDI OFF
 																lastFreqMidi = lastFreqMidi.add(freq);

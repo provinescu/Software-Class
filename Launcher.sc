@@ -175,7 +175,7 @@ Launcher {
 				},
 				10,	{
 					w.view.children.at(14).string_("Choose Soft");
-					nameSoft = "TotalControls";// 57121
+					nameSoft = "TotalControls";
 				},
 			);
 		};

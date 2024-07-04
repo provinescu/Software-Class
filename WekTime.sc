@@ -107,15 +107,15 @@ WekTime {
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							windowExternalControlGUI.view.children.at(0).valueAction_(0);
-							}.defer;
+								{
+									windowExternalControlGUI.view.children.at(0).valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							windowExternalControlGUI.view.children.at(0).valueAction_(1);
-							}.defer;
+								{
+									windowExternalControlGUI.view.children.at(0).valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -1008,7 +1008,7 @@ f						Switch File for Analyze.
 				wekOut = msg[1..];
 
 				{
-				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
+					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 						switch(wekOut[0].clip(0, 3),
 							0, {typeSequencer = 'Rand'},
 							1, {typeSequencer = 'Seq'; indexSequence = 0},
@@ -1172,13 +1172,13 @@ f						Switch File for Analyze.
 							listeCtrl5FX.put(i, wekOut[76+i].clip(0.01, 100) / 100);//76
 							windowControlGUI.view.children.at(i * 93 + 290).children.at(2).valueAction_(wekOut[76+i].clip(0.01, 100));
 						});
-					lastTimeWekData = time;
-				});
+						lastTimeWekData = time;
+					});
 					// Preset 80
-				numPreset = wekOut[80].asInteger.clip(1, 40);// Number Preset
-				if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-					// load new preset
-					{
+					numPreset = wekOut[80].asInteger.clip(1, 40);// Number Preset
+					if(flagWTP  == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+						// load new preset
+						{
 							if(File.exists(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd"),
 								{
 									lastNumPreset = numPreset;
@@ -1186,7 +1186,7 @@ f						Switch File for Analyze.
 									file=File(~pathWekTime ++ "Preset" + numPreset.asInteger.asString ++ ".scd","r");
 									fonctionLoadPreset.value(file.readAllString.interpret, windowControlGUI, 'on'); file.close;
 									windowControlGUI.name="WekTime a Interactive and Organizer Musical Software by Provinescu's Software Production" + " | " +  "Preset" + numPreset.asInteger.asString});
-				});
+					});
 				}.defer(0);
 			},'/wek/outputs');
 
@@ -1248,22 +1248,29 @@ f						Switch File for Analyze.
 
 							// Set Ambitus Freq
 							freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-							freq = freq.midicps;
-
 							// Setup Freq with Scaling and Tuning
 							if(flagScaling != 'off', {
-								pos = 0;
-								oct = freq.cpsoct.round(0.001);
-								ratio = oct.frac;
+								oct = freq / 12;
+								ratio = (oct.frac * 12).round(0.1);
 								oct = oct.floor;
-								degre = (ratio * tuning.size + 0.5).floor;
-								(scale.degrees.size - 1).do({arg i;
-									difL=abs(degre - scale.degrees.at(i));
-									difH=abs(degre - scale.degrees.at(i+1));
-									if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-										{if(difL <= difH, {pos = i},{pos = i+1})});
-								});
-								freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
+								pos = scale.degrees.indexOfEqual(ratio);
+								if(pos == nil,
+									{
+										pos = scale.degrees.indexOfGreaterThan(ratio);
+										if(pos == nil,
+											{
+												pos = scale.degrees.last;
+											},
+											{
+												pos = scale.degrees.at(pos);
+											}
+										);
+									},
+									{
+										pos = scale.degrees.at(pos);
+									}
+								);
+								freq = (oct * 12 + pos).midicps;
 							});
 
 							octave = (freq.cpsmidi / 12).floor;
@@ -1376,7 +1383,7 @@ f						Switch File for Analyze.
 						//Sender
 						sender.sendMsg("/wek/inputs", *mfcc[0..]);
 
-							if(flagStreamMFCC != 'wek',
+						if(flagStreamMFCC != 'wek',
 							{
 								// Send control outputs for wekinator 81 data
 								data = data.add(numSequencer);//0
@@ -1482,22 +1489,29 @@ f						Switch File for Analyze.
 
 						// Set Ambitus Freq
 						freq = freq.cpsmidi / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
-						freq = freq.midicps;
-
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling != 'off', {
-							pos = 0;
-							oct = freq.cpsoct.round(0.001);
-							ratio = oct.frac;
+							oct = freq / 12;
+							ratio = (oct.frac * 12).round(0.1);
 							oct = oct.floor;
-							degre = (ratio * tuning.size + 0.5).floor;
-							(scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - scale.degrees.at(i));
-								difH=abs(degre - scale.degrees.at(i+1));
-								if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
-							});
-							freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
+							pos = scale.degrees.indexOfEqual(ratio);
+							if(pos == nil,
+								{
+									pos = scale.degrees.indexOfGreaterThan(ratio);
+									if(pos == nil,
+										{
+											pos = scale.degrees.last;
+										},
+										{
+											pos = scale.degrees.at(pos);
+										}
+									);
+								},
+								{
+									pos = scale.degrees.at(pos);
+								}
+							);
+							freq = (oct * 12 + pos).midicps;
 						});
 
 						octave = (freq.cpsmidi / 12).floor;
@@ -1805,95 +1819,95 @@ f						Switch File for Analyze.
 					//Sender
 					sender.sendMsg("/wek/inputs", *mfccData[0..]);
 					if(flagStreamMFCC != 'wek',
-							{
-								// Send control outputs for wekinator 81 data
-								data = data.add(numSequencer);//0
-								data = data.add(wekBPM[0]);
-								data = data.add(wekBPM[1]);
-								data = data.add(numberStepSequencer);
-								data = data.add(ambitusFreq[0]);
-								data = data.add(ambitusFreq[1]);
-								data = data.add(rangeFFT[0]);
-								data = data.add(rangeFFT[1]);
-								//Weight Synth
-								listeWeightSynth.do({arg weight, i;//8 11
-									data = data.add(weight);
+						{
+							// Send control outputs for wekinator 81 data
+							data = data.add(numSequencer);//0
+							data = data.add(wekBPM[0]);
+							data = data.add(wekBPM[1]);
+							data = data.add(numberStepSequencer);
+							data = data.add(ambitusFreq[0]);
+							data = data.add(ambitusFreq[1]);
+							data = data.add(rangeFFT[0]);
+							data = data.add(rangeFFT[1]);
+							//Weight Synth
+							listeWeightSynth.do({arg weight, i;//8 11
+								data = data.add(weight);
+							});
+							//synth
+							typeSynthDef.do({arg n, s;
+								changeChoiceSynthDef.do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 12 a 15
 								});
-								//synth
-								typeSynthDef.do({arg n, s;
-									changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 12 a 15
-									});
+							});
+							// duree synth
+							listeFlagDureeSynth.do({arg n, s;
+								['Seq', 'Pitch', 'Grain'].do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 16 19
 								});
-								// duree synth
-								listeFlagDureeSynth.do({arg n, s;
-									['Seq', 'Pitch', 'Grain'].do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 16 19
-									});
+							});
+							// mode synth
+							modeMIDIOSC.do({arg n, s;
+								changeChoiceMIDI.do({arg item, i;
+									if(n == item, {data = data.add(i.asFloat)});// 20 23
 								});
-								// mode synth
-								modeMIDIOSC.do({arg n, s;
-									changeChoiceMIDI.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 20 23
-									});
-								});
-								// loop sample
-								loopSample.do({arg loop, i;
-									data = data.add(loop);//24 27
-								});
-								//Octave
-								listeOctave.do({arg oct, i;//28 31
-									data = data.add(oct);
-								});
-								//SemiTone
-								listeDemiTon.do({arg demi, i;//32 35
-									data = data.add(demi);
-								});
-								//Cent
-								listeCent.do({arg cent, i;//36 39
-									data = data.add(cent);
-								});
-								// Filter
-								choiceFilter.do({arg filt, i;//40 43
-									data = data.add(filt * (listeFilters.size - 1));
-								});
-								//Ctrl filter
-								listeCtrl1Filter.do({arg ctrl, i;//44 47
-									data = data.add(ctrl);
-								});
-								listeCtrl2Filter.do({arg ctrl, i;//48 51
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl3Filter.do({arg ctrl, i;//52 55
-									data = data.add(ctrl * 100);
-								});
-								//FX
-								choiceFX.do({arg fx, i;//56 59
-									data = data.add(fx * (listeFX.size - 1));
-								});
-								// Ctrl FX
-								listeCtrl1FX.do({arg ctrl, i;//60 63
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl2FX.do({arg ctrl, i;//64 67
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl3FX.do({arg ctrl, i;//68 71
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl4FX.do({arg ctrl, i;//72 75
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl5FX.do({arg ctrl, i;//76 79
-									data = data.add(ctrl * 100);
-								});
+							});
+							// loop sample
+							loopSample.do({arg loop, i;
+								data = data.add(loop);//24 27
+							});
+							//Octave
+							listeOctave.do({arg oct, i;//28 31
+								data = data.add(oct);
+							});
+							//SemiTone
+							listeDemiTon.do({arg demi, i;//32 35
+								data = data.add(demi);
+							});
+							//Cent
+							listeCent.do({arg cent, i;//36 39
+								data = data.add(cent);
+							});
+							// Filter
+							choiceFilter.do({arg filt, i;//40 43
+								data = data.add(filt * (listeFilters.size - 1));
+							});
+							//Ctrl filter
+							listeCtrl1Filter.do({arg ctrl, i;//44 47
+								data = data.add(ctrl);
+							});
+							listeCtrl2Filter.do({arg ctrl, i;//48 51
+								data = data.add(ctrl * 100);
+							});
+							listeCtrl3Filter.do({arg ctrl, i;//52 55
+								data = data.add(ctrl * 100);
+							});
+							//FX
+							choiceFX.do({arg fx, i;//56 59
+								data = data.add(fx * (listeFX.size - 1));
+							});
+							// Ctrl FX
+							listeCtrl1FX.do({arg ctrl, i;//60 63
+								data = data.add(ctrl * 100);
+							});
+							listeCtrl2FX.do({arg ctrl, i;//64 67
+								data = data.add(ctrl * 100);
+							});
+							listeCtrl3FX.do({arg ctrl, i;//68 71
+								data = data.add(ctrl * 100);
+							});
+							listeCtrl4FX.do({arg ctrl, i;//72 75
+								data = data.add(ctrl * 100);
+							});
+							listeCtrl5FX.do({arg ctrl, i;//76 79
+								data = data.add(ctrl * 100);
+							});
 
-								// preset
-								data = data.add(numPreset.asFloat);//80
+							// preset
+							data = data.add(numPreset.asFloat);//80
 
-								// Sender
-								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
-						});
+							// Sender
+							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
+					});
 				});
 			}, (0..127), nil);
 
@@ -2098,19 +2112,27 @@ f						Switch File for Analyze.
 									// Setup Freq with Scaling and Tuning
 									freq = demiTon + (cent / 100) + (octave * 12 + 60) + midiOscFreq + bendMIDI;
 									if(flagScaling != 'off', {
-										pos = 0;
-										oct = freq.midicps.cpsoct.round(0.001);
-										ratio = oct.frac;
+										oct = freq / 12;
+										ratio = (oct.frac * 12).round(0.1);
 										oct = oct.floor;
-										degre = (ratio * tuning.size + 0.5).floor;
-										(scale.degrees.size - 1).do({arg i;
-											difL=abs(degre - scale.degrees.at(i));
-											difH=abs(degre - scale.degrees.at(i+1));
-											if(degre >= scale.degrees.at(i) and: {degre <= scale.degrees.at(i+1)},
-												{if(difL <= difH, {pos = i},{pos = i+1})});
-										});
-										freq = scale.degreeToFreq(pos, (oct + 1 * 12).midicps, 0).round(0.001);
-										freq = freq.cpsmidi;
+										pos = scale.degrees.indexOfEqual(ratio);
+										if(pos == nil,
+											{
+												pos = scale.degrees.indexOfGreaterThan(ratio);
+												if(pos == nil,
+													{
+														pos = scale.degrees.last;
+													},
+													{
+														pos = scale.degrees.at(pos);
+													}
+												);
+											},
+											{
+												pos = scale.degrees.at(pos);
+											}
+										);
+										freq = oct * 12 + pos;
 									});
 									// Set Rate
 									freqToMidi = freq.floor;

@@ -1136,15 +1136,15 @@ Preset Wek",
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							~startsysteme.valueAction_(0);
-							}.defer;
+								{
+									~startsysteme.valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							~startsysteme.valueAction_(1);
-							}.defer;
+								{
+									~startsysteme.valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -1991,7 +1991,7 @@ Preset Wek",
 
 			wekOut = msg[1..];
 			{
-			if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
+				if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 					~synthDefInstrMenu.valueAction_(wekOut[0].asInteger.clip(0, ~listSynth.size - 1));//0
 					~soundsInstrMenu.valueAction_(wekOut[1].asInteger.clip(0, ~displaySons.size -1));
 					~freqInstr.valueAction = [wekOut[2], wekOut[3]].clip(0, 127);
@@ -2175,14 +2175,14 @@ Preset Wek",
 						{~geneBandButton.valueAction = 0},
 						{~geneBandButton.valueAction = 1}
 					);
-				lastTimeWekData = time;
-			});
+					lastTimeWekData = time;
+				});
 				// Preset
-			numPreset = wekOut[94].asInteger.clip(1, 40);
+				numPreset = wekOut[94].asInteger.clip(1, 40);
 
-			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-				// load new preset
-				{
+				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+					// load new preset
+					{
 						if(File.exists(~nompathdata ++ "preset" + numPreset.asInteger.asString++".scd"),
 							{
 								lastNumPreset = numPreset;
@@ -2192,7 +2192,7 @@ Preset Wek",
 								~wp.name=~nomFenetre+~algoMusic + "preset" + numPreset.asInteger.asString ++".scd";
 								file.close;
 						});
-			});
+				});
 			}.defer(0);
 		},'/wek/outputs');
 
@@ -3515,19 +3515,27 @@ Preset Wek",
 					freq = freq / 127 * freqRange + freqLow + freqTrans;
 					if(~flagScaling != 'off', {
 						freq = freq.collect({arg item, index;
-							pos = 0;
-							octave = item.midicps.cpsoct.round(0.001);
-							ratio = octave.frac;
+							octave = item /12;
+							degre = (octave.frac * 12).round(0.1);
 							octave = octave.floor;
-							degre = (ratio * ~tuning.size + 0.5).floor;
-							(~scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - ~scale.degrees.wrapAt(i));
-								difH=abs(degre - ~scale.degrees.wrapAt(i+1));
-								if(degre >= ~scale.degrees.wrapAt(i) and: {degre <= ~scale.degrees.wrapAt(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
-							});
-							item = ~scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
-							item = item.cpsmidi;
+							pos = ~scale.degrees.indexOfGreaterThan(degre);
+							if(pos == nil,
+								{
+									pos = ~scale.degrees.indexOfGreaterThan(degre);
+									if(pos == nil,
+										{
+											pos = ~scale.degrees.last;
+										},
+										{
+											pos = ~scale.degrees.at(pos);
+										}
+									);
+								},
+								{
+									pos = ~scale.degrees.at(pos);
+								}
+							);
+							item = octave * 12 + pos;
 						});
 					});
 					freqRate=freq - 48 + ~root;

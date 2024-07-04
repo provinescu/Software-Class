@@ -1866,15 +1866,15 @@ G                       Init Genome Agent (solo).
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							~startsysteme.valueAction_(0);
-							}.defer;
+								{
+									~startsysteme.valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							~startsysteme.valueAction_(1);
-							}.defer;
+								{
+									~startsysteme.valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -3154,19 +3154,27 @@ G                       Init Genome Agent (solo).
 					freq = freq / 127 * freqRange + freqLow + freqTrans;
 					if(~flagScaling != 'off', {
 						freq = freq.collect({arg item, index;
-							pos = 0;
-							octave = item.midicps.cpsoct.round(0.001);
-							ratio = octave.frac;
+							octave = item /12;
+							degre = (octave.frac * 12).round(0.1);
 							octave = octave.floor;
-							degre = (ratio * ~tuning.size + 0.5).floor;
-							(~scale.degrees.size - 1).do({arg i;
-								difL=abs(degre - ~scale.degrees.wrapAt(i));
-								difH=abs(degre - ~scale.degrees.wrapAt(i+1));
-								if(degre >= ~scale.degrees.wrapAt(i) and: {degre <= ~scale.degrees.wrapAt(i+1)},
-									{if(difL <= difH, {pos = i},{pos = i+1})});
-							});
-							item = ~scale.degreeToFreq(pos, (octave + 1 * 12).midicps, 0).round(0.001);
-							item = item.cpsmidi;
+							pos = ~scale.degrees.indexOfGreaterThan(degre);
+							if(pos == nil,
+								{
+									pos = ~scale.degrees.indexOfGreaterThan(degre);
+									if(pos == nil,
+										{
+											pos = ~scale.degrees.last;
+										},
+										{
+											pos = ~scale.degrees.at(pos);
+										}
+									);
+								},
+								{
+									pos = ~scale.degrees.at(pos);
+								}
+							);
+							item = octave * 12 + pos;
 						});
 					});
 					freqRate=freq - 48 + ~root;

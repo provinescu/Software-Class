@@ -322,7 +322,7 @@ Score Commandes:
 												"Bad Command".postln;
 												items = startItems;
 												item = 0;
-												{startTdefScore.valueAction_(0)}.defer(2);
+												{startTdefScore.valueAction_(0)}.defer;
 												thisThread.stop;
 												thisThread.remove;
 											};
@@ -346,7 +346,7 @@ Score Commandes:
 									{
 										items = startItems;
 										item = 0;
-										{startTdefScore.valueAction_(0)}.defer(2);
+										{startTdefScore.valueAction_(0)}.defer;
 										thisThread.stop;
 										thisThread.remove;
 									},
@@ -505,7 +505,7 @@ Score Commandes:
 												{
 													"Bad Command".postln;
 													item = item + 1;
-													{startManualScore.valueAction_(0)}.defer(2);
+													{startManualScore.valueAction_(0)}.defer;
 												};
 											);
 											// Commande
@@ -525,7 +525,7 @@ Score Commandes:
 								{
 									if(loopScore == 'off',
 										{
-											{startManualScore.valueAction_(0)}.defer(2);
+											{startManualScore.valueAction_(0)}.defer;
 											flagManualPlaying = 'off';
 											items = startItems;
 											item = 0;
