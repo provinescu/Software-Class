@@ -75,7 +75,7 @@ TotalControls {
 		//Score
 		wScore = Window("TotalControls (Score Editor/Player and ShortCuts Controls for HP Software)", Rect(250, 250, 625, 525));
 		wScore.view.decorator = FlowLayout(wScore.view.bounds);
-		StaticText(wScore, Rect(0, 0, 500, 24)).string_("TotalControls (A Score Editor/Player and ShortCuts Controls)").stringColor_(Color.white(1.0,1.0));
+		StaticText(wScore, Rect(0, 0, 620, 24)).string_("TotalControls (A Score Editor/Player and ShortCuts Controls)").stringColor_(Color.white(1.0,1.0));
 		wScore.view.decorator.nextLine;
 		// Load Score
 		menuScore = PopUpMenu(wScore,Rect(0, 0, 110, 20)).background_(Color.grey(0.5, 0.8)).items = ["Score menu", "Load Score", "Save Score"];
