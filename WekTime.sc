@@ -2144,7 +2144,7 @@ f						Switch File for Analyze.
 										midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
 										if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
 										// Reset MIDI OUT
-										freqMidi.wrapPut(synth, freqToMidi);
+										freqMidi.wrapPut(synth, freqToMidi+12);
 										// Send MIDI On
 										midiOut.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127);
 										if(flagVST == 'on', {~fxVST.midi.noteOn(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), amp.dbamp * 127)});
