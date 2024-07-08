@@ -1626,8 +1626,8 @@ f						Switch File for Analyze.
 									// Set Rate
 									freqToMidi = freq.floor;
 									freqSynth = freq.midicps;
-									freqRate = (freq - 48).midicps;
-									rate = 2**freqRate.cpsoct * listeReverse.at(synth);
+									freqRate = (freq - 36).midicps;
+									rate = 2**freqRate.cpsoct.round(0.001) * listeReverse.at(synth);
 									// Set MIDI Off
 									if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {
 										midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
