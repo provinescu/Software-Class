@@ -2,7 +2,7 @@
 
 Density {
 
-	classvar <> s;
+	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD;
 
 	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse;
 	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
@@ -218,6 +218,16 @@ Density {
 		channelsVerb = 0; // Verb ouput channel
 		rangeFFT = [0.0, 1.0];
 		loopMusic = 1;
+		// For Kohonen
+		kohonenF = HPclassKohonen.new(1,127,1);
+		kohonenA = HPclassKohonen.new(1,127,1);
+		kohonenD = HPclassKohonen.new(1,127,1);
+		// For Genetic
+		geneticF = HPclassGenetiques.new(1, 127);
+		geneticA = HPclassGenetiques.new(1, 127);
+		geneticD = HPclassGenetiques.new(1, 127);
+		// For Neural
+		neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
 
 		// Audio Out
 		listeMasterOut = [
@@ -1391,7 +1401,7 @@ Density {
 											// Plot Data Music
 											plotDataMusic.value(freq, amp, dureeDisplay);
 											// Evaluate for each Instrument
-											//dataInstr = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeBPM, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, indexBandFhz]
+											//dataInstr = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeBPM, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, indexBandFhz]
 											listeDataInstruments.do({arg dataInstr, index;
 												if(dataInstr.at(5).asString.containsi("EventStreamPlayer").not and: {dataInstr.at(5).isPlaying == true},
 													{
@@ -1440,7 +1450,7 @@ Density {
 			}, (0..127), nil);
 
 			/////////////// AlgoCompo + Setup Range and Filter Data Music ////////////////////////
-			computeAlgoFilterDataMusic = {arg freq, amp, duree, data, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm;
+			computeAlgoFilterDataMusic = {arg freq, amp, duree, data, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm;
 				var music, fft, octave, position = 0, ratio, degre, newFreq=[], newAmp=[], newDuree=[], chordFreq=[], chordAmp=[], chordDuree=[], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances=[], dureeChord, maxTraining=0, flux, flatness, centroid, energy, bpm, listF=[], listA=[], listD=[], freqNeu=[], ampNeu=[], durNeu=[];
 				// DataMusicTransform [fft, freq, amp, duree]
 				// [[flux, flatness, centroid, energy, bpm], [q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie], ...]
@@ -1666,8 +1676,6 @@ Density {
 					'Kohonen', {
 						/*// FFT
 						# flux, flatness, centroid, energy, bpm = data.at(0);*/
-						// Duree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Training Kohonen Duree
 						maxTraining.do({arg i; kohonenD.training(duree.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Duree
@@ -1675,6 +1683,8 @@ Density {
 							item = kohonenD.training(item.asArray, 1, 1, 1);
 							item.at(0).at(1) / 127;// Vecteur
 						});
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = duree;
 						if(flagChord == 'on', {
 							// Check Duree for Chords
 							duree.do({arg duree, index, newFHZ;
@@ -1788,6 +1798,8 @@ Density {
 						freq = listF;
 						amp = listA;
 						duree = listD;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = duree;
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
@@ -2023,6 +2035,8 @@ Density {
 						amp = ampNeu;
 						duree = durNeu;
 						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = duree;
+						// Duree Transformation
 						if(flagChord == 'on', {
 							// Check Duree for Chords
 							duree.do({arg duree, index, newFHZ;
@@ -2108,7 +2122,7 @@ Density {
 
 			/////////////////// Build New dataInstruments //////////////////////
 			buildSynth = {arg indexBandFhz;
-				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST, newFreq, newAmp, newDur;
+				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST, newFreq, newAmp, newDur;
 				// Probability
 				// Flux
 				/*flux = (13.287712379549 - fft.at(0).mediane.log2.abs / 13.287712379549).clip(0, 1);
@@ -2174,7 +2188,7 @@ Density {
 				cv = ecartType / duree.mean;
 				dissymetrie = duree.dissymetrie;
 				dataMusicTransform = dataMusicTransform.add([q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie]);
-				// For Kohonen
+				/*// For Kohonen
 				kohonenF = HPclassKohonen.new(1,127,1);
 				kohonenA = HPclassKohonen.new(1,127,1);
 				kohonenD = HPclassKohonen.new(1,127,1);
@@ -2183,14 +2197,14 @@ Density {
 				geneticA = HPclassGenetiques.new(1, 127);
 				geneticD = HPclassGenetiques.new(1, 127);
 				// For Neural
-				neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
+				neuralFAD = HPNeuralNet.new(3, 1, [9], 3);*/
 				// Choose Algorithm
 				algorithm = rrand(algoLo, algoHi);
 				algorithm = listAlgorithm.at(algorithm);
 				displayAlgo = algorithm.asString;
 				displayIndex = indexBandFhz.asString;
 				//////////////////////// COMPUTE ALGO /////////////////////////////
-				# newFreq, newAmp, newDur = computeAlgoFilterDataMusic.value(freq, amp, duree, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm);
+				# newFreq, newAmp, newDur = computeAlgoFilterDataMusic.value(freq, amp, duree, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm);
 				///////////////////////////////////////////////////////////////////
 				// Synth
 				indexX = (indexInstrumentX + (0.5 * rrand(jitterIndexInstrumentX.neg, jitterIndexInstrumentX))).clip(0, 1);
@@ -2468,7 +2482,7 @@ Density {
 				// Time Start Synth
 				time = Main.elapsedTime;
 				// Set List Data Instruments
-				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, newFreq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, indexBandFhz, synthMidiVST]);
+				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, newFreq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, indexBandFhz, synthMidiVST]);
 				// Display for GUI
 				{
 					// Synth
@@ -2489,7 +2503,7 @@ Density {
 				loop({arg time, indexBandFhz;
 					// Time
 					time = Main.elapsedTime;
-					// Check Instruments (data = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, algorithm, indexBandFhz, synthMidiVST])
+					// Check Instruments (data = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, indexBandFhz, synthMidiVST])
 					listeDataInstruments.do({arg data, index, tempo;
 						var bpm;
 						if(flagBPM == 'on', {
@@ -2727,6 +2741,9 @@ ctrl + f				Load and Add File for Analyze.
 w / ctrl + w			Switch Window.
 z						Load Random Preset.
 k                       New Environment.
+a                       Init Genetic
+shift + a               Init Kohonen
+alt + a                 Init Neural
 
 Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
@@ -3077,7 +3094,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		fonctionShortCut = {arg window;
 			window.view.keyDownAction = {arg view,char,modifiers,unicode, keycode, number, file;
 				number = nil;
-				// [char,modifiers,unicode,keycode].postln;
+				//[char,modifiers,unicode,keycode].postln;
 				// Touches pave numerique
 				if(modifiers==2097152 and: {unicode==49} and: {keycode==83},{number = 1});
 				if(modifiers==2097152 and: {unicode==50} and: {keycode==84},{number = 2});
@@ -3360,6 +3377,25 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						windowEar.name="Density" + " | " + pathData.asString;
 						fonctionCollectFolders.value;
 					}, fileMode: 2);
+				});
+				//key a // init genetic
+				if(char == $a, {
+					// For Genetic
+					geneticF = HPclassGenetiques.new(1, 127);
+					geneticA = HPclassGenetiques.new(1, 127);
+					geneticD = HPclassGenetiques.new(1, 127);
+				});
+				//key shift+a // init Kohonen
+				if(modifiers == 131072 and: {unicode==65} and: {keycode==0}, {
+					// For Kohonen
+					kohonenF = HPclassKohonen.new(1,127,1);
+					kohonenA = HPclassKohonen.new(1,127,1);
+					kohonenD = HPclassKohonen.new(1,127,1);
+				});
+				//key alt+a // init Neural
+				if(modifiers == 524288 and: {unicode==97} and: {keycode==0}, {
+					// For Neural
+					neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
 				});
 			};
 		};
