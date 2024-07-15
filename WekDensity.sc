@@ -2154,8 +2154,6 @@ Preset Wek",
 					'Kohonen', {
 						/*// FFT
 						# flux, flatness, centroid, energy, bpm = data.at(0);*/
-						// Duree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Training Kohonen Duree
 						maxTraining.do({arg i; kohonenD.training(duree.wrapAt(i).asArray * 127, i+1, maxTraining, 1)});
 						// Calculate Kohonen Duree
@@ -2163,6 +2161,8 @@ Preset Wek",
 							item = kohonenD.training(item.asArray, 1, 1, 1);
 							item.at(0).at(1) / 127;// Vecteur
 						});
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						if(flagChord == 'on', {
 							// Check Duree for Chords
 							duree.do({arg duree, index, newFHZ;
@@ -2276,6 +2276,8 @@ Preset Wek",
 						freq = listF;
 						amp = listA;
 						duree = listD;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
@@ -2510,6 +2512,8 @@ Preset Wek",
 						freq = freqNeu;
 						amp = ampNeu;
 						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Duree Transformation
 						if(flagChord == 'on', {
 							// Check Duree for Chords

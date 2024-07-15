@@ -1684,7 +1684,7 @@ Density {
 							item.at(0).at(1) / 127;// Vecteur
 						});
 						// Duree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = duree;
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						if(flagChord == 'on', {
 							// Check Duree for Chords
 							duree.do({arg duree, index, newFHZ;
@@ -1799,7 +1799,7 @@ Density {
 						amp = listA;
 						duree = listD;
 						// Duree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = duree;
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
@@ -2035,7 +2035,7 @@ Density {
 						amp = ampNeu;
 						duree = durNeu;
 						// Duree Transformation
-						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = duree;
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
 						// Duree Transformation
 						if(flagChord == 'on', {
 							// Check Duree for Chords
