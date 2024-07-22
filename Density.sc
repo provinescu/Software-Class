@@ -1401,7 +1401,7 @@ Density {
 											// Plot Data Music
 											plotDataMusic.value(freq, amp, dureeDisplay);
 											// Evaluate for each Instrument
-											//dataInstr = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeBPM, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, indexBandFhz]
+											//dataInstr = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz]
 											listeDataInstruments.do({arg dataInstr, index;
 												if(dataInstr.at(5).asString.containsi("EventStreamPlayer").not and: {dataInstr.at(5).isPlaying == true},
 													{
@@ -1450,7 +1450,7 @@ Density {
 			}, (0..127), nil);
 
 			/////////////// AlgoCompo + Setup Range and Filter Data Music ////////////////////////
-			computeAlgoFilterDataMusic = {arg freq, amp, duree, data, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm;
+			computeAlgoFilterDataMusic = {arg freq, amp, duree, data, z1, z2, z3, z4, z5, z6, z7, algorithm;
 				var music, fft, octave, position = 0, ratio, degre, newFreq=[], newAmp=[], newDuree=[], chordFreq=[], chordAmp=[], chordDuree=[], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances=[], dureeChord, maxTraining=0, flux, flatness, centroid, energy, bpm, listF=[], listA=[], listD=[], freqNeu=[], ampNeu=[], durNeu=[];
 				// DataMusicTransform [fft, freq, amp, duree]
 				// [[flux, flatness, centroid, energy, bpm], [q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie], ...]
@@ -2122,7 +2122,7 @@ Density {
 
 			/////////////////// Build New dataInstruments //////////////////////
 			buildSynth = {arg indexBandFhz;
-				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST, newFreq, newAmp, newDur;
+				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, z1, z2, z3, z4, z5, z6, z7, algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST, newFreq, newAmp, newDur;
 				// Probability
 				// Flux
 				/*flux = (13.287712379549 - fft.at(0).mediane.log2.abs / 13.287712379549).clip(0, 1);
@@ -2204,7 +2204,7 @@ Density {
 				displayAlgo = algorithm.asString;
 				displayIndex = indexBandFhz.asString;
 				//////////////////////// COMPUTE ALGO /////////////////////////////
-				# newFreq, newAmp, newDur = computeAlgoFilterDataMusic.value(freq, amp, duree, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm);
+				# newFreq, newAmp, newDur = computeAlgoFilterDataMusic.value(freq, amp, duree, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm);
 				///////////////////////////////////////////////////////////////////
 				// Synth
 				indexX = (indexInstrumentX + (0.5 * rrand(jitterIndexInstrumentX.neg, jitterIndexInstrumentX))).clip(0, 1);
@@ -2482,7 +2482,7 @@ Density {
 				// Time Start Synth
 				time = Main.elapsedTime;
 				// Set List Data Instruments
-				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, newFreq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, indexBandFhz, synthMidiVST]);
+				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, newFreq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz, synthMidiVST]);
 				// Display for GUI
 				{
 					// Synth
@@ -2503,7 +2503,7 @@ Density {
 				loop({arg time, indexBandFhz;
 					// Time
 					time = Main.elapsedTime;
-					// Check Instruments (data = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, /*kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD,*/ algorithm, indexBandFhz, synthMidiVST])
+					// Check Instruments (data = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz, synthMidiVST])
 					listeDataInstruments.do({arg data, index, tempo;
 						var bpm;
 						if(flagBPM == 'on', {
