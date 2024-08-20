@@ -1015,13 +1015,13 @@ f						Switch File for Analyze.
 							2, {typeSequencer = 'WeightS'},
 							3, {typeSequencer = 'WeightP'});
 						windowControlGUI.view.children.at(0).value_(wekOut[0]);
-						densityBPM = wekOut[1..2].clip(0.016, 1000);
-						windowControlGUI.view.children.at(1).children.at(1).value_(densityBPM[0] * 60);
-						windowControlGUI.view.children.at(1).children.at(3).value_(densityBPM[1] * 60);
+						//densityBPM = wekOut[1..2].clip(0.016, 1000);
+						windowControlGUI.view.children.at(1).children.at(1).value_(wekOut[1].clip(0.016, 1000) * 60);
+						windowControlGUI.view.children.at(1).children.at(3).value_(wekOut[2].clip(0.016, 1000) * 60);
 
-						windowControlGUI.view.children.at(1).children.at(2).lo_(densityBPM[0] / 1000
+						windowControlGUI.view.children.at(1).children.at(2).lo_(wekOut[1].clip(0.016, 1000) / 1000
 						);
-						windowControlGUI.view.children.at(1).children.at(2).hi_(densityBPM[1] / 1000
+						windowControlGUI.view.children.at(1).children.at(2).hi_(wekOut[2].clip(0.016, 1000) / 1000
 						);
 						numberStepSequencer = wekOut[3].clip(0, 48);
 						windowControlGUI.view.children.at(2).children.at(2).value_(numberStepSequencer);
@@ -1952,7 +1952,7 @@ f						Switch File for Analyze.
 						});
 					});
 					// New Duree
-					duree = rrand(densityBPM.at(0), densityBPM.at(1)).reciprocal;
+					duree = rrand(densityBPM.at(0).postcs, densityBPM.at(1).postcs).reciprocal;
 					// Setup Mute Solo
 					numberSynth.do({arg synth; if(listeSoloSynth.at(synth).value == 1, {flagSolo = 'on'})});
 					// Set active synth for choice playing
@@ -4406,7 +4406,7 @@ Preset Wek",
 		windowVST.front;
 		windowControlGUI.front;
 
-		//listeWindows=listeWindows.add(windowVST);
+		listeWindows=listeWindows.add(windowVST);
 
 		// Pour Acceder a un control precis
 		// windowControlGUI.view.children.at((synth * 93 + numeroDuControl) + (numberSynth * numberMaxStepSequencer + 14)).children.at(numero de la view)_(valeur);
@@ -4530,6 +4530,13 @@ Preset Wek",
 		listeWindows = listeWindows.add(windowKeyboard);
 		listeWindows.do({arg window; fonctionShortCut.value(window)});
 		keyboardShortCut.value(windowKeyboard);
+		listeWindows.do({arg window; fonctionShortCut.value(window);
+			window.view.do({arg view;
+				view.children.do({arg subView;
+					subView.font = Font("Helvetica", 10);
+				});
+			});
+		});
 
 		// Setup Font View
 		listeWindows.do({arg window;
