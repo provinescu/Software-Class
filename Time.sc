@@ -604,7 +604,7 @@ f						Switch File for Analyze.
 				windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
 				windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
 				//windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
-				windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
+				//windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
 				windowExternalControlGUI.view.children.at(12).valueAction_(control.at(4));
 				windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(5));
 				windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(6));
@@ -3825,7 +3825,7 @@ f						Switch File for Analyze.
 		windowVST.front;
 		windowControlGUI.front;
 
-		//listeWindows=listeWindows.add(windowVST);
+		listeWindows=listeWindows.add(windowVST);
 
 		// Pour Acceder a un control precis
 		// windowControlGUI.view.children.at((synth * 93 + numeroDuControl) + (numberSynth * numberMaxStepSequencer + 14)).children.at(numero de la view)_(valeur);
@@ -3954,7 +3954,7 @@ f						Switch File for Analyze.
 		listeWindows.do({arg window;
 			window.view.do({arg view;
 				view.children.do({arg subView;
-					subView.font = Font("Futura", 10);
+					subView.font = Font("Helvetica", 10);
 				});
 			});
 		});

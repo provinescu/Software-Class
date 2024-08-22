@@ -640,7 +640,7 @@ f						Switch File for Analyze.
 				windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
 				windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
 				//windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
-				windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
+				//windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
 				windowExternalControlGUI.view.children.at(12).valueAction_(control.at(4));
 				windowExternalControlGUI.view.children.at(13).children.at(2).valueAction_(control.at(5));
 				windowExternalControlGUI.view.children.at(14).children.at(2).valueAction_(control.at(6));
@@ -1952,7 +1952,7 @@ f						Switch File for Analyze.
 						});
 					});
 					// New Duree
-					duree = rrand(densityBPM.at(0).postcs, densityBPM.at(1).postcs).reciprocal;
+					duree = rrand(densityBPM.at(0), densityBPM.at(1)).reciprocal;
 					// Setup Mute Solo
 					numberSynth.do({arg synth; if(listeSoloSynth.at(synth).value == 1, {flagSolo = 'on'})});
 					// Set active synth for choice playing
