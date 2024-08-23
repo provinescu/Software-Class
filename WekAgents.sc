@@ -7782,7 +7782,7 @@ Preset Wek",
 		~listeWindows.do({arg window;
 			window.view.do({arg view;
 				view.children.do({arg subView;
-					subView.font = Font("Helvetica", 11);
+					subView.font = Font("Helvetica", 10);
 					if(subView.asString.containsi("PopUpMenu"), {subView.stringColor = Color.white});
 				});
 			});

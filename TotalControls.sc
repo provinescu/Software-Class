@@ -319,12 +319,12 @@ Score Commandes:
 												});
 											},
 											{
-												"Bad Command".postln;
-												items = startItems;
-												item = 0;
+												"Bad or Unknow Command".postln;
+												item = item + 1;
+												/*items = startItems;
 												{startTdefScore.valueAction_(0)}.defer;
 												thisThread.stop;
-												thisThread.remove;
+												thisThread.remove;*/
 											};
 										);
 										// Commande
@@ -503,9 +503,9 @@ Score Commandes:
 													});
 												},
 												{
-													"Bad Command".postln;
+													"Bad or Unknow Command".postln;
 													item = item + 1;
-													{startManualScore.valueAction_(0)}.defer;
+													//{startManualScore.valueAction_(0)}.defer;
 												};
 											);
 											// Commande

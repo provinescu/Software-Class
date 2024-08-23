@@ -5136,6 +5136,13 @@ y ... -						Musical keys.
 
 			listeWindows = listeWindows.add(windowSynth);
 			fonctionShortCut.value(windowSynth);
+			listeWindows.do({arg window; fonctionShortCut.value(window);
+			window.view.do({arg view;
+				view.children.do({arg subView;
+					subView.font = Font("Helvetica", 10);
+				});
+			});
+		});
 
 			// Sortie Fonction Window
 			[windowSynth, {freezeDataOSC}];

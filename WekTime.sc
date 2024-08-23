@@ -194,7 +194,7 @@ f						Switch File for Analyze.
 			'WeightP',
 		];
 		densityBPM = [30, 120] / 60;
-		wekBPM = [30, 120] / 60;
+		wekBPM = [30, 120];
 		indexSequence = 0;
 		changeChoiceMIDI = [
 			'Translate',
@@ -1016,12 +1016,12 @@ f						Switch File for Analyze.
 							3, {typeSequencer = 'WeightP'});
 						windowControlGUI.view.children.at(0).value_(wekOut[0]);
 						//densityBPM = wekOut[1..2].clip(0.016, 1000);
-						windowControlGUI.view.children.at(1).children.at(1).value_(wekOut[1].clip(0.016, 1000) * 60);
-						windowControlGUI.view.children.at(1).children.at(3).value_(wekOut[2].clip(0.016, 1000) * 60);
+						windowControlGUI.view.children.at(1).children.at(1).value_(wekOut[1].clip(1, 60000));
+						windowControlGUI.view.children.at(1).children.at(3).value_(wekOut[2].clip(1, 60000));
 
-						windowControlGUI.view.children.at(1).children.at(2).lo_(wekOut[1].clip(0.016, 1000) / 1000
+						windowControlGUI.view.children.at(1).children.at(2).lo_(wekOut[1].clip(1, 60000) / 1000
 						);
-						windowControlGUI.view.children.at(1).children.at(2).hi_(wekOut[2].clip(0.016, 1000) / 1000
+						windowControlGUI.view.children.at(1).children.at(2).hi_(wekOut[2].clip(1, 60000) / 1000
 						);
 						numberStepSequencer = wekOut[3].clip(0, 48);
 						windowControlGUI.view.children.at(2).children.at(2).value_(numberStepSequencer);
@@ -2136,7 +2136,7 @@ f						Switch File for Analyze.
 									});
 									// Set Rate
 									freqToMidi = freq.floor;
-									freqSynth = freq.midicps;
+									freqSynth = (freq + 12).midicps;
 									freqRate = (freq - 36).midicps;
 									rate = 2**freqRate.cpsoct * listeReverse.at(synth);
 									// Set MIDI Off
@@ -3456,7 +3456,7 @@ Preset Wek",
 
 		// Frequence BPM
 		EZRanger(windowControlGUI, Rect(75, 5, 225, 20), "BPM", ControlSpec(1, 60000, \exp, 0),
-			{|ez| densityBPM=ez.value / 60; wekBPM = ez.value / 60;
+			{|ez| densityBPM=ez.value / 60; wekBPM = ez.value;
 				if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
 		}, [30, 120], false, 30, 40).setColors(knobColor: Color.new(0.582, 0, 0), stringColor:  Color.red(0.8, 0.8)).setColors(Color.grey(0.3), Color.magenta);
 

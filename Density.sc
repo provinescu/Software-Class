@@ -5002,7 +5002,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		listeWindows=listeWindows.add(windowPlotterFFT);
 		listeWindows=listeWindows.add(windowKeyboard);
 		//listeWindows=listeWindows.add(windowVST);
-		listeWindows.do({arg window; fonctionShortCut.value(window)});
+		listeWindows.do({arg window; fonctionShortCut.value(window);
+			window.view.do({arg view;
+				view.children.do({arg subView;
+					subView.font = Font("Helvetica", 10);
+				});
+			});
+		});
 
 		// Init Preset
 		//Post << "Init Preset" <<  Char.nl;

@@ -7380,6 +7380,13 @@ G                       Init Genome Agent (solo).
 		~listeWindows=~listeWindows.add(windowKeyboard);
 		~listeWindows=~listeWindows.add(windowVST);
 		~listeWindows.do({arg window; ~fonctionShortCuts.value(window)});
+		~listeWindows.do({arg window;
+			window.view.do({arg view;
+				view.children.do({arg subView;
+					subView.font = Font("Helvetica", 10);
+				});
+			});
+		});
 
 		// Setup Font View
 		~listeWindows.do({arg window;
