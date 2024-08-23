@@ -640,7 +640,7 @@ y ... -						Musical keys.
 						f.close;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						//tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -668,7 +668,7 @@ y ... -						Musical keys.
 						f.close;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -698,7 +698,7 @@ y ... -						Musical keys.
 						windowControl.name="Matrix Control" + " | "+ PathName.new(paths).fileName;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -725,7 +725,7 @@ y ... -						Musical keys.
 						windowControl.name="Matrix Control" + " | " + PathName.new(paths).fileName;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -1784,7 +1784,7 @@ y ... -						Musical keys.
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
-											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+											file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 								});
 						});
 					},
@@ -1816,7 +1816,7 @@ y ... -						Musical keys.
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
-											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+											file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 								});
 						});
 					});
@@ -2200,7 +2200,7 @@ y ... -						Musical keys.
 							file=File(pathMatrix ++ foldersToScanPreset.at(number),"r");
 							windowControl.name="Matrix Control" + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret);
-							file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+							file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 				});
 				// Key Z -> load Synthesizer aleatoire
 				if(char == $Z, {
@@ -2219,7 +2219,7 @@ y ... -						Musical keys.
 							fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 							tampon.remove(tampon.last);// Remove controlSynth panel
 							fonctionLoadSynthesizer.value(tampon.at(0), tampon2);
-							file.close;listeWindows.at(3).front;indexWindows=3;
+							file.close;/*listeWindows.at(3).front;*/indexWindows=3;
 							// Init Band for Synth
 							//fonctionInitBand.value(numFhzBand);
 					}, {"cancelled".postln});
@@ -2248,7 +2248,7 @@ y ... -						Musical keys.
 						windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
 						file=File(pathMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
-						file.close;listeWindows.at(3).front;indexWindows=3;
+						file.close;/*listeWindows.at(3).front;*/indexWindows=3;
 				}, {"cancelled".postln});
 			});
 			//load Preset without close others windows
@@ -2257,7 +2257,7 @@ y ... -						Musical keys.
 					{windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
 						file=File(pathMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
-						file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+						file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 			});
 			// Save Synthesizer
 			if(commandeExecute == 'Save Synthesizer', {

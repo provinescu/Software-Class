@@ -641,7 +641,7 @@ Preset Wek",
 						f.close;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						//tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -669,7 +669,7 @@ Preset Wek",
 						f.close;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -699,7 +699,7 @@ Preset Wek",
 						windowControl.name="WekMatrix Control" + " | "+ PathName.new(paths).fileName;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -726,7 +726,7 @@ Preset Wek",
 						windowControl.name="WekMatrix Control" + " | " + PathName.new(paths).fileName;
 						//Document.listener.string="";
 						s.queryAllNodes;
-						listeWindows.at(3).front;
+						/*listeWindows.at(3).front;*/
 						indexWindows=3;
 						tampon2 = data.last;// Load OSCfreeze
 						data.remove(data.last);// remove OSCFreeze
@@ -1509,7 +1509,7 @@ Preset Wek",
 									windowControl.name="WekMatrix Control" + " | " + "Preset" + numPreset.asInteger.asString;
 									file=File(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
 									fonctionLoadPreset.value(file.readAllString.interpret);
-									file.close;listeWindows.at(3).front;indexWindows=3;
+									file.close;/*listeWindows.at(3).front;*/indexWindows=3;
 							});
 					});
 				}.defer(0);
@@ -1746,7 +1746,7 @@ Preset Wek",
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
-											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+											file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 								});
 						});
 					},
@@ -1778,7 +1778,7 @@ Preset Wek",
 													// Init Band for Synth
 													//fonctionInitBand.value(numFhzBand);
 											});
-											file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+											file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 								});
 						});
 					});
@@ -2162,7 +2162,7 @@ Preset Wek",
 							file=File(pathWekMatrix ++ foldersToScanPreset.at(number),"r");
 							windowControl.name="WekMatrix Control" + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret);
-							file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+							file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 				});
 				// Key Z -> load Synthesizer aleatoire
 				if(char == $Z, {
@@ -2181,7 +2181,7 @@ Preset Wek",
 							fonctionLoadControlSynth.value(windowControlSynth, tampon.last);//Load ControlSynth Panel
 							tampon.remove(tampon.last);// Remove controlSynth panel
 							fonctionLoadSynthesizer.value(tampon.at(0), tampon2);
-							file.close;listeWindows.at(3).front;indexWindows=3;
+							file.close;/*listeWindows.at(3).front;*/indexWindows=3;
 							// Init Band for Synth
 							//fonctionInitBand.value(numFhzBand);
 					}, {"cancelled".postln});
@@ -2212,7 +2212,7 @@ Preset Wek",
 						windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
 						file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
-						file.close;listeWindows.at(3).front;indexWindows=3;
+						file.close;/*listeWindows.at(3).front;*/indexWindows=3;
 				}, {"cancelled".postln});
 			});
 			//load Preset without close others windows
@@ -2221,7 +2221,7 @@ Preset Wek",
 					{windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
 						file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
-						file.close;listeWindows.at(3).front;indexWindows=3}, {"cancelled".postln});
+						file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 			});
 			// Save Synthesizer
 			if(commandeExecute == 'Save Synthesizer', {
