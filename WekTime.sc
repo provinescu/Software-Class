@@ -1235,7 +1235,7 @@ f						Switch File for Analyze.
 
 			// OSC Data
 			OSCFunc.newMatching({arg msg, time, addr, recvPort;
-				var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data=[], mfcc;
+				var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data=[], mfcc, tamponSynth, tamponDurSynth, tamponModSynth;
 				if(flagOSC == 1 and: {flagKeyboard == 'off'},
 					{
 						// Music
@@ -1386,89 +1386,185 @@ f						Switch File for Analyze.
 						if(flagStreamMFCC != 'wek',
 							{
 								// Send control outputs for wekinator 81 data
-								data = data.add(numSequencer);//0
-								data = data.add(wekBPM[0]);
-								data = data.add(wekBPM[1]);
-								data = data.add(numberStepSequencer);
-								data = data.add(ambitusFreq[0]);
-								data = data.add(ambitusFreq[1]);
-								data = data.add(rangeFFT[0]);
-								data = data.add(rangeFFT[1]);
-								//Weight Synth
-								listeWeightSynth.do({arg weight, i;//8 11
-									data = data.add(weight);
-								});
+
+								tamponSynth = [];
 								//synth
 								typeSynthDef.do({arg n, s;
 									changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 12 a 15
+										if(n == item, {tamponSynth = tamponSynth.add(i.asFloat)});// 12 a 15
 									});
 								});
+								tamponDurSynth = [];
 								// duree synth
 								listeFlagDureeSynth.do({arg n, s;
 									['Seq', 'Pitch', 'Grain'].do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 16 19
+										if(n == item, {tamponDurSynth = tamponDurSynth.add(i.asFloat)});// 16 19
 									});
 								});
+								tamponModSynth = [];
 								// mode synth
 								modeMIDIOSC.do({arg n, s;
 									changeChoiceMIDI.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 20 23
+										if(n == item, {tamponModSynth = tamponModSynth.add(i.asFloat)});// 20 23
 									});
 								});
-								// loop sample
-								loopSample.do({arg loop, i;
-									data = data.add(loop);//24 27
-								});
-								//Octave
-								listeOctave.do({arg oct, i;//28 31
-									data = data.add(oct);
-								});
-								//SemiTone
-								listeDemiTon.do({arg demi, i;//32 35
-									data = data.add(demi);
-								});
-								//Cent
-								listeCent.do({arg cent, i;//36 39
-									data = data.add(cent);
-								});
-								// Filter
-								choiceFilter.do({arg filt, i;//40 43
-									data = data.add(filt * (listeFilters.size - 1));
-								});
-								//Ctrl filter
-								listeCtrl1Filter.do({arg ctrl, i;//44 47
-									data = data.add(ctrl);
-								});
-								listeCtrl2Filter.do({arg ctrl, i;//48 51
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl3Filter.do({arg ctrl, i;//52 55
-									data = data.add(ctrl * 100);
-								});
-								//FX
-								choiceFX.do({arg fx, i;//56 59
-									data = data.add(fx * (listeFX.size - 1));
-								});
-								// Ctrl FX
-								listeCtrl1FX.do({arg ctrl, i;//60 63
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl2FX.do({arg ctrl, i;//64 67
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl3FX.do({arg ctrl, i;//68 71
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl4FX.do({arg ctrl, i;//72 75
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl5FX.do({arg ctrl, i;//76 79
-									data = data.add(ctrl * 100);
-								});
 
-								// preset
-								data = data.add(numPreset.asFloat);//80
+								data = [
+									numSequencer,//0
+									wekBPM[0],
+									wekBPM[1],
+									numberStepSequencer,
+									ambitusFreq[0],
+									ambitusFreq[1],
+									rangeFFT[0],
+									rangeFFT[1],
+									/*//Weight Synth
+									listeWeightSynth.do({arg weight, i;//8 11
+									data = data.add(weight);
+									});*/
+									listeWeightSynth[0],
+									listeWeightSynth[1],
+									listeWeightSynth[2],
+									listeWeightSynth[3],
+									/*//synth
+									typeSynthDef.do({arg n, s;
+									changeChoiceSynthDef.do({arg item, i;
+									if(n == item, {tampon = tampon.add(i.asFloat)});// 12 a 15
+									});
+									});*/
+									tamponSynth[0],
+									tamponSynth[1],
+									tamponSynth[2],
+									tamponSynth[3],
+									/*// duree synth
+									listeFlagDureeSynth.do({arg n, s;
+									['Seq', 'Pitch', 'Grain'].do({arg item, i;
+									if(n == item, {tampon = tampon.add(i.asFloat)});// 16 19
+									});
+									});*/
+									tamponDurSynth[0],
+									tamponDurSynth[1],
+									tamponDurSynth[2],
+									tamponDurSynth[3],
+									/*// mode synth
+									modeMIDIOSC.do({arg n, s;
+									changeChoiceMIDI.do({arg item, i;
+									if(n == item, {tampon = tampon.add(i.asFloat)});// 20 23
+									});
+									});*/
+									tamponModSynth[0],
+									tamponModSynth[1],
+									tamponModSynth[2],
+									tamponModSynth[3],
+									/*// loop sample
+									loopSample.do({arg loop, i;
+									data = data.add(loop);//24 27
+									});*/
+									loopSample[0],
+									loopSample[1],
+									loopSample[2],
+									loopSample[3],
+									/*//Octave
+									listeOctave.do({arg oct, i;//28 31
+									data = data.add(oct);
+									});*/
+									listeOctave[0],
+									listeOctave[1],
+									listeOctave[2],
+									listeOctave[3],
+									/*//SemiTone
+									listeDemiTon.do({arg demi, i;//32 35
+									data = data.add(demi);
+									});*/
+									listeDemiTon[0],
+									listeDemiTon[1],
+									listeDemiTon[2],
+									listeDemiTon[3],
+									/*//Cent
+									listeCent.do({arg cent, i;//36 39
+									data = data.add(cent);
+									});*/
+									listeCent[0],
+									listeCent[1],
+									listeCent[2],
+									listeCent[3],
+									/*// Filter
+									choiceFilter.do({arg filt, i;//40 43
+									tampon = tampon.add(filt * (listeFilters.size - 1));
+									});*/
+									choiceFilter[0] * (listeFilters.size - 1),
+									choiceFilter[1] * (listeFilters.size - 1),
+									choiceFilter[2] * (listeFilters.size - 1),
+									choiceFilter[3] * (listeFilters.size - 1),
+									/*//Ctrl filter
+									listeCtrl1Filter.do({arg ctrl, i;//44 47
+									data = data.add(ctrl);
+									});*/
+									listeCtrl1Filter[0],
+									listeCtrl1Filter[1],
+									listeCtrl1Filter[2],
+									listeCtrl1Filter[3],
+									/*listeCtrl2Filter.do({arg ctrl, i;//48 51
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl2Filter[0] * 100,
+									listeCtrl2Filter[1] * 100,
+									listeCtrl2Filter[2] * 100,
+									listeCtrl2Filter[3] * 100,
+									/*listeCtrl3Filter.do({arg ctrl, i;//52 55
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl3Filter[0] * 100,
+									listeCtrl3Filter[1] * 100,
+									listeCtrl3Filter[2] * 100,
+									listeCtrl3Filter[3] * 100,
+									/*//FX
+									choiceFX.do({arg fx, i;//56 59
+									data = data.add(fx * (listeFX.size - 1));
+									});*/
+									choiceFX[0] * (listeFX.size - 1),
+									choiceFX[1] * (listeFX.size - 1),
+									choiceFX[2] * (listeFX.size - 1),
+									choiceFX[3] * (listeFX.size - 1),
+									/*// Ctrl FX
+									listeCtrl1FX.do({arg ctrl, i;//60 63
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl1FX[0] * 100,
+									listeCtrl1FX[1] * 100,
+									listeCtrl1FX[2] * 100,
+									listeCtrl1FX[3] * 100,
+									/*listeCtrl2FX.do({arg ctrl, i;//64 67
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl2FX[0] * 100,
+									listeCtrl2FX[1] * 100,
+									listeCtrl2FX[2] * 100,
+									listeCtrl2FX[3] * 100,
+									/*listeCtrl3FX.do({arg ctrl, i;//68 71
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl3FX[0] * 100,
+									listeCtrl3FX[1] * 100,
+									listeCtrl3FX[2] * 100,
+									listeCtrl4FX[3] * 100,
+									/*listeCtrl4FX.do({arg ctrl, i;//72 75
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl4FX[0] * 100,
+									listeCtrl4FX[1] * 100,
+									listeCtrl4FX[2] * 100,
+									listeCtrl4FX[3] * 100,
+									/*listeCtrl5FX.do({arg ctrl, i;//76 79
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl5FX[0] * 100,
+									listeCtrl5FX[1] * 100,
+									listeCtrl5FX[2] * 100,
+									listeCtrl5FX[3] * 100,
+									// preset
+									numPreset.asFloat,//80
+								];
 
 								// Sender
 								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
@@ -1478,7 +1574,7 @@ f						Switch File for Analyze.
 
 			// OSC Data
 			OSCFunc.newMatching({arg msg, time, addr, recvPort;
-				var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data, mfcc;
+				var freq, octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, amp, duree, indexNumFhzBand, data, mfcc, tamponSynth, tamponDurSynth, tamponModSynth;
 				if(flagKeyboard == 'on',
 					{
 						// Music
@@ -1616,89 +1712,185 @@ f						Switch File for Analyze.
 						if(flagStreamMFCC != 'wek',
 							{
 								// Send control outputs for wekinator 81 data
-								data = data.add(numSequencer);//0
-								data = data.add(wekBPM[0]);
-								data = data.add(wekBPM[1]);
-								data = data.add(numberStepSequencer);
-								data = data.add(ambitusFreq[0]);
-								data = data.add(ambitusFreq[1]);
-								data = data.add(rangeFFT[0]);
-								data = data.add(rangeFFT[1]);
-								//Weight Synth
-								listeWeightSynth.do({arg weight, i;//8 11
-									data = data.add(weight);
-								});
+
+								tamponSynth = [];
 								//synth
 								typeSynthDef.do({arg n, s;
 									changeChoiceSynthDef.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 12 a 15
+										if(n == item, {tamponSynth = tamponSynth.add(i.asFloat)});// 12 a 15
 									});
 								});
+								tamponDurSynth = [];
 								// duree synth
 								listeFlagDureeSynth.do({arg n, s;
 									['Seq', 'Pitch', 'Grain'].do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 16 19
+										if(n == item, {tamponDurSynth = tamponDurSynth.add(i.asFloat)});// 16 19
 									});
 								});
+								tamponModSynth = [];
 								// mode synth
 								modeMIDIOSC.do({arg n, s;
 									changeChoiceMIDI.do({arg item, i;
-										if(n == item, {data = data.add(i.asFloat)});// 20 23
+										if(n == item, {tamponModSynth = tamponModSynth.add(i.asFloat)});// 20 23
 									});
 								});
-								// loop sample
-								loopSample.do({arg loop, i;
-									data = data.add(loop);//24 27
-								});
-								//Octave
-								listeOctave.do({arg oct, i;//28 31
-									data = data.add(oct);
-								});
-								//SemiTone
-								listeDemiTon.do({arg demi, i;//32 35
-									data = data.add(demi);
-								});
-								//Cent
-								listeCent.do({arg cent, i;//36 39
-									data = data.add(cent);
-								});
-								// Filter
-								choiceFilter.do({arg filt, i;//40 43
-									data = data.add(filt * (listeFilters.size - 1));
-								});
-								//Ctrl filter
-								listeCtrl1Filter.do({arg ctrl, i;//44 47
-									data = data.add(ctrl);
-								});
-								listeCtrl2Filter.do({arg ctrl, i;//48 51
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl3Filter.do({arg ctrl, i;//52 55
-									data = data.add(ctrl * 100);
-								});
-								//FX
-								choiceFX.do({arg fx, i;//56 59
-									data = data.add(fx * (listeFX.size - 1));
-								});
-								// Ctrl FX
-								listeCtrl1FX.do({arg ctrl, i;//60 63
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl2FX.do({arg ctrl, i;//64 67
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl3FX.do({arg ctrl, i;//68 71
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl4FX.do({arg ctrl, i;//72 75
-									data = data.add(ctrl * 100);
-								});
-								listeCtrl5FX.do({arg ctrl, i;//76 79
-									data = data.add(ctrl * 100);
-								});
 
-								// preset
-								data = data.add(numPreset.asFloat);//80
+								data = [
+									numSequencer,//0
+									wekBPM[0],
+									wekBPM[1],
+									numberStepSequencer,
+									ambitusFreq[0],
+									ambitusFreq[1],
+									rangeFFT[0],
+									rangeFFT[1],
+									/*//Weight Synth
+									listeWeightSynth.do({arg weight, i;//8 11
+									data = data.add(weight);
+									});*/
+									listeWeightSynth[0],
+									listeWeightSynth[1],
+									listeWeightSynth[2],
+									listeWeightSynth[3],
+									/*//synth
+									typeSynthDef.do({arg n, s;
+									changeChoiceSynthDef.do({arg item, i;
+									if(n == item, {tampon = tampon.add(i.asFloat)});// 12 a 15
+									});
+									});*/
+									tamponSynth[0],
+									tamponSynth[1],
+									tamponSynth[2],
+									tamponSynth[3],
+									/*// duree synth
+									listeFlagDureeSynth.do({arg n, s;
+									['Seq', 'Pitch', 'Grain'].do({arg item, i;
+									if(n == item, {tampon = tampon.add(i.asFloat)});// 16 19
+									});
+									});*/
+									tamponDurSynth[0],
+									tamponDurSynth[1],
+									tamponDurSynth[2],
+									tamponDurSynth[3],
+									/*// mode synth
+									modeMIDIOSC.do({arg n, s;
+									changeChoiceMIDI.do({arg item, i;
+									if(n == item, {tampon = tampon.add(i.asFloat)});// 20 23
+									});
+									});*/
+									tamponModSynth[0],
+									tamponModSynth[1],
+									tamponModSynth[2],
+									tamponModSynth[3],
+									/*// loop sample
+									loopSample.do({arg loop, i;
+									data = data.add(loop);//24 27
+									});*/
+									loopSample[0],
+									loopSample[1],
+									loopSample[2],
+									loopSample[3],
+									/*//Octave
+									listeOctave.do({arg oct, i;//28 31
+									data = data.add(oct);
+									});*/
+									listeOctave[0],
+									listeOctave[1],
+									listeOctave[2],
+									listeOctave[3],
+									/*//SemiTone
+									listeDemiTon.do({arg demi, i;//32 35
+									data = data.add(demi);
+									});*/
+									listeDemiTon[0],
+									listeDemiTon[1],
+									listeDemiTon[2],
+									listeDemiTon[3],
+									/*//Cent
+									listeCent.do({arg cent, i;//36 39
+									data = data.add(cent);
+									});*/
+									listeCent[0],
+									listeCent[1],
+									listeCent[2],
+									listeCent[3],
+									/*// Filter
+									choiceFilter.do({arg filt, i;//40 43
+									tampon = tampon.add(filt * (listeFilters.size - 1));
+									});*/
+									choiceFilter[0] * (listeFilters.size - 1),
+									choiceFilter[1] * (listeFilters.size - 1),
+									choiceFilter[2] * (listeFilters.size - 1),
+									choiceFilter[3] * (listeFilters.size - 1),
+									/*//Ctrl filter
+									listeCtrl1Filter.do({arg ctrl, i;//44 47
+									data = data.add(ctrl);
+									});*/
+									listeCtrl1Filter[0],
+									listeCtrl1Filter[1],
+									listeCtrl1Filter[2],
+									listeCtrl1Filter[3],
+									/*listeCtrl2Filter.do({arg ctrl, i;//48 51
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl2Filter[0] * 100,
+									listeCtrl2Filter[1] * 100,
+									listeCtrl2Filter[2] * 100,
+									listeCtrl2Filter[3] * 100,
+									/*listeCtrl3Filter.do({arg ctrl, i;//52 55
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl3Filter[0] * 100,
+									listeCtrl3Filter[1] * 100,
+									listeCtrl3Filter[2] * 100,
+									listeCtrl3Filter[3] * 100,
+									/*//FX
+									choiceFX.do({arg fx, i;//56 59
+									data = data.add(fx * (listeFX.size - 1));
+									});*/
+									choiceFX[0] * (listeFX.size - 1),
+									choiceFX[1] * (listeFX.size - 1),
+									choiceFX[2] * (listeFX.size - 1),
+									choiceFX[3] * (listeFX.size - 1),
+									/*// Ctrl FX
+									listeCtrl1FX.do({arg ctrl, i;//60 63
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl1FX[0] * 100,
+									listeCtrl1FX[1] * 100,
+									listeCtrl1FX[2] * 100,
+									listeCtrl1FX[3] * 100,
+									/*listeCtrl2FX.do({arg ctrl, i;//64 67
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl2FX[0] * 100,
+									listeCtrl2FX[1] * 100,
+									listeCtrl2FX[2] * 100,
+									listeCtrl2FX[3] * 100,
+									/*listeCtrl3FX.do({arg ctrl, i;//68 71
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl3FX[0] * 100,
+									listeCtrl3FX[1] * 100,
+									listeCtrl3FX[2] * 100,
+									listeCtrl4FX[3] * 100,
+									/*listeCtrl4FX.do({arg ctrl, i;//72 75
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl4FX[0] * 100,
+									listeCtrl4FX[1] * 100,
+									listeCtrl4FX[2] * 100,
+									listeCtrl4FX[3] * 100,
+									/*listeCtrl5FX.do({arg ctrl, i;//76 79
+									data = data.add(ctrl * 100);
+									});*/
+									listeCtrl5FX[0] * 100,
+									listeCtrl5FX[1] * 100,
+									listeCtrl5FX[2] * 100,
+									listeCtrl5FX[3] * 100,
+									// preset
+									numPreset.asFloat,//80
+								];
 
 								// Sender
 								sender.sendMsg("/wekinator/control/outputs", *data[0..]);
@@ -1709,7 +1901,7 @@ f						Switch File for Analyze.
 			// Setup MIDI Responder
 			// NoteOn
 			MIDIdef.noteOn(\midiNoteOn, {arg amp, freq, canal, src;
-				var octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, duree, indexNumFhzBand, time = Main.elapsedTime, data;
+				var octave, oct, ratio, degre, difL, difH, pos=scale.degrees.size - 1, demiTon, cent, duree, indexNumFhzBand, time = Main.elapsedTime, data,  tamponSynth, tamponDurSynth, tamponModSynth;
 				if(canal == canalMIDI and: {flagMIDI == 1}, {
 
 					amp = amp / 127;
@@ -1821,89 +2013,185 @@ f						Switch File for Analyze.
 					if(flagStreamMFCC != 'wek',
 						{
 							// Send control outputs for wekinator 81 data
-							data = data.add(numSequencer);//0
-							data = data.add(wekBPM[0]);
-							data = data.add(wekBPM[1]);
-							data = data.add(numberStepSequencer);
-							data = data.add(ambitusFreq[0]);
-							data = data.add(ambitusFreq[1]);
-							data = data.add(rangeFFT[0]);
-							data = data.add(rangeFFT[1]);
-							//Weight Synth
-							listeWeightSynth.do({arg weight, i;//8 11
-								data = data.add(weight);
-							});
+
+							tamponSynth = [];
 							//synth
 							typeSynthDef.do({arg n, s;
 								changeChoiceSynthDef.do({arg item, i;
-									if(n == item, {data = data.add(i.asFloat)});// 12 a 15
+									if(n == item, {tamponSynth = tamponSynth.add(i.asFloat)});// 12 a 15
 								});
 							});
+							tamponDurSynth = [];
 							// duree synth
 							listeFlagDureeSynth.do({arg n, s;
 								['Seq', 'Pitch', 'Grain'].do({arg item, i;
-									if(n == item, {data = data.add(i.asFloat)});// 16 19
+									if(n == item, {tamponDurSynth = tamponDurSynth.add(i.asFloat)});// 16 19
 								});
 							});
+							tamponModSynth = [];
 							// mode synth
 							modeMIDIOSC.do({arg n, s;
 								changeChoiceMIDI.do({arg item, i;
-									if(n == item, {data = data.add(i.asFloat)});// 20 23
+									if(n == item, {tamponModSynth = tamponModSynth.add(i.asFloat)});// 20 23
 								});
 							});
-							// loop sample
-							loopSample.do({arg loop, i;
-								data = data.add(loop);//24 27
-							});
-							//Octave
-							listeOctave.do({arg oct, i;//28 31
-								data = data.add(oct);
-							});
-							//SemiTone
-							listeDemiTon.do({arg demi, i;//32 35
-								data = data.add(demi);
-							});
-							//Cent
-							listeCent.do({arg cent, i;//36 39
-								data = data.add(cent);
-							});
-							// Filter
-							choiceFilter.do({arg filt, i;//40 43
-								data = data.add(filt * (listeFilters.size - 1));
-							});
-							//Ctrl filter
-							listeCtrl1Filter.do({arg ctrl, i;//44 47
-								data = data.add(ctrl);
-							});
-							listeCtrl2Filter.do({arg ctrl, i;//48 51
-								data = data.add(ctrl * 100);
-							});
-							listeCtrl3Filter.do({arg ctrl, i;//52 55
-								data = data.add(ctrl * 100);
-							});
-							//FX
-							choiceFX.do({arg fx, i;//56 59
-								data = data.add(fx * (listeFX.size - 1));
-							});
-							// Ctrl FX
-							listeCtrl1FX.do({arg ctrl, i;//60 63
-								data = data.add(ctrl * 100);
-							});
-							listeCtrl2FX.do({arg ctrl, i;//64 67
-								data = data.add(ctrl * 100);
-							});
-							listeCtrl3FX.do({arg ctrl, i;//68 71
-								data = data.add(ctrl * 100);
-							});
-							listeCtrl4FX.do({arg ctrl, i;//72 75
-								data = data.add(ctrl * 100);
-							});
-							listeCtrl5FX.do({arg ctrl, i;//76 79
-								data = data.add(ctrl * 100);
-							});
 
-							// preset
-							data = data.add(numPreset.asFloat);//80
+							data = [
+								numSequencer,//0
+								wekBPM[0],
+								wekBPM[1],
+								numberStepSequencer,
+								ambitusFreq[0],
+								ambitusFreq[1],
+								rangeFFT[0],
+								rangeFFT[1],
+								/*//Weight Synth
+								listeWeightSynth.do({arg weight, i;//8 11
+								data = data.add(weight);
+								});*/
+								listeWeightSynth[0],
+								listeWeightSynth[1],
+								listeWeightSynth[2],
+								listeWeightSynth[3],
+								/*//synth
+								typeSynthDef.do({arg n, s;
+								changeChoiceSynthDef.do({arg item, i;
+								if(n == item, {tampon = tampon.add(i.asFloat)});// 12 a 15
+								});
+								});*/
+								tamponSynth[0],
+								tamponSynth[1],
+								tamponSynth[2],
+								tamponSynth[3],
+								/*// duree synth
+								listeFlagDureeSynth.do({arg n, s;
+								['Seq', 'Pitch', 'Grain'].do({arg item, i;
+								if(n == item, {tampon = tampon.add(i.asFloat)});// 16 19
+								});
+								});*/
+								tamponDurSynth[0],
+								tamponDurSynth[1],
+								tamponDurSynth[2],
+								tamponDurSynth[3],
+								/*// mode synth
+								modeMIDIOSC.do({arg n, s;
+								changeChoiceMIDI.do({arg item, i;
+								if(n == item, {tampon = tampon.add(i.asFloat)});// 20 23
+								});
+								});*/
+								tamponModSynth[0],
+								tamponModSynth[1],
+								tamponModSynth[2],
+								tamponModSynth[3],
+								/*// loop sample
+								loopSample.do({arg loop, i;
+								data = data.add(loop);//24 27
+								});*/
+								loopSample[0],
+								loopSample[1],
+								loopSample[2],
+								loopSample[3],
+								/*//Octave
+								listeOctave.do({arg oct, i;//28 31
+								data = data.add(oct);
+								});*/
+								listeOctave[0],
+								listeOctave[1],
+								listeOctave[2],
+								listeOctave[3],
+								/*//SemiTone
+								listeDemiTon.do({arg demi, i;//32 35
+								data = data.add(demi);
+								});*/
+								listeDemiTon[0],
+								listeDemiTon[1],
+								listeDemiTon[2],
+								listeDemiTon[3],
+								/*//Cent
+								listeCent.do({arg cent, i;//36 39
+								data = data.add(cent);
+								});*/
+								listeCent[0],
+								listeCent[1],
+								listeCent[2],
+								listeCent[3],
+								/*// Filter
+								choiceFilter.do({arg filt, i;//40 43
+								tampon = tampon.add(filt * (listeFilters.size - 1));
+								});*/
+								choiceFilter[0] * (listeFilters.size - 1),
+								choiceFilter[1] * (listeFilters.size - 1),
+								choiceFilter[2] * (listeFilters.size - 1),
+								choiceFilter[3] * (listeFilters.size - 1),
+								/*//Ctrl filter
+								listeCtrl1Filter.do({arg ctrl, i;//44 47
+								data = data.add(ctrl);
+								});*/
+								listeCtrl1Filter[0],
+								listeCtrl1Filter[1],
+								listeCtrl1Filter[2],
+								listeCtrl1Filter[3],
+								/*listeCtrl2Filter.do({arg ctrl, i;//48 51
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl2Filter[0] * 100,
+								listeCtrl2Filter[1] * 100,
+								listeCtrl2Filter[2] * 100,
+								listeCtrl2Filter[3] * 100,
+								/*listeCtrl3Filter.do({arg ctrl, i;//52 55
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl3Filter[0] * 100,
+								listeCtrl3Filter[1] * 100,
+								listeCtrl3Filter[2] * 100,
+								listeCtrl3Filter[3] * 100,
+								/*//FX
+								choiceFX.do({arg fx, i;//56 59
+								data = data.add(fx * (listeFX.size - 1));
+								});*/
+								choiceFX[0] * (listeFX.size - 1),
+								choiceFX[1] * (listeFX.size - 1),
+								choiceFX[2] * (listeFX.size - 1),
+								choiceFX[3] * (listeFX.size - 1),
+								/*// Ctrl FX
+								listeCtrl1FX.do({arg ctrl, i;//60 63
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl1FX[0] * 100,
+								listeCtrl1FX[1] * 100,
+								listeCtrl1FX[2] * 100,
+								listeCtrl1FX[3] * 100,
+								/*listeCtrl2FX.do({arg ctrl, i;//64 67
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl2FX[0] * 100,
+								listeCtrl2FX[1] * 100,
+								listeCtrl2FX[2] * 100,
+								listeCtrl2FX[3] * 100,
+								/*listeCtrl3FX.do({arg ctrl, i;//68 71
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl3FX[0] * 100,
+								listeCtrl3FX[1] * 100,
+								listeCtrl3FX[2] * 100,
+								listeCtrl4FX[3] * 100,
+								/*listeCtrl4FX.do({arg ctrl, i;//72 75
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl4FX[0] * 100,
+								listeCtrl4FX[1] * 100,
+								listeCtrl4FX[2] * 100,
+								listeCtrl4FX[3] * 100,
+								/*listeCtrl5FX.do({arg ctrl, i;//76 79
+								data = data.add(ctrl * 100);
+								});*/
+								listeCtrl5FX[0] * 100,
+								listeCtrl5FX[1] * 100,
+								listeCtrl5FX[2] * 100,
+								listeCtrl5FX[3] * 100,
+								// preset
+								numPreset.asFloat,//80
+							];
 
 							// Sender
 							sender.sendMsg("/wekinator/control/outputs", *data[0..]);
