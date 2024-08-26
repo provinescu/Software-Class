@@ -1785,27 +1785,99 @@ Preset Wek",
 					// Automation master slider
 					// musicData = freq, amp, duree, tempo,Centroid, flatness, energy, flux;
 					// Pan
-					if(rrand(0.0, 100.0) < pourcentPan.value, {controlPanSlider.valueAction_([rrand(-1.0, 0.0), rrand(0.0, 1.0)])});
+					if(rrand(0.0, 100.0) < pourcentPan.value, {
+						controlPanSlider.valueAction_([rrand(-1.0, 0.0), rrand(0.0, 1.0)]);
+						listeWindowSynth.do({|window|
+			if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+			window.value.view.children.at(38).children.do({arg subView, subItem;
+			if(subItem == 2, {subView.activeLo_(rrand(-1.0, 0.0)); subView.activeHi_(rrand(0.0, 1.0))})
+			});
+			});
+			});
+					});
 					// Freq
 					data = musicData.at(0).soloArray;
 					# q1A, medianeA, q3A, ecartqA, ecartsemiqA = data.quartiles;
 					dissymetrie = data.dissymetrie;
-					if(rrand(0.0, 100.0) < pourcentFreq.value, {controlFreqSlider.valueAction_([medianeA - ecartsemiqA, medianeA + ecartsemiqA].cpsmidi)});
+					if(rrand(0.0, 100.0) < pourcentFreq.value, {
+						controlFreqSlider.valueAction_([medianeA - ecartsemiqA, medianeA + ecartsemiqA].cpsmidi);
+						listeWindowSynth.do({|window|
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+					window.value.view.children.at(39).children.do({arg subView, subItem;
+									if(subItem == 2, {subView.activeLo_((medianeA - ecartsemiqA).cpsmidi / 127); subView.activeHi_((medianeA + ecartsemiqA).cpsmidi / 127)})
+					});
+				});
+			});
+					});
 					// Transpose
-					if(rrand(0.0, 100.0) < pourcentFreqT.value, {controlFreqTranSlider.valueAction_(dissymetrie * 12)});
+					if(rrand(0.0, 100.0) < pourcentFreqT.value, {
+						controlFreqTranSlider.valueAction_(dissymetrie * 12);
+						listeWindowSynth.do({|window|
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+					window.value.view.children.at(40).children.do({arg subView, subItem;
+						if(subItem == 2, {subView.valueAction_(dissymetrie * 12)});
+					});
+				});
+			});
+					});
 					// Amp
-					if(rrand(0.0, 100.0) < pourcentAmp.value, {controlAmpSlider.valueAction_([rrand(-12.0, -6.0), rrand(-6.0, 0.0)])});
+					if(rrand(0.0, 100.0) < pourcentAmp.value, {
+						controlAmpSlider.valueAction_([rrand(-12.0, -6.0), rrand(-6.0, 0.0)]);
+						listeWindowSynth.do({|window|
+			if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+			window.value.view.children.at(41).children.do({arg subView, subItem;
+			if(subItem == 2, {subView.activeLo_(rrand(-12.0, -6.0)); subView.activeHi_(rrand(-6.0, 0.0))})
+			});
+			});
+			});
+					});
 					// Dur
 					data = musicData.at(2).soloArray;
 					# q1A, medianeA, q3A, ecartqA, ecartsemiqA = data.quartiles;
 					dissymetrie = data.dissymetrie;
-					if(rrand(0.0, 100.0) < pourcentDur.value, {controlDureeSlider.valueAction_([q1A, q3A] / timeMaximum)});
+					if(rrand(0.0, 100.0) < pourcentDur.value, {
+						controlDureeSlider.valueAction_([q1A, q3A] / timeMaximum);
+						listeWindowSynth.do({|window|
+					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+						window.value.view.children.at(42).children.do({arg subView, subItem;
+							if(subItem == 2, {subView.activeLo_(q1A / timeMaximum); subView.activeHi_(q3A / timeMaximum)})
+						});
+					});
+				});
+					});
 					// Stretch
-					if(rrand(0.0, 100.0) < pourcentDurT.value, {controlDureeTranSlider.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign)});
+					if(rrand(0.0, 100.0) < pourcentDurT.value, {
+						controlDureeTranSlider.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign);
+						listeWindowSynth.do({|window|
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+					window.value.view.children.at(43).children.do({arg subView, subItem;
+						if(subItem == 2, {subView.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign)});
+					});
+				});
+			});
+					});
 					// Quant
-					if(rrand(0.0, 100.0) < pourcentQuant.value, {controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor))});
+					if(rrand(0.0, 100.0) < pourcentQuant.value, {
+						controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor));
+						listeWindowSynth.do({|window|
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+					window.value.view.children.at(44).children.do({arg subView, subItem;
+						if(subItem == 2, {subView.valueAction_(((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor)))});
+					});
+				});
+			});
+					});
 					// Root
-					if(rrand(0.0, 100.0) < pourcentRoot.value, {controlRootSlider.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor)});
+					if(rrand(0.0, 100.0) < pourcentRoot.value, {
+						controlRootSlider.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor);
+						listeWindowSynth.do({|window|
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(81).value == 1}, {
+					window.value.view.children.at(80).children.do({arg subView, subItem;
+						if(subItem == 2, {subView.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor)});
+					});
+				});
+			});
+					});
 					//
 					lastMeanProbaPresetFlux = meanProbaPresetFlux;
 					lastMeanProbaPresetFlatness = meanProbaPresetFlatness;
@@ -2727,13 +2799,13 @@ Preset Wek",
 			valLo = (ez.value.at(0));
 			valHi = (ez.value.at(1));
 			previousPan = ez.value;
-			/*listeWindowSynth.do({|window|
-			if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
+			listeWindowSynth.do({|window|
+			if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
 			window.value.view.children.at(38).children.do({arg subView, subItem;
 			if(subItem == 2, {subView.activeLo_(valLo + 1 / 2); subView.activeHi_(valHi + 1 / 2)})
 			});
 			});
-			});*/
+			});
 		},[-1, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
@@ -2743,7 +2815,7 @@ Preset Wek",
 			valHi = (ez.value.at(1) / 127);
 			previousFreq = ez.value;
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
 					window.value.view.children.at(39).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
 					});
@@ -2754,7 +2826,7 @@ Preset Wek",
 		// Freq T
 		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
 					window.value.view.children.at(40).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
@@ -2768,13 +2840,13 @@ Preset Wek",
 			valLo = (ez.value.at(0) / 2).dbamp;
 			valHi = (ez.value.at(1) / 2).dbamp;
 			previousAmp = ez.value;
-			/*listeWindowSynth.do({|window|
-			if(window.view.children.at(54).value == 1 or: {window.view.children.at(54).value == 2}, {
+			listeWindowSynth.do({|window|
+			if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
 			window.value.view.children.at(41).children.do({arg subView, subItem;
 			if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
 			});
 			});
-			});*/
+			});
 		},[-inf, 0],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
@@ -2785,7 +2857,7 @@ Preset Wek",
 				valHi = (ez.value.at(1));
 				previousDuree = ez.value;
 				listeWindowSynth.do({|window|
-					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
 						window.value.view.children.at(42).children.do({arg subView, subItem;
 							if(subItem == 2, {subView.activeLo_(valLo / 60); subView.activeHi_(valHi / 60)})
 						});
@@ -2796,7 +2868,7 @@ Preset Wek",
 		// Duree T
 		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
 					window.value.view.children.at(43).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
@@ -2807,7 +2879,7 @@ Preset Wek",
 		// Quantization
 		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
 					window.value.view.children.at(44).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_((ez.value))});
 					});
@@ -2818,7 +2890,7 @@ Preset Wek",
 		// Root
 		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(81).value == 1}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(81).value == 0}, {
 					window.value.view.children.at(80).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
