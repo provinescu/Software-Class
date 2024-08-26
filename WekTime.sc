@@ -1015,15 +1015,15 @@ f						Switch File for Analyze.
 							2, {typeSequencer = 'WeightS'},
 							3, {typeSequencer = 'WeightP'});
 						windowControlGUI.view.children.at(0).value_(wekOut[0]);
-						//densityBPM = wekOut[1..2].clip(0.016, 1000);
-						windowControlGUI.view.children.at(1).children.at(1).value_(wekOut[1].clip(1, 60000));
-						windowControlGUI.view.children.at(1).children.at(3).value_(wekOut[2].clip(1, 60000));
+						//densityBPM = wekOut[1..2].abs.clip(1, 60000) / 1000);
+						windowControlGUI.view.children.at(1).children.at(1).value_(wekOut[1].abs.clip(1, 60000));
+						windowControlGUI.view.children.at(1).children.at(3).value_(wekOut[2].abs.clip(1, 60000));
 
-						windowControlGUI.view.children.at(1).children.at(2).lo_(wekOut[1].clip(1, 60000) / 1000
+						windowControlGUI.view.children.at(1).children.at(2).lo_(wekOut[1].abs.clip(1, 60000) / 1000
 						);
-						windowControlGUI.view.children.at(1).children.at(2).hi_(wekOut[2].clip(1, 60000) / 1000
+						windowControlGUI.view.children.at(1).children.at(2).hi_(wekOut[2].abs.clip(1, 60000) / 1000
 						);
-						numberStepSequencer = wekOut[3].clip(0, 48);
+						numberStepSequencer = wekOut[3].clip(1, 48);
 						windowControlGUI.view.children.at(2).children.at(2).value_(numberStepSequencer);
 						ambitusFreq = wekOut[4..5].clip(0, 127);
 						windowControlGUI.view.children.at(3).children.at(1).value_(ambitusFreq[0]);
