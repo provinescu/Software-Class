@@ -637,7 +637,7 @@ f						Switch File for Analyze.
 			//Control + NumFhzBand
 			control = data.last;
 			if(flag == 'on', {
-				windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
+				//windowExternalControlGUI.view.children.at(2).valueAction_(control.at(0));
 				windowExternalControlGUI.view.children.at(7).valueAction_(control.at(1));
 				//windowExternalControlGUI.view.children.at(10).children.at(2).valueAction_(control.at(2));
 				//windowExternalControlGUI.view.children.at(11).children.at(2).valueAction_(control.at(3));
