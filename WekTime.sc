@@ -2325,7 +2325,7 @@ f						Switch File for Analyze.
 										volumeFilter = volumeFilter.clip(-inf, 0)}, {volumeFilter = listeVolumeFilter.at(synth)});
 									// Ctrl1 Filter
 									if(listeActiveJitterCtrl1Filter.at(synth) == 1, {
-										ctrl1Filter = listeCtrl1Filter.at(synth) * (10 ** (1.5 * listeJitterCtrl1Filter.at(synth) * rrand(-1.0, 1.0)));
+										ctrl1Filter = listeCtrl1Filter.at(synth) * (10 ** (2 * listeJitterCtrl1Filter.at(synth) * rrand(-1.0, 1.0)));
 										ctrl1Filter = ctrl1Filter.clip(20, 12544);
 									}, {ctrl1Filter = listeCtrl1Filter.at(synth)});
 									// Ctrl2 Filter

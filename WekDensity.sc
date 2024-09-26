@@ -112,7 +112,7 @@ WekDensity {
 											listeDataInstruments.do({arg data, index;
 												data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 											});
-											windowEar.name = "Density" + " | " + "Preset" + number.asString;
+											windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
 											file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
 											fonctionLoadPreset.value(file.readAllString.interpret);
 											file.close;

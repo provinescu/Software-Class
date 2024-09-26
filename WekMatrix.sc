@@ -1414,7 +1414,7 @@ Preset Wek",
 										{
 											if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
 												{fonctionUserOperatingSystem.value(9);
-													windowControl.name="Matrix Control" + " | " + "Preset" + number.asString;
+													windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
 													file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 													fonctionLoadPreset.value(file.readAllString.interpret);
 													file.close;
