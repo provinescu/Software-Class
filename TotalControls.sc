@@ -273,14 +273,15 @@ Score Commandes:
 
 		// PROCESSUS Read Score
 		routineScore = {arg score;
-			var time=0.0417, cmd=[], val, item = 0, scoreVal = [], number;
+			var time=1, cmd=[], val, item = 0, scoreVal = [], number, pos;
 			Tdef(\ScorePlay,
 				{
 					loop({
 						cmd = scorePlaying.at(items);
+						pos = items;
 						{
 							windows.value(5);
-							wScore.view.children.at(9).string_("Next "++items.asString + scorePlaying.at(items));
+							wScore.view.children.at(9).string_("Current "++items.asString + scorePlaying.at(pos));
 						}.defer;
 						scoreVal = [];
 						if(cmd != nil,
