@@ -5652,8 +5652,7 @@ Preset Wek",
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
 				var chain, envelope;
 				// Envelope
-
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
 				chain = SinOsc.ar(freq, 0, 0.5) * envelope * amp;
 				// Out
@@ -5797,10 +5796,10 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
-				chain = SinOsc.ar(freq, 0, 0.5) * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain = SinOsc.ar(freq, 0, 0.5) * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5817,11 +5816,11 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(centroid, energy, durSynth), XLine.kr(energy, centroid, durSynth));
 				// Play
-				chain = Formant.ar(freq, line, 0.5) * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain = Formant.ar(freq, line, 0.5) * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5838,7 +5837,7 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
 				modPartial = 1;//4 - flux.log10.abs.ceil;// + flux;
@@ -5846,7 +5845,7 @@ Preset Wek",
 				index = 4 - flux.log10.abs.ceil;
 				mod =SinOsc.ar(freq * modPartial, 0 , freq * index * LFNoise1.kr((centroid / energy).abs).abs);
 				car = SinOsc.ar(freq * carPartial + mod);
-				chain = car * 0.5 * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain = car * 0.5 * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5863,12 +5862,12 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
 				mod =SinOsc.ar(energy / 10);
 				car = SinOsc.ar(freq, 0, mod);
-				chain = car * 0.5 * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain = car * 0.5 * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5885,10 +5884,10 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
-				chain = Saw.ar(freq, 0.25) * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain = Saw.ar(freq, 0.25) * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5905,12 +5904,12 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
 				fc = LinExp.kr(LFNoise1.kr(flux), -1, 1, energy, centroid);
 				osc = Mix.fill(8, {LFSaw.ar(freq * [Rand(0.99,1.01), Rand(0.99,1.01)], 0, 1) }).distort * 0.5;
-				chain= RLPF.ar(osc, fc, flatness) * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain= RLPF.ar(osc, fc, flatness) * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -5927,10 +5926,10 @@ Preset Wek",
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play
-				chain= Gendy1.ar(Rand(2, 6), 3, flatness, flux, freq, centroid) * envelope * Trig1.kr(Impulse.kr(flux * 100), flatness) * amp;
+				chain= Gendy1.ar(Rand(2, 6), 3, flatness, flux, freq, centroid) * envelope * gate * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6405,11 +6404,11 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				/*chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(durSynth), dur), BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;*/
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6428,10 +6427,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
 				chain = chain * envelope * amp;
 				// Out
@@ -6456,10 +6455,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope * amp;
@@ -6481,11 +6480,11 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
 				// Play Buffer
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope * amp;
 				// Out
@@ -6506,7 +6505,7 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
 				// Play Buffer
@@ -7105,7 +7104,7 @@ Preset Wek",
 				//BufWr.ar(inputSig, buffer, recHead, loop: 1);
 				RecordBuf.ar(inputSig, buffer, offset: 0, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: 1);
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				chain = Median.ar(5, HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp);
@@ -7133,10 +7132,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(gate, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
 				chain = chain * envelope * amp;
 				// Out
@@ -7167,10 +7166,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(gate, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy * flatness, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope * amp;
@@ -7198,11 +7197,11 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
 				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(gate, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope * amp;
 				// Out
@@ -7229,7 +7228,7 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				//chain = HPbufRd.ar(1, buffer, Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
@@ -7258,7 +7257,7 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				trigger = Dust2.kr(flatness.reciprocal);
@@ -7288,10 +7287,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
-
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset).lag(flatness.log10.abs/3), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(gate, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer) * offset, recHead, BufFrames.kr(buffer) * offset).lag(flatness.log10.abs/3), 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -7611,9 +7610,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
@@ -7644,9 +7644,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
@@ -7677,9 +7678,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
@@ -7710,9 +7712,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
@@ -7743,9 +7746,10 @@ Preset Wek",
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
-				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, Trig1.kr(Impulse.kr(flux * 100), flatness), BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
 				in2 = HPbufRd.ar(1, postBuffer, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), BufRateScale.kr(postBuffer) * rate, BufFrames.kr(postBuffer) * offset, recHead, BufFrames.kr(postBuffer) * offset), 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
