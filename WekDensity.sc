@@ -2,7 +2,7 @@
 
 WekDensity {
 
-	classvar <> s, numPreset, lastNumPreset, lastTimeWekData, timeWekPreset, timeWekData, lastTimeWekPreset, listeWekPreset, flagWTD, flagWTP, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD;
+	classvar <> s, numPreset, lastNumPreset, lastTimeWekData, timeWekPreset, timeWekData, lastTimeWekPreset, listeWekPreset, flagWTD, flagWTP, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi;
 
 	var tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
 	var wekFreq, wekAmp, wekDur, wekCentroid, wekEnergy, wekFlux, wekFlatness;
@@ -301,6 +301,7 @@ WekDensity {
 		timeWekData = 0.0625;
 		flagWTD = 'on';
 		flagWTP = 'on';
+		chanelsMidi =  [1,1,2,3,4,5,6,7,8,9,10,11,12];// 13 value 12 band et start for no bands
 		40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 		// For Kohonen
 		kohonenF = HPclassKohonen.new(1,127,1);
@@ -2693,9 +2694,8 @@ Preset Wek",
 				panx = rrand(panSynthLo, panSynthHi); pany = rrand(panSynthLo, panSynthHi);
 				// Canal MIDI
 				if(indexBandFhz == 0,
-					{canalMidi = rrand(midiOutLo.asInteger, midiOutHi.asInteger) - 1},
-					{canalMidi = midiRange.wrapAt(indexBandFhz - 1) - 1;
-					};
+					{canalMidi = chanelsMidi[0] - 1},
+					{canalMidi = chanelsMidi[indexBandFhz] - 1};
 				);
 				displayMIDI = (canalMidi + 1).asString;
 				// Envelope
@@ -4304,17 +4304,16 @@ Preset Wek",
 		};
 		// Midi Out
 		Button(windowEar,Rect(0, 0, 100, 20)).
-		states_([["Midi Out On", Color.green], ["Midi Out Off", Color.red]]).
+		states_([["Chanels Midi Out On", Color.green], ["Chanels Midi Out Off", Color.red]]).
 		action_({arg midi;
 			if(midi.value == 0, {flagMidiOut = 'off'; windowEar.view.children.at(12).enabled_(false)},
 				{flagMidiOut = 'on'; windowEar.view.children.at(12).enabled_(true)}
 		)};
 		);
-		// Range Canals Midi Out
-		EZRanger(windowEar , 250 @ 20, "Canals", ControlSpec(1, 16, \lin, 1),
-			{|ez| midiOutLo = ez.value.at(0); midiOutHi = ez.value.at(1);
-				midiRange = []; (midiOutHi - midiOutLo + 1).do({arg i; midiRange = midiRange.add(i + midiOutLo).asInteger});
-		}, [1, 16], labelWidth: 50, numberWidth: 25);
+		// Chanels MIDI OUT
+		EZText(windowEar, Rect(0, 0, 300, 20), "Chanels",
+			{arg string; chanelsMidi = string.value},
+			chanelsMidi =  [1,1,2,3,4,5,6,7,8,9,10,11,12], true);//13 value 12 band et au debut pour all chanels
 		windowEar.view.decorator.nextLine;
 
 		// Analyze

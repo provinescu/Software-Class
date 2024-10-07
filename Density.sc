@@ -2,7 +2,7 @@
 
 Density {
 
-	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD;
+	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi;
 
 	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse;
 	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
@@ -218,6 +218,7 @@ Density {
 		channelsVerb = 0; // Verb ouput channel
 		rangeFFT = [0.0, 1.0];
 		loopMusic = 1;
+		chanelsMidi =  [1,1,2,3,4,5,6,7,8,9,10,11,12];// 13 value 12 band et start for no bands
 		// For Kohonen
 		kohonenF = HPclassKohonen.new(1,127,1);
 		kohonenA = HPclassKohonen.new(1,127,1);
@@ -2215,9 +2216,8 @@ Density {
 				panx = rrand(panSynthLo, panSynthHi); pany = rrand(panSynthLo, panSynthHi);
 				// Canal MIDI
 				if(indexBandFhz == 0,
-					{canalMidi = rrand(midiOutLo.asInteger, midiOutHi.asInteger) - 1},
-					{canalMidi = midiRange.wrapAt(indexBandFhz - 1) - 1;
-					};
+					{canalMidi = chanelsMidi[0] - 1},
+					{canalMidi = chanelsMidi[indexBandFhz] - 1};
 				);
 				displayMIDI = (canalMidi + 1).asString;
 				// Envelope
@@ -4194,17 +4194,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		};
 		// Midi Out
 		Button(windowEar,Rect(0, 0, 100, 20)).
-		states_([["Midi Out On", Color.green], ["Midi Out Off", Color.red]]).
+		states_([["Chanels Midi Out On", Color.green], ["Chanels Midi Out Off", Color.red]]).
 		action_({arg midi;
 			if(midi.value == 0, {flagMidiOut = 'off'; windowEar.view.children.at(12).enabled_(false)},
 				{flagMidiOut = 'on'; windowEar.view.children.at(12).enabled_(true)}
 		)};
 		);
-		// Range Canals Midi Out
-		EZRanger(windowEar , 250 @ 20, "Canals", ControlSpec(1, 16, \lin, 1),
-			{|ez| midiOutLo = ez.value.at(0); midiOutHi = ez.value.at(1);
-				midiRange = []; (midiOutHi - midiOutLo + 1).do({arg i; midiRange = midiRange.add(i + midiOutLo).asInteger});
-		}, [1, 16], labelWidth: 50, numberWidth: 25);
+		// Chanels MIDI OUT
+		EZText(windowEar, Rect(0, 0, 300, 20), "Chanels",
+			{arg string; chanelsMidi = string.value},
+			chanelsMidi =  [1,1,2,3,4,5,6,7,8,9,10,11,12], true);//13 value 12 band et au debut pour all chanels
 		windowEar.view.decorator.nextLine;
 
 		// Analyze
