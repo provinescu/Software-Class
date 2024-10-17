@@ -2834,7 +2834,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				},
 				{"cancelled".postln});
 				}),
-				MenuAction("Edit/Save", {arg window, text;
+				MenuAction("Edit/Save", {arg window, text, file, comUnix;
 					window = Document.new("Synth Edit/Save", synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; synthOrchestra = text.interpret};
 				});
 			).title_("Synth"),

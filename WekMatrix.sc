@@ -1836,7 +1836,7 @@ Preset Wek",
 					# q1A, medianeA, q3A, ecartqA, ecartsemiqA = data.quartiles;
 					dissymetrie = data.dissymetrie;
 					if(rrand(0.0, 100.0) < pourcentDur.value, {
-						controlDureeSlider.valueAction_([q1A, q3A] / timeMaximum);
+						controlDureeSlider.valueAction_([q1A, q3A]);
 						listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
 						window.value.view.children.at(42).children.do({arg subView, subItem;

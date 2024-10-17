@@ -1874,7 +1874,7 @@ y ... -						Musical keys.
 					# q1A, medianeA, q3A, ecartqA, ecartsemiqA = data.quartiles;
 					dissymetrie = data.dissymetrie;
 					if(rrand(0.0, 100.0) < pourcentDur.value, {
-						controlDureeSlider.valueAction_([q1A, q3A] / timeMaximum);
+						controlDureeSlider.valueAction_([q1A, q3A]);
 						listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
 						window.value.view.children.at(42).children.do({arg subView, subItem;
@@ -2842,7 +2842,7 @@ y ... -						Musical keys.
 			});
 			});
 			});
-		},[-1, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[-1, 1],labelWidth: 50, numberWidth: 35);
 		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
 		previousFreq = [0, 127];
@@ -2857,7 +2857,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		},[0, 127],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[0, 127],labelWidth: 50, numberWidth: 35);
 		pourcentFreq = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq T
 		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
@@ -2868,7 +2868,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Amp
 		previousAmp = [-inf, 0];
@@ -2883,7 +2883,7 @@ y ... -						Musical keys.
 			});
 			});
 			});
-		},[-inf, 0],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[-inf, 0],labelWidth: 50, numberWidth: 35);
 		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
 		previousDuree = [0, 1];
@@ -2899,7 +2899,7 @@ y ... -						Musical keys.
 						});
 					});
 				});
-		},[0, 4],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[0, 4],labelWidth: 50, numberWidth: 35);
 		pourcentDur = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree T
 		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
@@ -2910,7 +2910,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 100, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 100, labelWidth: 50, numberWidth: 35);
 		pourcentDurT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Quantization
 		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
@@ -2921,7 +2921,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
 		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
@@ -2932,7 +2932,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 
 		windowControlSynth.onClose_({
