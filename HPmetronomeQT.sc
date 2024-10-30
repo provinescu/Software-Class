@@ -17,9 +17,9 @@ HPmetronomeQT {
 
 		QtGUI.palette = QPalette.dark;// light / system
 
-		server = Server.new(\Metronome, NetAddr("127.0.0.1", 57105));
-		server.makeWindow;
-		//server = Server.default;
+		//server = Server.new(\Metronome, NetAddr("127.0.0.1", 57105));
+		//server.makeWindow;
+		server = Server.default;
 
 		/*server.options.memSize = 2**20;
 		server.options.device = "JackRouter";// use a specific soundcard*/

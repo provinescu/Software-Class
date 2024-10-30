@@ -677,8 +677,7 @@ WekDensity {
 
 		// Load Preset
 		fonctionLoadPreset = {arg allData, index=0;
-			var bpm, autoRoot;
-
+			var bpm, autoRoot, flagPlay;
 			// Smooth release
 			groupeSynth.release(4);
 			groupeFX.release(4);
@@ -751,10 +750,13 @@ WekDensity {
 			index = index + 1;
 			// soundOrchestra
 			if(allData.at(index) != soundOrchestra, {
+				if(startSystem.value == 0, {flagPlay = 0}, {startSystem.valueAction_(0); flagPlay = 1});
 				"... LOAD SOUNDORCHESTRA... !!!".postln;
 				soundOrchestra = allData.at(index);
 				s.bind{
 					fonctionLoadSoundOrchestra.value(soundOrchestra);
+					s.sync;
+					if(flagPlay == 1, {startSystem.valueAction_(1)});
 					s.sync;
 				};
 			}, {soundOrchestra = allData.at(index)});
