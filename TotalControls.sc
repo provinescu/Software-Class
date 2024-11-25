@@ -19,7 +19,9 @@ TotalControls {
 		QtGUI.palette = QPalette.dark;// light / system
 
 		flagManualPlaying = 'off';
-		// Standalone Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134, WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
+		// Standalone
+		// Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134
+		// WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
 		// Provinescu All Soft = 57140
 		// SuperCollider
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", NetAddr.langPort));
@@ -163,6 +165,7 @@ TotalControls {
 					"ShortCuts:
 
 esc stop all soft
+q stop all soft
 s play all soft
 l Load preset for all soft
 < or - next commande manual score
@@ -545,6 +548,16 @@ Score Commandes:
 			});
 			// key esc -> stop all soft
 			if(char == 27.asAscii and: {modifiers==0},
+				{
+					{windows.value(numView.value)}.defer(2);
+					cmd=[];
+					cmd =cmd.add("all");
+					cmd = cmd.add("stop").postcs;
+					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
+					{windows.value(numView.value)}.defer(2);
+			});
+			// key q -> stop all soft
+			if(char == $q and: {modifiers==0},
 				{
 					{windows.value(numView.value)}.defer(2);
 					cmd=[];
