@@ -2007,6 +2007,7 @@ Preset Wek",
 								if(chord > 1, {chord = 1 - (chord - 1)});*/
 								chord = chord * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
 								chord = chord.min(135);
+								chord.midicps;
 							});
 						});
 						// Setup newFreq with Scaling and Tuning
@@ -2130,6 +2131,7 @@ Preset Wek",
 								if(chord > 1, {chord = 1 - (chord - 1)});*/
 								chord = chord * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
 								chord = chord.min(135);
+								chord.midicps;
 							});
 						});
 						// Setup newFreq with Scaling and Tuning
