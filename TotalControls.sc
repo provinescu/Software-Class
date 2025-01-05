@@ -284,7 +284,7 @@ Score Commandes:
 						pos = items;
 						{
 							windows.value(5);
-							wScore.view.children.at(9).string_("Current "++items.asString + scorePlaying.at(pos));
+							wScore.view.children.at(9).string_("Current "++(items-1).asString + scorePlaying.at(pos));
 						}.defer;
 						scoreVal = [];
 						if(cmd != nil,
