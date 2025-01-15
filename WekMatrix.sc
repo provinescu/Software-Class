@@ -1449,21 +1449,21 @@ Preset Wek",
 				{
 					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 						// Set Master Sliders Controls [pan, freq, transFreq, amp, duree, stretch, quant, root]
-						//controlPanSlider.valueAction = wekOut[0..1].clip(-1, 1);
-						controlFreqSlider.valueAction = wekOut[2..3].clip(0, 127);
-						controlFreqTranSlider.valueAction = wekOut[4].clip(-127, 127);
-						//controlAmpSlider.valueAction = wekOut[5..6].clip(-120, 0);
-						controlDureeSlider.valueAction = wekOut[7..8].clip(0, 60);
-						controlDureeTranSlider.valueAction = wekOut[9].clip(-100, 100);
-						controlQuantaSlider.valueAction = wekOut[10].clip(1, 100);
-						controlRootSlider.valueAction = wekOut[11].clip(0, 21);
+						//controlPanSlider.valueA= wekOut[0..1].clip(-1, 1);
+						controlFreqSlider.value = wekOut[2..3].clip(0, 127);
+						controlFreqTranSlider.value = wekOut[4].clip(-127, 127);
+						//controlAmpSlider.value = wekOut[5..6].clip(-120, 0);
+						controlDureeSlider.value = wekOut[7..8].clip(0, 60);
+						controlDureeTranSlider.value = wekOut[9].clip(-100, 100);
+						controlQuantaSlider.value = wekOut[10].clip(1, 100);
+						controlRootSlider.value = wekOut[11].clip(0, 21);
 						lastTimeWekData = time;
 						// Set Data to Synth
 						{
 							listeWindowSynth.do({|window|
-								if(window.view.children.at(54).value == 2, {
+								if(window.view.children.at(54).value == 1, { // set to wek in on
 									// Freq
-									if(window.view.children.at(57).value == 1, {
+									if(window.view.children.at(57).value == 2, {
 										window.value.view.children.at(39).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.activeLo_(wekOut[2].clip(0, 127) / 127); subView.activeHi_(wekOut[3].clip(0, 127) / 127)})
 										});
@@ -1472,13 +1472,13 @@ Preset Wek",
 											if(subItem == 2, {subView.valueAction_(wekOut[4].clip(-127, 127))});
 										});
 									});
-									if(window.view.children.at(81).value == 1, {
+									if(window.view.children.at(81).value == 2, {
 										// Root
 										window.value.view.children.at(80).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.valueAction_(wekOut[11].clip(0, 21))});
 										});
 									});
-									if(window.view.children.at(58).value == 1, {
+									if(window.view.children.at(58).value == 2, {
 										// Duree
 										window.value.view.children.at(42).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.activeLo_(wekOut[7].clip(0, 60) / 60); subView.activeHi_(wekOut[8].clip(0, 60) / 60)})
@@ -3719,10 +3719,10 @@ Preset Wek",
 			windowSynth.view.decorator.nextLine;
 			// AutomationSynthMusicData start stop playing
 			startAutomationSynthMusicData = Button(windowSynth,Rect(0, 0, 100, 20));
-			startAutomationSynthMusicData.states = [["MusicData Off", Color.magenta,  Color.green(0.8, 0.25)],["MusicData On", Color.magenta, Color.red(0.8, 0.25)], ["MusicData Wek", Color.magenta, Color.blue(0.8, 0.25)]];
-			startAutomationSynthMusicData.action = {|view| if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false)});
+			startAutomationSynthMusicData.states = [["MusicData Off", Color.magenta,  Color.green(0.8, 0.25)], ["MusicData On", Color.magenta, Color.red(0.8, 0.25)]];
+			startAutomationSynthMusicData.action = {|view|
+				if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false)});
 				if(view.value == 1, {tdefMusicData.play; tempoAutomationSynthMusicData.enabled_(true);jitterAutomationMusicData.enabled_(true)});
-				if(view.value == 2, {nil; /*wek input*/});
 				fonctionEnabledSlider.value(view.value);
 			};
 			// Tempo AutomationSynthMusicData Synth
@@ -3731,11 +3731,11 @@ Preset Wek",
 			jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 20, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
 			// Auto Freq
-			automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.magenta,  Color.green(0.8, 0.25)],["Freq", Color.magenta, Color.red(0.8, 0.25)]];
-			automationSliderFreq.action = {|view| };
+			automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.magenta,  Color.green(0.8, 0.25)],["Freq", Color.magenta, Color.red(0.8, 0.25)], ["Freq", Color.magenta, Color.blue(0.8, 0.25)]];
+			automationSliderFreq.action = {|view|};
 			// Auto Dur
-			automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.magenta,  Color.green(0.8, 0.25)],["Dur", Color.magenta, Color.red(0.8, 0.25)]];
-			automationSliderDur.action = {|view| };
+			automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.magenta,  Color.green(0.8, 0.25)],["Dur", Color.magenta, Color.red(0.8, 0.25)], ["Dur", Color.magenta, Color.blue(0.8, 0.25)]];
+			automationSliderDur.action = {|view|};
 			// Auto Buffer
 			automationSliderBuffer= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["CtrlBuf", Color.black,  Color.green(0.8, 0.25)],["CtrlBuf", Color.black, Color.red(0.8, 0.25)]];
 			automationSliderBuffer.action = {|view| };
@@ -3930,7 +3930,7 @@ Preset Wek",
 				{|ez| root = ez.value; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, labelWidth: 20, numberWidth: 20);
 			// Auto Root
 			Button(windowSynth,Rect(0, 0, 20, 20)).
-			states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]]).
+			states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)], ["w", Color.black, Color.blue(0.8, 0.25)]]).
 			action_({arg view; flagRoot = view.value;
 				if(view.value == 0, {/*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/});
 			});
@@ -4180,7 +4180,7 @@ Preset Wek",
 				switchBufferOne.enabled_(true); switchBufferOneAction.enabled_(true); loopBufferOne.enabled_(true); durSampleOneSlider.enabled_(true); textBufferOne.enabled_(true);switchBufferTwo.enabled_(true); loopBufferTwo.enabled_(true); switchBufferTwoAction.enabled_(true); loopBufferTwo.enabled_(true); sendLocalBuf.enabled_(true); durSampleTwoSlider.enabled_(true); textBufferTwo.enabled_(true); controlsAntiClick.enabled_(true); freqSlider.enabled_(true); freqTranSlider.enabled_(true); dureeSlider.enabled_(true); dureeTranSlider.enabled_(true); quantaSlider.enabled_(true);envelopeSynth.enabled_(true);
 				reverseBufferOneAction.enabled_(true); knobOffset1.enabled_(true); knobPreLevel1.enabled_(true); knobPostLevel1.enabled_(true); knobRecOn1.enabled_(true); reverseBufferTwoAction.enabled_(true);
 				knobOffset2.enabled_(true); knobPreLevel2.enabled_(true); knobPostLevel2.enabled_(true); knobRecOn2.enabled_(true);
-				if(flagAuto == 1 or: {flagAuto == 2}, {
+				if(flagAuto == 1 or: {flagAuto == 2} or: {flagAuto == 0}, {
 					automationSliderFreq.enabled_(true); automationSliderDur.enabled_(true); automationSliderSynth.enabled_(true); automationNumberSynth.enabled_(true);automationSliderBuffer.enabled_(true)}, {
 					automationSliderFreq.enabled_(false); automationSliderDur.enabled_(false); automationSliderSynth.enabled_(false); automationNumberSynth.enabled_(false);automationSliderBuffer.enabled_(false)});
 				// Synthese

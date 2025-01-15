@@ -4653,11 +4653,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			envelopeSynth = arrayEnv;
 		};
 		// HP Threshold
-		EZKnob(windowEar, 80 @ 80, "Threshold", ControlSpec(0, 1, \lin, 0.01),
-			{|ez| ctrlHP1 = ez.value; groupeSynth.set(\ctrlHP1, ctrlHP1)}, 0.5, layout: \vert2);
+		EZKnob(windowEar, 80 @ 80, "Threshold", ControlSpec(0, 1, \lin, 0.0001),
+			{|ez| ctrlHP1 = ez.value; groupeSynth.set(\ctrlHP1, ctrlHP1)}, 0.5, layout: \vert2).view.children.at(2).decimals = 4;
 		// HP Sensitivity
-		EZKnob(windowEar, 80 @ 80, "Sensitivity", ControlSpec(0.01, 1, \lin, 0.01),
-			{|ez| ctrlHP2 = ez.value; groupeSynth.set(\ctrlHP2, ctrlHP2)}, 0.5, layout: \vert2);
+		EZKnob(windowEar, 80 @ 80, "Sensitivity", ControlSpec(0.01, 1, \lin, 0.0001),
+			{|ez| ctrlHP2 = ez.value; groupeSynth.set(\ctrlHP2, ctrlHP2)}, 0.5, layout: \vert2).view.children.at(2).decimals = 4;
 		// Offset Sound
 		EZKnob(windowEar, 80 @ 80, "Offset", \unipolar,
 			{|ez| offsetSound = ez.value}, 0, layout: \vert2);
