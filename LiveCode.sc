@@ -522,11 +522,11 @@ LiveCode {
 		winCode.view.decorator.nextLine;
 		//Code Window
 		editCode = TextView(winCode, Rect(0, 0, 790, 400));
+		editCode.font_(Font("Courier", 16), 0, 20);
 		editCode.hasVerticalScroller_(true);
 		editCode.hasHorizontalScroller_(true);
 		editCode.autohidesScrollers_(true);
 		editCode.resize_(5);
-		editCode.setFont(Font("Courier", 24), 0, 20);
 		editCode.string_("SynthDef('LiveCode'.asString, { |in=0, out=0, freq=440, amp=0.1, dur=1, bpm=1, centroid=440, energy=440, flux=0.5, flatness=0.5|
 var sig, trig;
 sig = Saw.ar(freq, amp.max(0.1));

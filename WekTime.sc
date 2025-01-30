@@ -1271,11 +1271,15 @@ f						Switch File for Analyze.
 									}
 								);
 								freq = (oct * 12 + pos).midicps;
+								octave = (freq.cpsmidi / 12).floor;
+								demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+								cent = 0.5;
+							},
+							{
+								octave = (freq.cpsmidi / 12).floor;
+								demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+								cent = freq.frac;
 							});
-
-							octave = (freq.cpsmidi / 12).floor;
-							demiTon = ((freq.cpsmidi / 12).frac * 12).floor;
-							cent = ((freq.cpsmidi / 12).frac * 12).frac * 2;
 
 							// Set Bus OSC
 							busOSCfreq.set(freq);
@@ -1611,8 +1615,8 @@ f						Switch File for Analyze.
 						});
 
 						octave = (freq.cpsmidi / 12).floor;
-						demiTon = ((freq.cpsmidi / 12).frac * 12).floor;
-						cent = ((freq.cpsmidi / 12).frac * 12).frac * 2;
+						demiTon = ((freq.cpsmidi / 12).frac * 12 + 0.5).floor;
+						cent = 0.5;
 
 						// Set Bus OSC
 						busOSCfreq.set(freq);
@@ -1912,7 +1916,7 @@ f						Switch File for Analyze.
 					freq = freq / 127 * (ambitusFreq.at(1) - ambitusFreq.at(0)) + ambitusFreq.at(0);
 					octave = (freq / 12).floor;
 					demiTon = ((freq / 12).frac * 12 + 0.5).floor;
-					cent = ((freq / 12).frac * 12 + 0.5).frac * 2 - 0.5;
+					cent = 0.5;
 
 					// Set Bus OSC
 					busOSCfreq.set(freq);
