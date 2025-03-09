@@ -226,6 +226,7 @@ f						Switch File for Analyze.
 			'PlayBuf',
 			'PlayBufMedianLeakDC',
 			'Waveloss',
+			'DelayHarmonic',
 			'Synth HPshiftDown',
 			'Synth MagShift',
 			'Synth LocalMax',
@@ -4949,6 +4950,26 @@ Preset Wek",
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, hp1, hp2) * envelope;
 				chain = WaveLoss.ar(chain, oscFlux * 20 + 20, oscFlatness * 40 + 40);
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef('DelayHarmonic',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid, hp1=0.5, hp2=0.5;
+				var envelope, chain, trig, phase, envDel, del, maxDel = 0.05, inputSig;
+				trig = Impulse.kr(BufDur.kr(buffer).reciprocal * abs(endPos - startPos));
+				startPos = if(rate < 0, endPos, startPos);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				// Synth
+				inputSig = HPplayBuf.ar(1, buffer, 1, trig, BufFrames.kr(buffer) * startPos, loop, hp1, hp2) * envelope;
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
 				Out.ar(out, chain);
 		}).add;
 

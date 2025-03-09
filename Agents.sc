@@ -1206,6 +1206,7 @@ G                       Init Genome Agent (solo).
 					"RandKlankSample",
 					"DjScratch",
 					"LiquidFilter",
+					"DelayHarmonic",
 					"PV_HPshiftDown",
 					//"PV_HPecartType",
 					"PV_MagNoise",
@@ -1407,6 +1408,7 @@ G                       Init Genome Agent (solo).
 			"RandKlankSample",
 			"DjScratch",
 			"LiquidFilter",
+			"DelayHarmonic",
 			"PV_HPshiftDown",
 			//"PV_HPecartType",
 			"PV_MagNoise",
@@ -8002,6 +8004,49 @@ G                       Init Genome Agent (solo).
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
 
 
+					// Switch Audio Out
+					main = if(~switchAudioOut == 0,
+						if(~flagMC == 0,
+							// Pan 1
+							Pan2.ar(main, Rand(panLo, panHi), envelope),
+							// Pan 2
+							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
+						if(~switchAudioOut == 2,
+							if(~flagMC == 0,
+								// PanAz 1
+								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
+								// PanAz 2
+								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
+							if(~switchAudioOut == 1,
+								// Rotate2
+								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
+								// Ambisonic
+								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
+									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+					// Out
+					Out.ar(buseffets, Mix(main) * amp);
+					Out.ar(busverb, Mix(main) * amp * ampreal);
+					Out.ar(out, main * amp * ampreal);
+			}).send(s);
+
+			SynthDef("DelayHarmonic",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
+					var dureesample, envelope, ambisonic, main=0, maxDel=0.05, del, phase, envDel, inputSig;
+					// Set Rate Freq
+					rate=2**rate.cpsoct;
+					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					// envelope
+			envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
+					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
+					// Main Synth
+					inputSig = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * reverse, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				main = del.sum;
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,

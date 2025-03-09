@@ -244,6 +244,7 @@ Matrix {
 			'RandKlankSample',
 			'DjScratch',
 			'LiquidFilter',
+			'DelayHarmonic',
 			//'FluidSynth',
 			//////// FFT 1 buffer
 			'FFT 1 BUFFER (',
@@ -5545,6 +5546,63 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Main Synth
 				chain = HPbufRd.ar(1, buffer, Phasor.ar(1, BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer)), BufRateScale.kr(buffer) * reverse1, loopOne, ctrlHP1, ctrlHP2);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
+						// Pan v1
+						Pan2.ar(chain, Rand(panLo, panHi), envelope),
+						// Pan v2
+						Pan2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, Rand(panLo, panHi), envelope, widthMC, orientationMC),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('DelayHarmonic',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample, localBuf, inputSig, phase, envDel, del, maxDel=0.05;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, amp, 0, dureeSample, 2);
+				// Set Buffer
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				// Synth
+				//inputSig = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				inputSig = In.ar(busIn);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
