@@ -2,7 +2,7 @@
 
 Density2 {
 
-	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi;
+	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi, transFreqintruments, transDureeintruments;
 
 	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse;
 	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
@@ -10,7 +10,7 @@ Density2 {
 	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, loopMusic;
 
-	*new {arg path = "~/Documents/Density/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path = "~/Documents/Density2/", ni = 26, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110;
 
 		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort);
 
@@ -81,6 +81,8 @@ Density2 {
 		canalMIDI = 0;
 		rangeDBintruments = [-12.dbamp, -3.dbamp];
 		rangeFreqintruments = [0, 127];
+		transFreqintruments = 0;
+		transDureeintruments = 1;
 		quantizationDuree = 100;
 		keyboardTranslateBefore = 0;
 		stretchDuree = 1;
@@ -383,6 +385,59 @@ Density2 {
 				"PV_BinWipeStreamPrePostBufEnv",
 				"PV_RectComb2StreamPrePostBufEnv",
 			],
+			// DelayHarmonic
+			[
+				"DelayHarmonic",
+				"RFDelayHarmonic",
+				"ResonzDelayHarmonic",
+				"KlankDelayHarmonic",
+				"LiquidDelayHarmonic",
+				"ElasticDelayHarmonic",
+				"MedianDelayHarmonic",
+				"LeakDCDelayHarmonic",
+				"MedianLeakDCDelayHarmonic",
+			],
+			// Postbuf Stream DelayHarmonic
+			[
+				"StreamDelayHarmonic",
+				"KlankStreamDelayHarmonic",
+				"LiquidStreamDelayHarmonic",
+				"ElasticStreamDelayHarmonic",
+				"MedianStreamDelayHarmonic",
+				"LeakDCStreamDelayHarmonic",
+				"MedianLeakDCStreamDelayHarmonic",
+			],
+			// DelayHarmonic StreamEnv
+			[
+				"StreamDelayHarmonicEnv",
+				"KlankStreamDelayHarmonicEnv",
+				"LiquidStreamDelayHarmonicEnv",
+				"ElasticStreamDelayHarmonicEnv",
+			],
+			// PreBuf + DelayHarmonic PV
+			[
+				"PV_AddPreDelayHarmonic",
+				"PV_MulPreDelayHarmonic",
+				"PV_MagDivPreDelayHarmonic",
+				"PV_BinWipePreDelayHarmonic",
+				"PV_RectComb2PreDelayHarmonic",
+			],
+			// PreBuf + DelayHarmonic PV Stream
+			[
+				"PV_AddStreamPreDelayHarmonic",
+				"PV_MulStreamPreDelayHarmonic",
+				"PV_MagDivStreamPreDelayHarmonic",
+				"PV_BinWipeStreamPreDelayHarmonic",
+				"PV_RectComb2StreamPreDelayHarmonic",
+			],
+			// PreBuf + DelayHarmonic PV StreamEnv
+			[
+				"PV_AddStreamPreDelayHarmonicEnv",
+				"PV_MulStreamPreDelayHarmonicEnv",
+				"PV_MagDivStreamPreDelayHarmonicEnv",
+				"PV_BinWipeStreamPreDelayHarmonicEnv",
+				"PV_RectComb2StreamPreDelayHarmonicEnv",
+			],
 			// Special
 			[
 				"Silent",
@@ -600,8 +655,8 @@ Density2 {
 				window.view.children.do({arg view, item;
 					// Check BPM
 					// Setup GUI Value
-					if(item == 34, {bpm = data.at(item).at(2).at(2)});
-					if(item == 65, {autoRoot = data.at(item).at(1)});
+					if(item == 36, {bpm = data.at(item).at(2).at(2)});
+					if(item == 67, {autoRoot = data.at(item).at(1)});
 					// Check Sliders don't touch
 					// Setup GUI Value
 					if(index == 0 and: {item == 0 or: {item == 1} or: {item == 2} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7}} or: {item == 8} or: {item == 9}, {nil},
@@ -650,9 +705,9 @@ Density2 {
 			});
 			// SET GOOD BPM
 			// Setup GUI Value
-			windowEar.view.children.at(34).children.at(2).valueAction_(bpm);
+			windowEar.view.children.at(36).children.at(2).valueAction_(bpm);
 			// Setup AutoRoot
-			windowEar.view.children.at(65).valueAction_(autoRoot);
+			windowEar.view.children.at(67).valueAction_(autoRoot);
 			// synthOrchestra
 			synthOrchestra = allData.at(index);
 			index = index + 1;
@@ -1057,16 +1112,14 @@ Density2 {
 			windowEar.view.children.at(12).enabled_(false);
 			windowEar.view.children.at(16).enabled_(false);
 			windowEar.view.children.at(17).enabled_(false);
-			windowEar.view.children.at(65).enabled_(false);
-			windowEar.view.children.at(84).valueAction_(0);// No Tuning
-			windowEar.view.children.at(85).enabled_(false);
-			windowEar.view.children.at(86).enabled_(false);
-			windowEar.view.children.at(70).valueAction_(1);
-			windowEar.view.children.at(71).valueAction_(1);
+			windowEar.view.children.at(67).enabled_(false);
+			windowEar.view.children.at(86).valueAction_(0);// No Tuning
+			windowEar.view.children.at(87).enabled_(false);
+			windowEar.view.children.at(88).enabled_(false);
 			windowEar.view.children.at(72).valueAction_(1);
 			windowEar.view.children.at(73).valueAction_(1);
-			windowEar.view.children.at(70).enabled_(false);
-			windowEar.view.children.at(71).enabled_(false);
+			windowEar.view.children.at(74).valueAction_(1);
+			windowEar.view.children.at(76).valueAction_(1);
 			windowEar.view.children.at(72).enabled_(false);
 			windowEar.view.children.at(73).enabled_(false);
 			windowEar.view.children.at(74).enabled_(false);
@@ -1078,6 +1131,8 @@ Density2 {
 			windowEar.view.children.at(80).enabled_(false);
 			windowEar.view.children.at(81).enabled_(false);
 			windowEar.view.children.at(82).enabled_(false);
+			windowEar.view.children.at(83).enabled_(false);
+			windowEar.view.children.at(84).enabled_(false);
 
 			windowEar.name = "Density" + typeMasterOut;
 			windowGVerb.name = "Reverb" + typeMasterOut;
@@ -1505,7 +1560,7 @@ Density2 {
 						});
 						newDuree = newDuree.mod(1);
 						//Set Range newDuree
-						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization newDuree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
@@ -1519,7 +1574,8 @@ Density2 {
 							note.asArray.collect({arg chord, index;
 								/*if(chord < 0, {chord = chord.abs});
 								if(chord > 1, {chord = 1 - (chord - 1)});*/
-								chord = chord * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+								chord = chord * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+								chord = chord.min(135);
 								chord.midicps;
 							});
 						});
@@ -1609,7 +1665,7 @@ Density2 {
 						});
 						newDuree = newDuree.mod(1);
 						//Set Range newDuree
-						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization newDuree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
@@ -1642,7 +1698,8 @@ Density2 {
 							note.asArray.collect({arg chord, index;
 								/*if(chord < 0, {chord = chord.abs});
 								if(chord > 1, {chord = 1 - (chord - 1)});*/
-								chord = chord * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+								chord = chord * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+								chord = chord.min(135);
 								chord.midicps;
 							});
 						});
@@ -1725,7 +1782,7 @@ Density2 {
 							newDuree = duree;
 						});
 						// Set Range Duree
-						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization Duree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
@@ -1745,7 +1802,8 @@ Density2 {
 						newFreq = newFreq.collect({arg item, index;
 							if(item < 0, {item = 0});
 							if(item > 1, {item = 1});
-							item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+							item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments;
+							item = item.min(135);
 							item.midicps;
 						});
 						// Setup Freq with Scaling and Tuning
@@ -1841,7 +1899,7 @@ Density2 {
 							newDuree = duree;
 						});
 						// Set Range Duree
-						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization Duree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
@@ -1849,7 +1907,8 @@ Density2 {
 							newDuree.put(index, item);
 						});
 						// Setup Range Freq
-						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
 						newFreq = newFreq.midicps;
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
@@ -1977,7 +2036,7 @@ Density2 {
 							newDuree = duree;
 						});
 						// Set Range Duree
-						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization Duree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
@@ -1985,7 +2044,8 @@ Density2 {
 							newDuree.put(index, item);
 						});
 						// Setup Range Freq
-						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
 						newFreq = newFreq.midicps;
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
@@ -2030,7 +2090,8 @@ Density2 {
 						freq.size.do({arg i, f, a, d;
 							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], nil, 1, 0.5, 0.5);
 							// Freq
-							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0)).midicps);
+							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments).midicps);
+							freqNeu = freqNeu.min(135);
 							// Amp
 							ampNeu = ampNeu.add(a.at(0));
 							// Duree
@@ -2077,7 +2138,8 @@ Density2 {
 							newDuree = duree;
 						});
 						// Set Range Duree
-						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0);
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						newDuree = newDuree.max(0.01);
 						// Quantization Duree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
@@ -2086,7 +2148,8 @@ Density2 {
 						});
 						/*// Setup Range Freq
 						freq = freq.collect({arg item, index;
-						item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0);
+						item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments;
+						item = item.min(135);
 						item.midicps;
 						});*/
 						// Setup Freq with Scaling and Tuning
@@ -2319,7 +2382,7 @@ Density2 {
 					root = root.cpsoct;
 					root = (root.frac * tuning.size + 0.5).floor;
 					// Setup GUI Value
-					{windowEar.view.children.at(85).children.at(2).valueAction_(root);}.defer;
+					{windowEar.view.children.at(87).children.at(2).valueAction_(root);}.defer;
 				});
 				// MASTEROUT
 				masterOut = Synth.new(typeMasterOut, [
@@ -2518,7 +2581,7 @@ Density2 {
 								if((oldTempo - tempo).abs > 0.2, {
 									{
 										// Setup GUI Value
-										windowEar.view.children.at(34).children.at(2).valueAction_(tempo * 60)}.defer;
+										windowEar.view.children.at(36).children.at(2).valueAction_(tempo * 60)}.defer;
 									oldTempo = tempo;
 								});
 							});
@@ -4028,7 +4091,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowGVerb.front;
 
 		/////// Density Ear Panel
-		windowEar = Window("Density" + typeMasterOut, Rect(0, 800, 715, 850), scroll: true);
+		windowEar = Window("Density" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
 		windowEar.alpha=1.0;
 		windowEar.front;
 		windowEar.view.decorator = FlowLayout(windowEar.view.bounds);
@@ -4369,13 +4432,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 				for(0, numFhzBand,
 					{arg index;
-						windowEar.view.children.at(70 + index).enabled_(true);
+						windowEar.view.children.at(72 + index).enabled_(true);
 				});
 				if(numFhzBand < 12, {
 					for(numFhzBand + 1, 12,
 						{arg index;
-							windowEar.view.children.at(70 + index).enabled_(false);
-							windowEar.view.children.at(70 + index).valueAction_(0);
+							windowEar.view.children.at(72 + index).enabled_(false);
+							windowEar.view.children.at(72 + index).valueAction_(0);
 					});
 				});
 				freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -4389,8 +4452,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(flag.value == 0,
 				{flagFhzBand = 'off';
 					windowEar.view.children.at(17).enabled_(false);
-					windowEar.view.children.at(70).enabled_(false);
-					windowEar.view.children.at(71).enabled_(false);
 					windowEar.view.children.at(72).enabled_(false);
 					windowEar.view.children.at(73).enabled_(false);
 					windowEar.view.children.at(74).enabled_(false);
@@ -4402,18 +4463,20 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					windowEar.view.children.at(80).enabled_(false);
 					windowEar.view.children.at(81).enabled_(false);
 					windowEar.view.children.at(82).enabled_(false);
+					windowEar.view.children.at(83).enabled_(false);
+					windowEar.view.children.at(84).enabled_(false);
 					numIndexSynthBand = 0;
 				},
 				{flagFhzBand = 'on';
 					windowEar.view.children.at(17).enabled_(true);
 					for(0, numFhzBand,
 						{arg index;
-							windowEar.view.children.at(70 + index).enabled_(true);
+							windowEar.view.children.at(72 + index).enabled_(true);
 					});
 					if(numFhzBand < 12, {
 						for(numFhzBand + 1, 12,
 							{arg index;
-								windowEar.view.children.at(70 + index).enabled_(false);
+								windowEar.view.children.at(72 + index).enabled_(false);
 						});
 					});
 					numIndexSynthBand = 0;
@@ -4545,6 +4608,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		EZRanger(windowEar , 550 @ 20, "Range FHZ", ControlSpec(0, 127, \lin, 0.1),
 			{|ez| rangeFreqintruments = ez.value}, [0, 127], labelWidth: 100, numberWidth: 50);
 		windowEar.view.decorator.nextLine;
+		EZSlider(windowEar , 550 @ 15, "Trans FHZ", ControlSpec(-127, 127, \lin, 0.1),
+			{|ez| transFreqintruments = ez.value}, 0, labelWidth: 100, numberWidth: 50);
+		windowEar.view.decorator.nextLine;
 		// Range Amplitude
 		EZRanger(windowEar , 550 @ 20, "Range Amp", \db,
 			{|ez| rangeDBintruments = ez.value.dbamp}, [-12, -3], labelWidth: 100,numberWidth: 50);
@@ -4552,6 +4618,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Range Duree
 		EZRanger(windowEar , 550 @ 20, "Range Duree", ControlSpec(0, 60, \lin, 0),
 			{|ez| rangeDureeintruments = ez.value}, [0, dureeMaximumAnalyze], labelWidth: 100,numberWidth: 50);
+		windowEar.view.decorator.nextLine;
+		EZSlider(windowEar , 550 @ 15, "Trans Duree", ControlSpec(-60, 60, \lin, 0.01),
+			{|ez| if(ez.value >= -1 and: {ez.value < 1},
+				{transDureeintruments = 1.0},
+				{
+					if(ez.value < -1, {transDureeintruments = ez.value.reciprocal.abs},
+						{transDureeintruments = ez.value});
+			});
+		}, 0, labelWidth: 100, numberWidth: 50);
 		windowEar.view.decorator.nextLine;
 		// Stretch Duree
 		EZKnob(windowEar, 80 @ 80, "Stretch", ControlSpec(0.0167, 60, \exp, 0),
@@ -4666,18 +4741,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| dureeSample = ez.value}, 1, layout: \vert2).view.children.at(2).minDecimals_(5).maxDecimals_(5);
 		// Rec/Pre Level Sample
 		MultiSliderView(windowEar, Rect(0, 0, 35, 70)).value_([1, 0]).action={arg levels;
-			recLevel = levels.value.at(0); preLevel = levels.value.at(1); groupeRecBuffer.set(\level1, recLevel, \level2, preLevel); groupeSynth.set(\level1, recLevel, \level2, preLevel); windowEar.view.children.at(44).value = recLevel; windowEar.view.children.at(45).value = preLevel};
+			recLevel = levels.value.at(0); preLevel = levels.value.at(1); groupeRecBuffer.set(\level1, recLevel, \level2, preLevel); groupeSynth.set(\level1, recLevel, \level2, preLevel); windowEar.view.children.at(46).value = recLevel; windowEar.view.children.at(47).value = preLevel};
 		// Display value recbutton 1
 		NumberBox(windowEar, Rect(0, 0, 35, 18)).minDecimals_(4).maxDecimals_(4).action = {arg num;
 			recLevel = num.value;
-			windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);
+			windowEar.view.children.at(45).valueAction_([recLevel, preLevel]);
 		};
 		// Display value recbutton 2
 		NumberBox(windowEar, Rect(0, 0, 35, 18)).minDecimals_(4).maxDecimals_(4).action = {arg num;
 			preLevel = num.value;
-			windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);
+			windowEar.view.children.at(45).valueAction_([recLevel, preLevel]);
 		};
-		windowEar.view.children.at(43).valueAction_([recLevel, preLevel]);// Init
+		windowEar.view.children.at(45).valueAction_([recLevel, preLevel]);// Init
 		windowEar.view.decorator.nextLine;
 		// Range Pan
 		EZRanger(windowEar , 250 @ 20, "Pan", \bipolar,
@@ -4788,12 +4863,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Automation Root
 		Button(windowEar, Rect(0, 0, 90, 20)).states_([["AutoRoot On", Color.green], ["AutoRoot Off", Color.red]]).action_({|view|
 			if(view.value == 1, {flagRoot = 'on';
-				windowEar.view.children.at(85).enabled_(false);
+				windowEar.view.children.at(87).enabled_(false);
 			}, {flagRoot = 'off';
 				// Setup GUI Value
-				windowEar.view.children.at(85).enabled_(true);
-				/*windowEar.view.children.at(85).children.at(1).valueAction_(12);
-				windowEar.view.children.at(85).children.at(1).valueAction_(0);*/
+				windowEar.view.children.at(87).enabled_(true);
+				/*windowEar.view.children.at(87).children.at(1).valueAction_(12);
+				windowEar.view.children.at(87).children.at(1).valueAction_(0);*/
 			};
 			);
 		});
@@ -4802,12 +4877,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			if(view.value == 1, {
 				flagBPM = 'on';
 				// Setup GUI Value
-				windowEar.view.children.at(34).enabled_(false)
+				windowEar.view.children.at(36).enabled_(false)
 			},
 			{flagBPM = 'off';
 				// Setup GUI Value
-				windowEar.view.children.at(34).enabled_(true);
-				windowEar.view.children.at(34).children.at(2).valueAction_(60);
+				windowEar.view.children.at(36).enabled_(true);
+				windowEar.view.children.at(36).children.at(2).valueAction_(60);
 			});
 		});
 		// Chord On / Off
@@ -4870,22 +4945,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
 		action = {arg item;
 			// Setup GUI Value
-			//windowEar.view.children.at(64).valueAction_(0);
-			windowEar.view.children.at(85).children.at(1).valueAction_(12);
-			windowEar.view.children.at(85).children.at(1).valueAction_(0);
-			windowEar.view.children.at(65).enabled_(true);
-			windowEar.view.children.at(85).enabled_(true);
-			windowEar.view.children.at(86).enabled_(true);
+			//windowEar.view.children.at(66).valueAction_(0);
+			windowEar.view.children.at(87).children.at(1).valueAction_(12);
+			windowEar.view.children.at(87).children.at(1).valueAction_(0);
+			windowEar.view.children.at(67).enabled_(true);
+			windowEar.view.children.at(87).enabled_(true);
+			windowEar.view.children.at(88).enabled_(true);
 			switch(item.value,
 				// No Scale
 				0, {flagScaling = 'off';
 					// Setup GUI Value
-					windowEar.view.children.at(65).valueAction_(0);
-					windowEar.view.children.at(65).enabled_(false);
-					windowEar.view.children.at(85).children.at(1).valueAction_(12);
-					windowEar.view.children.at(85).children.at(1).valueAction_(0);
-					windowEar.view.children.at(85).enabled_(false);
-					windowEar.view.children.at(86).enabled_(false);
+					windowEar.view.children.at(67).valueAction_(0);
+					windowEar.view.children.at(67).enabled_(false);
+					windowEar.view.children.at(87).children.at(1).valueAction_(12);
+					windowEar.view.children.at(87).children.at(1).valueAction_(0);
+					windowEar.view.children.at(87).enabled_(false);
+					windowEar.view.children.at(88).enabled_(false);
 				},
 				// Tempered
 				1, {nil},
@@ -4970,11 +5045,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			);
 			if(item.value > 1 and: {item.value < 28}, {tuning = Tuning.et12; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
 				// Setup GUI Value
-				windowEar.view.children.at(86).children.at(1).valueAction = degrees.asString;
+				windowEar.view.children.at(88).children.at(1).valueAction = degrees.asString;
 			});
 			if(item.value > 28, {tuning = Tuning.sruti; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
 				// Setup GUI Value
-				windowEar.view.children.at(86).children.at(1).valueAction = degrees.asString;
+				windowEar.view.children.at(88).children.at(1).valueAction = degrees.asString;
 			});
 		};
 		// Root
@@ -6374,15 +6449,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum * envelope;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6392,20 +6479,32 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del, line;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
-				line = if(Rand(0, 1) < 0.5, XLine.ar(flatness * centroid, energy * flatness, durSynth), XLine.ar(energy * flatness, centroid * flatness, durSynth));
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				line = if(Rand(0, 1) < 0.5, XLine.ar(flatness * centroid, energy * flatness, durSynth), XLine.ar(energy * flatness, centroid * flatness, durSynth));
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = if(freq < 64.5.midicps, RLPF.ar(chain, line, 0.333), RHPF.ar(chain, line, 0.333));
 				chain = chain * envelope;
 				// Out
@@ -6417,19 +6516,31 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del, line;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
-				line = if(Rand(0, 1) < 0.5, XLine.ar(energy, centroid, durSynth), XLine.ar(centroid, energy, durSynth));
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				line = if(Rand(0, 1) < 0.5, XLine.ar(energy, centroid, durSynth), XLine.ar(centroid, energy, durSynth));
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = Resonz.ar(chain, line);
 				chain = chain * envelope;
 				// Out
@@ -6441,18 +6552,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, dur);
 				chain = chain * envelope;
 				// Out
@@ -6464,8 +6587,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
 				var formantfreqs, formantamps, formantbandwidths; //data for formants
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				formantfreqs= [0.3, 0.6, 1, 1.6, 2.3, 2.6, 3, 3.3]; //centre frequencies of formants
 				formantamps= ([0 , -3, -6, -12, -18, -24, -30, -36]).dbamp; //peaks of formants
 				formantbandwidths=[40, 80, 120, 160, 200, 240, 280, 320];  //bandwidths
@@ -6473,14 +6599,23 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope;
@@ -6493,19 +6628,31 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del, line;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
-				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, dur), XLine.kr(flux, flatness, dur));
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, dur), XLine.kr(flux, flatness, dur));
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope;
 				// Out
@@ -6517,7 +6664,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
@@ -6548,7 +6698,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, recHead=0, playHead=0, phase, envDel, del, trigger;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger;
 				// Buffer
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
@@ -6582,17 +6732,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
 				// Play Buffer
-				chain = Median.ar(flatness * 30 + 1, chain) * envelope;
+				chain = Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6602,17 +6762,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
 				// Play Buffer
-				chain = LeakDC.ar(chain, flux) * envelope;
+				chain = LeakDC.ar(HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2), flux) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6622,17 +6792,29 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
 				// Play Buffer
-				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, chain), flux) * envelope;
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2)), flux) * envelope;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6644,15 +6826,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum * envelope * amp;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6662,18 +6856,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
 				chain = chain * envelope * amp;
 				// Out
@@ -6685,8 +6891,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
 				var formantfreqs, formantamps, formantbandwidths; //data for formants
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				formantfreqs= [0.3, 0.6, 1, 1.6, 2.3, 2.6, 3, 3.3]; //centre frequencies of formants
 				formantamps= ([0 , -3, -6, -12, -18, -24, -30, -36]).dbamp; //peaks of formants
 				formantbandwidths=[40, 80, 120, 160, 200, 240, 280, 320];  //bandwidths
@@ -6694,14 +6903,23 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy * flatness, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope * amp;
@@ -6714,18 +6932,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del, line;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope * amp;
@@ -6738,7 +6968,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
 				// Buffer
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
@@ -6772,7 +7002,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger;
 				// Buffer
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
@@ -6806,7 +7036,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger;
 				// Buffer
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
@@ -6838,17 +7068,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
 				// Play Buffer
-				chain = Median.ar(flatness * 30 + 1, chain) * envelope * amp;
+				chain = Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6858,17 +7098,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
 				// Play Buffer
-				chain = LeakDC.ar(chain) * envelope * amp;
+				chain = LeakDC.ar(HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2)) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6878,17 +7128,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
 				// Play Buffer
-				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, chain), flux) * envelope * amp;
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2)), flux) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6900,21 +7160,33 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum * envelope * amp;
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
@@ -6924,21 +7196,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
 				chain = chain * envelope * amp;
 				// Out
@@ -6950,7 +7235,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
 				var formantfreqs, formantamps, formantbandwidths; //data for formants
 				formantfreqs= [0.3, 0.6, 1, 1.6, 2.3, 2.6, 3, 3.3]; //centre frequencies of formants
 				formantamps= ([0 , -3, -6, -12, -18, -24, -30, -36]).dbamp; //peaks of formants
@@ -6961,14 +7246,29 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				/// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain = Mix(RHPF.ar(chain, formantfreqs * energy * flatness, formantbandwidths / (formantfreqs * energy)));
 				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
 				chain = chain * envelope * amp;
@@ -6981,22 +7281,35 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
-				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				// Buffer
+				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				chain = del.sum;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, buffer, recHead);
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
+				// Play Buffer
+				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				chain =  CombC.ar(chain, 0.1, line, 1);
 				chain = chain * envelope * amp;
 				// Out
@@ -7008,7 +7321,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
@@ -7044,7 +7357,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
@@ -7082,7 +7395,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger, phase, maxDel=0.05, envDel, del;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, trigger;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
@@ -7120,19 +7433,28 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7147,19 +7469,28 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7174,21 +7505,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7203,21 +7543,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7232,22 +7581,31 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7264,19 +7622,28 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7291,19 +7658,28 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7318,21 +7694,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7347,21 +7732,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7376,22 +7770,31 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7408,25 +7811,35 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				gate = Trig1.kr(Impulse.kr(flux * 100), flatness);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7441,25 +7854,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7474,25 +7896,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7507,25 +7938,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7540,25 +7980,34 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, postBuffer, inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				var chain, postBuffer, inputSig, rate, envelope, recHead=0, playHead=0, in1, in2, fft1, fft2;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				flatness = flatness.clip(0.1, 0.5);
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Buffer
+				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
+				inputSig = In.ar(in);
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, BufFrames.kr(postBuffer) * offset,  BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset),
+					// rate > 1
+					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
+				);
+				// RecBuffer
+				BufWr.ar(inputSig, postBuffer, recHead);
 				// Envelope
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				// Play Buffer
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
-				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				inputSig = In.ar(in);
-				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				in2 = del.sum;
+				in2 = HPbufRd.ar(1, postBuffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2);
 				// FFT
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -7604,7 +8053,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, rate, envA, envS, envR, recHead=0, playHead=0, postBuffer, inputSig, phase, maxDel=0.05, envDel, del;
+				var chain, rate, envA, envS, envR, recHead=0, playHead=0, postBuffer, inputSig;
 				// Buffer
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				inputSig = In.ar(in);
@@ -7806,6 +8255,963 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Synth
 				//chain = BufRd.ar(1, buffer, playHead, loop: 0) * envelope;
 				chain = Warp1.ar(1, buffer, playHead, rate, windowSize: flux, overlaps: 8, windowRandRatio: flatness) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+				/////////////////////// SAMPLER DelayHarmonic //////////////////////////
+
+		SynthDef("DelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("RFDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del, line;
+				// Normalize
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				line = if(Rand(0, 1) < 0.5, XLine.ar(flatness * centroid, energy * flatness, durSynth), XLine.ar(energy * flatness, centroid * flatness, durSynth));
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = if(freq < 64.5.midicps, RLPF.ar(chain, line, 0.333), RHPF.ar(chain, line, 0.333));
+				chain = chain * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("ResonzDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del, line;
+				// Normalize
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				line = if(Rand(0, 1) < 0.5, XLine.ar(energy, centroid, durSynth), XLine.ar(centroid, energy, durSynth));
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = Resonz.ar(chain, line);
+				chain = chain * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("KlankDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				// Normalize
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, dur);
+				chain = chain * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LiquidDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				var formantfreqs, formantamps, formantbandwidths; //data for formants
+				formantfreqs= [0.3, 0.6, 1, 1.6, 2.3, 2.6, 3, 3.3]; //centre frequencies of formants
+				formantamps= ([0 , -3, -6, -12, -18, -24, -30, -36]).dbamp; //peaks of formants
+				formantbandwidths=[40, 80, 120, 160, 200, 240, 280, 320];  //bandwidths
+				// Normalize
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				flux = flux.clip(0.001, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = Mix(RHPF.ar(chain, formantfreqs * energy, formantbandwidths / (formantfreqs * energy)));
+				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
+				chain = chain * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("ElasticDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del, line;
+				// Normalize
+				flux = flux.clip(0.001, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, dur), XLine.kr(flux, flatness, dur));
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain =  CombC.ar(chain, 0.1, line, 1);
+				chain = chain * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("Warp1DelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, maxDel=0.05, phase, envDel, del;
+				// Normalize
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Set play and rec head pour recording
+				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
+					// rate > 1
+					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
+				);
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+					// rate > 1
+					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+				);
+				// Rec Buffer
+				BufWr.ar(inputSig, buffer, recHead);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				chain = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, flatness, -1, energy.log2.abs, flux) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// Play Buffer
+				chain = Median.ar(flatness * 30 + 1, chain) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LeakDCDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// Play Buffer
+				chain = LeakDC.ar(chain, flux) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianLeakDCDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, maxDel=0.05, phase, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// Play Buffer
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, chain), flux) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		/////////////////////// SAMPLER STREAM DelayHarmonic//////////////////////////
+
+		SynthDef("StreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("KlankStreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				// Normalize
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LiquidStreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var formantfreqs, formantamps, formantbandwidths; //data for formants
+				formantfreqs= [0.3, 0.6, 1, 1.6, 2.3, 2.6, 3, 3.3]; //centre frequencies of formants
+				formantamps= ([0 , -3, -6, -12, -18, -24, -30, -36]).dbamp; //peaks of formants
+				formantbandwidths=[40, 80, 120, 160, 200, 240, 280, 320];  //bandwidths
+				// Normalize
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				flux = flux.clip(0.001, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = Mix(RHPF.ar(chain, formantfreqs * energy * flatness, formantbandwidths / (formantfreqs * energy)));
+				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("ElasticStreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del, line;
+				// Normalize
+				flux = flux.clip(0.001, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
+				chain =  CombC.ar(chain, 0.1, line, 1);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianStreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// Play Buffer
+				chain = Median.ar(flatness * 30 + 1, chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LeakDCStreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// Play Buffer
+				chain = LeakDC.ar(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("MedianLeakDCStreamDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				// Play Buffer
+				chain = LeakDC.ar(Median.ar(flatness * 30 + 1, chain), flux) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		/////////////////////// SAMPLER STREAM DelayHarmonicFER WITH EnvGen//////////////////////////
+
+		SynthDef("StreamDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, recHead=0, playHead=0, envelope, phase, maxDel=0.05, envDel, del;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("KlankStreamDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = DynKlank.ar(`[[Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid),Rand(energy, centroid)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, 1, 0, durSynth);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("LiquidStreamDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, phase, maxDel=0.05, envDel, del;
+				var formantfreqs, formantamps, formantbandwidths; //data for formants
+				formantfreqs= [0.3, 0.6, 1, 1.6, 2.3, 2.6, 3, 3.3]; //centre frequencies of formants
+				formantamps= ([0 , -3, -6, -12, -18, -24, -30, -36]).dbamp; //peaks of formants
+				formantbandwidths=[40, 80, 120, 160, 200, 240, 280, 320];  //bandwidths
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain = Mix(RHPF.ar(chain, formantfreqs * energy * flatness, formantbandwidths / (formantfreqs * energy)));
+				chain = BBandPass.ar(chain, LFNoise1.kr(flux) + 1 * centroid, flatness, 1);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("ElasticStreamDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain, inputSig, rate, envelope, recHead=0, playHead=0, line, phase, maxDel=0.05, envDel, del;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				line = if(Rand(0, 1) < 0.5, XLine.kr(flatness, flux, durSynth), XLine.kr(flux, flatness, durSynth));
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				chain = del.sum;
+				chain =  CombC.ar(chain, 0.1, line, 1);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		///////////////////////// PV Prebuf + DelayHarmonic ////////////////////////
+
+		SynthDef("PV_AddPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_Add(fft1, fft2);
+				chain = IFFT(chain) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_MulPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_Mul(fft1, fft2);
+				chain = IFFT(chain) * 0.5 * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_MagDivPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_MagDiv(fft1, fft2, flatness);
+				chain = IFFT(chain) * 0.5 * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_BinWipePreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
+				chain = IFFT(chain) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_RectComb2PreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, loop, seuil: ctrlHP1, sensibilite: ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
+				chain = IFFT(chain) * envelope;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		/////////////////////// Stream PV Prebuf + DelayHarmonic ////////////////////
+
+		SynthDef("PV_AddStreamPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_Add(fft1, fft2);
+				chain = IFFT(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_MulStreamPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_Mul(fft1, fft2);
+				chain = IFFT(chain) * 0.5 * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_MagDivStreamPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_MagDiv(fft1, fft2, flatness);
+				chain = IFFT(chain) * 0.5 * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_BinWipeStreamPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
+				chain = IFFT(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_RectComb2StreamPreDelayHarmonic",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0).lag(durSynth);
+				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
+				chain = IFFT(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		/////////////////////// Stream PV Prebuf + DelayHarmonic WITH EnvGen////////////////////
+
+		SynthDef("PV_AddStreamPreDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				gate = Trig1.kr(Impulse.kr(flux * 100), flatness);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_Add(fft1, fft2);
+				chain = IFFT(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_MulStreamPreDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_Mul(fft1, fft2);
+				chain = IFFT(chain) * 0.5 * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_MagDivStreamPreDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_MagDiv(fft1, fft2, flatness);
+				chain = IFFT(chain) * 0.5 * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_BinWipeStreamPreDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_BinWipe(fft1, fft2, flatness.log10.abs - 1);
+				chain = IFFT(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		SynthDef("PV_RectComb2StreamPreDelayHarmonicEnv",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
+				// Play Buffer
+				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				rate2 = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+				inputSig = In.ar(in);
+				phase = LFSaw.ar(rate2.neg, [1, 0]).range(0, maxDel);
+				envDel = SinOsc.ar(rate2, [3pi/2, pi/2]).range(0, 1).sqrt;
+				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+				in2 = del.sum;
+				// FFT
+				fft1 = FFT(LocalBuf(1024, 1), in1);
+				fft2 = FFT(LocalBuf(1024, 1), in2);
+				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
+				chain = IFFT(chain) * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;
