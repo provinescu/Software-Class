@@ -555,6 +555,7 @@ Score Commandes:
 					cmd = cmd.add("stop").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
+					{wScore.view.children.at(9).string_("Current "++cmd.asString)}.defer;
 			});
 			// key q -> stop all soft
 			if(char == $q and: {modifiers==0},
@@ -565,6 +566,7 @@ Score Commandes:
 					cmd = cmd.add("stop").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
+					{wScore.view.children.at(9).string_("Current "++cmd.asString)}.defer;
 			});
 			// key s -> start all soft
 			if(char == $s and: {modifiers==0},
@@ -575,6 +577,7 @@ Score Commandes:
 					cmd = cmd.add("start").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
+					{wScore.view.children.at(9).string_("Current "++cmd.asString)}.defer;
 			});
 			// ROBOT
 			// key r -> robot preset
