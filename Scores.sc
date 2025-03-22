@@ -778,6 +778,7 @@ Score Commandes:
 			cmd = commandeExecute.add(number).postcs;
 			netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 			{windows.value(numView.value)}.defer(2);
+			{wScore.view.children.at(9).string_("Current "++commandeExecute)}.defer;
 			commande = [];
 		};
 		// Fonction Commandes Special
@@ -786,6 +787,7 @@ Score Commandes:
 			commandeExecute.postcs;
 			netScoreAddr.do({arg net; net.sendMsg(\score, *commandeExecute)});
 			{windows.value(numView.value)}.defer(2);
+			{wScore.view.children.at(9).string_("Current "++commandeExecute)}.defer;
 			commande = [];
 		}
 
