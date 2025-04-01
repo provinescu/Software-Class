@@ -4,8 +4,7 @@ Scores {
 
 	classvar s;
 
-	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes;
-	var loopScore, windows, numView, fonctionCommandes2, startItems;
+	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes, loopScore, windows, numView, fonctionCommandes2, startItems, stopItems;
 
 	*new	{arg path=nil;
 
@@ -34,6 +33,7 @@ Scores {
 
 		items = 0;
 		startItems = 0;
+		stopItems = 100;
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// button valid score
@@ -145,11 +145,13 @@ Scores {
 				wScore.view.children.at(numView.value).focus;
 			});
 		};
-		validScore = Button(wScore,Rect(0, 0, 110, 20)).states=[["Val+Init Score", Color.black, Color.blue(0.8, 0.25)]];
+		validScore = Button(wScore,Rect(0, 0, 100, 20)).states=[["Init Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
-			items = 0;
+			/*items = 0;
 			startItems = 0;
+			stopItems = 100;
 			wScore.view.children.at(8).children.at(1).value_(0);
+			wScore.view.children.at(9).children.at(1).value_(100);*/
 			scorePlaying  = wEditScore.string.interpret;
 			scorePlaying.postcs;
 		};
@@ -158,7 +160,7 @@ Scores {
 		// Ici les ShortCuts
 
 		StaticText(wScore, Rect(0, 0, 50, 20)).string_("SCORE").stringColor_(Color.white(1.0,1.0));
-		Button(wScore,Rect(0, 0, 250, 20)).states_([["Display Score Commandes + ShortCuts", Color.black, Color.red(0.8, 0.25)]]).
+		Button(wScore,Rect(0, 0, 250, 20)).states_([["Display Score Commandes + ShortCuts", Color.black, Color.white(0.8, 0.25)]]).
 		action_(
 			{
 				TextView().name_("Commandes + ShortCuts").string_(
@@ -232,8 +234,19 @@ Score Commandes:
 		);
 
 		// Start Items Score
-		EZNumber(wScore, 160@20, "Start Items Score", ControlSpec(0, 100, 'lin', 1),
-			{arg i; items = i.value; startItems = i.value}, 0, true, 100, 50);
+		EZNumber(wScore, 110@20, "Start Score", ControlSpec(0, 100, 'lin', 1),
+			{arg i; items = i.value; startItems = i.value}, 0, true, 80, 40);
+		// End Items Score
+		EZNumber(wScore, 110@20, "End Score", ControlSpec(0, 100, 'lin', 1),
+			{arg i; stopItems = i.value}, 0, true, 80, 40).value_(100);
+		Button(wScore,Rect(0, 0, 50, 20)).states_([["Init Val", Color.yellow, Color.red(0.8, 0.25)]]).
+		action_({arg b;
+			items = 0;
+			startItems = 0;
+			stopItems = 100;
+			wScore.view.children.at(8).children.at(1).value_(0);
+			wScore.view.children.at(9).children.at(1).value_(100);
+		});
 		wScore.view.decorator.nextLine;
 		// Play Items Score
 		TextView(wScore, Rect(0, 0, 600, 20)).string_("Current");
@@ -284,7 +297,7 @@ Score Commandes:
 						pos = items;
 						{
 							windows.value(5);
-							wScore.view.children.at(9).string_("Current "++(items-1).asString + scorePlaying.at(pos));
+							wScore.view.children.at(11).string_("Current "++(items-1).asString + scorePlaying.at(pos));
 						}.defer;
 						scoreVal = [];
 						if(cmd != nil,
@@ -342,6 +355,21 @@ Score Commandes:
 										cmd = cmd.at(1);
 										val = cmd.at(item);
 								});
+								if(items >= stopItems, {
+									if(loopScore == 'off',
+										{
+											items = startItems;
+											item = 0;
+											{startTdefScore.valueAction_(0)}.defer;
+											thisThread.stop;
+											thisThread.remove;
+										},
+										{
+											items = startItems - 1;
+											item = 0;
+											time = 0;
+									});
+								});
 								items= items + 1;
 								item = 0;
 							},
@@ -357,6 +385,7 @@ Score Commandes:
 									{
 										items = startItems;
 										item = 0;
+										time = 0;
 								});
 						});
 						time.wait;
@@ -461,21 +490,29 @@ Score Commandes:
 			if(modifiers==655360 and: {unicode==210} and: {keycode==28},{fonctionCommandes.value(commande, 38)});
 			if(modifiers==655360 and: {unicode==212} and: {keycode==25},{fonctionCommandes.value(commande, 39)});
 			if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(commande, 40)});
-
 			// key < next score titem
 			if(char == $< and: {modifiers == 0} or: {char == $- and: {modifiers == 0}},
 				{
 					if(flagManualPlaying == 'on',
 						{
+							if(items > stopItems, {
+								if(loopScore == 'off',
+									{
+										{startManualScore.valueAction_(0)}.defer;
+										flagManualPlaying = 'off';
+									},
+									{
+										items = startItems;
+										item = 0;
+								});
+							});
 							cmd = scorePlaying.at(items);
 							{
 								windows.value(3);
-								wScore.view.children.at(9).string_("Current "++items.asString + scorePlaying.at(items));
+								wScore.view.children.at(11).string_("Current "++items.asString + scorePlaying.at(items));
 							}.defer;
-							if(cmd != nil,
+							if(items <= stopItems,
 								{
-									// Time
-									time = cmd.at(0);
 									// Commande
 									cmd = cmd.at(1);
 									val = cmd.at(item);
@@ -517,8 +554,6 @@ Score Commandes:
 										},
 										{
 											cmd = scorePlaying.at(items);
-											// Time
-											time = cmd.at(0);
 											// Commande
 											cmd = cmd.at(1);
 											val = cmd.at(item);
@@ -537,8 +572,10 @@ Score Commandes:
 										{
 											items = startItems;
 											item = 0;
+
 									});
-							});
+								};
+							);
 					});
 			});
 			// key l -> load Preset for all soft
@@ -555,7 +592,7 @@ Score Commandes:
 					cmd = cmd.add("stop").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
-					{wScore.view.children.at(9).string_("Current "++cmd.asString)}.defer;
+					{wScore.view.children.at(11).string_("Current "++cmd.asString)}.defer;
 			});
 			// key q -> stop all soft
 			if(char == $q and: {modifiers==0},
@@ -566,7 +603,7 @@ Score Commandes:
 					cmd = cmd.add("stop").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
-					{wScore.view.children.at(9).string_("Current "++cmd.asString)}.defer;
+					{wScore.view.children.at(11).string_("Current "++cmd.asString)}.defer;
 			});
 			// key s -> start all soft
 			if(char == $s and: {modifiers==0},
@@ -577,7 +614,7 @@ Score Commandes:
 					cmd = cmd.add("start").postcs;
 					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 					{windows.value(numView.value)}.defer(2);
-					{wScore.view.children.at(9).string_("Current "++cmd.asString)}.defer;
+					{wScore.view.children.at(11).string_("Current "++cmd.asString)}.defer;
 			});
 			// ROBOT
 			// key r -> robot preset
@@ -781,7 +818,7 @@ Score Commandes:
 			cmd = commandeExecute.add(number).postcs;
 			netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
 			{windows.value(numView.value)}.defer(2);
-			{wScore.view.children.at(9).string_("Current "++commandeExecute)}.defer;
+			{wScore.view.children.at(11).string_("Current "++commandeExecute)}.defer;
 			commande = [];
 		};
 		// Fonction Commandes Special
@@ -790,7 +827,7 @@ Score Commandes:
 			commandeExecute.postcs;
 			netScoreAddr.do({arg net; net.sendMsg(\score, *commandeExecute)});
 			{windows.value(numView.value)}.defer(2);
-			{wScore.view.children.at(9).string_("Current "++commandeExecute)}.defer;
+			{wScore.view.children.at(11).string_("Current "++commandeExecute)}.defer;
 			commande = [];
 		}
 
