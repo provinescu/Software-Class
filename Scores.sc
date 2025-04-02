@@ -406,7 +406,7 @@ Score Commandes:
 
 			var val, time, cmd = 'on', item = 0, scoreVal=[], number;
 
-			//[view, char, modifiers, unicode, keycode].postcs;
+			[view, char, modifiers, unicode, keycode].postcs;
 
 			// Touches pave numerique
 			if(modifiers==2097152 and: {unicode==49} and: {keycode==83},{fonctionCommandes.value(commande, 1)});
@@ -491,7 +491,7 @@ Score Commandes:
 			if(modifiers==655360 and: {unicode==212} and: {keycode==25},{fonctionCommandes.value(commande, 39)});
 			if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(commande, 40)});
 			// key < next score titem
-			if(char == $< and: {modifiers == 0} or: {char == $- and: {modifiers == 0}},
+			if(char == $< and: {modifiers == 0} or: {char == $- and: {modifiers == 0}} or: {char == 0.asAscii and: {modifiers == 1048576}},
 				{
 					if(flagManualPlaying == 'on',
 						{
