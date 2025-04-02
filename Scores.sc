@@ -4,7 +4,7 @@ Scores {
 
 	classvar s;
 
-	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes, loopScore, windows, numView, fonctionCommandes2, startItems, stopItems, bpm;
+	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes, loopScore, windows, numView, fonctionCommandes2, startItems, stopItems, bpm, dimScore;
 
 	*new	{arg path=nil;
 
@@ -39,8 +39,9 @@ Scores {
 
 		items = 0;
 		startItems = 0;
-		stopItems = 100;
+		stopItems = 2;
 		bpm = 1;
+		dimScore = 2;
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// button valid score
@@ -60,6 +61,12 @@ Scores {
 						file.close;
 						//wScore.name="Score Editor/Player and ShortCuts Controls for HP Software " + path.asPathName.fileName;
 						wScore.view.children.at(0).string = "Score Editor/Player and ShortCuts Controls for HP Software | " + path.asPathName.fileName;
+						dimScore = scorePlaying.size - 1;
+						items = 0;
+						startItems = 0;
+						stopItems = dimScore;
+						wScore.view.children.at(8).children.at(1).value_(startItems);
+						wScore.view.children.at(9).children.at(1).value_(stopItems);
 					}, {"cancelled".postln});
 				},
 				// Save score
@@ -148,13 +155,14 @@ Scores {
 		};
 		validScore = Button(wScore,Rect(0, 0, 100, 20)).states=[["Init Score", Color.black, Color.blue(0.8, 0.25)]];
 		validScore.action = {arg view;
-			/*items = 0;
-			startItems = 0;
-			stopItems = 100;
-			wScore.view.children.at(8).children.at(1).value_(0);
-			wScore.view.children.at(9).children.at(1).value_(100);*/
 			scorePlaying  = wEditScore.string.interpret;
 			scorePlaying.postcs;
+			dimScore = scorePlaying.size - 1;
+			/*items= 0;
+			startItems = 0;
+			stopItems = dimScore;
+			wScore.view.children.at(8).children.at(1).value_(startItems);
+			wScore.view.children.at(9).children.at(1).value_(stopItems);*/
 		};
 		wScore.view.decorator.nextLine;
 
@@ -236,18 +244,18 @@ Score Commandes:
 
 		// Start Items Score
 		EZNumber(wScore, 110@20, "Start Score", ControlSpec(0, 100, 'lin', 1),
-			{arg i; items = i.value; startItems = i.value}, 0, true, 80, 40);
+			{arg i; items = i.value; startItems = i.value}, 0, true, 80, 40).value_(0);
 		// End Items Score
 		EZNumber(wScore, 110@20, "End Score", ControlSpec(0, 100, 'lin', 1),
-			{arg i; stopItems = i.value}, 0, true, 80, 40);
+			{arg i; stopItems = i.value}, 0, true, 80, 40).value_(dimScore);
 		// Init
 		Button(wScore,Rect(0, 0, 50, 20)).states_([["Init Val", Color.white, Color.red(0.8, 0.25)]]).
 		action_({arg b;
 			items = 0;
 			startItems = 0;
-			stopItems = 100;
-			wScore.view.children.at(8).children.at(1).value_(0);
-			wScore.view.children.at(9).children.at(1).value_(100);
+			stopItems = dimScore;
+			wScore.view.children.at(8).children.at(1).value_(startItems);
+			wScore.view.children.at(9).children.at(1).value_(stopItems);
 		});
 		// BPM
 		EZNumber(wScore, 80@20, "BPM", ControlSpec(1, 480, 'lin', 1),
@@ -267,25 +275,8 @@ Score Commandes:
 		wEditScore.font_(Font("Time", 14));
 		wEditScore.string_("[
 [ 1, ['all', 'stop'] ],
-
-[ 2, ['all', 'preset', 1, 'agents', 'start',] ],
-[ 2, ['matrix', 'start',] ],
-[ 2, ['wektime', 'start'] ],
-
-[ 1, ['all', 'stop'] ],
-
-[ 2, ['all', 'preset', 2, 'wektime', 'start',] ],
-[ 2, ['agents', 'start',] ],
-[ 2, ['matrix', 'start'] ],
-
-[ 1, ['all', 'stop'] ],
-
-[ 2, ['all', 'preset', 3, 'agents', 'start',] ],
-[ 2, ['matrix', 'start',] ],
-[ 2, ['wektime', 'start'] ],
-
-[ 1, ['all', 'stop'] ],
-
+[ 2, ['all', 'preset', 1] ],
+[ 2, ['all', 'start'] ]
 ]");
 
 		wScore.onClose_({});
@@ -293,10 +284,10 @@ Score Commandes:
 		wScore.front;
 
 		// Init view
-		wScore.view.children.at(8).children.at(1).valueAction_(0);
-		wScore.view.children.at(9).children.at(1).valueAction_(100);
-		wScore.view.children.at(10).valueAction = 1;
-		wScore.view.children.at(11).children.at(1).valueAction_(60);
+		validScore.valueAction = 1;
+		wScore.view.children.at(8).children.at(1).valueAction = 0;
+		wScore.view.children.at(9).children.at(1).valueAction = dimScore;
+		wScore.view.children.at(11).children.at(1).valueAction = 60;
 
 		// PROCESSUS Read Score
 		routineScore = {arg score;
@@ -397,7 +388,7 @@ Score Commandes:
 										item = 0;
 								});
 						});
-						(time * bpm.reciprocal).wait;
+						(time * bpm.reciprocal).max(0.0417).wait;
 					});
 			}).play;
 		};
