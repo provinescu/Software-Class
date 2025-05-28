@@ -179,6 +179,8 @@ esc stop all soft
 q stop all soft
 s play all soft
 l Load preset for all soft
+k wekinator start all soft
+crtrl + k wekinator stop all soft
 < or - next commande manual score
 
 r robot preset
@@ -220,6 +222,13 @@ p provinescu preset
 alt+p provinescu start
 ctrl+p provinescu stop
 
+K wekinator agents start
+ctrl + K wekinator agents stop
+alt + k wekinator time start
+ctrl + alt + k wekinator time stop
+alt + K wekinator density start
+ctrl + alt + K wekinator density stop
+
 Score Commandes:
 
 'all'
@@ -237,6 +246,8 @@ Score Commandes:
 'preset'
 'start'
 'stop'
+'wekrun'
+'wekstop'
 "
 				).front;
 			}
@@ -329,7 +340,7 @@ Score Commandes:
 														scoreVal = [];
 												});
 												// Start Stop
-												if(val == 'stop' or: {val == 'start'}, {
+												if(val == 'stop' or: {val == 'start'} or: {val == 'wekrun'} or: {val == 'wekstop'}, {
 													scoreVal.postcs;
 													netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 													{windows.value(5)}.defer(2);
@@ -535,7 +546,7 @@ Score Commandes:
 															scoreVal = [];
 													});
 													// Start Stop
-													if(val == 'stop' or: {val == 'start'}, {
+													if(val == 'stop' or: {val == 'start'} or: {val == 'wekrun'} or: {val == 'wekstop'}, {
 														scoreVal.postcs;
 														netScoreAddr.do({arg net; net.sendMsg(\score, *scoreVal)});
 														{windows.value(3)}.defer(2);
@@ -807,6 +818,54 @@ Score Commandes:
 			if(char == 16.asAscii and: {modifiers==262144},
 				{
 					commande = ["provinescu", "stop"];
+					fonctionCommandes2.value(commande);
+			});
+			// k wekinator start
+			if(char == $k and: {modifiers==0},
+				{
+					commande = ["all", "wekrun"];
+					fonctionCommandes2.value(commande);
+			});
+			// ctrl + k wekinator stop
+			if(char == 11.asAscii and: {modifiers==262144},
+				{
+					commande = ["all", "wekstop"];
+					fonctionCommandes2.value(commande);
+			});
+			// K wekinator agents start
+			if(char == 75.asAscii and: {modifiers==131072},
+				{
+					commande = ["wekagents", "wekrun"];
+					fonctionCommandes2.value(commande);
+			});
+			// ctrl + K wekinator agents stop
+			if(char == 11.asAscii and: {modifiers==393216},
+				{
+					commande = ["wekagents", "wekstop"];
+					fonctionCommandes2.value(commande);
+			});
+			// alt + k wekinator time start
+			if(char == 107.asAscii and: {modifiers==524288},
+				{
+					commande = ["wektime", "wekrun"];
+					fonctionCommandes2.value(commande);
+			});
+			// ctrl + alt + k wekinator time stop
+			if(char == 11.asAscii and: {modifiers==786432},
+				{
+					commande = ["wektime", "wekstop"];
+					fonctionCommandes2.value(commande);
+			});
+			// alt + K ekinator density start
+			if(char == 75.asAscii and: {modifiers==655360},
+				{
+					commande = ["wekdensity", "wekrun"];
+					fonctionCommandes2.value(commande);
+			});
+			// ctrl + alt + K wekinator density stop
+			if(char == 11.asAscii and: {modifiers==917504},
+				{
+					commande = ["wekdensity", "wekstop"];
 					fonctionCommandes2.value(commande);
 			});
 		};
