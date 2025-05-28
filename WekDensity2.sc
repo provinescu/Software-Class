@@ -131,6 +131,21 @@ WekDensity2 {
 									startSystem.valueAction_(1);
 								}.defer;
 							});
+							// Wekinator Start
+							if(cmd  == 'wekrun', {
+								flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+								{
+									windowPlotterData.view.children.at(2).valueAction = 0;// rec
+									windowPlotterData.view.children.at(4).value = 1;// run
+								}.defer;
+							});
+							//Wekinator Stop
+							if(cmd == 'wekstop', {
+								flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+								{
+									windowPlotterData.view.children.at(4).value = 0;// run
+								}.defer;
+							});
 					});
 					item = item + 3;
 					cmd = msg[item];
@@ -1066,7 +1081,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				path = PathName.new(path);
 				pathonly = path.pathOnly;
 				name = path.fileName;
-				name = "preset" + name;
+				//name = "preset" + name;
 				path = pathonly ++ name;
 				fileName = PathName.new(path).fileName;
 				path = PathName.new(path).fullPath;

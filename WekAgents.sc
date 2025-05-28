@@ -570,7 +570,7 @@ Preset Wek",
 					path = PathName.new(path);
 					pathonly = path.pathOnly;
 					name = path.fileName;
-					name = "preset"+name;
+					//name = "preset"+name;
 					path = pathonly++name;
 					fileName = PathName.new(path).fileName;
 					path = PathName.new(path).fullPath;
@@ -1144,6 +1144,21 @@ Preset Wek",
 							if(cmd == 'start', {
 								{
 									~startsysteme.valueAction_(1);
+								}.defer;
+							});
+							// Wekinator Start
+							if(cmd  == 'wekrun', {
+								flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+								{
+									~wp.view.children.wrapAt(95).valueAction = 0;// rec
+									~wp.view.children.wrapAt(97).value = 1;// run
+								}.defer;
+							});
+							//Wekinator Stop
+							if(cmd == 'wekstop', {
+								flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+								{
+									~wp.view.children.wrapAt(97).value = 0;// run
 								}.defer;
 							});
 					});
@@ -8425,15 +8440,15 @@ Preset Wek",
 					rate=2**rate.cpsoct;
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					// envelope
-			envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					inputSig = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * reverse, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				main = del.sum;
+					rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+					phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+					envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+					del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+					main = del.sum;
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,

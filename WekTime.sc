@@ -117,6 +117,21 @@ WekTime {
 									windowExternalControlGUI.view.children.at(0).valueAction_(1);
 								}.defer;
 							});
+							// Wekinator Start
+							if(cmd  == 'wekrun', {
+								flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+								{
+									windowExternalControlGUI.view.children.at(32).valueAction = 0;// rec
+									windowExternalControlGUI.view.children.at(34).value = 1;// run
+								}.defer;
+							});
+							//Wekinator Stop
+							if(cmd == 'wekstop', {
+								flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+								{
+									windowExternalControlGUI.view.children.at(34).value = 0;// run
+								}.defer;
+							});
 					});
 					item = item + 3;
 					cmd = msg[item];
