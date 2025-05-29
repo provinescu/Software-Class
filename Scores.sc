@@ -502,7 +502,7 @@ Score Commandes:
 			if(modifiers==655360 and: {unicode==212} and: {keycode==25},{fonctionCommandes.value(commande, 39)});
 			if(modifiers==655360 and: {unicode==218} and: {keycode==29},{fonctionCommandes.value(commande, 40)});
 			// key < next score titem
-			if(char == $< and: {modifiers == 0} or: {char == $- and: {modifiers == 0}} or: {char == 0.asAscii and: {modifiers == 1048576}} or: {char == 0.asAscii and: {modifiers == 524288}} or: {char == 0.asAscii and: {modifiers == 262144}},
+			if(char == $< and: {modifiers == 0} or: {char == $- and: {modifiers == 0}} or: {char == 13.asAscii and: {modifiers == 0}},
 				{
 					if(flagManualPlaying == 'on',
 						{
