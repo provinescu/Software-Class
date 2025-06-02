@@ -180,7 +180,7 @@ q stop all soft
 s play all soft
 l Load preset for all soft
 k wekinator start all soft
-crtrl + k wekinator stop all soft
+j or crtrl + k wekinator stop all soft
 < or - next commande manual score
 
 r robot preset
@@ -826,8 +826,8 @@ Score Commandes:
 					commande = ["all", "wekrun"];
 					fonctionCommandes2.value(commande);
 			});
-			// ctrl + k wekinator stop
-			if(char == 11.asAscii and: {modifiers==262144},
+			// ctrl + k ou j wekinator stop
+			if(char == 11.asAscii and: {modifiers==262144} or: {char == $j and: {modifiers==0}},
 				{
 					commande = ["all", "wekstop"];
 					fonctionCommandes2.value(commande);
