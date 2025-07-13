@@ -2853,7 +2853,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				path = PathName.new(path);
 				pathonly = path.pathOnly;
 				name = path.fileName;
-				name = "preset" + name;
+				//name = "preset" + name;
 				path = pathonly ++ name;
 				fileName = PathName.new(path).fileName;
 				path = PathName.new(path).fullPath;

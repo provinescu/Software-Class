@@ -456,6 +456,14 @@ Density2 {
 			[
 				"SynthSamplerStreamEnv",
 			],
+			// Experiment Synth
+			[
+				"ExperimentSynth1",
+			],
+			// Experiment Synth Stream
+			[
+				"ExperimentSynthStream1",
+			],
 		];
 
 		// FX
@@ -2863,7 +2871,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				path = PathName.new(path);
 				pathonly = path.pathOnly;
 				name = path.fileName;
-				name = "preset" + name;
+				//name = "preset" + name;
 				path = pathonly ++ name;
 				fileName = PathName.new(path).fileName;
 				path = PathName.new(path).fullPath;
@@ -9212,6 +9220,59 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				fft2 = FFT(LocalBuf(1024, 1), in2);
 				chain = PV_RectComb2(fft1, fft2, flux.log10.abs * 16, flux, flatness.log10.abs / 2);
 				chain = IFFT(chain) * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		////////////////////////// EXPERIMENTAL SYNTH /////////////////////////////////////////////7
+
+		// Experimental Synth
+		SynthDef("ExperimentSynth1",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, dur, 2);
+				// Play Buffer
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, gate, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				chain =  HPF.ar(chain, energy, 1, LPF.ar(chain, centroid, 1));
+				chain = CombC.ar(chain, 0.2, flux, flatness);
+				chain = chain * envelope * amp;
+				// Out
+				Out.ar(out, chain);
+		}).add;
+
+		// Experimental Synth Stream
+		SynthDef("ExperimentSynthStream1",
+			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
+				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
+				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
+				var chain,  inputSig, rate, envelope, in1, in2, fft1, fft2, phase, maxDel=0.05, envDel, del, rate2;
+				// Normalize
+				flux = flux.clip(0.01, 1.0);
+				flatness = flatness.clip(0.1, 0.5);
+				energy = (energy / 8372 * 4186).clip(50, 4186);
+				centroid = (centroid / 12544 * 8372).clip(50, 8372);
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
+				//gate = Impulse.kr(dur.reciprocal);
+				// Envelope
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth, 2);
+				// Play Buffer
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate.lag(bpm), 1, BufFrames.kr(buffer) * offset, 1, ctrlHP1, ctrlHP2);
+				chain =  HPF.ar(chain, energy, 1, LPF.ar(chain, centroid, 1));
+				chain = CombC.ar(chain, 0.2, flux, flatness);
+				chain = chain * envelope * amp;
 				// Out
 				Out.ar(out, chain);
 		}).add;

@@ -2,18 +2,18 @@
 
 LiveCode {
 
-	classvar <> s;
+	classvar <> s,
 
-	var pathData, midiOut, numberAudioIn, numberAudioOut, recChannels, typeMasterOut, widthMC, orientationMC, winCode, editCode, validCode, menuCode, runCode, synth;
-	var groupSynth, groupAnalyze, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyzeOnsets, synthAnalyzePitch, synthAnalyzePitch2, synthAnalyzeKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, bufferFile, fonctionLoadFileForAnalyze;
-	var rangeFlux, rangeFlatness, rangeCentroid, rangeEnergy, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, busOSCfreq, busOSCamp, busOSCduree;
-	var windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, plotterData, displayAnalyzeFFT, plotDataMusic;
-	var dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, maximumData;
-	var synthVST, fxVST, groupeVST, flagVST, cmdperiodfunc, canalMIDI, oscMusicFFT, lastTime, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, numFhzBand, bandFHZ, switchSourceIn, switchAnalyze, typeAlgoAnalyze, numIndexSynthBand, indexDataDuree, indexDataFreq, indexDataAmp;
-	var dataFreq, dataAmp, dataDuree, serveurAdresse, groupeMasterOut,groupeVST, groupeLimiter, groupeVerb;
-	var gVerb, allPass, jpVerb, freeVerb, channelsVerb, verb, synthMasterOut, busSynthInOut;
+	pathData, midiOut, numberAudioIn, numberAudioOut, recChannels, typeMasterOut, widthMC, orientationMC, winCode, editCode, validCode, menuCode, runCode, synth,
+	groupSynth, groupAnalyze, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyzeOnsets, synthAnalyzePitch, synthAnalyzePitch2, synthAnalyzeKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, bufferFile, fonctionLoadFileForAnalyze,
+	rangeFlux, rangeFlatness, rangeCentroid, rangeEnergy, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, busOSCfreq, busOSCamp, busOSCduree,
+	windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, plotterData, displayAnalyzeFFT, plotDataMusic,
+	dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, maximumData,
+	synthVST, fxVST, groupeVST, flagVST, cmdperiodfunc, canalMIDI, oscMusicFFT, lastTime, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, numFhzBand, bandFHZ, switchSourceIn, switchAnalyze, typeAlgoAnalyze, numIndexSynthBand, indexDataDuree, indexDataFreq, indexDataAmp,
+	dataFreq, dataAmp, dataDuree, serveurAdresse, groupeMasterOut,groupeVST, groupeLimiter, groupeVerb,
+	gVerb, allPass, jpVerb, freeVerb, channelsVerb, verb, synthMasterOut, busSynthInOut;
 
-	*new {arg path = "~/Documents/LiveCode/", ni = 10, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="HDMI"/*"Built-in Output"*/, size = 512, wid=2.0, ori=0.5, flag=0, name="LiveCode", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path = "~/Documents/LiveCode/", ni = 10, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="HDMI"/*"Built-in Output"*/, size = 512, wid=2.0, ori=0.5, flag=0, name="LiveCode", scPort=57110;
 
 		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort);
 
@@ -79,10 +79,10 @@ LiveCode {
 			this.run;
 
 			cmdperiodfunc = {
-			Window.closeAll;
-		};
+				Window.closeAll;
+			};
 
-		CmdPeriod.doOnce(cmdperiodfunc);
+			CmdPeriod.doOnce(cmdperiodfunc);
 
 		});
 
@@ -115,7 +115,7 @@ LiveCode {
 			};
 			bufferFile.value;
 		};
-		fonctionLoadFileForAnalyze.value("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01.wav");
+		fonctionLoadFileForAnalyze.value("/Users/hp/Music/Sounds/Drums HP/HP Slow Jazz Drums.wav"/*"/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01.wav"*/);
 
 		// Init Data
 		dataFlux = [];
@@ -247,24 +247,24 @@ LiveCode {
 
 		//Init EndProcessing
 
-		 synthMasterOut = Synth.newPaused(typeMasterOut, [\in, busSynthInOut, \out, 0], groupeMasterOut, \addToTail);
+		synthMasterOut = Synth.newPaused(typeMasterOut, [\in, busSynthInOut, \out, 0], groupeMasterOut, \addToTail);
 
 		//gVerb = Synth.newPaused("GVerb" + typeMasterOut, [\out, channelsVerb, \xFade, 0, \panLo, 0, \panHi, 0, \drylevel, 0, \earlylevel, 0, \taillevel, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-			s.sync;
+		s.sync;
 
-			//freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\out, channelsVerb, \xFade, 0.5, \panLo, 0, \panHi, 0, \drylevel, 0.9, \earlylevel, 0.5, \taillevel, 0.9], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-			s.sync;
+		//freeVerb = Synth.newPaused("FreeVerb" + typeMasterOut, [\out, channelsVerb, \xFade, 0.5, \panLo, 0, \panHi, 0, \drylevel, 0.9, \earlylevel, 0.5, \taillevel, 0.9], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+		s.sync;
 
-			verb = /*allPass =*/ Synth.newPaused("Allpass" + typeMasterOut, [\out, channelsVerb, \xFade, 0.33, \panLo, 0, \panHi, 0, \drylevel, 0.5, \earlylevel, 0.6, \taillevel, 0.8], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-			s.sync;
+		verb = /*allPass =*/ Synth.newPaused("Allpass" + typeMasterOut, [\out, channelsVerb, \xFade, 0.33, \panLo, 0, \panHi, 0, \drylevel, 0.5, \earlylevel, 0.6, \taillevel, 0.8], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+		s.sync;
 
-			//jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\out, channelsVerb, \xFade, 0.5, \panLo, 0, \panHi, 0, \drylevel, 0.5, \earlylevel, 0.5, \taillevel, 0.5], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-			s.sync;
+		//jpVerb = Synth.newPaused("JPverb" + typeMasterOut, [\out, channelsVerb, \xFade, 0.5, \panLo, 0, \panHi, 0, \drylevel, 0.5, \earlylevel, 0.5, \taillevel, 0.5], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+		s.sync;
 
 		Synth.new("SynthLimiter", [\limit, -3.dbamp], groupeLimiter, \addToTail);
 		s.sync;
 
-		synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+		synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeVST, \addToTail);
 		fxVST = VSTPluginController(synthVST);
 		s.sync;
 
@@ -391,7 +391,7 @@ LiveCode {
 		StaticText(winCode, Rect(0, 0, 500, 24)).string_("LiveCode").stringColor_(Color.yellow);
 		winCode.view.decorator.nextLine;
 		// Load Coding
-		menuCode = PopUpMenu(winCode,Rect(0, 0, 100, 20)).background_(Color.grey(0.5, 0.8)).items = ["User Menu", "Load Code", "Save Code"];
+		menuCode = PopUpMenu(winCode,Rect(0, 0, 100, 20)).background_(Color.grey(0.5, 0.8)).items = ["User Menu", "Load Code", "Save Code", "Write", "Read"];
 		menuCode.action={arg item, file;
 			item.value.switch(
 				// Do Nothing
@@ -407,7 +407,28 @@ LiveCode {
 					winCode.name="LiveCode"+path;
 					file=File(path++".scd","w");
 					file.write(editCode.string);file.close;
-				},{"cancelled".postln})}
+				},{"cancelled".postln})},
+				3, {
+					[rangeCentroid, rangeEnergy, rangeFlux, rangeFlatness].writeArchive("/Users/hp/Documents/SC3/test")},
+				4, {
+					#rangeCentroid, rangeEnergy, rangeFlux, rangeFlatness = Object.readArchive("/Users/hp/Documents/SC3/test");
+					windowPlotterData.view.children.at(1).children.at(2).lo_(rangeCentroid[0]);
+					windowPlotterData.view.children.at(1).children.at(2).hi_(rangeCentroid[1]);
+					windowPlotterData.view.children.at(1).children.at(1).value_(rangeCentroid[0]);
+					windowPlotterData.view.children.at(1).children.at(3).value_(rangeCentroid[1]);
+					windowPlotterData.view.children.at(2).children.at(2).lo_(rangeEnergy[0]);
+					windowPlotterData.view.children.at(2).children.at(2).hi_(rangeEnergy[1]);
+					windowPlotterData.view.children.at(2).children.at(1).value_(rangeEnergy[0]);
+					windowPlotterData.view.children.at(2).children.at(3).value_(rangeEnergy[1]);
+					windowPlotterData.view.children.at(3).children.at(2).lo_(rangeFlux[0]);
+					windowPlotterData.view.children.at(3).children.at(2).hi_(rangeFlux[1]);
+					windowPlotterData.view.children.at(3).children.at(1).value_(rangeFlux[0]);
+					windowPlotterData.view.children.at(3).children.at(3).value_(rangeFlux[1]);
+					windowPlotterData.view.children.at(4).children.at(2).lo_(rangeFlatness[0]);
+					windowPlotterData.view.children.at(4).children.at(2).hi_(rangeFlatness[1]);
+					windowPlotterData.view.children.at(4).children.at(1).value_(rangeFlatness[0]);
+					windowPlotterData.view.children.at(4).children.at(3).value_(rangeFlatness[1]);
+				}
 			);
 			menuCode.value_(0);
 		};
@@ -527,12 +548,23 @@ LiveCode {
 		editCode.hasHorizontalScroller_(true);
 		editCode.autohidesScrollers_(true);
 		editCode.resize_(5);
-		editCode.string_("SynthDef('LiveCode'.asString, { |in=0, out=0, freq=440, amp=0.1, dur=1, bpm=1, centroid=440, energy=440, flux=0.5, flatness=0.5|
-var sig, trig;
-sig = Saw.ar(freq, amp.max(0.1));
-trig = Impulse.kr(dur.reciprocal);
-sig = sig * EnvGen.kr(Env.perc, trig, 1, 0, dur);// doneAction: Done.freeSelf
-sig = Pan2.ar(sig, flux*2-1);
+		editCode.string_("
+			SynthDef('LiveCode'.asString, { |in=0, out=0, freq=440, amp=0.1, dur=1, bpm=1, centroid=440, energy=440, flux=0.5, flatness=0.5|
+var sig, trig, buffer, rate;
+buffer = LocalBuf.new(48000,1);
+trig = Impulse.kr(dur.reciprocal.lag(bpm));
+in = SoundIn.ar(0);// carte son
+RecordBuf.ar(in, buffer, 0, 1, 0.5);
+rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+//sig = PlayBuf.ar(1, buffer, rate, 0, BufFrames.kr(buffer));
+sig = Saw.ar(freq.lag(bpm), amp.max(0.6));
+sig = sig * EnvGen.kr(Env.perc, trig, 1, 0, dur.lag(bpm));// doneAction: Done.freeSelf
+trig = Impulse.kr(dur.reciprocal.lag(bpm));
+sig = HPF.ar(sig, energy, 0.5, LPF.ar(sig, centroid, 0.5));
+sig = sig * EnvGen.kr(Env.perc, trig, 1, 0, dur.lag(bpm));// doneAction: Done.freeSelf
+sig = CombC.ar(sig, 0.2, flux, flatness);
+
+sig = Pan2.ar(sig, TRand.kr(-1, 1, trig));
 Out.ar(0, sig);
 }).add;
 ");
@@ -551,16 +583,16 @@ Out.ar(0, sig);
 		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0],[0],[0],[0],[0],[0]]; plotterData = [[0], [0], [0],[0],[0],[0],[0],[0]]};
 
 		// Range FFT
-		EZRanger(windowPlotterData , 500 @ 20, "Centroid", \unipolar,
+		EZRanger(windowPlotterData , 500 @ 20, "Centroid", ControlSpec(0.001, 1, \lin),
 			{|ez| rangeCentroid = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
 		// Range FFT
-		EZRanger(windowPlotterData , 500 @ 20, "Energy", \unipolar,
+		EZRanger(windowPlotterData , 500 @ 20, "Energy", ControlSpec(0.001, 1, \lin),
 			{|ez| rangeEnergy = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
 		// Range FFT
-		EZRanger(windowPlotterData , 500 @ 20, "Flux", \unipolar,
+		EZRanger(windowPlotterData , 500 @ 20, "Flux", ControlSpec(0.001, 1, \lin),
 			{|ez| rangeFlux = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
 		// Range FFT
-		EZRanger(windowPlotterData , 500 @ 20, "Flatness", \unipolar,
+		EZRanger(windowPlotterData , 500 @ 20, "Flatness", ControlSpec(0.001, 1, \lin),
 			{|ez| rangeFlatness = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
 		// Plotter
 		plotterDataGUI = Plotter("Analyze Data", Rect(0, 0, 500, 390), windowPlotterData).plotMode_(\steps);
