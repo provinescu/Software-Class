@@ -187,8 +187,6 @@ WekMatrix {
 			'VarSaw',
 			'Pulse',
 			'Klang',
-			'Klank',
-			'Klank2',
 			'Gendy3',
 			'Spring',
 			'Silent',
@@ -5228,7 +5226,7 @@ Preset Wek",
 											\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
 											\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
 											\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-											\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 0], groupe, \addToTail).map(\freq, busOSC.at(indexNumFhzBand));
+											\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 0], groupe, \addToTail).mapn(\freq, busOSC.at(indexNumFhzBand), \ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
 									},
 									{
 										fork{1.wait; "Warning Synth or FX Mode not Valid".postcs};
@@ -6090,13 +6088,11 @@ Preset Wek",
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				//// Set offset
-				//ctrl4 = if(ctrl4.value <= 0 , ctrl4.value, Logistic.kr(ctrl4*4, 1, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Resonz.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4));
+				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl4).max(0.01)).linexp(0, 1, 108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3+1.midicps, \minmax).clip(20, 20000));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -6157,7 +6153,7 @@ Preset Wek",
 				freq = freq.clip(20, 12544);
 				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3 + 1.midicps, dureeSample*ctrl4), 0.333), RHPF.ar(chain, XLine.ar(108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6 + 1.midicps, dureeSample*ctrl7), 0.333));
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl4).max(0.01)).linexp(0, 1, 108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl7).max(0.01)).linexp(0, 1, 108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6+1.midicps, \minmax).clip(0, 20000), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -6566,7 +6562,7 @@ Preset Wek",
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Line.kr(ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl6.clip(0.01, 1.0)*dureeSample).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -6624,7 +6620,7 @@ Preset Wek",
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Line.kr(Rand(ctrl2.clip(0.01, 0.99), ctrl3.clip(0.01, 0.99))/100, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, ctrl6.clip(0.01, 1.0)*dureeSample), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl6.clip(0.01, 1.0)*dureeSample).linexp(0,1, Rand(ctrl2.clip(0.01, 0.99), ctrl3.clip(0.01, 0.99))/100, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100), 1, 0.5);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -6852,7 +6848,7 @@ Preset Wek",
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Set offset
-				ctrl3 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
+				ctrl3 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2 + 3, ctrl3 * 100, TRand(0, 1, Impulse.kr(duree.reciprocal))));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				//chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -6903,6 +6899,7 @@ Preset Wek",
 		dureeSample = dureeSample + (loopOne * (duree - dureeSample));
 		dureeSample = clip2(duree, dureeSample);
 		// Envelope
+
 		envelope = Select.kr(mode, [
 		EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 		EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
@@ -9181,7 +9178,7 @@ Preset Wek",
 				// Synth
 				freq = freq.clip(20,12544);
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.ar(63.5.midicps*ctrl1+27.5, freq, duree*ctrl3), 0.333), RHPF.ar(chain, XLine.ar(127.midicps*ctrl2+27.5, freq, duree*ctrl3), 0.333));
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.kr(63.5.midicps*ctrl1+27.5, freq, duree*ctrl3), 0.333), RHPF.ar(chain, XLine.kr(127.midicps*ctrl2+27.5, freq, duree*ctrl3), 0.333));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -9227,7 +9224,7 @@ Preset Wek",
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				chain = if(freq >= 60.midicps , Resonz.ar(chain, XLine.ar(127.midicps*ctrl1+21.midicps, 55*ctrl2 + 21.midicps, duree*ctrl3)), Resonz.ar(chain, XLine.ar(55*ctrl1+21.midicps, 127.midicps*ctrl2 + 21.midicps, duree*ctrl3)));
+				chain = if(freq >= 60.midicps , Resonz.ar(chain, XLine.kr(127.midicps*ctrl1+21.midicps, 55*ctrl2 + 21.midicps, duree*ctrl3)), Resonz.ar(chain, XLine.kr(55*ctrl1+21.midicps, 127.midicps*ctrl2 + 21.midicps, duree*ctrl3)));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11117,7 +11114,7 @@ Preset Wek",
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(SinOsc.ar(SinOsc.kr(ctrl1*8, mul: Line.kr(0, ctrl2*100, ctrl3*duree), add: freq), mul: amp / 4) + SinOsc.ar(SinOsc.kr(ctrl4*16, mul: Line.kr(0, ctrl5*100, ctrl6*duree), add: freq), mul: amp / 4) + SinOsc.ar(SinOsc.kr(ctrl7*24, mul: Line.kr(0, ctrl8*100, ctrl9*duree), add: freq), mul: amp / 4) + SinOsc.ar(SinOsc.kr(ctrl10*32, mul: Line.kr(0, ctrl11*100, ctrl12*duree), add: freq), mul: amp / 4));
+				chain = Mix(SinOsc.ar(SinOsc.kr(ctrl1*8, mul: TRand.kr(0, ctrl2*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp / 6) + SinOsc.ar(SinOsc.kr(ctrl3*16, mul: TRand.kr(0, ctrl4*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp / 6) + SinOsc.ar(SinOsc.kr(ctrl5*24, mul: TRand.kr(0, ctrl6*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp / 6) + SinOsc.ar(SinOsc.kr(ctrl7*32, mul: TRand.kr(0, ctrl8*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp / 6) + SinOsc.ar(SinOsc.kr(ctrl1*9, mul: TRand.kr(0, ctrl10*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp / 6) + SinOsc.ar(SinOsc.kr(ctrl11*128, mul: TRand.kr(0, ctrl12*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp / 6));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11267,7 +11264,7 @@ Preset Wek",
 				// Synth
 				freq = freq.clip(20,12544);
 				chain = Saw.ar(freq, 0.5);
-				chain = RHPF.ar(chain, Line.kr(ctrl1*4000, ctrl2*4000, duree*ctrl4), ctrl3, 1, RLPF.ar(chain, Line.kr(ctrl5*2000, ctrl7*2000, duree*ctrl8), ctrl6));
+				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl4).linexp(0, 1, ctrl1*4000, ctrl2*4000, \minmax), ctrl3, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl8).linexp(0, 1, ctrl5*2000, ctrl7*2000, \minmax), ctrl6));
 				//chain = BBandPass.ar(chain, ctrl1 * 4186 + 27.5, ctrl2 + 0.001);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
@@ -11366,7 +11363,7 @@ Preset Wek",
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(Klang.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, [amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12], nil], freq));
+				chain = Mix(DynKlang.ar(`[[ctrl1, ctrl2, ctrl3+1, ctrl4+1, ctrl5+2, ctrl6+2, ctrl7+3, ctrl8+3, ctrl9+4, ctrl10+4, ctrl11+5, ctrl12+5] , [amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12, amp / 12], 0], freq));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11415,7 +11412,7 @@ Preset Wek",
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(Blip.ar(freq, Line.kr(50 * ctrl1 + 1,50 * ctrl2 + 1, duree * ctrl3), 0.5));
+				chain = Mix(Blip.ar(freq, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl3).linexp(0, 1, 50 * ctrl1 + 1, 50 * ctrl2 + 1, \minmax), 0.5));
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11540,104 +11537,6 @@ Preset Wek",
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
-		SynthDef('Klank',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, envelope, ambisonic;
-				// Set Music Data
-				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
-				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Envelope
-
-				envelope = Select.kr(mode, [
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
-				// Synth
-				chain = Mix(DynKlank.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, amp / 12, nil], Dust2.ar(duree.reciprocal * 100), freq));
-				// chain = Limiter.ar(chain, 1.0, 0.01);
-				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
-
-		SynthDef('Klank2',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, envelope, ambisonic;
-				// Set Music Data
-				//freq = (freq.cpsmidi / 127 * (freqHi - freqLo) + freqLo + freqT).midicps;
-				//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Envelope
-
-				envelope = Select.kr(mode, [
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
-				// Synth
-				chain = Mix(DynKlank.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12] * 4186 + 32.703195662575, amp / 12, nil], Impulse.ar(duree.reciprocal * 64), freq));
-				// chain = Limiter.ar(chain, 1.0, 0.01);
-				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
-
 		SynthDef('Spring',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
 				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
@@ -11665,8 +11564,7 @@ Preset Wek",
 				d = ctrl3 * 0.001;
 				outforce = Spring.ar(inforce, k, d);
 				outforce = outforce * freq + freq;
-				//main = SinOsc.ar(freq, 0, 0.5);
-				chain = PMOsc.ar(freq, outforce, Line.kr(ctrl4, ctrl5 * 2pi), 0, 0.25);
+				chain = PMOsc.ar(freq, outforce, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl6).linexp(0, 1, ctrl4, ctrl5 * 2pi, \minmax), 0, 0.25);
 				// chain = Limiter.ar(chain, 1.0, 0.01);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
