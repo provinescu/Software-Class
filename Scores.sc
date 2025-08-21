@@ -856,7 +856,7 @@ Score Commandes:
 					commande = ["wektime", "wekstop"];
 					fonctionCommandes2.value(commande);
 			});
-			// alt + K ekinator density start
+			// alt + K wekinator density start
 			if(char == 75.asAscii and: {modifiers==655360},
 				{
 					commande = ["wekdensity", "wekrun"];

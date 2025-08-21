@@ -412,17 +412,18 @@ HPdroneMIDI {
 		// Vibrato
 		//SinOSC.kr(flatness.log.abs, mul: flatness, add: BufRateScale.kr(buffer) * rate)
 
-		SynthDef("Drone", { |freq = 60, amp = 0.8, gate = 1|
+		SynthDef("Drone", { |freq = 60, amp = 0.8, dur = 1, gate = 1|
 			var sig, arrayFreq, trig, seq, dFreq, verb, vibrato;
-			arrayFreq = [freq, freq + 12, freq - 12, freq + 5, freq - 5, freq + 7, freq - 7, freq + 10, freq - 10];
-			trig = Trig1.kr(Dust2.kr(12), 1);
+			arrayFreq = [freq, freq + 5, freq + 7,  freq + 10, freq - 5, freq - 7,  freq - 10];
 			seq = Drand(arrayFreq, inf);
+			trig = Trig1.kr(Dust2.kr(24), dur);
 			dFreq = Demand.kr(trig, 0, seq).lag;
-			freq = freq.asArray;
-			freq = freq.add(dFreq);
-			vibrato = Vibrato.kr(freq.midicps, 0.33, 0.02);
-			sig = Mix(JPverb.ar(CombC.ar(Dust2.ar(6), 0.2, freq.midicps.reciprocal, 1.0, amp, LFSaw.ar(vibrato, 0, amp / 12)), 6, 0, 3));
-			sig = sig * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+			vibrato = Vibrato.kr(dFreq.midicps, 0.1, 0.02);
+			sig = CombC.ar(Dust2.ar(24), 0.2, dFreq.midicps.reciprocal, 1.0, amp, LFSaw.ar(vibrato, 0, amp / 12));
+			//sig = CombC.ar(Dust2.ar(6), 0.2, freq.midicps.reciprocal, 1.0, amp);
+			sig = sig * EnvGen.kr(Env.adsr, gate, timeScale: dur, doneAction: Done.freeSelf);
+			//sig = sig * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);// =  no envelope
+			//sig = Mix(JPverb.ar(sig, 3));
 			Out.ar(0, sig ! 2);
 		}).add;
 

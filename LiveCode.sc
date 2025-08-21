@@ -562,7 +562,7 @@ sig = sig * EnvGen.kr(Env.perc, trig, 1, 0, dur.lag(bpm));// doneAction: Done.fr
 trig = Impulse.kr(dur.reciprocal.lag(bpm));
 sig = HPF.ar(sig, energy, 0.5, LPF.ar(sig, centroid, 0.5));
 sig = sig * EnvGen.kr(Env.perc, trig, 1, 0, dur.lag(bpm));// doneAction: Done.freeSelf
-sig = CombC.ar(sig, 0.2, flux, flatness);
+sig = CombC.ar(sig, 0.2, flux, flatness*1000);
 
 sig = Pan2.ar(sig, TRand.kr(-1, 1, trig));
 Out.ar(0, sig);
