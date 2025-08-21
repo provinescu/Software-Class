@@ -79,7 +79,7 @@ Matrix {
 			while({cmd != nil},
 				{
 					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'Matrix'},
+					if(cmd == 'all' or: {cmd == 'matrix'},
 						{
 							cmd = msg[item+1].postln;
 							// Preset
@@ -14032,7 +14032,7 @@ y ... -						Musical keys.
 				freqCentroid = (freqCentroid / 12544 * (ctrl2 - ctrl1).abs + ctrl1 * 12544).clip(20, 12544);
 				energy = (energy / 12544 * (ctrl4 - ctrl3).abs + ctrl3 * 12544).clip(20, 12544);
 				flux = flux *  ctrl5;
-				flatness = flatness *  ctrl6 * 100;
+				flatness = flatness *  ctrl6 * 10000;
 				// Envelope
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
@@ -14040,8 +14040,8 @@ y ... -						Musical keys.
 					amp]);
 				// Synth
 				chain = Saw.ar(freq.lag(tempo));
-				chain = HPF.ar(chain, freqCentroid, 1, LPF.ar(chain, energy, 1));
-				chain = CombC.ar(chain, 0.2, flux, flatness, 0.5);
+				chain = HPF.ar(chain, freqCentroid.clip(20, 20000), 1, LPF.ar(chain, energy.clip(20,20000), 1));
+				chain = CombC.ar(chain, 0.2, flux.clip(0.0001, 10000), flatness.clip(0.0001, 10000), 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
