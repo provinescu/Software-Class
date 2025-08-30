@@ -4658,7 +4658,7 @@ y ... -						Musical keys.
 						\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
 						\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6)], groupe, \addToTail).map(\freq, busOSC.at(indexNumFhzBand));
 				}, {
-					// New Tdef Synth or Normal Synth
+					// New Tdef Synth or Sequencer Synth
 					synthAndFX = nil;
 					if(flagModeSynth == 'Tdef' /*and: {synthNumber < choiceSynth.indexOf('FX (')}*/,
 						// ModeTdef
@@ -4714,8 +4714,8 @@ y ... -						Musical keys.
 											listeFreq = listeFreq.soloArray;
 											listeAmp = listeAmp.soloArray;
 											// MIDI OFF
-											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 											})});
 											lastFreqMidi=[];
 											// Playing
@@ -4786,8 +4786,8 @@ y ... -						Musical keys.
 									},
 									{
 										// MIDI OFF
-										if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-											if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+										if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+											if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, freq.cpsmidi, 0)});
 
 										});
 										lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
@@ -4881,8 +4881,8 @@ y ... -						Musical keys.
 												listeFreq = listeFreq.soloArray;
 												listeAmp = listeAmp.soloArray;
 												// MIDI OFF
-												if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-													if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+												if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+													if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 												})});
 												lastFreqMidi=[];
 												// Playing
@@ -4948,8 +4948,8 @@ y ... -						Musical keys.
 										},
 										{
 											// MIDI OFF
-											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 											});
 											lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
 											indexMusicData = 9999;
@@ -5044,8 +5044,8 @@ y ... -						Musical keys.
 																listeFreq = listeFreq.soloArray;
 																listeAmp = listeAmp.soloArray;
 																// MIDI OFF
-																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 																})});
 																lastFreqMidi=[];
 																// Playing
@@ -5111,8 +5111,8 @@ y ... -						Musical keys.
 														},
 														{
 															// MIDI OFF
-															if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+															if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 
 															});
 															lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
@@ -5222,8 +5222,8 @@ y ... -						Musical keys.
 																	listeFreq = listeFreq.soloArray;
 																	listeAmp = listeAmp.soloArray;
 																	// MIDI OFF
-																	if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																		if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+																	if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																		if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 																	})});
 																	lastFreqMidi=[];
 																	// Playing
@@ -5279,8 +5279,8 @@ y ... -						Musical keys.
 															},
 															{
 																// MIDI OFF
-																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 
 																});
 																lastFreqMidi=[]; dureeTdef = quanta.reciprocal;

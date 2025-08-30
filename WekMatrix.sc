@@ -4611,8 +4611,8 @@ Preset Wek",
 											listeFreq = listeFreq.soloArray;
 											listeAmp = listeAmp.soloArray;
 											// MIDI OFF
-											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 											})});
 											lastFreqMidi=[];
 											// Playing
@@ -4683,8 +4683,8 @@ Preset Wek",
 									},
 									{
 										// MIDI OFF
-										if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-											if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+										if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+											if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, freq.cpsmidi, 0)});
 
 										});
 										lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
@@ -4778,8 +4778,8 @@ Preset Wek",
 												listeFreq = listeFreq.soloArray;
 												listeAmp = listeAmp.soloArray;
 												// MIDI OFF
-												if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-													if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+												if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+													if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 												})});
 												lastFreqMidi=[];
 												// Playing
@@ -4845,8 +4845,8 @@ Preset Wek",
 										},
 										{
 											// MIDI OFF
-											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 											});
 											lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
 											indexMusicData = 9999;
@@ -4941,8 +4941,8 @@ Preset Wek",
 																listeFreq = listeFreq.soloArray;
 																listeAmp = listeAmp.soloArray;
 																// MIDI OFF
-																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 																})});
 																lastFreqMidi=[];
 																// Playing
@@ -5008,8 +5008,8 @@ Preset Wek",
 														},
 														{
 															// MIDI OFF
-															if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+															if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 
 															});
 															lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
@@ -5119,8 +5119,8 @@ Preset Wek",
 																	listeFreq = listeFreq.soloArray;
 																	listeAmp = listeAmp.soloArray;
 																	// MIDI OFF
-																	if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																		if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+																	if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																		if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 																	})});
 																	lastFreqMidi=[];
 																	// Playing
@@ -5176,8 +5176,8 @@ Preset Wek",
 															},
 															{
 																// MIDI OFF
-																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0);
-																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, (freq.cpsmidi + 0.5).floor, 0)});
+																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																	if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 
 																});
 																lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
