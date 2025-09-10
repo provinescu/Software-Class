@@ -72,7 +72,7 @@ Scores {
 				// Save score
 				2, {
 					Dialog.savePanel({arg path;
-						file=File(path++".scd","w");
+						file=File(path,"w");
 						file.write(wEditScore.string);file.close;
 						//wScore.name="Score Editor/Player and Shortcuts Controls for HP Software " + path.asPathName.fileName;
 						wScore.view.children.at(0).string = "Score Editor/Player and Shortcuts Controls for HP Software | " + path.asPathName.fileName;
