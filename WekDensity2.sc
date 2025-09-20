@@ -3896,6 +3896,15 @@ Preset Wek",
 			{|ez| groupeVST.set(\gainIn, ez.value)}, 0.5, layout: \horz);
 		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
 			{|ez| groupeVST.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
+		windowVST.view.children.at(0).focus;
+		windowVST.onClose_({groupeVST.free});
+		windowVST.front;
+		windowVST.view.do({arg view;
+					view.children.do({arg subView;
+						subView.font = Font("Helvetica", 10);
+					});
+				});
+		fonctionShortCut.value(windowVST);
 
 		////////////////////////// Window Keyboard ///////////////////////////////
 		windowKeyboard = Window.new("Keyboard", Rect(600, 25, 625, 130), scroll: true);

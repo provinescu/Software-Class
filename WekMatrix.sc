@@ -2715,6 +2715,12 @@ Preset Wek",
 			{|ez| groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
 		windowVST.view.children.at(0).focus;
 		windowVST.front;
+		windowVST.view.do({arg view;
+					view.children.do({arg subView;
+						subView.font = Font("Helvetica", 10);
+					});
+				});
+		fonctionShortCut.value(windowVST);
 
 		////////////////////////// Window Keyboard ///////////////////////////////
 		windowKeyboard = Window.new("Keyboard", Rect(0, 800, 1024, 175), scroll: true);

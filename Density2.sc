@@ -3782,6 +3782,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowVST.view.children.at(0).focus;
 		windowVST.onClose_({groupeVST.free});
 		windowVST.front;
+		windowVST.view.do({arg view;
+					view.children.do({arg subView;
+						subView.font = Font("Helvetica", 10);
+					});
+				});
+		fonctionShortCut.value(windowVST);
 
 		////////////////////////// Window Keyboard ///////////////////////////////
 		windowKeyboard = Window.new("Keyboard", Rect(600, 25, 625, 130), scroll: true);
