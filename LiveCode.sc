@@ -22,7 +22,7 @@ LiveCode {
 	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort;
 
 		//// Setup GUI style
-		QtGUI.palette = QPalette.system;// light / system
+		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
 
 		pathData = PathName.new(path).pathOnly;
@@ -409,9 +409,9 @@ LiveCode {
 					file.write(editCode.string);file.close;
 				},{"cancelled".postln})},
 				3, {
-					[rangeCentroid, rangeEnergy, rangeFlux, rangeFlatness].writeArchive("/Users/hp/Documents/SC3/test livecode")},
+					[rangeCentroid, rangeEnergy, rangeFlux, rangeFlatness].writeArchive("/Users/hp/Documents/SC3/test")},
 				4, {
-					#rangeCentroid, rangeEnergy, rangeFlux, rangeFlatness = Object.readArchive("/Users/hp/Documents/SC3/test livecode");
+					#rangeCentroid, rangeEnergy, rangeFlux, rangeFlatness = Object.readArchive("/Users/hp/Documents/SC3/test");
 					windowPlotterData.view.children.at(1).children.at(2).lo_(rangeCentroid[0]);
 					windowPlotterData.view.children.at(1).children.at(2).hi_(rangeCentroid[1]);
 					windowPlotterData.view.children.at(1).children.at(1).value_(rangeCentroid[0]);
