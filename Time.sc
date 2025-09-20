@@ -3787,7 +3787,7 @@ f						Switch File for Analyze.
 		////////////////////////// Window VST ///////////////////////////////
 		windowVST = Window.new("VST Stereo", Rect(1000, 540, 320, 80), scroll: true);
 		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
-		Button(windowVST, Rect(0, 0, 75, 20)).
+		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Run On", Color.green], ["Run Off", Color.red]]).
 		action = {arg shortcut;
 			switch (shortcut.value,
@@ -3795,22 +3795,22 @@ f						Switch File for Analyze.
 				1, {~synthVST.run(true); flagVST ='on'};
 			);
 		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
+		Button(windowVST, Rect(0, 0, 60, 20)).
 		states_([["Browse", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.browse;
 		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
+		Button(windowVST, Rect(0, 0, 40, 20)).
 		states_([["Editor", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.editor;
 		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
+		Button(windowVST, Rect(0, 0, 30, 20)).
 		states_([["GUI", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.gui;
 		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
+		Button(windowVST, Rect(0, 0, 40, 20)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
 			~synthVST.free;
@@ -3818,6 +3818,10 @@ f						Switch File for Analyze.
 			// New VST
 			~synthVST = Synth.newPaused("VST"+ typeMasterOut, [\xFade, 0.5, \panLo, 0, \panHi, 0, \gainIn, 0.5], groupeLimiter, \addToHead).map(\bpm, busOSCtempo);
 			~fxVST = VSTPluginController(~synthVST);
+		};
+		PopUpMenu(windowVST,Rect(0, 0, 70, 20)).items_(["Out 1", "Out 2", "Out 3", "Out 4", "Out 5", "Out 6", "Out 7", "Out 8", "Out 9", "Out 10", "Out 11", "Out 12", "Out 13", "Out 14", "Out 15", "Out 16", "Out 17", "Out 18", "Out 19", "Out 20", "Out 21", "Out 22", "Out 23", "Out 24", "Out 25", "Out 26", "Out 27", "Out 28", "Out 29", "Out 30", "Out 31", "Out 32"]).
+		action = {arg ez;
+			~synthVST.set(\out, ez.value);
 		};
 		EZKnob(windowVST, 150 @ 25, "xFade", \unipolar,
 			{|ez| groupeLimiter.set(\xFade, ez.value)}, 0.5, layout: \horz);
