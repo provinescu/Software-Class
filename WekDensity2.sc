@@ -3852,7 +3852,6 @@ Preset Wek",
 
 		////////////////////////// Window VST ///////////////////////////////
 		windowVST = Window.new("VST Stereo", Rect(710, 300, 320, 80), scroll: true);
-		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
 		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Run On", Color.green], ["Run Off", Color.red]]).

@@ -2597,7 +2597,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 	creationGUI {
 
 		////////////////////////// Window VST ///////////////////////////////
-		windowVST = Window.new("VST Stereo", Rect(40, 500, 320, 80), scroll: true);
+		windowVST = Window.new("VST Stereo", Rect(40, 40, 320, 80), scroll: true);
 		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
 		Button(windowVST, Rect(0, 0, 60, 20)).
 		states_([["Run On", Color.green], ["Run Off", Color.red]]).
