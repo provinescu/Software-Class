@@ -1389,7 +1389,7 @@ y ... -						Musical keys.
 			// OSC pour Audio et File
 			oscMusicData = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 				var freq, amp, duree, tempo, freqCentroid=0, flatness=0, energy=0, flux=0, musicData=[];
-				if(msg.at(2) == 8 and: {flagKeyboard == 'off'},
+				if(msg.at(2) == 1 and: {flagKeyboard == 'off'},
 					{
 						// Music
 						freq=msg.at(3);
@@ -1488,7 +1488,7 @@ y ... -						Musical keys.
 			// OSC pour Keyboard
 			oscKeyboardData = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 				var freq, amp, duree, tempo, freqCentroid=0, flatness=0, energy=0, flux=0, musicData=[];
-				if(msg.at(2) == 8 and: {flagKeyboard == 'on'},
+				if(msg.at(2) == 1 and: {flagKeyboard == 'on'},
 					{
 						// Music
 						freq=msg.at(3);
@@ -1583,7 +1583,7 @@ y ... -						Musical keys.
 
 			// OSC pour MIDI-IN
 			oscMIDIdata = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-				if(msg.at(2) == 5 and: {flagKeyboard == 'on'},
+				if(msg.at(2) == 1 and: {flagKeyboard == 'on'},
 					{
 						// SetUp Env Var
 						tempoMIDI = msg.at(3);
@@ -5443,7 +5443,7 @@ y ... -						Musical keys.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: 1);
 		}).add;
 
 		// Matrix Audio Analyze Pitch
@@ -5463,7 +5463,7 @@ y ... -						Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: 1);
 		}).add;
 
 		// Matrix Audio Analyze Pitch2
@@ -5486,7 +5486,7 @@ y ... -						Musical keys.
 				flux =  FFTFlux.kr(fft2);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: 1);
 		}).add;
 
 		// Matrix Audio Analyze KeyTrack
@@ -5505,7 +5505,7 @@ y ... -						Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(detect, '/Matrix_Musical_Data', values: [freqIn, ampIn, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: 1);
 		}).add;
 
 		// Matrix Keyboard
@@ -5520,7 +5520,7 @@ y ... -						Musical keys.
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
-				SendReply.kr(trigger, '/Matrix_Keyboard_Data', values: [note, amp, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5, 6, 7, 8]);
+				SendReply.kr(trigger, '/Matrix_Keyboard_Data', values: [note, amp, timeIn, tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: 1);
 		}).add;
 
 		// Matrix MIDI
@@ -5534,7 +5534,7 @@ y ... -						Musical keys.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(trigger, '/Matrix_MIDI_Data', values: [tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: [1, 2, 3, 4, 5]);
+				SendReply.kr(trigger, '/Matrix_MIDI_Data', values: [tempo, centroid, flatness.clip(0.0001, 1), energy, flux.clip(0.0001, 1)], replyID: 1);
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
@@ -6068,7 +6068,7 @@ y ... -						Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = Mix(HPtGrains.ar(2, Impulse.kr(ctrl1*100), buffer, BufRateScale.kr(buffer) * rate * reverse1, BufDur.kr(buffer) * ctrl4, (duree*ctrl2)/(ctrl3*100), 0, 1, ctrlHP1, ctrlHP2));
+				chain = Mix(HPtGrains.ar(2, Impulse.kr(ctrl1*100), buffer, BufRateScale.kr(buffer) * rate * reverse1, BufDur.kr(buffer) * ctrl2, (duree*ctrl3)/(ctrl4*100), 0, 1, ctrlHP1, ctrlHP2));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6175,7 +6175,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl1).max(0.01)).linexp(0, 1, 108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3+1.midicps, \minmax).clip(20, 20000));
+				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl3).max(0.01)).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6232,7 +6232,7 @@ y ... -						Musical keys.
 				// Synth
 				freq = freq.clip(20, 12544);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl1).max(0.01)).linexp(0, 1, 108.midicps*ctrl2+1.midicps, 108.midicps*ctrl3+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl4).max(0.01)).linexp(0, 1, 108.midicps*ctrl5+1.midicps, 108.midicps*ctrl6+1.midicps, \minmax).clip(0, 20000), 0.333));
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl3).max(0.01)).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl6).max(0.01)).linexp(0, 1, 108.midicps*ctrl4+1.midicps, 108.midicps*ctrl5+1.midicps, \minmax).clip(0, 20000), 0.333));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6616,8 +6616,8 @@ y ... -						Musical keys.
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 10, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl1.clip(0.01, 1.0)*dureeSample).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl6.clip(0.01, 1.0)*dureeSample).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6671,8 +6671,8 @@ y ... -						Musical keys.
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl1.clip(0.01, 1.0)*dureeSample).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl8.clip(0.01, 1.0)*dureeSample).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6891,7 +6891,7 @@ y ... -						Musical keys.
 				ctrl3 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2 + 3, ctrl3 * 100, TRand(0, 1, Impulse.kr(duree.reciprocal))));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 *100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, 1));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
