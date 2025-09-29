@@ -297,7 +297,7 @@ WekDensity2 {
 		numIndexSynthBand = 0;
 		flagBand = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		flagVST = 'off';
-		flagRecSound == 'off';
+		flagRecSound = 'off';
 		12.do({arg i; channelsSynth = channelsSynth.add(0)});// Channels Synth Ouput en fonction des numFhzBand
 		channelsVerb = 0; // Verb ouput channel
 		rangeFFT = [0.0, 1.0];
