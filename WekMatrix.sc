@@ -4567,7 +4567,7 @@ Preset Wek",
 				}, {
 					// New Tdef Synth or Normal Synth
 					synthAndFX = nil;
-					if(flagModeSynth == 'Tdef' /*and: {synthNumber < choiceSynth.indexOf('FX (')}*/,
+					if(flagModeSynth == 'Tdef' and: {synthNumber < choiceSynth.indexOf('FX (')},
 						// ModeTdef
 						{
 							tdefSynthesizer = Tdef((name ++ groupe.nodeID.asString).asSymbol, {
