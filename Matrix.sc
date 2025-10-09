@@ -5742,7 +5742,7 @@ y ... -						Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Main Synth
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(1, BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer)), BufRateScale.kr(buffer) * reverse1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(1, BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1.max(0.001)), 1, loopOne, ctrlHP1, ctrlHP2);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
