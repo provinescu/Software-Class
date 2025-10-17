@@ -43,11 +43,10 @@ HPsequenceEditor {
 				// Save Sequences
 				4, {~userOperatingSystem.valueAction_(13)},
 				// Load Sequence
-				1, {Dialog.openPanel({ arg paths;
-					paths.do({ arg p; var file, seq;
-						file=File(p,"r");
+				1, {Dialog.openPanel({ arg paths, file, seq;
+						file=File(paths,"r");
 						seq = file.readAllString.interpret;file.close;
-						~listeagentfreq.wrapPut(~agentSequence-1, seq.wrapAt(0));~listeagentamp.wrapPut(~agentSequence-1, seq.wrapAt	(1));~listeagentduree.wrapPut(~agentSequence-1, seq.wrapAt(2))})},{"cancelled".postln})},
+						~listeagentfreq.wrapPut(~agentSequence-1, seq.wrapAt(0));~listeagentamp.wrapPut(~agentSequence-1, seq.wrapAt	(1));~listeagentduree.wrapPut(~agentSequence-1, seq.wrapAt(2))},{"cancelled".postln})},
 				// Save Sequence
 				3, {Dialog.savePanel({arg path; var file, seq;
 					file=File(path++".scd","w");file.write([~listeagentfreq.wrapAt(~agentSequence-1),~listeagentamp.wrapAt(~agentSequence-1),~listeagentduree.wrapAt(~agentSequence-1)].asCompileString);file.close},{"cancelled".postln})}

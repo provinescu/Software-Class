@@ -37,13 +37,12 @@ HPliveCoding {
 				0, {nil},
 				// Load Coding
 				1, {Dialog.openPanel({ arg paths;
-					paths.do({ arg p; var file, coding;
-						~wCoding.name="Live Coding Editor for Agents by HP"+p;
-						~wEditCoding.open(p);
-				})},{"cancelled".postln})},
+						~wCoding.name="Live Coding Editor for Agents by HP"+PathName.new(paths).fileName;
+						~wEditCoding.open(paths);
+				},{"cancelled".postln})},
 				// Save Coding
 				2, {Dialog.savePanel({arg path; var file;
-					~wCoding.name=~nomFenetre+path;
+					~wCoding.name=~nomFenetre+PathName.new(path).fileName;
 					file=File(path++".scd","w");
 					file.write(~wEditCoding.string);file.close;
 				},{"cancelled".postln})}

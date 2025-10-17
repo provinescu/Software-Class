@@ -37,18 +37,17 @@ HPscoreEditor {
 				// Do Nothing
 				0, {nil},
 				// Load score
-				1, {Dialog.openPanel({ arg paths;
-					paths.do({ arg p; var file, score;
+				1, {Dialog.openPanel({ arg paths, file, score;
 						~routineScore.value(~scorePlaying).stop;~routineScore.value(~scorePlaying).remove;
-						file=File(p,"r");
+						file=File(paths,"r");
 						score = file.readAllString;
-						~wScore.name="Score Editor for Agents by HP"+p;
+						~wScore.name="Score Editor for Agents by HP"+PathName.new(paths).fileName;
 						~scorePlaying = score.interpret;
 						~wEditScore.string_(score);
-						file.close})},{"cancelled".postln})},
+						file.close},{"cancelled".postln})},
 				// Save score
 				2, {Dialog.savePanel({arg path; var file;
-					~wScore.name=~nomFenetre+path;
+					~wScore.name=~nomFenetre+PathName.new(path).fileName;
 					file=File(path++".scd","w");
 					file.write(~wEditScore.string);file.close;
 				},{"cancelled".postln})}
