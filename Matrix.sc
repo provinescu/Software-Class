@@ -2944,6 +2944,124 @@ y ... -						Musical keys.
 		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 
+		/*// Tuning pour tous les synth
+		// Tuning
+			PopUpMenu(windowSynth, Rect(0, 0, 95, 20)).
+			items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
+			action = {arg item;
+				// Setup GUI Value
+				windowSynth.view.children.at(80).children.at(1).valueAction_(12);
+				windowSynth.view.children.at(80).children.at(1).valueAction_(0);
+				windowSynth.view.children.at(80).enabled_(true);
+				windowSynth.view.children.at(82).enabled_(true);
+				switch(item.value,
+					// No Scale
+					0, {
+						flagScaling = 'off';
+						// Setup GUI Value
+						windowSynth.view.children.at(80).children.at(1).valueAction_(12);
+						windowSynth.view.children.at(80).children.at(1).valueAction_(0);
+						windowSynth.view.children.at(80).enabled_(false);
+						windowSynth.view.children.at(82).enabled_(false);
+					},
+					// Tempered
+					1, {nil},
+					// Chromatic
+					2, {degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]},
+					// Whole Tone 1
+					3, {degrees =  [0, 2, 4, 6, 8, 10]},
+					// Major
+					4, {degrees =  [0, 2, 4, 5, 7, 9, 11]},
+					// Minor
+					5, {degrees =  [0, 2, 3, 5, 7, 8, 10]},
+					// Diminued
+					6, {degrees =  [0, 2, 3, 5, 6, 8, 9, 11]},
+					// Octatonic 1
+					7, {degrees =  [0, 1, 3, 4, 6, 7, 9, 10]},
+					// Octatonic 2
+					8, {degrees =  [0, 2, 3, 5, 6, 8, 9, 11]},
+					// Nonatonique
+					9, {degrees =  [0, 2, 3, 4, 6, 7, 8, 10, 11]},
+					// Messian 4
+					10, {degrees =  [0, 1, 2, 5, 6, 7, 8, 11]},
+					// Messian 5
+					11, {degrees =  [0, 1, 5, 6, 7, 11]},
+					// Messian 6
+					12, {degrees =  [0, 2, 4, 5, 6, 8, 10, 11]},
+					// Messian 7
+					13, {degrees =  [0, 1, 2, 3, 5, 6, 7, 8, 9, 11]},
+					// Bi-Pentaphonic
+					14, {degrees =  [0, 1, 2, 4, 5, 6, 7, 9, 10, 11]},
+					// Major Pentatonic
+					15, {degrees =  [0, 2, 4, 7, 9]},
+					// Minor Pentatonic
+					16, {degrees =  [0, 3, 5, 7, 10]},
+					// Blues
+					17, {degrees =  [0, 3, 5, 6, 7, 10]},
+					// Asavari
+					18, {degrees =  [0, 2, 3, 5, 7, 8, 10]},
+					// Bhairava
+					19, {degrees =  [0, 1, 4, 5, 7, 8, 11]},
+					// Bhairavi
+					20, {degrees =  [0, 1, 3, 5, 7, 8, 10]},
+					// Bilaval
+					21, {degrees =  [0, 2, 4, 5, 7, 9, 11]},
+					// Kafi
+					22, {degrees =  [0, 2, 3, 5, 7, 9, 10]},
+					// Kalyan
+					23, {degrees =  [0, 2, 4, 6, 7, 9, 11]},
+					// Khammaj
+					24, {degrees =  [0, 2, 4, 5, 7, 9, 10]},
+					// Marava
+					25, {degrees =  [0, 1, 4, 6, 7, 9, 11]},
+					// Pooravi
+					26, {degrees =  [0, 1, 4, 6, 7, 8, 11]},
+					// Todi
+					27, {degrees =  [0, 1, 3, 6, 7, 8, 11]},
+					// Indian Shrutis
+					28, {nil},
+					// 22tet
+					29, {degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]},
+					// 12tet
+					30, {degrees =  [0, 2, 4, 6, 7, 9, 11, 13, 15, 16, 19, 20]},
+					// Asavari
+					31, {degrees =  [0, 4, 6, 9, 13, 15, 19]},
+					// Bhairava
+					32, {degrees =  [0, 2, 7, 9, 13, 15, 20]},
+					// Bhairavi
+					33, {degrees =  [0, 3, 5, 9, 13, 15, 18]},
+					// Bilaval
+					34, {degrees =  [0, 4, 7, 9, 13, 16, 20]},
+					// Kafi
+					35, {degrees =  [0, 4, 6, 9, 13, 16, 19]},
+					// Kalyan
+					36, {degrees =  [0, 4, 7, 11, 13, 16, 20]},
+					// Khammaj
+					37, {degrees =  [0, 4, 7, 9, 13, 16, 19]},
+					// Marava
+					38, {degrees =  [0, 2, 7, 11, 13, 16, 20]},
+					// Pooravi
+					39, {degrees =  [0, 2, 7, 11, 13, 15, 20]},
+					// Todi
+					40, {degrees =  [0, 2, 6, 11, 13, 15, 20]}
+				);
+				if(item.value > 1 and: {item.value < 28}, {tuning = Tuning.et12; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
+					// Setup GUI Value
+					windowSynth.view.children.at(82).children.at(1).valueAction = degrees.asString;
+				});
+				if(item.value > 28, {tuning = Tuning.sruti; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
+					// Setup GUI Value
+					windowSynth.view.children.at(82).children.at(1).valueAction = degrees.asString;
+				});
+			};
+
+			// Degrees
+			EZText(windowSynth, Rect(0, 0, 335, 20), "Degrees",
+				{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
+				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 33, 295);
+			windowSynth.view.children.at(80).enabled_(false);
+			windowSynth.view.children.at(82).enabled_(false);*/
+
 		windowControlSynth.onClose_({
 			listeWindows.remove(windowControlSynth);
 		});
@@ -6175,7 +6293,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl3).max(0.01)).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000));
+				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6232,7 +6350,7 @@ y ... -						Musical keys.
 				// Synth
 				freq = freq.clip(20, 12544);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl3).max(0.01)).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl6).max(0.01)).linexp(0, 1, 108.midicps*ctrl4+1.midicps, 108.midicps*ctrl5+1.midicps, \minmax).clip(0, 20000), 0.333));
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl3+1.midicps, 108.midicps*ctrl4+1.midicps, \minmax).clip(0, 20000), 0.333));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6617,7 +6735,7 @@ y ... -						Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl6.clip(0.01, 1.0)*dureeSample).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6672,7 +6790,7 @@ y ... -						Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl8.clip(0.01, 1.0)*dureeSample).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -10983,7 +11101,7 @@ y ... -						Musical keys.
 				// Synth
 				freq = freq.clip(20,12544);
 				chain = Saw.ar(freq, 0.5);
-				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl1).linexp(0, 1, ctrl2*4000, ctrl3*4000, \minmax), ctrl4, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl5).linexp(0, 1, ctrl6*2000, ctrl7*2000, \minmax), ctrl8));
+				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl1*4000, ctrl2*4000, \minmax), ctrl3, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4*2000, ctrl5*2000, \minmax), ctrl6));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11118,7 +11236,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(Blip.ar(freq, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl1).linexp(0, 1, 50 * ctrl2 + 1, 50 * ctrl3 + 1, \minmax), 0.5));
+				chain = Mix(Blip.ar(freq, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 50 * ctrl1 + 1, 50 * ctrl2 + 1, \minmax), 0.5));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11258,7 +11376,7 @@ y ... -						Musical keys.
 				d = ctrl3 * 0.001;
 				outforce = Spring.ar(inforce, k, d);
 				outforce = outforce * freq + freq;
-				chain = PMOsc.ar(freq, outforce, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl4).linexp(0, 1, ctrl5, ctrl6 * 2pi, \minmax), 0, 0.25);
+				chain = PMOsc.ar(freq, outforce, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4, ctrl5 * 2pi, \minmax), 0, 0.25);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,

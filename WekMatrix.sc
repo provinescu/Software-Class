@@ -6076,7 +6076,7 @@ Preset Wek",
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl3).max(0.01)).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000));
+				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6133,7 +6133,7 @@ Preset Wek",
 				// Synth
 				freq = freq.clip(20, 12544);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl3).max(0.01)).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), (dureeSample * ctrl6).max(0.01)).linexp(0, 1, 108.midicps*ctrl4+1.midicps, 108.midicps*ctrl5+1.midicps, \minmax).clip(0, 20000), 0.333));
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl3+1.midicps, 108.midicps*ctrl4+1.midicps, \minmax).clip(0, 20000), 0.333));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6518,7 +6518,7 @@ Preset Wek",
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl6.clip(0.01, 1.0)*dureeSample).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6573,7 +6573,7 @@ Preset Wek",
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), ctrl8.clip(0.01, 1.0)*dureeSample).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -10884,7 +10884,7 @@ Preset Wek",
 				// Synth
 				freq = freq.clip(20,12544);
 				chain = Saw.ar(freq, 0.5);
-				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl1).linexp(0, 1, ctrl2*4000, ctrl3*4000, \minmax), ctrl4, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl5).linexp(0, 1, ctrl6*2000, ctrl7*2000, \minmax), ctrl8));
+				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl1*4000, ctrl2*4000, \minmax), ctrl3, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4*2000, ctrl5*2000, \minmax), ctrl6));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11019,7 +11019,7 @@ Preset Wek",
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(Blip.ar(freq, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl1).linexp(0, 1, 50 * ctrl2 + 1, 50 * ctrl3 + 1, \minmax), 0.5));
+				chain = Mix(Blip.ar(freq, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 50 * ctrl1 + 1, 50 * ctrl2 + 1, \minmax), 0.5));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11159,7 +11159,7 @@ Preset Wek",
 				d = ctrl3 * 0.001;
 				outforce = Spring.ar(inforce, k, d);
 				outforce = outforce * freq + freq;
-				chain = PMOsc.ar(freq, outforce, Sweep.kr(Impulse.kr(duree.reciprocal), duree * ctrl4).linexp(0, 1, ctrl5, ctrl6 * 2pi, \minmax), 0, 0.25);
+				chain = PMOsc.ar(freq, outforce, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4, ctrl5 * 2pi, \minmax), 0, 0.25);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
