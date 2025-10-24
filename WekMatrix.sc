@@ -10,6 +10,7 @@ WekMatrix {
 	var changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu;
 	var midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile;
 	var menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze, dimIn, speedMFCC, responder, sender, menuAlgo;
+	var degrees, root, scale, tuning;
 
 	*new	{arg path="~/Documents/WekMatrix/", ni=8, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -2797,8 +2798,8 @@ Preset Wek",
 		listeWindows = listeWindows.add(windowMasterFX);
 		fonctionShortCut.value(windowMasterFX);
 
-		////// Fonction Window for controling all sliders windows instruments + Wekinator /////
-		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 575, 400, 200), scroll: true);
+		//// Fonction Window for controling all sliders windows instruments ///
+		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 550, 400, 250), scroll: true);
 		windowControlSynth.alpha=1.0;
 		windowControlSynth.front;
 		windowControlSynth.view.decorator = FlowLayout(windowControlSynth.view.bounds);
@@ -2898,6 +2899,7 @@ Preset Wek",
 		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
 		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
+			root = ez.value;
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 and: {window.view.children.at(81).value == 0}, {
 					window.value.view.children.at(80).children.do({arg subView, subItem;
@@ -2907,6 +2909,147 @@ Preset Wek",
 			});
 		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
 		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+
+				// Tuning pour tous les synth
+		degrees =[0,1,2,3,4,5,6,7,8,9,10,11];
+		root = 0;
+		tuning = Tuning.et12;
+		scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
+
+		// Tuning
+		PopUpMenu(windowControlSynth, Rect(0, 0, 130, 20)).
+		items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
+		action = {arg item;
+			// Setup GUI Value
+			windowControlSynth.view.children.at(17).enabled_(true);
+			switch(item.value,
+				// No Scale
+				0, {
+					// Setup GUI Value
+					windowControlSynth.view.children.at(17).enabled_(false);
+				},
+				// Tempered
+				1, {nil},
+				// Chromatic
+				2, {degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]},
+				// Whole Tone 1
+				3, {degrees =  [0, 2, 4, 6, 8, 10]},
+				// Major
+				4, {degrees =  [0, 2, 4, 5, 7, 9, 11]},
+				// Minor
+				5, {degrees =  [0, 2, 3, 5, 7, 8, 10]},
+				// Diminued
+				6, {degrees =  [0, 2, 3, 5, 6, 8, 9, 11]},
+				// Octatonic 1
+				7, {degrees =  [0, 1, 3, 4, 6, 7, 9, 10]},
+				// Octatonic 2
+				8, {degrees =  [0, 2, 3, 5, 6, 8, 9, 11]},
+				// Nonatonique
+				9, {degrees =  [0, 2, 3, 4, 6, 7, 8, 10, 11]},
+				// Messian 4
+				10, {degrees =  [0, 1, 2, 5, 6, 7, 8, 11]},
+				// Messian 5
+				11, {degrees =  [0, 1, 5, 6, 7, 11]},
+				// Messian 6
+				12, {degrees =  [0, 2, 4, 5, 6, 8, 10, 11]},
+				// Messian 7
+				13, {degrees =  [0, 1, 2, 3, 5, 6, 7, 8, 9, 11]},
+				// Bi-Pentaphonic
+				14, {degrees =  [0, 1, 2, 4, 5, 6, 7, 9, 10, 11]},
+				// Major Pentatonic
+				15, {degrees =  [0, 2, 4, 7, 9]},
+				// Minor Pentatonic
+				16, {degrees =  [0, 3, 5, 7, 10]},
+				// Blues
+				17, {degrees =  [0, 3, 5, 6, 7, 10]},
+				// Asavari
+				18, {degrees =  [0, 2, 3, 5, 7, 8, 10]},
+				// Bhairava
+				19, {degrees =  [0, 1, 4, 5, 7, 8, 11]},
+				// Bhairavi
+				20, {degrees =  [0, 1, 3, 5, 7, 8, 10]},
+				// Bilaval
+				21, {degrees =  [0, 2, 4, 5, 7, 9, 11]},
+				// Kafi
+				22, {degrees =  [0, 2, 3, 5, 7, 9, 10]},
+				// Kalyan
+				23, {degrees =  [0, 2, 4, 6, 7, 9, 11]},
+				// Khammaj
+				24, {degrees =  [0, 2, 4, 5, 7, 9, 10]},
+				// Marava
+				25, {degrees =  [0, 1, 4, 6, 7, 9, 11]},
+				// Pooravi
+				26, {degrees =  [0, 1, 4, 6, 7, 8, 11]},
+				// Todi
+				27, {degrees =  [0, 1, 3, 6, 7, 8, 11]},
+				// Indian Shrutis
+				28, {nil},
+				// 22tet
+				29, {degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]},
+				// 12tet
+				30, {degrees =  [0, 2, 4, 6, 7, 9, 11, 13, 15, 16, 19, 20]},
+				// Asavari
+				31, {degrees =  [0, 4, 6, 9, 13, 15, 19]},
+				// Bhairava
+				32, {degrees =  [0, 2, 7, 9, 13, 15, 20]},
+				// Bhairavi
+				33, {degrees =  [0, 3, 5, 9, 13, 15, 18]},
+				// Bilaval
+				34, {degrees =  [0, 4, 7, 9, 13, 16, 20]},
+				// Kafi
+				35, {degrees =  [0, 4, 6, 9, 13, 16, 19]},
+				// Kalyan
+				36, {degrees =  [0, 4, 7, 11, 13, 16, 20]},
+				// Khammaj
+				37, {degrees =  [0, 4, 7, 9, 13, 16, 19]},
+				// Marava
+				38, {degrees =  [0, 2, 7, 11, 13, 16, 20]},
+				// Pooravi
+				39, {degrees =  [0, 2, 7, 11, 13, 15, 20]},
+				// Todi
+				40, {degrees =  [0, 2, 6, 11, 13, 15, 20]}
+			);
+			// chroma
+			if(item.value > 1 and: {item.value < 28}, {tuning = Tuning.et12; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
+				// Setup GUI Value
+				windowControlSynth.view.children.at(17).children.at(1).valueAction = degrees.asString;
+				listeWindowSynth.do({|window|
+					if(window.view.children.at(54).value == 1, {
+						window.value.view.children.at(79).valueAction_(item.value);
+					});
+				});
+			});
+			//shruti
+			if(item.value > 28, {tuning = Tuning.sruti; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
+				// Setup GUI Value
+				windowControlSynth.view.children.at(17).children.at(1).valueAction = degrees.asString;
+				listeWindowSynth.do({|window|
+					if(window.view.children.at(54).value == 1, {
+						window.value.view.children.at(79).valueAction_(item.value);
+					});
+				});
+			});
+			//no scale
+			if(item.value ==0, {
+				// Setup GUI Value
+				windowControlSynth.view.children.at(17).children.at(1).valueAction = degrees.asString;
+				listeWindowSynth.do({|window|
+					if(window.view.children.at(54).value == 1, {
+						window.value.view.children.at(79).valueAction_(0);
+					});
+				});
+			});
+		};
+
+		// Degrees
+		EZText(windowControlSynth, Rect(0, 0, 350, 20), "Degrees",
+			{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
+				listeWindowSynth.do({|window|
+					if(window.view.children.at(54).value == 1, {
+						window.value.view.children.at(82).children.at(1).valueAction = degrees.asString;
+					});
+				});
+		}, degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 40, 300);
 
 		windowControlSynth.onClose_({
 			listeWindows.remove(windowControlSynth);
