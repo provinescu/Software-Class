@@ -1828,7 +1828,7 @@ y ... -						Musical keys.
 						listeWindowSynth.do({|window|
 							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
 								window.value.view.children.at(38).children.do({arg subView, subItem;
-									if(subItem == 2, {subView.activeLo_(rrand(-1.0, 0.0)); subView.activeHi_(rrand(0.0, 1.0))})
+									if(subItem == 2, {subView.activeLo_(rrand(1.0.neg, 1.0) + 1 / 2); subView.activeHi_(rrand(1.0.neg, 1.0) + 1 / 2)})
 								});
 							});
 						});
@@ -1864,7 +1864,7 @@ y ... -						Musical keys.
 						listeWindowSynth.do({|window|
 							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
 								window.value.view.children.at(41).children.do({arg subView, subItem;
-									if(subItem == 2, {subView.activeLo_(rrand(-12.0, -6.0)); subView.activeHi_(rrand(-6.0, 0.0))})
+									if(subItem == 2, {subView.activeLo_(rrand(-12.0.dbamp, -6.0.dbamp)); subView.activeHi_(rrand(-6.0.dbamp, 0.0.dbamp))})
 								});
 							});
 						});
@@ -3986,10 +3986,10 @@ y ... -						Musical keys.
 		jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 20, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
 		windowSynth.view.decorator.nextLine;
 		// Auto Freq
-		automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.black,  Color.green(0.8, 0.25)],["Freq", Color.black, Color.red(0.8, 0.25)]];
+		automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.black,  Color.green(0.8, 0.25)],["Freq", Color.black, Color.red(0.8, 0.25)], ["Freq", Color.black, Color.yellow(0.8, 0.25)]];
 		automationSliderFreq.action = {|view| };
 		// Auto Dur
-		automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.black,  Color.green(0.8, 0.25)],["Dur", Color.black, Color.red(0.8, 0.25)]];
+		automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.black,  Color.green(0.8, 0.25)],["Dur", Color.black, Color.red(0.8, 0.25)], ["Dur", Color.black, Color.yellow(0.8, 0.25)]];
 		automationSliderDur.action = {|view| };
 		// Auto Buffer
 		automationSliderBuffer= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["CtrlBuf", Color.black,  Color.green(0.8, 0.25)],["CtrlBuf", Color.black, Color.red(0.8, 0.25)]];
@@ -4187,7 +4187,7 @@ y ... -						Musical keys.
 			{|ez| root = ez.value; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, labelWidth: 20, numberWidth: 20);
 		// Auto Root
 		Button(windowSynth,Rect(0, 0, 20, 20)).
-		states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]]).
+		states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)], ["*", Color.black, Color.yellow(0.8, 0.25)]]).
 		action_({arg view; flagRoot = view.value;
 				if(view.value == 0, {/*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/});
 		});
@@ -4285,7 +4285,7 @@ y ... -						Musical keys.
 									# q1Freq, medianeFreq, q3Freq, ecartqFreq, ecartsemiqFreq = freq.quartiles;
 									dissymetrieFreq = freq.dissymetrie;
 									// Automation Root
-									if(window.view.children.at(79).value != 0 and: {flagRoot == 1},
+										if(window.view.children.at(79).value != 0 and: {flagRoot == 1} and: {window.view.children.at(81).value == 1},
 										{
 											newRoot = medianeFreq.cpsoct;
 											newRoot = (newRoot.frac * tuning.size + 0.5).floor;	window.view.children.at(80).children.at(2).valueAction_(newRoot);
