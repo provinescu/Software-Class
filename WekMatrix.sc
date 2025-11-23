@@ -10,7 +10,7 @@ WekMatrix {
 	var changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu;
 	var midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile;
 	var menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze, dimIn, speedMFCC, responder, sender, menuAlgo;
-	var degrees, root, scale, tuning;
+	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
 
 	*new	{arg path="~/Documents/WekMatrix/", ni=8, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -143,7 +143,7 @@ WekMatrix {
 		listeAlgorithm = ["Default", "Probability", "Euclide", "Genetic", "Kohonen", "Neural"];
 		flagMemory = 'off';
 		numFhzBand = 3; // Nombre de band de fhz (+1 pour all data) pour trier dans les synth index=0 pour all index=1 pour badnnum 1 etc...
-		bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
+		bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )].abs}).midicps;
 		bandFHZ = bandFHZ.reverse;
 		bandFHZ = bandFHZ.add([0, 127].midicps);
 		bandFHZ = bandFHZ.reverse;
@@ -901,7 +901,7 @@ Preset Wek",
 			window.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[], subType;
 				// StaticText
-				if(item == 2 or: {item == 8} or: {item == 12} or: {item == 16} or: {item == 22} or: {item == 32} or: {item == 37} or: {item == 45} or: {item == 47} or:{item == 50} or:{item == 65},
+				if(item == 2 or: {item == 8} or: {item == 12} or: {item == 16} or: {item == 22} or: {item == 32} or: {item == 37} or: {item == 45} or: {item == 47} or:{item == 50} or:{item == 70},
 					{data = data.add(view.string)});
 				// EZNumber
 				if(item == 9 or: {item == 10},
@@ -910,7 +910,7 @@ Preset Wek",
 					data = data.add(arrayData)});
 				// EZSlider
 				arrayData=[];
-				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56}  or:{item == 80},
+				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56}  or:{item == 85},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)},
 							{arrayData=arrayData.add(subView.value)})});
@@ -928,10 +928,10 @@ Preset Wek",
 				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7} or: {item == 11}
 					or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 28} or: {item == 29} or: {item == 30} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81} or:{item == 83} or:{item == 84},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 65} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 80} or:{item == 81} or:{item == 82} or:{item == 83} or:{item == 84} or:{item == 86} or:{item == 88} or:{item == 89},
 					{data = data.add(view.value)});
 				// Composite View (Degrees)
-				if(item == 82,
+				if(item == 87,
 					{
 						view.children.do({arg subView;
 							if(subView.asString == "a StaticText" or: {subView.asString == "a SCStaticText"} or: {subView.asString == "a QStaticText"}, {arrayData = arrayData.add(subView.string)});
@@ -966,7 +966,7 @@ Preset Wek",
 			listeWindowSynth.last.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
 				// StaticText
-				if(item == 2 or: {item == 8} or: {item == 12} or: {item == 16} or: {item == 37} or: {item == 45} or: {item == 47} or:{item == 50} or:{item == 65},	{nil});
+				if(item == 2 or: {item == 8} or: {item == 12} or: {item == 16} or: {item == 37} or: {item == 45} or: {item == 47} or:{item == 50} or:{item == 70},	{nil});
 				// Load Buffer One and Two
 				if(item == 22 or: {item == 32},
 					{
@@ -974,7 +974,7 @@ Preset Wek",
 				});
 				// EZSlider
 				arrayData=[];
-				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56} or:{item == 80},
+				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56} or:{item == 85},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
@@ -1016,14 +1016,14 @@ Preset Wek",
 				if(item == 0 or: {item == 3} or: {item == 5} or: {item == 6} or: {item == 7}
 					or: {item == 17} or: {item == 19} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 29} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 64} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 70} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 81},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 65} or:{item == 66} or:{item == 67} or:{item == 69} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 80} or:{item == 81} or:{item == 82} or:{item == 83} or:{item == 84} or:{item == 86} or:{item == 88},
 					{view.valueAction_(data.at(item))});
 				// MIDI
-				if(item == 63, {view.valueAction_(0); view.valueAction_(data.at(item))});
+				if(item == 68, {view.valueAction_(0); view.valueAction_(data.at(item))});
 				// Degrees
-				if(item == 82, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
+				if(item == 87, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
 				// Freeze
-				if(item == 84, {
+				if(item == 89, {
 					view.value_(data.at(item));
 					if(data.at(item).value == 1,{view.valueAction_(2)},{view.valueAction_(data.at(item))});// Action Special Freeze
 				});
@@ -1138,7 +1138,7 @@ Preset Wek",
 		fonctionSaveControlSynth = {arg window;
 			var data=[];
 			window.view.children.do({arg view, item;
-				var arrayData=[], subArrayData=[];
+				var arrayData=[], subArrayData=[], subType;
 				// EZSlider
 				arrayData=[];
 				if(item == 4 or: {item == 10} or: {item == 12} or: {item == 14},
@@ -1157,13 +1157,31 @@ Preset Wek",
 					data = data.add(arrayData)});
 				// EZKnob
 				arrayData=[];
-				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22},
+				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)});
 						if(subItem == 1, {arrayData=arrayData.add("A Knob")});
 						if(subItem == 2, {arrayData=arrayData.add(subView.value)})});
 					data = data.add(arrayData);
 				});
+				/*// gammes
+				if(item == 16,
+					{data = data.add(view.value)});
+				// Composite View (Degrees)
+				if(item == 17,
+					{
+						view.children.do({arg subView;
+							if(subView.asString == "a StaticText" or: {subView.asString == "a SCStaticText"} or: {subView.asString == "a QStaticText"}, {arrayData = arrayData.add(subView.string)});
+							if(subView.asString == "a TextField" or: {subView.asString == "a SCTextField"} or: {subView.asString == "a QTextField"}, {arrayData = arrayData.add(subView.string); subType = subView.asString});
+							if(subView.asString == "a Slider" or: {subView.asString == "a SCSlider"} or: {subView.asString == "a QSlider"}, {arrayData=arrayData.add(subView.value); subType = 	subView.asString});
+							if(subView.asString == "a RangeSlider" or: {subView.asString == "a SCRangeSlider"} or: {subView.asString == "a QRangeSlider"}, {subArrayData=subArrayData.add(subView.lo);subArrayData=subArrayData.add(subView.hi); arrayData=arrayData.add(subArrayData); subType = subView.asString});
+							if(subView.asString == "a Knob" or: {subView.asString == "a SCKnob"} or: {subView.asString == "a QKnob"}, {subArrayData=subArrayData.add(subView.value); arrayData=arrayData.add(subArrayData); subType = subView.asString});
+							if(subView.asString == "a NumberBox" or: {subView.asString == "a SCNumberBox"} or: {subView.asString == "a QNumberBox"}, {arrayData=arrayData.add(subView.value)});
+							if(subView.asString == "a UserView" or: {subView.asString == "an UserView"} or: {subView.asString == "a SCUserView"} or: {subView.asString == "a QUserView"},
+								{data = data.add([subView.asString, nil])});
+						});
+						data = data.add([view.asString, subType, arrayData]);
+				});*/
 			});
 			// Sortie Fonction Save Control
 			data.value;
@@ -1185,12 +1203,17 @@ Preset Wek",
 						if(subItem == 2, {subView.range(data.at(item).at(subItem).value)})});
 				});
 				// EZKnob
-				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} and:{data.at(item) != nil},
+				if(item == 1 or: {item == 3} or: {item == 5} or: {item == 7}  or: {item == 9} or: {item == 11} or: {item == 13} or: {item == 15},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0 or: {subItem == 1}, {nil});
 						if(subItem == 2, {subView.valueAction = data.at(item).at(subItem).value});
 					});
 				});
+				/*// gammes
+				if(item == 16,
+					{view.valueAction_(data.at(item))});
+				// Degrees
+				if(item == 17, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});*/
 			});
 		};
 
@@ -1221,7 +1244,7 @@ Preset Wek",
 			// bandFhz pour test dans OSC analyze 108-24 = 84 -->> range piano
 			//bandFHZ = Array.fill(numFhzBand, {arg i; 84 / numFhzBand * i + 24 + (84 / numFhzBand )}).midicps;
 			//bandFHZ = bandFHZ.add(127.midicps);
-			bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
+			bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )].abs}).midicps;
 			bandFHZ = bandFHZ.reverse;
 			bandFHZ = bandFHZ.add([0, 127].midicps);
 			bandFHZ = bandFHZ.reverse;
@@ -1238,15 +1261,15 @@ Preset Wek",
 			for(0, numFhzBand,
 				{arg index;
 					listeWindowSynth.do({arg w;
-						w.view.children.at(66 + index).enabled_(true);
+						w.view.children.at(71 + index).enabled_(true);
 					});
 			});
 			if(numFhzBand < 12, {
 				for(numFhzBand + 1, 12,
 					{arg index;
 						listeWindowSynth.do({arg w;
-							w.view.children.at(66 + index).enabled_(false);
-							w.view.children.at(66 + index).valueAction_(0);
+							w.view.children.at(71 + index).enabled_(false);
+							w.view.children.at(71 + index).valueAction_(0);
 						});
 				});
 			});
@@ -1449,10 +1472,10 @@ Preset Wek",
 				{
 					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
 						// Set Master Sliders Controls [pan, freq, transFreq, amp, duree, stretch, quant, root]
-						//controlPanSlider.valueA= wekOut[0..1].clip(-1, 1);
+						controlPanSlider.value = wekOut[0..1].clip(-1, 1);
 						controlFreqSlider.value = wekOut[2..3].clip(0, 127);
 						controlFreqTranSlider.value = wekOut[4].clip(-127, 127);
-						//controlAmpSlider.value = wekOut[5..6].clip(-120, 0);
+						controlAmpSlider.value = wekOut[5..6].clip(-120, 0);
 						controlDureeSlider.value = wekOut[7..8].clip(0, 60);
 						controlDureeTranSlider.value = wekOut[9].clip(-100, 100);
 						controlQuantaSlider.value = wekOut[10].clip(1, 100);
@@ -1462,35 +1485,54 @@ Preset Wek",
 						{
 							listeWindowSynth.do({|window|
 								if(window.view.children.at(54).value == 1, { // set to wek in on
-									// Freq
+									// Pan
 									if(window.view.children.at(57).value == 2, {
+										window.view.children.at(38).children.do({arg subView, subItem;
+											if(subItem == 2, {subView.activeLo_(wekOut[0].clip(-1, 1) + 1 / 2); subView.activeHi_(wekOut[1].clip(-1, 1) + 1 / 2)});
+										});
+									});
+									// Freq
+									if(window.view.children.at(58).value == 2, {
 										window.value.view.children.at(39).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.activeLo_(wekOut[2].clip(0, 127) / 127); subView.activeHi_(wekOut[3].clip(0, 127) / 127)})
 										});
-										// Freq T
+									});
+									// Freq T
+									if(window.view.children.at(59).value == 2, {
 										window.value.view.children.at(40).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.valueAction_(wekOut[4].clip(-127, 127))});
 										});
 									});
-									if(window.view.children.at(81).value == 2, {
-										// Root
-										window.value.view.children.at(80).children.do({arg subView, subItem;
-											if(subItem == 2, {subView.valueAction_(wekOut[11].clip(0, 21))});
+									// Amp
+									if(window.view.children.at(60).value == 2, {
+										window.view.children.at(41).children.do({arg subView, subItem;
+											if(subItem == 2, {subView.activeLo_(wekOut[5].clip(-120, 0).dbamp); subView.activeHi_(wekOut[6].clip(-120, 0).dbamp)});
 										});
 									});
-									if(window.view.children.at(58).value == 2, {
+									// Duree
+									if(window.view.children.at(61).value == 2, {
 										// Duree
 										window.value.view.children.at(42).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.activeLo_(wekOut[7].clip(0, 60) / 60); subView.activeHi_(wekOut[8].clip(0, 60) / 60)})
 										});
-										// Duree T
+									});
+									// Duree Stretch
+									if(window.view.children.at(62).value == 2, {
 										window.value.view.children.at(43).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.valueAction_(wekOut[9].clip(-100, 100))});
 										});
-										// Quant
+									});
+									// Quant
+									if(window.view.children.at(63).value == 2, {
 										window.value.view.children.at(44).children.do({arg subView, subItem;
 											if(subItem == 2, {subView.valueAction_(wekOut[10].clip(1, 100))});
 										});
+									});
+								});
+								// Root
+								if(window.view.children.at(86).value == 2, {
+									window.value.view.children.at(85).children.do({arg subView, subItem;
+										if(subItem == 2, {subView.valueAction_(wekOut[11].clip(0, 21))});
 									});
 								});
 							});
@@ -1802,7 +1844,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentFreq.value, {
 						controlFreqSlider.valueAction_([medianeA - ecartsemiqA, medianeA + ecartsemiqA].cpsmidi);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
 								window.value.view.children.at(39).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_((medianeA - ecartsemiqA).cpsmidi / 127); subView.activeHi_((medianeA + ecartsemiqA).cpsmidi / 127)})
 								});
@@ -1813,7 +1855,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentFreqT.value, {
 						controlFreqTranSlider.valueAction_(dissymetrie * 12);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(59).value == 1}, {
 								window.value.view.children.at(40).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_(dissymetrie * 12)});
 								});
@@ -1824,7 +1866,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentAmp.value, {
 						controlAmpSlider.valueAction_([rrand(-12.0, -6.0), rrand(-6.0, 0.0)]);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(60).value == 1}, {
 								window.value.view.children.at(41).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_(rrand(-12.0.dbamp, -6.0.dbamp)); subView.activeHi_(rrand(-6.0.dbamp, 0.0.dbamp))})
 								});
@@ -1838,7 +1880,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentDur.value, {
 						controlDureeSlider.valueAction_([q1A, q3A]);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(61).value == 1}, {
 								window.value.view.children.at(42).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_(q1A / timeMaximum); subView.activeHi_(q3A / timeMaximum)})
 								});
@@ -1849,7 +1891,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentDurT.value, {
 						controlDureeTranSlider.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(62).value == 1}, {
 								window.value.view.children.at(43).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign)});
 								});
@@ -1860,7 +1902,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentQuant.value, {
 						controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor));
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(63).value == 1}, {
 								window.value.view.children.at(44).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_(((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor)))});
 								});
@@ -1871,8 +1913,8 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentRoot.value, {
 						controlRootSlider.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(81).value == 1}, {
-								window.value.view.children.at(80).children.do({arg subView, subItem;
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(86).value == 1}, {
+								window.value.view.children.at(85).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor)});
 								});
 							});
@@ -2115,11 +2157,11 @@ Preset Wek",
 				});
 				// key I -> Init Algo all Synth
 				if(modifiers==131072 and: {unicode==73} and: {keycode==34},{
-					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(83).valueAction_(1)});
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(88).valueAction_(1)});
 				});
 				// Key alt + I -> Init Algo Synth on front
 				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
-					window.view.children.at(83).valueAction_(1);
+					window.view.children.at(88).valueAction_(1);
 				});
 				// key f -> Switch File for Analyze
 				if(modifiers==0 and: {unicode==102} and: {keycode==3}, {
@@ -2189,21 +2231,21 @@ Preset Wek",
 				});
 				// Key a -> switch freezeDataOSC for synth on front
 				if(char == $a, {
-					window.view.children.at(84).valueAction_((window.view.children.at(84).value.min(1) - 1).abs);
+					window.view.children.at(89).valueAction_((window.view.children.at(89).value.min(1) - 1).abs);
 				});
 				// Key A -> switch freezeDataOSC for all synth
 				if(char == $A, {
-					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_((listeWindowSynth.at(index).view.children.at(84).value.min(1) - 1).abs);
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(89).valueAction_((listeWindowSynth.at(index).view.children.at(89).value.min(1) - 1).abs);
 					});
 				});
 				// Key ctrl+a -> switch freezeDataOSC on for all synth
 				if(modifiers==262144 and: {unicode==1} and: {keycode==0}, {
-					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_(1);
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(89).valueAction_(1);
 					});
 				});
 				// Key ctrl+A -> switch freezeDataOSC off for all synth
 				if(modifiers==393216 and: {unicode==1} and: {keycode==0}, {
-					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(84).valueAction_(0);
+					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(89).valueAction_(0);
 					});
 				});
 				// Key y -> Display NodesTree
@@ -2717,10 +2759,10 @@ Preset Wek",
 		windowVST.view.children.at(0).focus;
 		windowVST.front;
 		windowVST.view.do({arg view;
-					view.children.do({arg subView;
-						subView.font = Font("Helvetica", 10);
-					});
-				});
+			view.children.do({arg subView;
+				subView.font = Font("Helvetica", 10);
+			});
+		});
 		fonctionShortCut.value(windowVST);
 
 		////////////////////////// Window Keyboard ///////////////////////////////
@@ -2816,7 +2858,7 @@ Preset Wek",
 					});
 				});
 			});
-		},[-1, 1],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[-1, 1],labelWidth: 50, numberWidth: 35);
 		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
 		previousFreq = [0, 127];
@@ -2825,24 +2867,24 @@ Preset Wek",
 			valHi = (ez.value.at(1) / 127);
 			previousFreq = ez.value;
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
 					window.value.view.children.at(39).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
 					});
 				});
 			});
-		},[0, 127],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[0, 127],labelWidth: 50, numberWidth: 35);
 		pourcentFreq = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq T
 		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(59).value == 0}, {
 					window.value.view.children.at(40).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Amp
 		previousAmp = [-inf, 0];
@@ -2851,13 +2893,13 @@ Preset Wek",
 			valHi = (ez.value.at(1) / 2).dbamp;
 			previousAmp = ez.value;
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(60).value == 0}, {
 					window.value.view.children.at(41).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.activeLo_(valLo); subView.activeHi_(valHi)})
 					});
 				});
 			});
-		},[-inf, 0],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[-inf, 0],labelWidth: 50, numberWidth: 35);
 		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
 		previousDuree = [0, 1];
@@ -2867,50 +2909,50 @@ Preset Wek",
 				valHi = (ez.value.at(1));
 				previousDuree = ez.value;
 				listeWindowSynth.do({|window|
-					if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
+					if(window.view.children.at(54).value == 1 and: {window.view.children.at(61).value == 0}, {
 						window.value.view.children.at(42).children.do({arg subView, subItem;
 							if(subItem == 2, {subView.activeLo_(valLo / 60); subView.activeHi_(valHi / 60)})
 						});
 					});
 				});
-		},[0, 4],labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		},[0, 4],labelWidth: 50, numberWidth: 35);
 		pourcentDur = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree T
 		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(62).value == 0}, {
 					window.value.view.children.at(43).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
 				});
 			});
-		}, 100, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 100, labelWidth: 50, numberWidth: 35);
 		pourcentDurT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Quantization
 		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(63).value == 0}, {
 					window.value.view.children.at(44).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_((ez.value))});
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
 		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
 			root = ez.value;
 			listeWindowSynth.do({|window|
-				if(window.view.children.at(54).value == 1 and: {window.view.children.at(81).value == 0}, {
-					window.value.view.children.at(80).children.do({arg subView, subItem;
+				if(window.view.children.at(54).value == 1 and: {window.view.children.at(86).value == 0}, {
+					window.value.view.children.at(85).children.do({arg subView, subItem;
 						if(subItem == 2, {subView.valueAction_(ez.value)});
 					});
 				});
 			});
-		}, 0, labelWidth: 50, numberWidth: 35).setColors(Color.grey(0.3), Color.magenta);
+		}, 0, labelWidth: 50, numberWidth: 35);
 		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 
-				// Tuning pour tous les synth
+		// Tuning pour tous les synth
 		degrees =[0,1,2,3,4,5,6,7,8,9,10,11];
 		root = 0;
 		tuning = Tuning.et12;
@@ -3015,7 +3057,7 @@ Preset Wek",
 				windowControlSynth.view.children.at(17).children.at(1).valueAction = degrees.asString;
 				listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1, {
-						window.value.view.children.at(79).valueAction_(item.value);
+						window.value.view.children.at(84).valueAction_(item.value);
 					});
 				});
 			});
@@ -3025,7 +3067,7 @@ Preset Wek",
 				windowControlSynth.view.children.at(17).children.at(1).valueAction = degrees.asString;
 				listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1, {
-						window.value.view.children.at(79).valueAction_(item.value);
+						window.value.view.children.at(84).valueAction_(item.value);
 					});
 				});
 			});
@@ -3035,7 +3077,7 @@ Preset Wek",
 				windowControlSynth.view.children.at(17).children.at(1).valueAction = degrees.asString;
 				listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1, {
-						window.value.view.children.at(79).valueAction_(0);
+						window.value.view.children.at(84).valueAction_(0);
 					});
 				});
 			});
@@ -3046,7 +3088,7 @@ Preset Wek",
 			{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
 				listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1, {
-						window.value.view.children.at(82).children.at(1).valueAction = degrees.asString;
+						window.value.view.children.at(87).children.at(1).valueAction = degrees.asString;
 					});
 				});
 		}, degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 40, 300);
@@ -3882,20 +3924,26 @@ Preset Wek",
 			// Jitter AutomationMusic Synth
 			jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 20, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
+			// Auto Pan
+			automationSliderPan = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["P", Color.black,  Color.green(0.8, 0.25)],["P", Color.black, Color.red(0.8, 0.25)], ["P", Color.magenta, Color.blue(0.8, 0.25)],  ["P", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Freq
-			automationSliderFreq = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Freq", Color.magenta,  Color.green(0.8, 0.25)],["Freq", Color.magenta, Color.red(0.8, 0.25)], ["Freq", Color.magenta, Color.blue(0.8, 0.25)], ["Freq", Color.black, Color.yellow(0.8, 0.25)]];
-			automationSliderFreq.action = {|view|};
+			automationSliderFreq = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["F", Color.black,  Color.green(0.8, 0.25)],["F", Color.black, Color.red(0.8, 0.25)], ["F", Color.magenta, Color.blue(0.8, 0.25)],  ["F", Color.black, Color.yellow(0.8, 0.25)]];
+			// Auto Translate
+			automationSliderTrans = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["T", Color.black,  Color.green(0.8, 0.25)],["T", Color.black, Color.red(0.8, 0.25)], ["T", Color.magenta, Color.blue(0.8, 0.25)],  ["T", Color.black, Color.yellow(0.8, 0.25)]];
+			// Auto Amp
+			automationSliderAmp = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["A", Color.black,  Color.green(0.8, 0.25)],["A", Color.black, Color.red(0.8, 0.25)], ["A", Color.magenta, Color.blue(0.8, 0.25)],  ["A", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Dur
-			automationSliderDur= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Dur", Color.magenta,  Color.green(0.8, 0.25)],["Dur", Color.magenta, Color.red(0.8, 0.25)], ["Dur", Color.magenta, Color.blue(0.8, 0.25)], ["Dur", Color.black, Color.yellow(0.8, 0.25)]];
-			automationSliderDur.action = {|view|};
+			automationSliderDur = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["D", Color.black,  Color.green(0.8, 0.25)],["D", Color.black, Color.red(0.8, 0.25)], ["D", Color.magenta, Color.blue(0.8, 0.25)],  ["D", Color.black, Color.yellow(0.8, 0.25)]];
+			// Auto stretch
+			automationSliderStretch = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["S", Color.black,  Color.green(0.8, 0.25)],["S", Color.black, Color.red(0.8, 0.25)], ["S", Color.magenta, Color.blue(0.8, 0.25)],  ["S", Color.black, Color.yellow(0.8, 0.25)]];
+			// Auto Quant
+			automationSliderQuant = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["Q", Color.black,  Color.green(0.8, 0.25)],["Q", Color.black, Color.red(0.8, 0.25)], ["Q", Color.magenta, Color.blue(0.8, 0.25)],  ["Q", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Buffer
-			automationSliderBuffer= Button(windowSynth,Rect(0, 0, 35, 20)).states = [["CtrlBuf", Color.black,  Color.green(0.8, 0.25)],["CtrlBuf", Color.black, Color.red(0.8, 0.25)]];
-			automationSliderBuffer.action = {|view| };
+			automationSliderBuffer= Button(windowSynth,Rect(0, 0, 12, 20)).states = [["B", Color.black,  Color.green(0.8, 0.25)],["B", Color.black, Color.red(0.8, 0.25)]];
 			// Auto Synth
-			automationSliderSynth = Button(windowSynth,Rect(0, 0, 35, 20)).states = [["Synth", Color.black,  Color.green(0.8, 0.25)],["Synth", Color.black, Color.red(0.8, 0.25)]];
-			automationSliderSynth.action = {|view| };
+			automationSliderSynth = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["Y", Color.black,  Color.green(0.8, 0.25)],["Y", Color.black, Color.red(0.8, 0.25)]];
 			// % Change Synth
-			automationNumberSynth = NumberBox(windowSynth,Rect(0, 0, 25, 20)).minDecimals_(4);
+			automationNumberSynth = NumberBox(windowSynth,Rect(0, 0, 20, 20)).minDecimals_(4);
 			automationNumberSynth.action = {|view|};
 			automationNumberSynth.step_(0.01); automationNumberSynth.clipLo_(0); automationNumberSynth.clipHi_(10); automationNumberSynth.scroll_step_(0.01); automationNumberSynth.value_(onOffSynthValue.at(0));
 			automationSliderFreq.enabled_(false); automationSliderDur.enabled_(false); automationSliderSynth.enabled_(false); automationNumberSynth.enabled_(false); automationSliderBuffer.enabled_(false);
@@ -3928,11 +3976,11 @@ Preset Wek",
 			menuAlgorithm.valueAction_(0);
 
 			// SynthBand
-			StaticText(windowSynth, 25 @ 20).string = "Band"; // 65
+			StaticText(windowSynth, 25 @ 20).string = "Band"; // 70
 			// Band 0 to 12
 			Button.new(windowSynth, 25 @ 20).
 			states_([["0", Color.green], ["0", Color.red]]).
-			action_({arg band; flagIndexBand.put(0, band.value); fonctionBand.value(0)}); // 66 all data
+			action_({arg band; flagIndexBand.put(0, band.value); fonctionBand.value(0)}); // 71 all data
 			Button.new(windowSynth, 25 @ 20).
 			states_([["1", Color.green], ["1", Color.red]]).
 			action_({arg band; flagIndexBand.put(1, band.value); fonctionBand.value(1)});
@@ -3975,19 +4023,19 @@ Preset Wek",
 			items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
 			action = {arg item;
 				// Setup GUI Value
-				windowSynth.view.children.at(80).children.at(1).valueAction_(12);
-				windowSynth.view.children.at(80).children.at(1).valueAction_(0);
-				windowSynth.view.children.at(80).enabled_(true);
-				windowSynth.view.children.at(82).enabled_(true);
+				windowSynth.view.children.at(85).children.at(1).valueAction_(12);
+				windowSynth.view.children.at(85).children.at(1).valueAction_(0);
+				windowSynth.view.children.at(85).enabled_(true);
+				windowSynth.view.children.at(87).enabled_(true);
 				switch(item.value,
 					// No Scale
 					0, {
 						flagScaling = 'off';
 						// Setup GUI Value
-						windowSynth.view.children.at(80).children.at(1).valueAction_(12);
-						windowSynth.view.children.at(80).children.at(1).valueAction_(0);
-						windowSynth.view.children.at(80).enabled_(false);
-						windowSynth.view.children.at(82).enabled_(false);
+						windowSynth.view.children.at(85).children.at(1).valueAction_(12);
+						windowSynth.view.children.at(85).children.at(1).valueAction_(0);
+						windowSynth.view.children.at(85).enabled_(false);
+						windowSynth.view.children.at(87).enabled_(false);
 					},
 					// Tempered
 					1, {nil},
@@ -4072,11 +4120,11 @@ Preset Wek",
 				);
 				if(item.value > 1 and: {item.value < 28}, {tuning = Tuning.et12; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
 					// Setup GUI Value
-					windowSynth.view.children.at(82).children.at(1).valueAction = degrees.asString;
+					windowSynth.view.children.at(87).children.at(1).valueAction = degrees.asString;
 				});
 				if(item.value > 28, {tuning = Tuning.sruti; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning); flagScaling = 'on';
 					// Setup GUI Value
-					windowSynth.view.children.at(82).children.at(1).valueAction = degrees.asString;
+					windowSynth.view.children.at(87).children.at(1).valueAction = degrees.asString;
 				});
 			};
 			// Root
@@ -4086,14 +4134,14 @@ Preset Wek",
 			Button(windowSynth,Rect(0, 0, 20, 20)).
 			states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)], ["w", Color.black, Color.blue(0.8, 0.25)], ["*", Color.black, Color.yellow(0.8, 0.25)]]).
 			action_({arg view; flagRoot = view.value;
-				if(view.value == 0, {/*windowSynth.view.children.at(80).children.at(2).valueAction_(0)*/});
+				if(view.value == 0, {/*windowSynth.view.children.at(85).children.at(2).valueAction_(0)*/});
 			});
 			// Degrees
 			EZText(windowSynth, Rect(0, 0, 335, 20), "Degrees",
 				{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
 				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 33, 295);
-			windowSynth.view.children.at(80).enabled_(false);
-			windowSynth.view.children.at(82).enabled_(false);
+			windowSynth.view.children.at(85).enabled_(false);
+			windowSynth.view.children.at(87).enabled_(false);
 
 			// Init Algo
 			Button(windowSynth, Rect(0, 0, 25, 20)).states_([["IniA", Color.yellow]]).action_({
@@ -4111,14 +4159,14 @@ Preset Wek",
 
 			for(0, numFhzBand,
 				{arg index;
-					windowSynth.view.children.at(66 + index).enabled_(true);
+					windowSynth.view.children.at(71 + index).enabled_(true);
 
 			});
 			if(numFhzBand < 12, {
 				for(numFhzBand + 1, 12,
 					{arg index;
-						windowSynth.view.children.at(66 + index).enabled_(false);
-						windowSynth.view.children.at(66 + index).valueAction_(0);
+						windowSynth.view.children.at(71 + index).enabled_(false);
+						windowSynth.view.children.at(71 + index).valueAction_(0);
 				});
 			});
 
@@ -4181,37 +4229,57 @@ Preset Wek",
 										//Probabilite Freq
 										# q1Freq, medianeFreq, q3Freq, ecartqFreq, ecartsemiqFreq = freq.quartiles;
 										dissymetrieFreq = freq.dissymetrie;
+										// Automation Pan
+										if(window.view.children.at(57).value == 1, {
+											window.view.children.at(38).children.do({arg subView, subItem;
+												if(subItem == 2, {subView.activeLo_(q1Freq.cpsmidi / 127 * dissymetrieFreq.sign + 1 / 2); subView.activeHi_(q3Freq.cpsmidi / 127 * dissymetrieFreq.sign + 1 / 2)});
+											});
+										});
 										// Automation Root
-										if(window.view.children.at(79).value != 0 and: {flagRoot == 1} and: {window.view.children.at(81).value == 1},
+										if(window.view.children.at(84).value != 0 and: {flagRoot == 1} and: {window.view.children.at(86).value == 1},
 											{
 												newRoot = medianeFreq.cpsoct;
-												newRoot = (newRoot.frac * tuning.size + 0.5).floor;	window.view.children.at(80).children.at(2).valueAction_(newRoot);
+												newRoot = (newRoot.frac * tuning.size + 0.5).floor;	window.view.children.at(85).children.at(2).valueAction_(newRoot);
 										});
 										// Set Freq Sliders
-										if(window.view.children.at(57).value == 1, {
+										if(window.view.children.at(58).value == 1, {
 											window.view.children.at(39).children.do({arg subView, subItem;
 												if(subItem == 2, {subView.activeLo_((q1Freq + rand2(ecartsemiqFreq * window.view.children.at(56).children.at(1).value)).cpsmidi /127); subView.activeHi_((q3Freq + rand2(ecartsemiqFreq * window.view.children.at(56).children.at(1).value)).cpsmidi / 127)});
 											});
-											/*window.view.children.at(40).children.do({arg subView, subItem;
-											if(subItem == 1, {subView.valueAction_(rand(medianeFreq.cpsmidi * window.view.children.at(56).children.at(1).value * rrand(0, 1) / 127).clip(0, 127) * dissymetrieFreq.sign + 0.5)});
-											});*/
+										});
+										// Set Freq translate
+										if(window.view.children.at(59).value == 1, {
+											window.view.children.at(40).children.do({arg subView, subItem;
+												if(subItem == 1, {subView.valueAction_(rand(medianeFreq.cpsmidi * window.view.children.at(56).children.at(1).value * rrand(0, 1) / 127).clip(0, 127) * dissymetrieFreq.sign + 0.5)});
+											});
+										});
+										// set Amp
+										if(window.view.children.at(60).value == 1, {
+											window.view.children.at(41).children.do({arg subView, subItem;
+												if(subItem == 2, {subView.activeLo_(q1Freq.cpsmidi / 127); subView.activeHi_(q3Freq.cpsmidi / 127)});
+											});
 										});
 										//Probabilite Duree
 										# q1Duree, medianeDuree, q3Duree, ecartqDuree, ecartsemiqDuree = musicData.at(2).quartiles;
 										dissymetrieDuree=musicData.at(2).dissymetrie;
 										newQuantaDur = ((ecartsemiqDuree.reciprocal+0.5).floor / (ecartqDuree.reciprocal+0.5).floor + 0.5).floor * (ecartqDuree.reciprocal+0.5).floor;
-										newQuantaDur;
 										// Set Duree Sliders
-										if(window.view.children.at(58).value == 1, {
+										if(window.view.children.at(61).value == 1, {
 											window.view.children.at(42).children.do({arg subView, subItem;
 												if(subItem == 2, {subView.activeLo_(q1Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum / 60)); subView.activeHi_(q3Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum / 60))});
 											});
-											/*window.view.children.at(43).children.do({arg subView, subItem;
-											if(subItem == 1, {subView.valueAction_(ecartqDuree + rand(window.view.children.at(56).children.at(1).value) / timeMaximum * dissymetrieDuree.sign / 50 + 0.5)});
+										});
+										// Set Duree Stretch
+										if(window.view.children.at(62).value == 1, {
+											window.view.children.at(43).children.do({arg subView, subItem;
+												if(subItem == 1, {subView.valueAction_(ecartqDuree + rand(window.view.children.at(56).children.at(1).value) / timeMaximum * dissymetrieDuree.sign / 50 + 0.5)});
 											});
+										});
+										// Set Duree Quant
+										if(window.view.children.at(63).value == 1, {
 											window.view.children.at(44).children.do({arg subView, subItem;
-											if(subItem == 1 and: {newQuantaDur > 0 and: {newQuantaDur <= 100}}, {subView.valueAction_((newQuantaDur - 1) / 100)});
-											});*/
+												if(subItem == 1 and: {newQuantaDur > 0 and: {newQuantaDur <= 100}}, {subView.valueAction_((newQuantaDur - 1) / 100)});
+											});
 										});
 										// Probabilite sur signal FreqCentroid
 										# q1FreqCentroid, medianeFreqCentroid, q3FreqCentroid, ecartqFreqCentroid, ecartsemiqFreqCentroid = musicData.at(4).quartiles;
@@ -4221,7 +4289,7 @@ Preset Wek",
 										ecarttypeEnergy=musicData.at(6).ecartType;
 										dissymetrieEnergy=musicData.at(6).dissymetrie;
 										// Setup ctrlBuffer Buffer
-										if(window.view.children.at(59).value == 1, {
+										if(window.view.children.at(64).value == 1, {
 											// Rec 1 on / off
 											window.view.children.at(26).valueAction_((0.5 + ecarttypeEnergy * 	dissymetrieEnergy.sign).clip(0.0, 1.0));
 											// Offset Buffer 1
@@ -4247,10 +4315,10 @@ Preset Wek",
 										# q1Flatness, medianeFlatness, q3Flatness, ecartqFlatness, ecartsemiqFlatness = musicData.at(5).log10.abs.quartiles;
 										meanFlatness = musicData.at(5).mean;
 										dissymetrieFlatness=musicData.at(5).dissymetrie;
-										if(variableChange == "Flux", {meanProbaPreset = fluxOnFly.log10.abs; q1 = q1Flux; q3 = q3Flux; ecartsemiq = ecartsemiqFlux; seuilInt = 1; seuilFrac = window.view.children.at(61).value}, {meanProbaPreset = flatnessOnFly.log10.abs; q1 = q1Flatness; q3 = q3Flatness; ecartsemiq = ecartsemiqFlatness; seuilInt = 0; seuilFrac = window.view.children.at(61).value});
+										if(variableChange == "Flux", {meanProbaPreset = fluxOnFly.log10.abs; q1 = q1Flux; q3 = q3Flux; ecartsemiq = ecartsemiqFlux; seuilInt = 1; seuilFrac = window.view.children.at(66).value}, {meanProbaPreset = flatnessOnFly.log10.abs; q1 = q1Flatness; q3 = q3Flatness; ecartsemiq = ecartsemiqFlatness; seuilInt = 0; seuilFrac = window.view.children.at(66).value});
 										// Setup Change Synth or FX
 										if(algoChange == "Probability", {
-											if(window.view.children.at(60).value == 1, {
+											if(window.view.children.at(65).value == 1, {
 												if(meanProbaPreset < (q1 - ecartsemiq) or: {meanProbaPreset > (q3 + ecartsemiq)},
 													{windowName = window.name.split($[).at(0);
 														synthNumber = nil; compteur = 0;
@@ -4280,7 +4348,7 @@ Preset Wek",
 											});
 										},
 										{
-											if(window.view.children.at(60).value == 1, {
+											if(window.view.children.at(65).value == 1, {
 												if(abs(meanProbaPreset.floor - lastMeanProbaPreset.floor) >= seuilInt and: {(meanProbaPreset - lastMeanProbaPreset).abs >= seuilFrac},
 													{windowName = window.name.split($[).at(0);
 														synthNumber = nil; compteur = 0;
