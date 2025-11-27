@@ -928,7 +928,7 @@ Preset Wek",
 				if(item == 0 or: {item == 1} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7} or: {item == 11}
 					or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 28} or: {item == 29} or: {item == 30} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 65} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 80} or:{item == 81} or:{item == 82} or:{item == 83} or:{item == 84} or:{item == 86} or:{item == 88} or:{item == 89},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 65} or:{item == 66} or:{item == 67} or:{item == 68} or:{item == 69} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 80} or:{item == 81} or:{item == 82} or:{item == 83} or:{item == 84} or:{item == 86} or:{item == 88} or:{item == 89} or:{item == 90},
 					{data = data.add(view.value)});
 				// Composite View (Degrees)
 				if(item == 87,
@@ -1016,7 +1016,7 @@ Preset Wek",
 				if(item == 0 or: {item == 3} or: {item == 5} or: {item == 6} or: {item == 7}
 					or: {item == 17} or: {item == 19} or: {item == 21} or: {item == 26}
 					or: {item == 27} or: {item == 29} or: {item == 31} or: {item == 36}
-					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 65} or:{item == 66} or:{item == 67} or:{item == 69} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 80} or:{item == 81} or:{item == 82} or:{item == 83} or:{item == 84} or:{item == 86} or:{item == 88},
+					or: {item == 46} or: {item == 48} or: {item == 49} or: {item == 51} or: {item == 54} or: {item == 57} or: {item == 58} or: {item == 59} or: {item == 60} or: {item == 61} or: {item == 62} or: {item == 63}  or: {item == 64} or:{item == 65} or:{item == 66} or:{item == 67} or:{item == 69} or:{item == 71} or:{item == 72} or:{item == 73} or:{item == 74} or:{item == 75} or:{item == 76} or:{item == 77} or:{item == 78} or:{item == 79} or:{item == 80} or:{item == 81} or:{item == 82} or:{item == 83} or:{item == 84} or:{item == 86} or:{item == 88} or:{item == 90},
 					{view.valueAction_(data.at(item))});
 				// MIDI
 				if(item == 68, {view.valueAction_(0); view.valueAction_(data.at(item))});
@@ -3497,7 +3497,7 @@ Preset Wek",
 			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
 			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off', indexModeSynth = 0;
 			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand, loopRec1=0, loopRec2=0;
-			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ];
+			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ], flagChord;
 
 			freezeDataOSC = freezeOSC;
 			flagBand = 'on';
@@ -3517,6 +3517,7 @@ Preset Wek",
 			flagScaling = 'off';
 			pos=scale.degrees.size - 1;
 			flagRoot = 0;
+			flagChord = 0;
 
 			// For Kohonen
 			kohonenF = HPclassKohonen.new(1,127,1);
@@ -4137,9 +4138,9 @@ Preset Wek",
 				if(view.value == 0, {/*windowSynth.view.children.at(85).children.at(2).valueAction_(0)*/});
 			});
 			// Degrees
-			EZText(windowSynth, Rect(0, 0, 335, 20), "Degrees",
+			EZText(windowSynth, Rect(0, 0, 300, 20), "Deg",
 				{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
-				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 33, 295);
+				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 33, 280);
 			windowSynth.view.children.at(85).enabled_(false);
 			windowSynth.view.children.at(87).enabled_(false);
 
@@ -4181,6 +4182,10 @@ Preset Wek",
 					});
 				});
 				if(flag.value == 2, {flagFreezeDataOSC = 'on'});
+			});
+			// Chrd on off
+			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["Chd!", Color.green], ["Chd@", Color.red]]).action_({arg flag;
+				flagChord = flag.value
 			});
 
 			// Fonction AutoControls
@@ -4816,7 +4821,7 @@ Preset Wek",
 											listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 											duree = newDuree.at(indexMusicData);
 											indexMusicData = indexMusicData + 1;
-											while({duree < chordDuree and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
+											while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
 												{
 													listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 													listeAmp = listeAmp.add(newAmp.at(indexMusicData));
@@ -4983,7 +4988,7 @@ Preset Wek",
 												listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 												duree = newDuree.at(indexMusicData);
 												indexMusicData = indexMusicData + 1;
-												while({duree < chordDuree and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
+												while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
 													{
 														listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 														listeAmp = listeAmp.add(newAmp.at(indexMusicData));
@@ -5146,7 +5151,7 @@ Preset Wek",
 																listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 																duree = newDuree.at(indexMusicData);
 																indexMusicData = indexMusicData + 1;
-																while({duree < chordDuree and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
+																while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
 																	{
 																		listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 																		listeAmp = listeAmp.add(newAmp.at(indexMusicData));
@@ -5324,7 +5329,7 @@ Preset Wek",
 																	listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 																	duree = newDuree.at(indexMusicData);
 																	indexMusicData = indexMusicData + 1;
-																	while({duree < chordDuree and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
+																	while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
 																		{
 																			listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 																			listeAmp = listeAmp.add(newAmp.at(indexMusicData));
