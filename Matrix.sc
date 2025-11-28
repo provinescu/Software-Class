@@ -3966,7 +3966,7 @@ y ... -						Musical keys.
 				time = env.value.at(0);
 				envDuree.size.do({arg i; envDuree.put(i, abs(time.wrapAt(i+1) - time.wrapAt(i)))});
 				envLevel = env.value.at(1);
-				groupe.set('envLevel', envLevel.at(0), 'envLevel2', envLevel.at(1), 'envLevel3', envLevel.at(2), 'envLevel4', envLevel.at(3), 'envLevel5', envLevel.at(4),  'envLevel6', envLevel.at(5),  'envLevel7', envLevel.at(6),  'envLevel8', envLevel.at(7), 'envTime1', envDuree.at(0), 'envTime2', envDuree.at(1), 'envTime3', envDuree.at(2), 'envTime4', envDuree.at(3), 'envTime5', envDuree.at(4), 'envTime6', envDuree.at(5), 'envTime7', envDuree.at(6));
+				groupe.setn('envLevel', envLevel.at(0), 'envLevel2', envLevel.at(1), 'envLevel3', envLevel.at(2), 'envLevel4', envLevel.at(3), 'envLevel5', envLevel.at(4),  'envLevel6', envLevel.at(5),  'envLevel7', envLevel.at(6),  'envLevel8', envLevel.at(7), 'envTime1', envDuree.at(0), 'envTime2', envDuree.at(1), 'envTime3', envDuree.at(2), 'envTime4', envDuree.at(3), 'envTime5', envDuree.at(4), 'envTime6', envDuree.at(5), 'envTime7', envDuree.at(6));
 			};
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("AntiClicks (HPplugins)        /        Synthesizeur Controls").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Controls antiClick Synth (plugins hp)
@@ -3976,7 +3976,7 @@ y ... -						Musical keys.
 			.xOffset_(4)
 			.thumbSize_(19)
 			.elasticMode_(1);
-			controlsAntiClick.action={|controls| groupe.set(\ctrlHP1, controls.value.at(0), \ctrlHP2, controls.value.at(1)); ctrlHP = controls.value};
+			controlsAntiClick.action={|controls| groupe.setn(\ctrlHP1, controls.value.at(0), \ctrlHP2, controls.value.at(1)); ctrlHP = controls.value};
 			// Controls Nodes
 			controlsNode=MultiSliderView(windowSynth, Rect(10, 0, 335, 85)).value_([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
 			.fillColor_(Color.blue)
@@ -3984,7 +3984,7 @@ y ... -						Musical keys.
 			.xOffset_(5)
 			.thumbSize_(22)
 			.elasticMode_(1);
-			controlsNode.action={|controls| groupe.set(\ctrl1, controls.value.at(0), \ctrl2, controls.value.at(1), \ctrl3, controls.value.at(2), \ctrl4, controls.value.at(3), \ctrl5, controls.value.at(4), \ctrl6, controls.value.at(5), \ctrl7, controls.value.at(6), \ctrl8, controls.value.at(7), \ctrl9, controls.value.at(8), \ctrl10, controls.value.at(9), \ctrl11, controls.value.at(10), \ctrl12, controls.value.at(11)); ctrlSynth = controls.value};
+			controlsNode.action={|controls| groupe.setn(\ctrl1, controls.value.at(0), \ctrl2, controls.value.at(1), \ctrl3, controls.value.at(2), \ctrl4, controls.value.at(3), \ctrl5, controls.value.at(4), \ctrl6, controls.value.at(5), \ctrl7, controls.value.at(6), \ctrl8, controls.value.at(7), \ctrl9, controls.value.at(8), \ctrl10, controls.value.at(9), \ctrl11, controls.value.at(10), \ctrl12, controls.value.at(11)); ctrlSynth = controls.value};
 			windowSynth.view.decorator.nextLine;
 
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Automation Synthesizer").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
@@ -4282,7 +4282,7 @@ y ... -						Musical keys.
 								if(window.view.children.at(0).value == 1 and: {window.view.children.at(51).value == 1}, {
 									// Controls Synth
 									ctrlSynth = (window.view.children.at(49).value + [window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0)]).clip(0.001, 0.99);
-									groupe.set(\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
+									groupe.setn(\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
 								});
 								newTempo = rrand(window.view.children.at(52).children.at(1).value, window.view.children.at(52).children.at(3).value);
 							});
