@@ -6,7 +6,7 @@ WekMatrix {
 	classvar  < s, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagStreamMFCC, flagWTD, flagWTP;
 
 	var synthAnalyzeIn, busAnalyze, synthAudioIn, synthFileIn, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuWekMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, seuilAnalyse, filtreAnalyse, fonctionLoadFileForAnalyse, parametresAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, sourceIn, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem;
-	var fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, chordDuree, chordSize, chordTimeSlider, chordSizeSlider;
+	var fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, oscMusicData, listeDataOSC, freqBefore, dureeBefore, ampBefore, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata;
 	var changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, oscKeyboardData, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu;
 	var midiKeyboard, oscMIDIdata, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, lastTimeAnalyse, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile;
 	var menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, freqTampon, ampTampon, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze, dimIn, speedMFCC, responder, sender, menuAlgo;
@@ -123,8 +123,6 @@ WekMatrix {
 		lastTimeAutomationPreset = Main.elapsedTime;
 		limitTemps = 0;
 		parametresAnalyse = [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5]];
-		chordDuree = 0.0833;
-		chordSize = 3;
 		flagDataOSC = 'on';
 		canalMIDI = 0;
 		lastMeanProbaPresetFlux = 0;
@@ -910,7 +908,7 @@ Preset Wek",
 					data = data.add(arrayData)});
 				// EZSlider
 				arrayData=[];
-				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56}  or:{item == 85},
+				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56}  or:{item == 85}  or:{item == 91}  or:{item == 92},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)},
 							{arrayData=arrayData.add(subView.value)})});
@@ -974,7 +972,7 @@ Preset Wek",
 				});
 				// EZSlider
 				arrayData=[];
-				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56} or:{item == 85},
+				if(item == 13 or: {item == 14} or: {item == 15} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 33} or: {item == 34} or: {item == 35} or: {item == 40} or: {item == 43} or: {item == 44} or: {item == 53} or: {item == 56} or:{item == 85}  or:{item == 91}  or:{item == 92},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
@@ -1081,22 +1079,20 @@ Preset Wek",
 			window.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
 				// StaticText + TextView
-				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 29} or: {item == 31} or: {item == 32},
+				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 27} or: {item == 29} or: {item == 30},
 					{data = data.add(view.string)});
 				// EZSlider
 				arrayData=[];
-				if(item == 7 or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 27} or: {item == 28} or: {item == 35},
+				if(item == 7 or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 33},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {arrayData=arrayData.add(subView.string)},
 							{arrayData=arrayData.add(subView.value)})});
 					data = data.add(arrayData)});
 				// All others Sliders
-				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 8} or: {item == 11} or: {item == 12} or: {item == 13} or: {item == 14} or: {item == 15} or: {item == 30} or: {item == 33} or: {item == 34},
+				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 8} or: {item == 11} or: {item == 12} or: {item == 13} or: {item == 14} or: {item == 15} or: {item == 28} or: {item == 31} or: {item == 32},
 					{data = data.add(view.value)});
 				// Range Band
-				if(item == 36, {data = data.add(rangeBand.value)});
-				// Wek no action
-				if(item == 37 or: {item == 38} or: {item == 39} or: {item == 40} or: {item == 41} or: {item == 42} or: {item == 43}, {nil});
+				if(item == 34, {data = data.add(rangeBand.value)});
 			});
 			// Sortie Fonction Save Control
 			data.value;
@@ -1113,11 +1109,11 @@ Preset Wek",
 							{bpm = data.at(item).at(subItem).value})});
 				});
 				// StaticText
-				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 29} or: {item == 31} or: {item == 32}, // or: {item == 30} or: {item == 33} or: {item == 34},
+				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 27} or: {item == 29} or: {item == 30},
 					{nil});
 				// EZSlider
 				arrayData=[];
-				if(item == 21 or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 27} or: {item == 28}  or: {item == 35} or: {item == 7} or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 34},
+				if(item == 7 or: {item == 16} or: {item == 17} or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26} or: {item == 33},
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
@@ -1125,11 +1121,11 @@ Preset Wek",
 				// All others Sliders
 				if(item == 13 or: {item == 8} or: {item == 14} or: {item == 15},
 					{view.valueAction_(data.at(item).value)});
-				// No Action + Wek No Action
-				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 30} or: {item == 33} or: {item == 37} or: {item == 38} or: {item == 39} or: {item == 40} or: {item == 41} or: {item == 42} or: {item == 43},
+				// No Action
+				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 19} or: {item == 20} or: {item == 28} or: {item == 31},
 					{nil});
 				// Range Band
-				if(item == 36, {rangeBand.valueAction = data.at(item).value});
+				if(item == 34, {rangeBand.valueAction = data.at(item).value});
 			});
 			// Set BPM
 			bpmSlider.valueAction = bpm;
@@ -2714,7 +2710,7 @@ Preset Wek",
 		////////////////////////// Window VST ///////////////////////////////
 		windowVST = Window.new("VST Stereo", Rect(40, 500, 320, 80), scroll: true);
 		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
-		Button(windowVST, Rect(0, 0, 60, 20)).
+		Button(windowVST, Rect(0, 0, 60, 15)).
 		states_([["Run On", Color.green], ["Run Off", Color.red]]).
 		action = {arg shortcut;
 			switch (shortcut.value,
@@ -2722,22 +2718,22 @@ Preset Wek",
 				1, {~synthVST.run(true); flagVST ='on'};
 			);
 		};
-		Button(windowVST, Rect(0, 0, 50, 20)).
+		Button(windowVST, Rect(0, 0, 50, 15)).
 		states_([["Browse", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.browse;
 		};
-		Button(windowVST, Rect(0, 0, 40, 20)).
+		Button(windowVST, Rect(0, 0, 40, 15)).
 		states_([["Editor", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.editor;
 		};
-		Button(windowVST, Rect(0, 0, 30, 20)).
+		Button(windowVST, Rect(0, 0, 30, 15)).
 		states_([["GUI", Color.white]]).
 		action = {arg shortcut;
 			~fxVST.gui;
 		};
-		Button(windowVST, Rect(0, 0, 40, 20)).
+		Button(windowVST, Rect(0, 0, 40, 15)).
 		states_([["Close", Color.white]]).
 		action = {arg shortcut;
 			~synthVST.free;
@@ -2746,7 +2742,7 @@ Preset Wek",
 			~synthVST = Synth.newPaused("VST Plugin", [\xFade, 0.5, \gainIn, 0.5], groupeMasterFX, \addToHead).map(\freq, busOSC.at(0));// Attention map bus systemBPM not a bus !!!!!!
 			~fxVST = VSTPluginController(~synthVST);
 		};
-		PopUpMenu(windowVST,Rect(0, 0, 70, 20)).items_(["Out 1", "Out 2", "Out 3", "Out 4", "Out 5", "Out 6", "Out 7", "Out 8", "Out 9", "Out 10", "Out 11", "Out 12", "Out 13", "Out 14", "Out 15", "Out 16", "Out 17", "Out 18", "Out 19", "Out 20", "Out 21", "Out 22", "Out 23", "Out 24", "Out 25", "Out 26", "Out 27", "Out 28", "Out 29", "Out 30", "Out 31", "Out 32"]).
+		PopUpMenu(windowVST,Rect(0, 0, 70, 15)).items_(["Out 1", "Out 2", "Out 3", "Out 4", "Out 5", "Out 6", "Out 7", "Out 8", "Out 9", "Out 10", "Out 11", "Out 12", "Out 13", "Out 14", "Out 15", "Out 16", "Out 17", "Out 18", "Out 19", "Out 20", "Out 21", "Out 22", "Out 23", "Out 24", "Out 25", "Out 26", "Out 27", "Out 28", "Out 29", "Out 30", "Out 31", "Out 32"]).
 		action = {arg ez;
 			~synthVST.set(\out, ez.value);
 		};
@@ -2754,7 +2750,7 @@ Preset Wek",
 			{|ez| groupeMasterFX.set(\xFade, ez.value)}, 0.5, layout: \horz);
 		EZKnob(windowVST, 150 @ 25, "Gain In", \unipolar,
 			{|ez| groupeMasterFX.set(\gainIn, ez.value)}, 0.5, layout: \horz);
-		EZRanger(windowVST , 300 @ 20, "Pan", \bipolar,
+		EZRanger(windowVST , 300 @ 15, "Pan", \bipolar,
 			{|ez| groupeMasterFX.set(\panLo, ez.value.at(0), \panHi, ez.value.at(1))}, [0, 0], labelWidth: 40, numberWidth: 40);
 		windowVST.view.children.at(0).focus;
 		windowVST.front;
@@ -2770,16 +2766,16 @@ Preset Wek",
 		windowKeyboard.view.decorator = FlowLayout(windowKeyboard.view.bounds);
 		windowKeyboard.front;
 		// Keyboard Translate
-		keyboardTranslate = EZSlider(windowKeyboard, 250 @ 20, "Translate", ControlSpec(-36, 31, \lin, 1),
+		keyboardTranslate = EZSlider(windowKeyboard, 250 @ 15, "Translate", ControlSpec(-36, 31, \lin, 1),
 			{|ez| forBy(60 + keyboardTranslateBefore, 76 + keyboardTranslateBefore, 1, {arg note; keyboard.removeColor(note)});
 				forBy(60 + ez.value, 76 + ez.value, 1, {arg note; keyboard.setColor(note, Color.blue)});
 				keyboardTranslateBefore = ez.value;
 		}, 0,labelWidth: 75,numberWidth: 50);
 		// Keyboard volume
-		keyboardVolume = EZSlider(windowKeyboard, 250 @ 20, "Volume", \db,
+		keyboardVolume = EZSlider(windowKeyboard, 250 @ 15, "Volume", \db,
 			{|ez| keyVolume = ez.value.dbamp}, -12,labelWidth: 75,numberWidth: 50);
 		// Setup ShortCut
-		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 200, 20));
+		setupKeyboardShortCut = Button(windowKeyboard, Rect(0, 0, 150, 15));
 		setupKeyboardShortCut.states = [["Musical Keyboard Shortcut", Color.black,  Color.red(0.8, 0.25)],["System Shortcut", Color.yellow, Color.green(0.8, 0.25)]];
 		setupKeyboardShortCut.action = {arg shortcut;
 			if(shortcut.value == 0, {keyboardShortCut.value(windowKeyboard);
@@ -2841,13 +2837,13 @@ Preset Wek",
 		fonctionShortCut.value(windowMasterFX);
 
 		//// Fonction Window for controling all sliders windows instruments ///
-		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 550, 400, 250), scroll: true);
+		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 550, 400, 200), scroll: true);
 		windowControlSynth.alpha=1.0;
 		windowControlSynth.front;
 		windowControlSynth.view.decorator = FlowLayout(windowControlSynth.view.bounds);
 		// Pan
 		previousPan = [-1, 1];
-		controlPanSlider = EZRanger(windowControlSynth, 250 @ 20, "Pan", \bipolar, {|ez| var valLo, valHi;
+		controlPanSlider = EZRanger(windowControlSynth, 250 @ 15, "Pan", \bipolar, {|ez| var valLo, valHi;
 			valLo = (ez.value.at(0));
 			valHi = (ez.value.at(1));
 			previousPan = ez.value;
@@ -2859,10 +2855,10 @@ Preset Wek",
 				});
 			});
 		},[-1, 1],labelWidth: 50, numberWidth: 35);
-		pourcentPan = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentPan = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq
 		previousFreq = [0, 127];
-		controlFreqSlider = EZRanger(windowControlSynth, 250 @ 20, "Freq", ControlSpec(0, 127, \lin, 0), {|ez| var valLo, valHi;
+		controlFreqSlider = EZRanger(windowControlSynth, 250 @ 15, "Freq", ControlSpec(0, 127, \lin, 0), {|ez| var valLo, valHi;
 			valLo = (ez.value.at(0) / 127);
 			valHi = (ez.value.at(1) / 127);
 			previousFreq = ez.value;
@@ -2874,9 +2870,9 @@ Preset Wek",
 				});
 			});
 		},[0, 127],labelWidth: 50, numberWidth: 35);
-		pourcentFreq = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentFreq = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Freq T
-		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 20, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
+		controlFreqTranSlider=EZSlider(windowControlSynth, 250 @ 15, "Transpose", ControlSpec(-127, 127, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 and: {window.view.children.at(59).value == 0}, {
 					window.value.view.children.at(40).children.do({arg subView, subItem;
@@ -2885,10 +2881,10 @@ Preset Wek",
 				});
 			});
 		}, 0, labelWidth: 50, numberWidth: 35);
-		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentFreqT = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Amp
 		previousAmp = [-inf, 0];
-		controlAmpSlider = EZRanger(windowControlSynth, 250 @ 20, "Amp", \db, {|ez| var valLo, valHi;
+		controlAmpSlider = EZRanger(windowControlSynth, 250 @ 15, "Amp", \db, {|ez| var valLo, valHi;
 			valLo = (ez.value.at(0) / 2).dbamp;
 			valHi = (ez.value.at(1) / 2).dbamp;
 			previousAmp = ez.value;
@@ -2900,10 +2896,10 @@ Preset Wek",
 				});
 			});
 		},[-inf, 0],labelWidth: 50, numberWidth: 35);
-		pourcentAmp = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentAmp = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree
 		previousDuree = [0, 1];
-		controlDureeSlider = EZRanger(windowControlSynth, 250 @ 20, "Dur", ControlSpec(0, 60, \lin, 0),
+		controlDureeSlider = EZRanger(windowControlSynth, 250 @ 15, "Dur", ControlSpec(0, 60, \lin, 0),
 			{|ez| var valLo, valHi;
 				valLo = (ez.value.at(0));
 				valHi = (ez.value.at(1));
@@ -2916,9 +2912,9 @@ Preset Wek",
 					});
 				});
 		},[0, 4],labelWidth: 50, numberWidth: 35);
-		pourcentDur = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentDur = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Duree T
-		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 20, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
+		controlDureeTranSlider=EZSliderTempo(windowControlSynth, 250 @ 15, "Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 and: {window.view.children.at(62).value == 0}, {
 					window.value.view.children.at(43).children.do({arg subView, subItem;
@@ -2927,9 +2923,9 @@ Preset Wek",
 				});
 			});
 		}, 100, labelWidth: 50, numberWidth: 35);
-		pourcentDurT = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentDurT = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Quantization
-		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 20, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
+		controlQuantaSlider=EZSlider(windowControlSynth, 250 @ 15, "Quant",ControlSpec(1, 100, \lin, 1), {|ez|
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 and: {window.view.children.at(63).value == 0}, {
 					window.value.view.children.at(44).children.do({arg subView, subItem;
@@ -2938,9 +2934,9 @@ Preset Wek",
 				});
 			});
 		}, 0, labelWidth: 50, numberWidth: 35);
-		pourcentQuant = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentQuant = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 		// Root
-		controlRootSlider=EZSlider(windowControlSynth, 250 @ 20, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
+		controlRootSlider=EZSlider(windowControlSynth, 250 @ 15, "Root",ControlSpec(0, 21, \lin, 1), {|ez|
 			root = ez.value;
 			listeWindowSynth.do({|window|
 				if(window.view.children.at(54).value == 1 and: {window.view.children.at(86).value == 0}, {
@@ -2950,7 +2946,7 @@ Preset Wek",
 				});
 			});
 		}, 0, labelWidth: 50, numberWidth: 35);
-		pourcentRoot = EZKnob(windowControlSynth, 130 @ 20, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
+		pourcentRoot = EZKnob(windowControlSynth, 130 @ 15, "Auto%", ControlSpec(0, 100, \lin, 0), unitWidth:30, labelWidth:30, initVal:0, layout:\horz);
 
 		// Tuning pour tous les synth
 		degrees =[0,1,2,3,4,5,6,7,8,9,10,11];
@@ -3084,7 +3080,7 @@ Preset Wek",
 		};
 
 		// Degrees
-		EZText(windowControlSynth, Rect(0, 0, 350, 20), "Degrees",
+		EZText(windowControlSynth, Rect(0, 0, 350, 15), "Degrees",
 			{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
 				listeWindowSynth.do({|window|
 					if(window.view.children.at(54).value == 1, {
@@ -3101,14 +3097,14 @@ Preset Wek",
 		fonctionShortCut.value(windowControlSynth);
 
 		////////////////////////////// Control Panel //////////////////////
-		windowControl =Window("WekMatrix Control", Rect(300, 0, 410, 535), scroll: true);
+		windowControl =Window("WekMatrix Control", Rect(300, 0, 410, 430), scroll: true);
 		windowControl.alpha=1.0;
 		windowControl.front;
 		windowControl.view.decorator = FlowLayout(windowControl.view.bounds);
 		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("WekMatrix a User Interface for Organizing Sounds by Provinescu Software Production").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Systeme start stop playing
-		startSystem = Button(windowControl,Rect(0, 0, 125, 20));
+		startSystem = Button(windowControl,Rect(0, 0, 125, 15));
 		startSystem.states = [["System Off", Color.black,  Color.green(0.8, 0.25)],["System On", Color.black, Color.red(0.8, 0.25)]];
 		startSystem.action = {|view|
 			if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPstart', view.value)});// Send Synchro Start
@@ -3170,30 +3166,30 @@ Preset Wek",
 		};
 		startSystem.focus;
 		// User Operating System
-		userOperatingSystem=PopUpMenu(windowControl, Rect(0, 0, 200, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceControl;
+		userOperatingSystem=PopUpMenu(windowControl, Rect(0, 0, 150, 15)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceControl;
 		userOperatingSystem.action = {arg item; fonctionUserOperatingSystem.value(item.value, windowControl); userOperatingSystem.value_(0)};
-		oscState = StaticText(windowControl, Rect(0, 0, 55, 20)).background_(Color.grey(0.5, 0.8)).string_("OSC Off").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
+		oscState = StaticText(windowControl, Rect(0, 0, 55, 15)).background_(Color.grey(0.5, 0.8)).string_("OSC Off").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Audio In / Send Audio Bus / BPM System").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Source In
-		sourceIn = PopUpMenu(windowControl,Rect(0, 0, 70, 20)).items = ["Az In 1", "Az In 2", "Az In 3", "Az In 4", "Az In 5", "Az In 6", "Az In 7", "Az In 8", "Az In 9", "Az In 10", "Az In 11", "Az In 12", "Az In 13", "Az In 14", "Az In 15", "Az In 16", "Az In 17", "Az In 18", "Az In 19", "Az In 20", "Az In 21", "Az In 22", "Az In 23", "Az In 24", "Az In 25", "Az In 26", "Az In 27", "Az In 28", "Az In 29", "Az In 30", "Az In 31", "Az In 32"];
+		sourceIn = PopUpMenu(windowControl,Rect(0, 0, 70, 15)).items = ["Az In 1", "Az In 2", "Az In 3", "Az In 4", "Az In 5", "Az In 6", "Az In 7", "Az In 8", "Az In 9", "Az In 10", "Az In 11", "Az In 12", "Az In 13", "Az In 14", "Az In 15", "Az In 16", "Az In 17", "Az In 18", "Az In 19", "Az In 20", "Az In 21", "Az In 22", "Az In 23", "Az In 24", "Az In 25", "Az In 26", "Az In 27", "Az In 28", "Az In 29", "Az In 30", "Az In 31", "Az In 32"];
 		sourceIn.action = {arg in;
 			synthAnalyzeIn.set(\in, in.value);
 		};
 		// Audio In
-		sendBusIn = PopUpMenu(windowControl,Rect(0, 0, 83, 20)).items = ["File->Bus 1", "File->Bus 2", "File->Bus 3", "File->Bus 4", "File->Bus 5", "File->Bus 6", "File->Bus 7", "File->Bus 8", "File->Bus 9", "File->Bus 10", "File->Bus 11", "File->Bus 12", "File->Bus 13", "File->Bus 14", "File->Bus 15", "File->Bus 16", "File->Bus 17", "File->Bus 18", "File->Bus 19", "File->Bus 20", "File->Bus 21", "File->Bus 22", "File->Bus 23", "File->Bus 24", "File->Bus 25", "File->Bus 26", "File->Bus 27", "File->Bus 28", "File->Bus 29", "File->Bus 30", "File->Bus 31", "File->Bus 32"];
+		sendBusIn = PopUpMenu(windowControl,Rect(0, 0, 83, 15)).items = ["File->Bus 1", "File->Bus 2", "File->Bus 3", "File->Bus 4", "File->Bus 5", "File->Bus 6", "File->Bus 7", "File->Bus 8", "File->Bus 9", "File->Bus 10", "File->Bus 11", "File->Bus 12", "File->Bus 13", "File->Bus 14", "File->Bus 15", "File->Bus 16", "File->Bus 17", "File->Bus 18", "File->Bus 19", "File->Bus 20", "File->Bus 21", "File->Bus 22", "File->Bus 23", "File->Bus 24", "File->Bus 25", "File->Bus 26", "File->Bus 27", "File->Bus 28", "File->Bus 29", "File->Bus 30", "File->Bus 31", "File->Bus 32"];
 		sendBusIn.action = {arg in;
 			synthFileIn.set(\busIn, listeBusInOut.at(in.value));
 		};
 		sendBusIn.stringColor = Color.white;
 		// BPM System
-		bpmSlider=EZSlider(windowControl, Rect(0, 0, 150, 20), "BPM", ControlSpec(7.5, 480, \exp, 0),
+		bpmSlider=EZSlider(windowControl, Rect(0, 0, 150, 15), "BPM", ControlSpec(7.5, 480, \exp, 0),
 			{|ez| if(oscStateflag == 'master', {slaveAppAddr.sendMsg('/HPtempo', ez.value)});//Send Synchro Tempo
 				systemBPM.schedAbs(systemBPM.beats, {systemBPM.tempo_(ez.value / 60)})}, 60, labelWidth: 30,numberWidth: 45);
 		bpmSlider.enabled_(false);
 		// BPM On / Off
-		bpmOnOff = PopUpMenu(windowControl,Rect(0, 0, 75, 20)).items = ["BPM Nil", "BPM Algo", "BPM On", "BPM OSC"];
+		bpmOnOff = PopUpMenu(windowControl,Rect(0, 0, 75, 15)).items = ["BPM Nil", "BPM Algo", "BPM On", "BPM OSC"];
 		bpmOnOff.action = {|view| flagSystemBPM = view.value;
 			if(view.value == 0, {bpmSlider.enabled_(false); bpmSlider.valueAction_(60)});
 			if(view.value == 1, {bpmSlider.enabled_(true); bpmSlider.valueAction_(60)});
@@ -3207,7 +3203,7 @@ Preset Wek",
 		textFileAnalyze = StaticText(windowControl, Rect(0, 0, 390, 12)).string_("a11wlk01-44_1.aiff").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Calculation Audio start stop playing
-		switchAudioIn = PopUpMenu(windowControl,Rect(0, 0, 125, 20)).background_(Color.grey(0.8, 0.25)).stringColor_(Color.red(0.8, 0.75)).items=["AudioIn On","FileIn On"];
+		switchAudioIn = PopUpMenu(windowControl,Rect(0, 0, 125, 15)).background_(Color.grey(0.8, 0.25)).stringColor_(Color.red(0.8, 0.75)).items=["AudioIn On","FileIn On"];
 		switchAudioIn.action = {|view|
 			if(startSystem.value == 1, {
 				if(view.value == 0, {
@@ -3227,19 +3223,19 @@ Preset Wek",
 			});
 		};
 		// Switch Canal MIDI
-		switchCanalMIDI = PopUpMenu(windowControl,Rect(0, 0, 100, 20)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.black).items=["MIDI in 1", "MIDI in 2", "MIDI in 3", "MIDI in 4", "MIDI in 5", "MIDI in 6", "MIDI in 7", "MIDI in 8", "MIDI in 9", "MIDI in 10", "MIDI in 11", "MIDI in 12", "MIDI in 13", "MIDI in 14", "MIDI in 15", "MIDI in 16"];
+		switchCanalMIDI = PopUpMenu(windowControl,Rect(0, 0, 100, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.black).items=["MIDI in 1", "MIDI in 2", "MIDI in 3", "MIDI in 4", "MIDI in 5", "MIDI in 6", "MIDI in 7", "MIDI in 8", "MIDI in 9", "MIDI in 10", "MIDI in 11", "MIDI in 12", "MIDI in 13", "MIDI in 14", "MIDI in 15", "MIDI in 16"];
 		switchCanalMIDI.action = {|view|
 			canalMIDI = view.value;
 		};
 		switchCanalMIDI.enabled_(false);
 		// Flag Data OSC
-		sliderDataOSC = Button(windowControl,Rect(0, 0, 20, 20));
+		sliderDataOSC = Button(windowControl,Rect(0, 0, 20, 15));
 		sliderDataOSC.states = [["@", Color.black,  Color.red(0.8, 0.25)],["!", Color.black, Color.green(0.8, 0.25)]];
 		sliderDataOSC.action = {|view|
 			if(view.value == 0 ,{flagDataOSC = 'on'},{flagDataOSC = 'off'});
 		};
 		// algo analyse
-		algoAnalyse = PopUpMenu(windowControl,Rect(0, 0, 125, 20)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.blue(0.8, 0.75)).items=["Algo Onsets","Algo Pitch","Algo Pitch2","Algo KeyTrack", "Keyboard", "Midi"];
+		algoAnalyse = PopUpMenu(windowControl,Rect(0, 0, 125, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.blue(0.8, 0.75)).items=["Algo Onsets","Algo Pitch","Algo Pitch2","Algo KeyTrack", "Keyboard", "Midi"];
 		algoAnalyse.action = {|view|
 			seuilAnalyse.valueAction_(parametresAnalyse.at(view.value).at(0));
 			filtreAnalyse.valueAction_(parametresAnalyse.at(view.value).at(1));
@@ -3303,7 +3299,7 @@ Preset Wek",
 			});
 		};
 		windowControl.view.decorator.nextLine;
-		PopUpMenu(windowControl,Rect(0, 0, 75, 20)).
+		PopUpMenu(windowControl,Rect(0, 0, 75, 15)).
 		items_(["Off", "LoPass", "HiPass"]).
 		action = {|filter|
 			if(filter.value == 0, {
@@ -3319,23 +3315,23 @@ Preset Wek",
 				windowControl.view.children.at(16).enabled_(true);
 			});
 		};
-		EZSlider(windowControl, 315 @ 20, "HzPass", \freq,
+		EZSlider(windowControl, 315 @ 15, "HzPass", \freq,
 			{|ez| groupeAnalyse.set(\hzPass, ez.value)}, 440,labelWidth: 50, numberWidth: 50);
 		windowControl.view.children.at(16).enabled_(false);
 		windowControl.view.decorator.nextLine;
 		// Thresh
-		seuilAnalyse=EZSlider(windowControl, 190 @ 20, "Thresh", \unipolar, {|ez| parametresAnalyse.at(algoAnalyse.value).put(0, ez.value);
+		seuilAnalyse=EZSlider(windowControl, 190 @ 15, "Thresh", \unipolar, {|ez| parametresAnalyse.at(algoAnalyse.value).put(0, ez.value);
 			synthAnalyseOnsets.set(\seuil, ez.value); synthAnalysePitch.set(\seuil, ez.value); synthAnalysePitch2.set(\seuil, ez.value); synthAnalyseKeyTrack.set(\seuil, ez.value)}, 0.5, labelWidth: 55,numberWidth: 40);
 		// Filter
-		filtreAnalyse=EZSlider(windowControl, 190 @ 20, "Filter",\unipolar, {|ez|
+		filtreAnalyse=EZSlider(windowControl, 190 @ 15, "Filter",\unipolar, {|ez|
 			parametresAnalyse.at(algoAnalyse.value).put(1, ez.value);
 			synthAnalyseOnsets.set(\filtre, ez.value); synthAnalysePitch.set(\filtre, ez.value); synthAnalysePitch2.set(\filtre, ez.value); synthAnalyseKeyTrack.set(\filtre, ez.value)}, 0.5, labelWidth: 55,numberWidth: 40);
 		windowControl.view.decorator.nextLine;
 		// Volume File out
-		volumeFileIn=EZSlider(windowControl, 190 @ 20, "File Level", ControlSpec(-inf, 12, \db, 0),
+		volumeFileIn=EZSlider(windowControl, 190 @ 15, "File Level", ControlSpec(-inf, 12, \db, 0),
 			{|ez| synthFileIn.set(\volume, ez.value.dbamp)}, -inf, labelWidth: 55, numberWidth: 40);
 		// file offset
-		offsetFileIn=EZSlider(windowControl, 190 @ 20, "File Offset", ControlSpec(0, 1, \lin, 0),
+		offsetFileIn=EZSlider(windowControl, 190 @ 15, "File Offset", ControlSpec(0, 1, \lin, 0),
 			{|ez|
 				s.bind{
 					synthFileIn.set(\trigger, -1);
@@ -3347,37 +3343,30 @@ Preset Wek",
 		}, 0, labelWidth: 55, numberWidth: 40);
 		windowControl.view.decorator.nextLine;
 		// Signal Buffer
-		offsetFileIn=EZSlider(windowControl, 385 @ 20, "Signal Buffer", ControlSpec(1, 256, \exp, 1),
+		offsetFileIn=EZSlider(windowControl, 385 @ 15, "Signal Buffer", ControlSpec(1, 256, \exp, 1),
 			{|ez| signalBuffer = ez.value}, 12, labelWidth: 80, numberWidth: 40);
 		windowControl.view.decorator.nextLine;
 		// Max Time
-		offsetFileIn=EZSlider(windowControl, 190 @ 20, "Time Maximum", ControlSpec(1, 60, \exp, 0),
+		offsetFileIn=EZSlider(windowControl, 190 @ 15, "Time Maximum", ControlSpec(1, 60, \exp, 0),
 			{|ez| timeMaximum = ez.value}, 4, labelWidth: 85, numberWidth: 40);
 		// Time Memory
-		offsetFileIn=EZSlider(windowControl, 190 @ 20, "Time Memory", ControlSpec(0.01666, 3600, \exp, 0),
+		offsetFileIn=EZSlider(windowControl, 190 @ 15, "Time Memory", ControlSpec(0.01666, 3600, \exp, 0),
 			{|ez| timeMemory = ez.value}, 4, labelWidth: 85, numberWidth: 40);
 		windowControl.view.decorator.nextLine;
 		// Filter Fhz
-		fhzFiltreGUI=EZSlider(windowControl, 125 @ 20, "Freq Filter", ControlSpec(0, 12, \lin, 0),
+		fhzFiltreGUI=EZSlider(windowControl, 125 @ 15, "Freq Filter", ControlSpec(0, 12, \lin, 0),
 			{|ez| fhzFilter = ez.value}, 0, labelWidth: 50, numberWidth: 30);
 		// Filter Amp
-		ampFiltreGUI=EZSlider(windowControl, 125 @ 20, "Amp Filter", ControlSpec(0, 60, \lin, 0.1),
+		ampFiltreGUI=EZSlider(windowControl, 125 @ 15, "Amp Filter", ControlSpec(0, 60, \lin, 0.1),
 			{|ez| ampFilter = ez.value}, 0, labelWidth: 55, numberWidth: 30);
 		// Filter Dur
-		durFiltreGUI=EZSlider(windowControl, 125 @ 20, "Dur Filter", ControlSpec(0.01, 16, \exp, 0),
+		durFiltreGUI=EZSlider(windowControl, 125 @ 15, "Dur Filter", ControlSpec(0.01, 16, \exp, 0),
 			{|ez| durFilter = ez.value}, 0.03125, labelWidth: 50, numberWidth: 30);
-		windowControl.view.decorator.nextLine;
-		// Chord Time
-		chordTimeSlider=EZSlider(windowControl, 190 @ 20, "Chord Time", ControlSpec(0.01, 1, \exp, 0),
-			{|ez| chordDuree = ez.value}, 0.0833, labelWidth: 75, numberWidth: 40);
-		// Chord Size
-		chordSizeSlider=EZSlider(windowControl, 190 @ 20, "Chord Size", ControlSpec(0, 12, \lin, 1),
-			{|ez| chordSize = ez.value}, 3, labelWidth: 75, numberWidth: 40);
 		windowControl.view.decorator.nextLine;
 		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Synthesizer + FX").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		//Add a New Synth or FX
-		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 20)).font_(Font( "Palatino-BoldItalic", 12)).stringColor_(Color.red).items = choiceSynth;
+		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 15)).font_(Font( "Palatino-BoldItalic", 12)).stringColor_(Color.red).items = choiceSynth;
 		addNewSynth.action = {arg item, tampon;
 			tampon = listeDataOSC;
 			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon)});// Fonction Add Synth or FX
@@ -3396,18 +3385,18 @@ Preset Wek",
 		displayOSC = TextView(windowControl, Rect(0, 0, 390, 95));
 		windowControl.view.decorator.nextLine;
 		// Auto Preset
-		Button(windowControl,Rect(0, 0, 105, 20)).states_([["Automation Preset Off", Color.black,  Color.green(0.8, 0.25)],["Automation Preset On", Color.black, Color.red(0.8, 0.25)]]).action = {|view| onOffSynth = view.value};
+		Button(windowControl,Rect(0, 0, 105, 15)).states_([["Automation Preset Off", Color.black,  Color.green(0.8, 0.25)],["Automation Preset On", Color.black, Color.red(0.8, 0.25)]]).action = {|view| onOffSynth = view.value};
 		// % Change Peset
-		NumberBox(windowControl,Rect(0, 0, 30, 20)).action_({|view| if(variableChange == "Flux", {onOffSynthValue.put(0, view.value)},{onOffSynthValue.put(1, view.value)})}).step_(0.01).clipLo_(0).clipHi_(10).scroll_step_(0.01).value_(onOffSynthValue.at(0));
+		NumberBox(windowControl,Rect(0, 0, 30, 15)).action_({|view| if(variableChange == "Flux", {onOffSynthValue.put(0, view.value)},{onOffSynthValue.put(1, view.value)})}).step_(0.01).clipLo_(0).clipHi_(10).scroll_step_(0.01).value_(onOffSynthValue.at(0));
 		// NumFhzBand
-		EZSlider(windowControl, 200 @ 20, "NumFhzBand", ControlSpec(1, 12, \lin, 1),
+		EZSlider(windowControl, 200 @ 15, "NumFhzBand", ControlSpec(1, 12, \lin, 1),
 			{arg band; numFhzBand = band.value.asInteger;
 				// Init Band for each synth
 				fonctionInitBand.value(numFhzBand);
 				rangeBand.value = bandFHZ.cpsmidi.round(2);
 		}, numFhzBand);
 		// Set Range FHZband
-		rangeBand = EZText(windowControl, Rect(0, 0, 390, 20), "Range Band",
+		rangeBand = EZText(windowControl, Rect(0, 0, 390, 15), "Range Band",
 			{arg range; bandFHZ = range.value.midicps},
 			[[0, 127], [0.0, 42.33], [42.33, 84.66], [84.66, 127.0] ], true);
 		// Wek
@@ -3494,10 +3483,10 @@ Preset Wek",
 			var windowSynth, startStop, sourceOut, sendBusOut, sendBusFX, sendLocalBuf, panSlider, freqSlider, freqTranSlider, ampSlider, dureeSlider, dureeTranSlider, quantaSlider, moveNodeAfter, moveNodeBefore, controlsAntiClick, controlsNode, startAutomationSynthControls, jitterAutomationSynthControls, tempoAutomationSynthControls, startAutomationSynthMusicData, tempoAutomationSynthMusicData, jitterAutomationMusicData, tdefControls, tdefMusicData, switchBufferOne, textBufferOne, switchBufferTwo, textBufferTwo, loopBufferOne, loopBufferTwo, switchBufferOneAction, reverseBufferOneAction, reverseBufferTwoAction, knobPreLevel1, knobPostLevel1, knobRecOn1, knobOffset1, knobPreLevel2, knobPostLevel2, knobRecOn2, knobOffset2,
 			switchBufferTwoAction, sourceBusIn, sourceBusOut, sourceFXin, sourceFXout, synthRec, userOperatingSystemSynth, windowView=[], envelopeSynth, tdefSynthesizer, bufferRecording1, bufferRecording2, changeSynth, fonctionEnabledSlider, fonctionEnabledControls, fonctionSynthTdefFX, synthAndFX=nil, recBuffer1, recBuffer2, automationSliderFreq, automationSliderDur, automationSliderSynth, automationNumberSynth, automationSliderBuffer, durSampleOneSlider, durSampleTwoSlider,
 			freq=0, amp=0, duree=0.01, dureeTdef=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0, indexMusicData=9999, compteurChord=0, listeFreq=[], listeAmp=[],
-			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
+			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM=1, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
 			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off', indexModeSynth = 0;
 			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand, loopRec1=0, loopRec2=0;
-			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ], flagChord;
+			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ], flagChord, chordDuree, chordSize;
 
 			freezeDataOSC = freezeOSC;
 			flagBand = 'on';
@@ -3518,6 +3507,8 @@ Preset Wek",
 			pos=scale.degrees.size - 1;
 			flagRoot = 0;
 			flagChord = 0;
+			chordDuree = 0.0833;
+			chordSize = 3;
 
 			// For Kohonen
 			kohonenF = HPclassKohonen.new(1,127,1);
@@ -3541,12 +3532,12 @@ Preset Wek",
 				});
 			};
 
-			windowSynth = Window(name ++ "[" ++ groupe.nodeID.asString ++ "]", Rect(rrand(700, 1000), 0, 410, 835), scroll: true);
+			windowSynth = Window(name ++ "[" ++ groupe.nodeID.asString ++ "]", Rect(rrand(700, 1000), 0, 410, 750), scroll: true);
 			windowSynth.alpha=1.0;
 			windowSynth.front;
 			windowSynth.view.decorator = FlowLayout(windowSynth.view.bounds);
 			// StartStop Synth
-			startStop = Button(windowSynth,Rect(0, 0, 50, 20)).states=[["Stop", Color.black, Color.green(0.8, 0.25)],["Start", Color.black, Color.red(0.8, 0.25)]];
+			startStop = Button(windowSynth,Rect(0, 0, 50, 15)).states=[["Stop", Color.black, Color.green(0.8, 0.25)],["Start", Color.black, Color.red(0.8, 0.25)]];
 			startStop.action = {arg view;
 				if(view.value == 1, {
 					if(startSystem.value == 1, {
@@ -3578,18 +3569,18 @@ Preset Wek",
 			};
 			startStop.focus;
 			// User Operating System
-			userOperatingSystemSynth=PopUpMenu(windowSynth, Rect(0, 0, 125, 20)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceInstrument;
+			userOperatingSystemSynth=PopUpMenu(windowSynth, Rect(0, 0, 125, 15)).font_(Font( "Palatino-BoldItalic", 12)).items = userOSchoiceInstrument;
 			userOperatingSystemSynth.action = {arg item; fonctionUserOperatingSystem.value(item.value, windowSynth); userOperatingSystemSynth.value_(0)};
 			windowSynth.view.decorator.nextLine;
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Audio Out / Bus Audio In / Send Bus Audio Out / Bus FX In / Send Bus FX Out").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// Source Out
-			sourceOut = PopUpMenu(windowSynth,Rect(0, 0, 60, 20)).items = ["Out 1", "Out 2", "Out 3", "Out 4", "Out 5", "Out 6", "Out 7", "Out 8", "Out 9", "Out 10", "Out 11", "Out 12", "Out 13", "Out 14", "Out 15", "Out 16", "Out 17", "Out 18", "Out 19", "Out 20", "Out 21", "Out 22", "Out 23", "Out 24", "Out 25", "Out 26", "Out 27", "Out 28", "Out 29", "Out 30", "Out 31", "Out 32", "ByPass"];
+			sourceOut = PopUpMenu(windowSynth,Rect(0, 0, 60, 15)).items = ["Out 1", "Out 2", "Out 3", "Out 4", "Out 5", "Out 6", "Out 7", "Out 8", "Out 9", "Out 10", "Out 11", "Out 12", "Out 13", "Out 14", "Out 15", "Out 16", "Out 17", "Out 18", "Out 19", "Out 20", "Out 21", "Out 22", "Out 23", "Out 24", "Out 25", "Out 26", "Out 27", "Out 28", "Out 29", "Out 30", "Out 31", "Out 32", "ByPass"];
 			sourceOut.action = {arg view;
 				if(view.value == 16, {groupe.set(\flagAmpOnOff, 0); flagAmp = 0},{groupe.set(\out, view.value); groupe.set(\flagAmpOnOff, 1); flagAmp = 1; out = view.value});
 			};
 			// Source Bus In
-			sourceBusIn = PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).items = ["Bus In 1", "Bus In 2", "Bus In 3", "Bus In 4", "Bus In 5", "Bus In 6", "Bus In 7", "Bus In 8", "Bus In 9", "Bus In 10", "Bus In 11", "Bus In 12", "Bus In 13", "Bus In 14", "Bus In 15", "Bus In 16", "Bus In 17", "Bus In 18", "Bus In 19", "Bus In 20", "Bus In 21", "Bus In 22", "Bus In 23", "Bus In 24", "Bus In 25", "Bus In 26", "Bus In 27", "Bus In 28", "Bus In 29", "Bus In 30", "Bus In 31", "Bus In 32"];
+			sourceBusIn = PopUpMenu(windowSynth,Rect(0, 0, 70, 15)).items = ["Bus In 1", "Bus In 2", "Bus In 3", "Bus In 4", "Bus In 5", "Bus In 6", "Bus In 7", "Bus In 8", "Bus In 9", "Bus In 10", "Bus In 11", "Bus In 12", "Bus In 13", "Bus In 14", "Bus In 15", "Bus In 16", "Bus In 17", "Bus In 18", "Bus In 19", "Bus In 20", "Bus In 21", "Bus In 22", "Bus In 23", "Bus In 24", "Bus In 25", "Bus In 26", "Bus In 27", "Bus In 28", "Bus In 29", "Bus In 30", "Bus In 31", "Bus In 32"];
 			sourceBusIn.action = {arg in;
 				s.bind{
 					synthRec.free;
@@ -3612,24 +3603,24 @@ Preset Wek",
 				};
 			};
 			// Source Bus Out
-			sourceBusOut = PopUpMenu(windowSynth,Rect(0, 0, 88, 20)).items = ["Send Bus 1", "Send Bus 2", "Send Bus 3", "Send Bus 4", "Send Bus 5", "Send Bus 6", "Send Bus 7", "Send Bus 8", "Send Bus 9", "Send Bus 10", "Send Bus 11", "Send Bus 12", "Send Bus 13", "Send Bus 14", "Send Bus 15", "Send Bus 16", "Send Bus 17", "Send Bus 18", "Send Bus 19", "Send Bus 20", "Send Bus 21", "Send Bus 22", "Send Bus 23", "Send Bus 24", "Send Bus 25", "Send Bus 26", "Send Bus 27", "Send Bus 28", "Send Bus 29", "Send Bus 30", "Send Bus 31", "Send Bus 32"];
+			sourceBusOut = PopUpMenu(windowSynth,Rect(0, 0, 88, 15)).items = ["Send Bus 1", "Send Bus 2", "Send Bus 3", "Send Bus 4", "Send Bus 5", "Send Bus 6", "Send Bus 7", "Send Bus 8", "Send Bus 9", "Send Bus 10", "Send Bus 11", "Send Bus 12", "Send Bus 13", "Send Bus 14", "Send Bus 15", "Send Bus 16", "Send Bus 17", "Send Bus 18", "Send Bus 19", "Send Bus 20", "Send Bus 21", "Send Bus 22", "Send Bus 23", "Send Bus 24", "Send Bus 25", "Send Bus 26", "Send Bus 27", "Send Bus 28", "Send Bus 29", "Send Bus 30", "Send Bus 31", "Send Bus 32"];
 			sourceBusOut.action = {arg out;
 				groupe.set(\busOut, listeBusInOut.at(out.value)); busOut = out.value;
 			};
 			// Source FX IN
-			sourceFXin= PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).items = ["FX In 1", "FX In 2", "FX In 3", "FX In 4", "FX In 5", "FX In 6", "FX In 7", "FX In 8", "FX In 9", "FX In 10", "FX In 11", "FX In 12", "FX In 13", "FX In 14", "FX In 15", "FX In 16", "FX In 17", "FX In 18", "FX In 19", "FX In 20", "FX In 21", "FX In 22", "FX In 23", "FX In 24", "FX In 25", "FX In 26", "FX In 27", "FX In 28", "FX In 29", "FX In 30", "FX In 31", "FX In 32"];
+			sourceFXin= PopUpMenu(windowSynth,Rect(0, 0, 70, 15)).items = ["FX In 1", "FX In 2", "FX In 3", "FX In 4", "FX In 5", "FX In 6", "FX In 7", "FX In 8", "FX In 9", "FX In 10", "FX In 11", "FX In 12", "FX In 13", "FX In 14", "FX In 15", "FX In 16", "FX In 17", "FX In 18", "FX In 19", "FX In 20", "FX In 21", "FX In 22", "FX In 23", "FX In 24", "FX In 25", "FX In 26", "FX In 27", "FX In 28", "FX In 29", "FX In 30", "FX In 31", "FX In 32"];
 			sourceFXin.action = {arg in;
 				groupe.set(\busFXin, listeBusFX.at(in.value)); busFXin = in.value;
 			};
 			// Source FX OUT
-			sourceFXout= PopUpMenu(windowSynth,Rect(0, 0, 88, 20)).items = ["Send FX 1", "Send FX 2", "Send FX 3", "Send FX 4", "Send FX 5", "Send FX 6", "Send FX 7", "Send FX 8", "Send FX 9", "Send FX 10", "Send FX 11", "Send FX 12", "Send FX 13", "Send FX 14", "Send FX 15", "Send FX 16", "Send FX 17", "Send FX 18", "Send FX 19", "Send FX 20", "Send FX 21", "Send FX 22", "Send FX 23", "Send FX 24", "Send FX 25", "Send FX 26", "Send FX 27", "Send FX 28", "Send FX 29", "Send FX 30", "Send FX 31", "Send FX 32"];
+			sourceFXout= PopUpMenu(windowSynth,Rect(0, 0, 88, 15)).items = ["Send FX 1", "Send FX 2", "Send FX 3", "Send FX 4", "Send FX 5", "Send FX 6", "Send FX 7", "Send FX 8", "Send FX 9", "Send FX 10", "Send FX 11", "Send FX 12", "Send FX 13", "Send FX 14", "Send FX 15", "Send FX 16", "Send FX 17", "Send FX 18", "Send FX 19", "Send FX 20", "Send FX 21", "Send FX 22", "Send FX 23", "Send FX 24", "Send FX 25", "Send FX 26", "Send FX 27", "Send FX 28", "Send FX 29", "Send FX 30", "Send FX 31", "Send FX 32"];
 			sourceFXout.action = {arg out;
 				groupe.set(\busFXout, listeBusFX.at(out.value)); busFXout = out.value;
 			};
 			windowSynth.view.decorator.nextLine;
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Synthesizer Connection").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Node Move After
-			moveNodeAfter = EZNumber(windowSynth, 120 @ 20, "MoveAfter", ControlSpec(masterFX.nodeID+1, 999999, \lin, 1), {|node| var indexMoi, indexLui, moi;
+			moveNodeAfter = EZNumber(windowSynth, 120 @ 15, "MoveAfter", ControlSpec(masterFX.nodeID+1, 999999, \lin, 1), {|node| var indexMoi, indexLui, moi;
 				if(node.value.asInteger != groupe.nodeID and: {listeGroupeSynthID.includes(node.value.asInteger)}, {
 					if(node.value.asInteger >= listeGroupeSynthID.maxItem,
 						{groupe.moveToTail(groupeSynth)}, {
@@ -3646,7 +3637,7 @@ Preset Wek",
 				if(node.value.asInteger > listeGroupeSynthID.maxItem, {moveNodeAfter.value_(listeGroupeSynthID.maxItem)});
 			}, masterFX.nodeID+1, labelWidth: 68, numberWidth: 52);
 			// Node Move Before
-			moveNodeBefore = EZNumber(windowSynth, 120 @ 20, "MoveBefore", ControlSpec(masterFX.nodeID+1, 999999, \lin, 1), {|node| var indexMoi, indexLui, moi;
+			moveNodeBefore = EZNumber(windowSynth, 120 @ 15, "MoveBefore", ControlSpec(masterFX.nodeID+1, 999999, \lin, 1), {|node| var indexMoi, indexLui, moi;
 				if(node.value.asInteger != groupe.nodeID and: {listeGroupeSynthID.includes(node.value.asInteger)}, {
 					if(node.value.asInteger <= listeGroupeSynthID.minItem, {groupe.moveToHead(groupeSynth)}, {
 						listeGroupeSynth.do({arg synth, index; if(synth.nodeID == node.value.asInteger,
@@ -3662,7 +3653,7 @@ Preset Wek",
 				if(node.value > listeGroupeSynthID.maxItem, {moveNodeBefore.value_(listeGroupeSynthID.maxItem)});
 			}, masterFX.nodeID+1, labelWidth: 68, numberWidth: 52).setColors(numTypingColor: Color.red);
 			//Change Synthesizer or FX
-			changeSynth=PopUpMenu(windowSynth, Rect(0, 0, 140, 20)).font_(Font( "Palatino-BoldItalic", 10)).stringColor_(Color.red).items = changeChoiceSynth;
+			changeSynth=PopUpMenu(windowSynth, Rect(0, 0, 140, 15)).font_(Font( "Palatino-BoldItalic", 10)).stringColor_(Color.red).items = changeChoiceSynth;
 			changeSynth.action = {arg item;
 				s.bind{
 					if(item.value != 1, {
@@ -3696,24 +3687,24 @@ Preset Wek",
 			windowSynth.view.decorator.nextLine;
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Bus Audio + FX Send Level").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// send Bus Out
-			sendBusOut = EZSlider(windowSynth, 390 @ 20, "Send Bus", \db,
+			sendBusOut = EZSlider(windowSynth, 390 @ 15, "Send Bus", \db,
 				{|ez| groupe.set(\levelBusOut, ez.value.dbamp); levelOut = ez.value.dbamp}, -inf, false, 100, 50);
 			windowSynth.view.decorator.nextLine;
 			// sendBusFX
-			sendBusFX = EZSlider(windowSynth, 390 @ 20, "Send Bus FX", \db,
+			sendBusFX = EZSlider(windowSynth, 390 @ 15, "Send Bus FX", \db,
 				{|ez| groupe.set(\levelBusFX, ez.value.dbamp); levelFX = ez.value.dbamp}, -inf, false, 100, 50);
 			windowSynth.view.decorator.nextLine;
 			// sendLocalBuf
-			sendLocalBuf = EZSlider(windowSynth, 390 @ 20, "Local In", \db,
+			sendLocalBuf = EZSlider(windowSynth, 390 @ 15, "Local In", \db,
 				{|ez| groupe.set(\levelLocalIn, ez.value.dbamp); levelLocal = ez.value.dbamp}, -inf, false, 100, 50);
 			windowSynth.view.decorator.nextLine;
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Buffer Audio for SynthDef").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// Button BufferOne Action
-			switchBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["O", Color.black, Color.green(0.8, 0.25)],["X", Color.black, Color.red(0.8, 0.25)]];
+			switchBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 15)).states=[["O", Color.black, Color.green(0.8, 0.25)],["X", Color.black, Color.red(0.8, 0.25)]];
 			switchBufferOneAction.action = {|view| groupe.set(\switchBuffer1, view.value); switch1 = view.value};
 			// Buffer sampler one
-			switchBufferOne = Button(windowSynth, Rect(0, 0, 100, 20)).states=[["Load Buffer I", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]];
+			switchBufferOne = Button(windowSynth, Rect(0, 0, 100, 15)).states=[["Load Buffer I", Color.red(0.8, 0.6), Color.grey(0.75, 0.25)]];
 			switchBufferOne.action = {|view|
 				Dialog.openPanel({ arg paths;
 					bufferOne = fonctionLoadSample.value(paths, groupe, bufferOne);
@@ -3723,12 +3714,12 @@ Preset Wek",
 				},{"cancelled".postln});
 			};
 			// Loop Sample one
-			loopBufferOne = Button(windowSynth,Rect(0, 0, 20, 20)).states = [["!", Color.black,  Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]];
+			loopBufferOne = Button(windowSynth,Rect(0, 0, 20, 15)).states = [["!", Color.black,  Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]];
 			loopBufferOne.action = {|view|
 				if(view.value == 0, {groupe.set(\loopOne, 0); loop1 = 0},{groupe.set(\loopOne, 1); loop1 = 1});
 			};
 			// Duree Sample One
-			durSampleOneSlider = NumberBox(windowSynth, 50 @ 20).minDecimals_(4).maxDecimals_(4);
+			durSampleOneSlider = NumberBox(windowSynth, 50 @ 15).minDecimals_(4).maxDecimals_(4);
 			durSampleOneSlider.action = {|time|
 				if(time.value < 0.01, {time.value = 0.01});
 				if(time.value > 60, {time.value = 60});
@@ -3746,10 +3737,10 @@ Preset Wek",
 			durSampleOneSlider.value_(timeBuf1);
 			durSampleOneSlider.step_(0.01);
 			// Button Reverse one
-			reverseBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
+			reverseBufferOneAction= Button(windowSynth, Rect(0, 0, 20, 15)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
 			reverseBufferOneAction.action = {|view| if(view.value == 0 , {groupe.set(\reverse1, 1); ctrlBuffer.put(4, 1)}, {groupe.set(\reverse1, 1.neg); ctrlBuffer.put(4, 1.neg)})};
 			// Text Buffer One
-			textBufferOne = StaticText(windowSynth, Rect(0, 0, 155, 20)).string_("Nil").stringColor_(Color.yellow).font_(Font("Georgia", 8)).align_(\center);
+			textBufferOne = StaticText(windowSynth, Rect(0, 0, 155, 15)).string_("Nil").stringColor_(Color.yellow).font_(Font("Georgia", 8)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer one
 			knobOffset1 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset1, ez.value); ctrlBuffer.put(3, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
@@ -3761,10 +3752,10 @@ Preset Wek",
 			};
 			windowSynth.view.decorator.nextLine;
 			// Button BufferTwo Action
-			switchBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["O", Color.black, Color.green(0.8, 0.25)],["X", Color.black, Color.red(0.8, 0.25)]];
+			switchBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 15)).states=[["O", Color.black, Color.green(0.8, 0.25)],["X", Color.black, Color.red(0.8, 0.25)]];
 			switchBufferTwoAction.action = {|view| groupe.set(\switchBuffer2, view.value); switch2 = view.value};
 			// Buffer sampler two
-			switchBufferTwo = Button(windowSynth, Rect(0, 0, 100, 20)).states=[["Load Buffer II", Color.blue(0.8, 0.6), Color.grey(0.75, 0.25)]];
+			switchBufferTwo = Button(windowSynth, Rect(0, 0, 100, 15)).states=[["Load Buffer II", Color.blue(0.8, 0.6), Color.grey(0.75, 0.25)]];
 			switchBufferTwo.action = {|view|
 				Dialog.openPanel({ arg paths;
 					bufferTwo = fonctionLoadSample.value(paths, groupe, bufferTwo);
@@ -3774,12 +3765,12 @@ Preset Wek",
 				},{"cancelled".postln});
 			};
 			// Loop Sample Two
-			loopBufferTwo = Button(windowSynth,Rect(0, 0, 20, 20)).states = [["!", Color.black,  Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]];
+			loopBufferTwo = Button(windowSynth,Rect(0, 0, 20, 15)).states = [["!", Color.black,  Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)]];
 			loopBufferTwo.action = {|view|
 				if(view.value == 0, {groupe.set(\loopTwo, 0); loop2 = 0},{groupe.set(\loopTwo, 1); loop2 = 1});
 			};
 			// Duree Sample Two
-			durSampleTwoSlider = NumberBox(windowSynth, 50 @ 20).minDecimals_(4);
+			durSampleTwoSlider = NumberBox(windowSynth, 50 @ 15).minDecimals_(4);
 			durSampleTwoSlider.action = {|time|
 				if(time.value < 0.01, {time.value = 0.01});
 				if(time.value > 60, {time.value = 60});
@@ -3797,10 +3788,10 @@ Preset Wek",
 			durSampleTwoSlider.value_(timeBuf2);
 			durSampleTwoSlider.step_(0.01);
 			// Button Reverse two
-			reverseBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 20)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
+			reverseBufferTwoAction= Button(windowSynth, Rect(0, 0, 20, 15)).states=[["->", Color.black, Color.green(0.8, 0.25)],["<-", Color.black, Color.red(0.8, 0.25)]];
 			reverseBufferTwoAction.action = {|view| if(view.value == 0 , {groupe.set(\reverse2, 1); ctrlBuffer.put(9, 1)}, {groupe.set(\reverse2, 1.neg); ctrlBuffer.put(9, 1.neg)})};
 			// Text Buffer Two
-			textBufferTwo = StaticText(windowSynth, Rect(0, 0, 155, 20)).string_("Nil").stringColor_(Color.yellow).font_(Font("Georgia", 8)).align_(\right);
+			textBufferTwo = StaticText(windowSynth, Rect(0, 0, 155, 15)).string_("Nil").stringColor_(Color.yellow).font_(Font("Georgia", 8)).align_(\right);
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer two
 			knobOffset2 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset2, ez.value); ctrlBuffer.put(8, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
@@ -3834,29 +3825,29 @@ Preset Wek",
 
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Musical Data").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			// Pan
-			panSlider=EZRanger(windowSynth, 390 @ 20, "Pan", \bipolar,
+			panSlider=EZRanger(windowSynth, 390 @ 15, "Pan", \bipolar,
 				{|ez| groupe.set(\panLo, ez.lo);groupe.set(\panHi, ez.hi); panLo = ez.lo; panHi = ez.hi}, [-0.1, 0.1], false, 100, 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Freq
-			freqSlider = EZRanger(windowSynth, 390 @ 20, "Freq", ControlSpec(0, 127, \lin, 0),
+			freqSlider = EZRanger(windowSynth, 390 @ 15, "Freq", ControlSpec(0, 127, \lin, 0),
 				{|ez| groupe.set(\freqLo, ez.lo);groupe.set(\freqHi, ez.hi); fhzLo = ez.lo; fhzHi = ez.hi},[0, 127],labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			// Freq T
-			freqTranSlider=EZSlider(windowSynth, 390 @ 20, "Freq Transpose", ControlSpec(-127, 127, \lin, 0), {|ez| groupe.set(\freqT, ez.value); fhzT = ez.value}, 0, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
+			freqTranSlider=EZSlider(windowSynth, 390 @ 15, "Freq Transpose", ControlSpec(-127, 127, \lin, 0), {|ez| groupe.set(\freqT, ez.value); fhzT = ez.value}, 0, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Amp
-			ampSlider = EZRanger(windowSynth, 390 @ 20, "Amp", \db,
+			ampSlider = EZRanger(windowSynth, 390 @ 15, "Amp", \db,
 				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-12, -3],labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Duree
-			dureeSlider = EZRanger(windowSynth, 390 @ 20, "Dur", ControlSpec(0, 60, \lin, 0),
+			dureeSlider = EZRanger(windowSynth, 390 @ 15, "Dur", ControlSpec(0, 60, \lin, 0),
 				{|ez| groupe.set(\durLo, ez.lo);groupe.set(\durHi, ez.hi); durLo = ez.lo; durHi = ez.hi},[0, 4],labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			// Duree T
-			dureeTranSlider=EZSliderTempo(windowSynth, 390 @ 20, "Dur Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
+			dureeTranSlider=EZSliderTempo(windowSynth, 390 @ 15, "Dur Stretch", ControlSpec(-100, 100, \lin, 0), {|ez|
 				if(ez.value <= 0, {groupe.set(\durM, ez.value.abs.reciprocal); durM = ez.value.abs.reciprocal},
 					{groupe.set(\durM, ez.value); durM = ez.value});
 			}, 1, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			// Quantization
-			quantaSlider=EZSlider(windowSynth, 390 @ 20, "Quant", ControlSpec(1, 100, \lin, 1),
+			quantaSlider=EZSlider(windowSynth, 390 @ 15, "Quant", ControlSpec(1, 100, \lin, 1),
 				{|ez| systemBPM.schedAbs(systemBPM.beats, {groupe.set(\quanta, ez.value)}); quanta = ez.value}, 100, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Envelope Synthesizer").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
@@ -3903,17 +3894,17 @@ Preset Wek",
 			StaticText(windowSynth, Rect(0, 0, 400, 11)).string_("Automation Synthesizer").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 			windowSynth.view.decorator.nextLine;
 			// AutomationControls start stop playing
-			startAutomationSynthControls = Button(windowSynth,Rect(0, 0, 100, 20));
+			startAutomationSynthControls = Button(windowSynth,Rect(0, 0, 100, 15));
 			startAutomationSynthControls.states = [["Controls Off", Color.black,  Color.green(0.8, 0.25)],["Controls On", Color.black, Color.red(0.8, 0.25)]];
 			startAutomationSynthControls.action = {|view| if(view.value == 0, {tdefControls.stop; ctrlSynth=controlsNode.value; jitterAutomationSynthControls.enabled_(false); tempoAutomationSynthControls.enabled_(false)}, {ctrlSynth=controlsNode.value; tdefControls.play; jitterAutomationSynthControls.enabled_(true); tempoAutomationSynthControls.enabled_(true)});
 			};
 			// Tempo AutomationControls Synth
-			tempoAutomationSynthControls=EZRanger(windowSynth, 180 @ 20, "Tempo", ControlSpec(16.reciprocal, 100.0, \exp, 0), {|tempo| }, [12, 24], labelWidth: 40, numberWidth: 40);
+			tempoAutomationSynthControls=EZRanger(windowSynth, 180 @ 15, "Tempo", ControlSpec(16.reciprocal, 100.0, \exp, 0), {|tempo| }, [12, 24], labelWidth: 40, numberWidth: 40);
 			// Jitter AutomationControls Synth
-			jitterAutomationSynthControls=EZSlider(windowSynth, 100 @ 20, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
+			jitterAutomationSynthControls=EZSlider(windowSynth, 100 @ 15, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
 			// AutomationSynthMusicData start stop playing
-			startAutomationSynthMusicData = Button(windowSynth,Rect(0, 0, 100, 20));
+			startAutomationSynthMusicData = Button(windowSynth,Rect(0, 0, 100, 15));
 			startAutomationSynthMusicData.states = [["MusicData Off", Color.magenta,  Color.green(0.8, 0.25)], ["MusicData On", Color.magenta, Color.red(0.8, 0.25)]];
 			startAutomationSynthMusicData.action = {|view|
 				if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false)});
@@ -3921,36 +3912,36 @@ Preset Wek",
 				fonctionEnabledSlider.value(view.value);
 			};
 			// Tempo AutomationSynthMusicData Synth
-			tempoAutomationSynthMusicData = EZRanger(windowSynth, 180 @ 20, "Tempo", ControlSpec(60.reciprocal, 100.0, \exp, 0), {|tempo| }, [0.125, 1.0], labelWidth: 40, numberWidth: 40);
+			tempoAutomationSynthMusicData = EZRanger(windowSynth, 180 @ 15, "Tempo", ControlSpec(60.reciprocal, 100.0, \exp, 0), {|tempo| }, [0.125, 1.0], labelWidth: 40, numberWidth: 40);
 			// Jitter AutomationMusic Synth
-			jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 20, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
+			jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 15, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 30, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
 			// Auto Pan
-			automationSliderPan = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["P", Color.black,  Color.green(0.8, 0.25)],["P", Color.black, Color.red(0.8, 0.25)], ["P", Color.magenta, Color.blue(0.8, 0.25)],  ["P", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderPan = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["P", Color.black,  Color.green(0.8, 0.25)],["P", Color.black, Color.red(0.8, 0.25)], ["P", Color.magenta, Color.blue(0.8, 0.25)],  ["P", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Freq
-			automationSliderFreq = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["F", Color.black,  Color.green(0.8, 0.25)],["F", Color.black, Color.red(0.8, 0.25)], ["F", Color.magenta, Color.blue(0.8, 0.25)],  ["F", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderFreq = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["F", Color.black,  Color.green(0.8, 0.25)],["F", Color.black, Color.red(0.8, 0.25)], ["F", Color.magenta, Color.blue(0.8, 0.25)],  ["F", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Translate
-			automationSliderTrans = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["T", Color.black,  Color.green(0.8, 0.25)],["T", Color.black, Color.red(0.8, 0.25)], ["T", Color.magenta, Color.blue(0.8, 0.25)],  ["T", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderTrans = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["T", Color.black,  Color.green(0.8, 0.25)],["T", Color.black, Color.red(0.8, 0.25)], ["T", Color.magenta, Color.blue(0.8, 0.25)],  ["T", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Amp
-			automationSliderAmp = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["A", Color.black,  Color.green(0.8, 0.25)],["A", Color.black, Color.red(0.8, 0.25)], ["A", Color.magenta, Color.blue(0.8, 0.25)],  ["A", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderAmp = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["A", Color.black,  Color.green(0.8, 0.25)],["A", Color.black, Color.red(0.8, 0.25)], ["A", Color.magenta, Color.blue(0.8, 0.25)],  ["A", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Dur
-			automationSliderDur = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["D", Color.black,  Color.green(0.8, 0.25)],["D", Color.black, Color.red(0.8, 0.25)], ["D", Color.magenta, Color.blue(0.8, 0.25)],  ["D", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderDur = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["D", Color.black,  Color.green(0.8, 0.25)],["D", Color.black, Color.red(0.8, 0.25)], ["D", Color.magenta, Color.blue(0.8, 0.25)],  ["D", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto stretch
-			automationSliderStretch = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["S", Color.black,  Color.green(0.8, 0.25)],["S", Color.black, Color.red(0.8, 0.25)], ["S", Color.magenta, Color.blue(0.8, 0.25)],  ["S", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderStretch = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["S", Color.black,  Color.green(0.8, 0.25)],["S", Color.black, Color.red(0.8, 0.25)], ["S", Color.magenta, Color.blue(0.8, 0.25)],  ["S", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Quant
-			automationSliderQuant = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["Q", Color.black,  Color.green(0.8, 0.25)],["Q", Color.black, Color.red(0.8, 0.25)], ["Q", Color.magenta, Color.blue(0.8, 0.25)],  ["Q", Color.black, Color.yellow(0.8, 0.25)]];
+			automationSliderQuant = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["Q", Color.black,  Color.green(0.8, 0.25)],["Q", Color.black, Color.red(0.8, 0.25)], ["Q", Color.magenta, Color.blue(0.8, 0.25)],  ["Q", Color.black, Color.yellow(0.8, 0.25)]];
 			// Auto Buffer
-			automationSliderBuffer= Button(windowSynth,Rect(0, 0, 12, 20)).states = [["B", Color.black,  Color.green(0.8, 0.25)],["B", Color.black, Color.red(0.8, 0.25)]];
+			automationSliderBuffer= Button(windowSynth,Rect(0, 0, 12, 15)).states = [["B", Color.black,  Color.green(0.8, 0.25)],["B", Color.black, Color.red(0.8, 0.25)]];
 			// Auto Synth
-			automationSliderSynth = Button(windowSynth,Rect(0, 0, 12, 20)).states = [["Y", Color.black,  Color.green(0.8, 0.25)],["Y", Color.black, Color.red(0.8, 0.25)]];
+			automationSliderSynth = Button(windowSynth,Rect(0, 0, 12, 15)).states = [["Y", Color.black,  Color.green(0.8, 0.25)],["Y", Color.black, Color.red(0.8, 0.25)]];
 			// % Change Synth
-			automationNumberSynth = NumberBox(windowSynth,Rect(0, 0, 20, 20)).minDecimals_(4);
+			automationNumberSynth = NumberBox(windowSynth,Rect(0, 0, 20, 15)).minDecimals_(4);
 			automationNumberSynth.action = {|view|};
 			automationNumberSynth.step_(0.01); automationNumberSynth.clipLo_(0); automationNumberSynth.clipHi_(10); automationNumberSynth.scroll_step_(0.01); automationNumberSynth.value_(onOffSynthValue.at(0));
 			automationSliderFreq.enabled_(false); automationSliderDur.enabled_(false); automationSliderSynth.enabled_(false); automationNumberSynth.enabled_(false); automationSliderBuffer.enabled_(false);
 			// Mode Synth or Pattern
-			//modeSynth = Button(windowSynth,Rect(0, 0, 45, 20)).states = [["Synth @", Color.red,  Color.grey(0.8, 0.25)],["Synth !", Color.blue, Color.grey(0.8, 0.25)]];
-			modeSynth = PopUpMenu(windowSynth,Rect(0, 0, 60, 20)).background_(Color.grey(0.8, 0.25)).stringColor_(Color.red).items=["Tdef","OnFly1", "OnFly2", "Stream1", "Stream2"];
+			//modeSynth = Button(windowSynth,Rect(0, 0, 45, 15)).states = [["Synth @", Color.red,  Color.grey(0.8, 0.25)],["Synth !", Color.blue, Color.grey(0.8, 0.25)]];
+			modeSynth = PopUpMenu(windowSynth,Rect(0, 0, 60, 15)).background_(Color.grey(0.8, 0.25)).stringColor_(Color.red).items=["Tdef","OnFly1", "OnFly2", "Stream1", "Stream2"];
 			modeSynth.action = {|view| switch(view.value,
 				0, {flagModeSynth = 'Tdef'; indexModeSynth=0},
 				1, {flagModeSynth = 'OnFly1'; indexModeSynth=0},
@@ -3961,7 +3952,7 @@ Preset Wek",
 			changeSynth.valueAction = (changeChoiceSynth.indexOf(name.asSymbol));// Reset Mode Synth
 			};
 			//Instr MIDI OUT
-			instrCanalMidiOut = PopUpMenu(windowSynth,Rect(0, 0, 75, 20)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=["MIDI out Off","MIDI out 1", "MIDI out 2", "MIDI out 3", "MIDI out 4", "MIDI out 5", "MIDI out 6", "MIDI out 7", "MIDI out 8", "MIDI out 9", "MIDI out 10", "MIDI out 11", "MIDI out 12", "MIDI out 13", "MIDI out 14", "MIDI out 15", "MIDI out 16"];
+			instrCanalMidiOut = PopUpMenu(windowSynth,Rect(0, 0, 75, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=["MIDI out Off","MIDI out 1", "MIDI out 2", "MIDI out 3", "MIDI out 4", "MIDI out 5", "MIDI out 6", "MIDI out 7", "MIDI out 8", "MIDI out 9", "MIDI out 10", "MIDI out 11", "MIDI out 12", "MIDI out 13", "MIDI out 14", "MIDI out 15", "MIDI out 16"];
 			instrCanalMidiOut.action = {|view|
 				if(view.value == 0, {flagMidiOut = 'off'}, {flagMidiOut = 'on'});
 				// MIDI OFF
@@ -3972,55 +3963,55 @@ Preset Wek",
 			};
 			instrCanalMidiOut.valueAction_(0);
 			//Menu Algorithm
-			menuAlgorithm = PopUpMenu(windowSynth,Rect(0, 0, 70, 20)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=listeAlgorithm;
+			menuAlgorithm = PopUpMenu(windowSynth,Rect(0, 0, 70, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=listeAlgorithm;
 			menuAlgorithm.action = {|algo| stringAlgorithm = listeAlgorithm.at(algo.value)};
 			menuAlgorithm.valueAction_(0);
 
 			// SynthBand
-			StaticText(windowSynth, 25 @ 20).string = "Band"; // 70
+			StaticText(windowSynth, 25 @ 15).string = "Band"; // 70
 			// Band 0 to 12
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["0", Color.green], ["0", Color.red]]).
 			action_({arg band; flagIndexBand.put(0, band.value); fonctionBand.value(0)}); // 71 all data
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["1", Color.green], ["1", Color.red]]).
 			action_({arg band; flagIndexBand.put(1, band.value); fonctionBand.value(1)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["2", Color.green], ["2", Color.red]]).
 			action_({arg band; flagIndexBand.put(2, band.value); fonctionBand.value(2)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["3", Color.green], ["3", Color.red]]).
 			action_({arg band; flagIndexBand.put(3, band.value); fonctionBand.value(3)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["4", Color.green], ["4", Color.red]]).
 			action_({arg band; flagIndexBand.put(4, band.value); fonctionBand.value(4)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["5", Color.green], ["5", Color.red]]).
 			action_({arg band; flagIndexBand.put(5, band.value); fonctionBand.value(5)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["6", Color.green], ["6", Color.red]]).
 			action_({arg band; flagIndexBand.put(6, band.value); fonctionBand.value(6)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["7", Color.green], ["7", Color.red]]).
 			action_({arg band; flagIndexBand.put(7, band.value); fonctionBand.value(7)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["8", Color.green], ["8", Color.red]]).
 			action_({arg band; flagIndexBand.put(8, band.value); fonctionBand.value(8)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["9", Color.green], ["9", Color.red]]).
 			action_({arg band; flagIndexBand.put(9, band.value); fonctionBand.value(9)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["10", Color.green], ["10", Color.red]]).
 			action_({arg band; flagIndexBand.put(10, band.value); fonctionBand.value(10)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["11", Color.green], ["11", Color.red]]).
 			action_({arg band; flagIndexBand.put(11, band.value); fonctionBand.value(11)});
-			Button.new(windowSynth, 25 @ 20).
+			Button.new(windowSynth, 25 @ 15).
 			states_([["12", Color.green], ["12", Color.red]]).
 			action_({arg band; flagIndexBand.put(12, band.value); fonctionBand.value(12)});// 78
 
 			// Tuning
-			PopUpMenu(windowSynth, Rect(0, 0, 95, 20)).
+			PopUpMenu(windowSynth, Rect(0, 0, 95, 15)).
 			items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
 			action = {arg item;
 				// Setup GUI Value
@@ -4129,23 +4120,23 @@ Preset Wek",
 				});
 			};
 			// Root
-			EZSlider(windowSynth, 95 @ 20, "Root", ControlSpec(0, 21, \lin, 1),
+			EZSlider(windowSynth, 95 @ 15, "Root", ControlSpec(0, 21, \lin, 1),
 				{|ez| root = ez.value; scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, labelWidth: 20, numberWidth: 20);
 			// Auto Root
-			Button(windowSynth,Rect(0, 0, 20, 20)).
+			Button(windowSynth,Rect(0, 0, 20, 15)).
 			states_([["!", Color.black, Color.green(0.8, 0.25)],["@", Color.black, Color.red(0.8, 0.25)], ["w", Color.black, Color.blue(0.8, 0.25)], ["*", Color.black, Color.yellow(0.8, 0.25)]]).
 			action_({arg view; flagRoot = view.value;
 				if(view.value == 0, {/*windowSynth.view.children.at(85).children.at(2).valueAction_(0)*/});
 			});
 			// Degrees
-			EZText(windowSynth, Rect(0, 0, 300, 20), "Deg",
+			EZText(windowSynth, Rect(0, 0, 300, 15), "Deg",
 				{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
 				degrees =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true, 33, 280);
 			windowSynth.view.children.at(85).enabled_(false);
 			windowSynth.view.children.at(87).enabled_(false);
 
 			// Init Algo
-			Button(windowSynth, Rect(0, 0, 25, 20)).states_([["IniA", Color.yellow]]).action_({
+			Button(windowSynth, Rect(0, 0, 25, 15)).states_([["IniA", Color.yellow]]).action_({
 				// For Kohonen
 				kohonenF = HPclassKohonen.new(1,127,1);
 				kohonenA = HPclassKohonen.new(1,127,1);
@@ -4172,7 +4163,7 @@ Preset Wek",
 			});
 
 			// Freeze Data OSC Button
-			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["FAD@", Color.green], ["FAD!", Color.red], ["FAD!", Color.blue]]).action_({arg flag;
+			Button(windowSynth, Rect(205, 0, 30, 15)).states_([["FAD@", Color.green], ["FAD!", Color.red], ["FAD!", Color.blue]]).action_({arg flag;
 				if(flag.value == 0, {flagFreezeDataOSC = 'off'; freezeDataOSC = [ ]});
 				if(flag.value == 1, {flagFreezeDataOSC = 'on'; freezeDataOSC = listeDataOSC.deepCopy;
 					listeWindowFreeze.do({arg freeze, index;
@@ -4184,9 +4175,15 @@ Preset Wek",
 				if(flag.value == 2, {flagFreezeDataOSC = 'on'});
 			});
 			// Chrd on off
-			Button(windowSynth, Rect(205, 0, 30, 20)).states_([["Chd!", Color.green], ["Chd@", Color.red]]).action_({arg flag;
+			Button(windowSynth, Rect(205, 0, 30, 15)).states_([["Chd!", Color.green], ["Chd@", Color.red]]).action_({arg flag;
 				flagChord = flag.value
 			});
+			// Chord Time
+			EZSlider(windowSynth, 100 @ 15, "ChrT", ControlSpec(0.01, 1, \exp, 0),
+				{|ez| chordDuree = ez.value}, 0.0833, labelWidth: 20, numberWidth: 25);
+			// Chord Size
+			EZSlider(windowSynth, 100 @ 15, "ChrS", ControlSpec(0, 12, \lin, 1),
+				{|ez| chordSize = ez.value}, 3, labelWidth: 20, numberWidth: 25);
 
 			// Fonction AutoControls
 			fonctionTdefControls = {arg window, groupe, newTempo=24;

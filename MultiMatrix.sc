@@ -2857,7 +2857,7 @@ y ... -						Musical keys.
 		fonctionShortCut.value(windowMasterFX);
 
 		//// Fonction Window for controling all sliders windows instruments ///
-		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 550, 400, 250), scroll: true);
+		windowControlSynth = Window("Master Sliders Music Control Synthesizer and FX", Rect(300, 550, 400, 200), scroll: true);
 		windowControlSynth.alpha=1.0;
 		windowControlSynth.front;
 		windowControlSynth.view.decorator = FlowLayout(windowControlSynth.view.bounds);
@@ -3117,7 +3117,7 @@ y ... -						Musical keys.
 		fonctionShortCut.value(windowControlSynth);
 
 		//////////////// Control Panel ////////////
-		windowControl =Window("Matrix Control", Rect(300, 0, 410, 515), scroll: true);
+		windowControl =Window("Matrix Control", Rect(300, 0, 410, 430), scroll: true);
 		windowControl.alpha=1.0;
 		windowControl.front;
 		windowControl.view.decorator = FlowLayout(windowControl.view.bounds);
@@ -3622,7 +3622,7 @@ y ... -						Musical keys.
 				});
 			};
 
-			windowSynth = Window(name ++ "[" ++ groupe.nodeID.asString ++ "]", Rect(rrand(700, 1000), 0, 410, 835), scroll: true);
+			windowSynth = Window(name ++ "[" ++ groupe.nodeID.asString ++ "]", Rect(rrand(700, 1000), 0, 410, 750), scroll: true);
 			windowSynth.alpha=1.0;
 			windowSynth.front;
 			windowSynth.view.decorator = FlowLayout(windowSynth.view.bounds);
