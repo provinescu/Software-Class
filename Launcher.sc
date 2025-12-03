@@ -116,7 +116,7 @@ Launcher {
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "Density2", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "WekDensity2", "Scores"]).stringColor_(Color.white).action = {|source|
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "MultiMatrix","Time", "Density", "Density2", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "WekDensity2", "Scores"]).stringColor_(Color.white).action = {|source|
 			switch (source.value,
 				0, {
 					nameSoft = "Robot";// 57564
@@ -131,60 +131,65 @@ Launcher {
 					path = "~/Documents/Matrix/";
 				},
 				3,	{
+					nameSoft = "MultiMatrix";
+					path = "~/Documents/Matrix/";
+					scPort = nil;// scPort random [57600-57700]
+				},
+				4,	{
 					nameSoft = "Time";// 57567
 					path = "~/Documents/Time/";
 				},
-				4,	{
+				5,	{
 					nameSoft = "Density";// 57568
 					path = "~/Documents/Density/";
 				},
-				5,	{
+				6,	{
 					nameSoft = "Density2";// 57568
 					path = "~/Documents/Density2/";
 				},
-				6,	{
+				7,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 1)");
 					nameSoft = "WekRobot";// 5770
 					path = "~/Documents/WekRobot/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
-				7,	{
+				8,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 95)");
 					nameSoft = "WekAgents";// 5771
 					path = "~/Documents/WekAgents/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
-				8,	{
+				9,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 13)");
 					nameSoft = "WekMatrix";// 57572
 					path = "~/Documents/WekMatrix/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
-				9,	{
+				10,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 71)");
 					nameSoft = "WekTime";// 57573
 					path = "~/Documents/WekTime/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
-				10,	{
+				11,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 17)");
 					nameSoft = "WekDensity";// 57574
 					path = "~/Documents/WekDensity/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
-				11,	{
+				12,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 17)");
 					nameSoft = "WekDensity2";// 57574
 					path = "~/Documents/WekDensity2/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
 				},
-				12,	{
+				13,	{
 					w.view.children.at(14).string_("Choose Soft");
 					nameSoft = "Scores";
 				},
