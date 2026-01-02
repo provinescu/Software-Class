@@ -7,7 +7,7 @@ Agents {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand;
 
-	*new	{arg path="~/Documents/Agents/", ni=26, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Agents", wek=6448, wekPort=57120, scPort=57110;
+	*new	{arg path="~/Documents/Agents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Agents", wek=6448, wekPort=57120, scPort=57110;
 
 		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort);
 
