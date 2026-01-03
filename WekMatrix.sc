@@ -184,9 +184,9 @@ WekMatrix {
 			hiPass= hiPass.add(127);
 			threshAlgo = threshAlgo.add(0.5);
 			filterAlgo = filterAlgo.add(0.5);
-			fhzFilter = fhzFilter.add(0);
-			ampFilter = ampFilter.add(0);
-			durFilter = durFilter.add(0.01);
+			fhzFilter = fhzFilter.add(0.5);
+			ampFilter = ampFilter.add(1);
+			durFilter = durFilter.add(0.03);
 			signalBuffer = signalBuffer.add(12);
 		});
 		listAudioIN = [];
@@ -631,7 +631,7 @@ y ... -						Musical keys.
 					SCRequestString("57120", "Wek Out Port", {arg index, port;
 						port = index.asInteger;
 						thisProcess.openUDPPort(port);
-						thisProcess.openPorts.postcs;
+						thisProcess.openPorts.postln;
 					});
 			}),
 			MenuAction("List
@@ -1110,15 +1110,18 @@ Preset Wek",
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
 				});
 				// All others Sliders
-				if(item == 5 or: {item == 6} or: {item == 8} or: {item == 13} or: {item == 14},
+				if(item == 8 or: {item == 13} or: {item == 14},
 					{view.valueAction_(data.at(item).value)});
 				// No Action
-				if(item == 1 or: {item == 2} or: {item == 11} or: {item == 12} or: {item == 28} or: {item == 31} or: {item == 32},
+				if(item == 1 or: {item == 2} or: {item == 5} or: {item == 6} or: {item == 11} or: {item == 12} or: {item == 28} or: {item == 31} or: {item == 32},
 					{nil});
 				// Range Band
 				if(item == 34, {rangeBand.valueAction = data.at(item).value});
 				// Maxtime and Memtime
 				if(item == 17 or: {item == 18} or: {item == 19} or: {item == 20} or: {item == 21} or: {item == 22} or: {item == 23} or: {item == 24} or: {item == 25} or: {item == 26}, {view.children.at(1).valueAction_(data.at(item).at(2).at(1))});
+				/*// Audio IN
+				if(item == 5,
+					{view.valueAction_(data.at(item).mod(numberAudioIn))});*/
 			});
 			// Set BPM
 			bpmSlider.valueAction = bpm;
@@ -1930,6 +1933,24 @@ Preset Wek",
 				var x, y;
 				tdefOSCdata = Tdef("WatchOSCdata", {
 					loop({
+						var x, y, z, b;
+						b = listeDataOSC.size-1;
+						numberAudioIn.do({arg a;
+							x=[]; y=[];
+							// Init Array
+							(numFhzBand + 1).do({arg i;
+								x = x.add([]);
+								y = y.add(0);
+								z = z.add(Main.elapsedTime);
+							});
+							if(a <= b, {
+								listeDataOSC.put(a, x.deepCopy);
+								indexDataMusic.put(a, y.deepCopy);
+							}, {
+								listeDataOSC = listeDataOSC.add(x.deepCopy);
+								indexDataMusic = indexDataMusic.add(y.deepCopy);
+							});
+						});
 						// Watch musicdata
 						numberAudioIn.do({arg a;
 							if((Main.elapsedTime - dureeOSCdata.at(a)) > timeMemory.at(a+1) and: {flagDataOSC == 'on'}, {
@@ -3734,25 +3755,45 @@ Preset Wek",
 					s.sync};
 		}, 0, labelWidth: 45, numberWidth: 30);
 		windowControl.view.decorator.nextLine;
-		// Signal Buffer
+		// Data Signal
 		EZText(windowControl, Rect(0, 0, 400, 15), "Data", {arg string;
-			var x, y;
+			var x, y, z, b, c;
 			signalBuffer = string.value;
+			c = listeDataOSC.size-1;
+			b = signalBuffer.size-1;
 			numberAudioIn.do({arg a;
-								x=[]; y=[];
-								// Init Array
-								(numFhzBand + 1).do({arg i;
-									x = x.add([]);
-									y = y.add(0);
-								});
-								listeDataOSC.put(a, x.deepCopy);
-								indexDataMusic.put(a, y.deepCopy);
-							});
+				x=[]; y=[];
+				// Init Array
+				(numFhzBand + 1).do({arg i;
+					x = x.add([]);
+					y = y.add(0);
+					z = z.add(Main.elapsedTime);
+				});
+				if(a <= c, {
+					listeDataOSC.put(a, x.deepCopy);
+					indexDataMusic.put(a, y.deepCopy);
+				}, {
+					listeDataOSC = listeDataOSC.add(x.deepCopy);
+					indexDataMusic = indexDataMusic.add(y.deepCopy);
+					lastTimeBand = lastTimeBand.add(z.deepCopy);
+					dureeOSCdata = dureeOSCdata.add(Main.elapsedTime);
+					lastDataAnalyze = lastDataAnalyze.add([0,0,0,nil,nil, Main.elapsedTime]);
+				});
+				if(a <= b, {nil}, {signalBuffer = signalBuffer.add(12)});
+			});
+			windowControl.view.children.at(17).children.at(1).value_(signalBuffer.asString);
 		}, signalBuffer, true, 45, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
-		//hipass
+		//hiPass
 		EZText(windowControl, Rect(0, 0, 400, 15), "HiPass",
-			{arg string; hiPass = string.value;
+			{arg string;
+				var z;
+				hiPass = string.value;
+				z = hiPass.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {hiPass = hiPass.add(127)});
+					windowControl.view.children.at(18).children.at(1).value_(hiPass.asString);
+				});
 				numberAudioIn.do({arg i;
 					if(arrayAudioIN.includes(i), {
 						synthAnalyseOnsets.at(i).set(\hiPass, hiPass.at(i).midicps); synthAnalysePitch.at(i).set(\hiPass, hiPass.at(i).midicps); synthAnalysePitch2.at(i).set(\hiPass, hiPass.at(i).midicps);
@@ -3761,9 +3802,16 @@ Preset Wek",
 			},
 			hiPass, true, 45, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
-		//lowpass
+		//loPass
 		EZText(windowControl, Rect(0, 0, 400, 15), "LoPass",
-			{arg string; loPass = string.value;
+			{arg string;
+				var z;
+				loPass = string.value;
+				z = loPass.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {loPass = loPass.add(0)});
+					windowControl.view.children.at(19).children.at(1).value_(loPass.asString);
+				});
 				numberAudioIn.do({arg i;
 					if(arrayAudioIN.includes(i), {
 						synthAnalyseOnsets.at(i).set(\loPass, loPass.at(i).midicps); synthAnalysePitch.at(i).set(\loPass, loPass.at(i).midicps); synthAnalysePitch2.at(i).set(\loPass, loPass.at(i).midicps);
@@ -3774,7 +3822,14 @@ Preset Wek",
 		windowControl.view.decorator.nextLine;
 		// Thresh
 		EZText(windowControl, Rect(0, 0, 400, 15), "Thresh",
-			{arg string; threshAlgo = string.value;
+			{arg string;
+				var z;
+				threshAlgo = string.value;
+				z = threshAlgo.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {threshAlgo = threshAlgo.add(0.5)});
+					windowControl.view.children.at(20).children.at(1).value_(threshAlgo.asString);
+				});
 				numberAudioIn.do({arg i;
 					if(arrayAudioIN.includes(i), {
 						synthAnalyseOnsets.at(i).set(\seuil, threshAlgo.at(i)); synthAnalysePitch.at(i).set(\seuil, threshAlgo.at(i)); synthAnalysePitch2.at(i).set(\seuil, threshAlgo.at(i)); synthAnalyseKeyTrack.at(i).set(\seuil, threshAlgo.at(i));
@@ -3785,7 +3840,14 @@ Preset Wek",
 		windowControl.view.decorator.nextLine;
 		// Filter
 		EZText(windowControl, Rect(0, 0, 400, 15), "Filter",
-			{arg string; filterAlgo = string.value;
+			{arg string;
+				var z;
+				filterAlgo = string.value;
+				z = filterAlgo.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {filterAlgo = filterAlgo.add(0.5)});
+					windowControl.view.children.at(21).children.at(1).value_(filterAlgo.asString);
+				});
 				numberAudioIn.do({arg i;
 					if(arrayAudioIN.includes(i), {
 						synthAnalyseOnsets.at(i).set(\filtre, filterAlgo.at(i)); synthAnalysePitch.at(i).set(\filtre, filterAlgo.at(i)); synthAnalysePitch2.at(i).set(\filtre, filterAlgo.at(i)); synthAnalyseKeyTrack.at(i).set(\filtre, filterAlgo.at(i));
@@ -3796,27 +3858,67 @@ Preset Wek",
 		windowControl.view.decorator.nextLine;
 		// Filter Fhz
 		EZText(windowControl, Rect(0, 0, 400, 15), "FhzFilt",
-			{arg string; fhzFilter = string.value},
+			{arg string;
+				var z;
+				fhzFilter = string.value;
+				z = fhzFilter.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {fhzFilter = fhzFilter.add(0.5)});
+					windowControl.view.children.at(22).children.at(1).value_(fhzFilter.asString);
+				});
+			},
 			fhzFilter, true, 50, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		// Filter Amp
 		EZText(windowControl, Rect(0, 0, 400, 15), "AmpFilt",
-			{arg string; ampFilter = string.value},
+			{arg string;
+				var z;
+				ampFilter = string.value;
+				z = ampFilter.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {ampFilter = ampFilter.add(1)});
+					windowControl.view.children.at(23).children.at(1).value_(ampFilter.asString);
+				});
+			},
 			ampFilter, true, 50, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		// Filter Dur
 		EZText(windowControl, Rect(0, 0, 400, 15), "DurFilt",
-			{arg string; durFilter = string.value},
+			{arg string;
+				var z;
+				durFilter = string.value;
+				z = durFilter.size-1;
+				numberAudioIn.do({arg a;
+					if(a <= z, {nil}, {durFilter = durFilter.add(0.03)});
+					windowControl.view.children.at(24).children.at(1).value_(durFilter.asString);
+				});
+			},
 			durFilter, true, 50, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		// Max Time
 		EZText(windowControl, Rect(0, 0, 400, 15), "MaxDur",
-			{arg string; timeMaximum = string.value},
+			{arg string;
+				var z;
+				timeMaximum = string.value;
+				z = timeMaximum.size-1;
+				(numberAudioIn+1).do({arg a;
+					if(a <= z, {nil}, {timeMaximum = timeMaximum.add(4)});
+					windowControl.view.children.at(25).children.at(1).value_(timeMaximum.asString);
+				});
+			},
 			timeMaximum, true, 50, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		// Time Memory
 		EZText(windowControl, Rect(0, 0, 400, 15), "Memory",
-			{arg string; timeMemory = string.value},
+			{arg string;
+				var z;
+				timeMemory = string.value;
+				z = timeMemory.size-1;
+				(numberAudioIn+1).do({arg a;
+					if(a <= z, {nil}, {timeMemory = timeMemory.add(4)});
+					windowControl.view.children.at(26).children.at(1).value_(timeMemory.asString);
+				});
+			},
 			timeMemory, true, 50, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("Synthesizer + FX").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
@@ -4634,14 +4736,14 @@ Preset Wek",
 				listAudioIN = fonctionArrayAudioIN.value(arrayAudioIN);
 				// Stop Synth inactif
 				numberAudioIn.do({arg i;
-					if(listAudioIN.includes(i), {("Audio Canal"+ i.asString + " ON").postcs},
+					if(listAudioIN.includes(i), {("Audio Canal"+ i.asString + " ON").postln},
 						{
 							synthAnalyzeIn.at(i).run(false);
 							synthAnalyseOnsets.at(i).run(false);
 							synthAnalysePitch.at(i).run(false);
 							synthAnalysePitch2.at(i).run(false);
 							synthAnalyseKeyTrack.at(i).run(false);
-							("Audio Canal"+ i.asString + " OFF").postcs;
+							("Audio Canal"+ i.asString + " OFF").postln;
 					});
 				});
 			});
@@ -5942,7 +6044,7 @@ Preset Wek",
 											\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 0], groupe, \addToTail).mapn(\freq, busOSC.at(indexNumFhzBand), \ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
 									},
 									{
-										fork{1.wait; "Warning Synth or FX Mode not Valid for Streaming".postcs};
+										fork{1.wait; "Warning Synth or FX Mode not Valid for Streaming".postln};
 									});
 								});
 							});
@@ -5959,7 +6061,7 @@ Preset Wek",
 						if(flagVST =='on', {~fxVST.midi.allNotesOff(canalMIDIinstr)});
 					});
 					arrayAudioIN.remove(audioInID);
-					if(arrayAudioIN.includes(audioInID), {("Another Synth is Listening Audio"+ audioInID.asString).postcs},
+					if(arrayAudioIN.includes(audioInID), {("Another Synth is Listening Audio"+ audioInID.asString).postln},
 						{
 							if(algoAnalyse.value == 0, {synthAnalyseOnsets.at(audioInID).run(false)});
 							if(algoAnalyse.value == 1, {synthAnalysePitch.at(audioInID).run(false)});
