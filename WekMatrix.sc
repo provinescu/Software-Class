@@ -9,7 +9,7 @@ WekMatrix {
 	var fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, listeDataOSC, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard;
 	var keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze;
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
-	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo;
+	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi;
 
 	*new	{arg path="~/Documents/WekWekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekWekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -114,8 +114,6 @@ WekMatrix {
 		flagSystemBPM=0;
 		commande=nil;
 		oscTempoMaster = 1;
-		timeMaximum = 4;
-		timeMemory = 4;
 		dureeOSCdata = Main.elapsedTime;
 		lastTimeAutomationPreset = Main.elapsedTime;
 		limitTemps = 0;
@@ -160,9 +158,11 @@ WekMatrix {
 		indexDataMusic = [];
 		lastTimeBand = [];
 		dureeOSCdata = [];
-		//index 0 pour keyb et midi
-		timeMaximum = [4];
-		timeMemory = [4];
+		//pour keyb et midi
+		maxKeybMidi = 4;
+		memKeybMidi = 4;
+		timeMaximum = [];
+		timeMemory = [];
 		x=[]; y=[]; z=[];
 		// Init Array
 		(numFhzBand + 1).do({arg i;
@@ -1034,6 +1034,7 @@ Preset Wek",
 		};
 
 		fonctionLoadPreset = {arg preset, dataControlSynth=[], tampon=[], tampon2=[];
+			var x, y, z, b;
 			tampon2 = preset.last;// Load freezeDataOSC
 			preset.remove(preset.last);// Remove FreezeDataOSC
 			tampon = preset.last;// Load OSCmusicData
@@ -1045,9 +1046,24 @@ Preset Wek",
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
 			listeDataOSC = tampon;
+						b = listeDataOSC.size-1;
+						numberAudioIn.do({arg a;
+							x=[]; y=[];
+							// Init Array
+							(numFhzBand + 1).do({arg i;
+								x = x.add([]);
+								y = y.add(0);
+								z = z.add(Main.elapsedTime);
+							});
+							if(a <= b, {
+								listeDataOSC.put(a, x.deepCopy);
+								indexDataMusic.put(a, y.deepCopy);
+							}, {
+								listeDataOSC = listeDataOSC.add(x.deepCopy);
+								indexDataMusic = indexDataMusic.add(y.deepCopy);
+							});
+						});
 			listeWindowFreeze = tampon2;
-			/*// Init Band for Synth
-			fonctionInitBand.value(numFhzBand);*/
 		};
 
 		fonctionSaveControl = {arg window;
@@ -1567,7 +1583,7 @@ Preset Wek",
 						// Set Bus OSC
 						if(flagDataOSC == 'on', {busOSC.at(0).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux)});//ok band 0
 						//Analyze Data
-						if(duree > timeMemory.at(indexAudio+1) or: {duree > timeMaximum.at(indexAudio+1)} and: {flagDataOSC == 'on'}, {
+						if(duree > timeMemory.at(indexAudio) or: {duree > timeMaximum.at(indexAudio)} and: {flagDataOSC == 'on'}, {
 							x=[]; y=[]; z=[];
 							// Init Array
 							(numFhzBand + 1).do({arg i;
@@ -1580,7 +1596,7 @@ Preset Wek",
 							lastTimeBand.put(indexAudio, z.deepCopy);
 							lastTimeAnalyse = time; lastDataAnalyze.put(indexAudio, [freq, amp, duree, freqTampon, ampTampon, time]);
 						});
-						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter.at(indexAudio) and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter.at(indexAudio)} and: {duree >= durFilter.at(indexAudio)} and: {duree <= timeMaximum.at(indexAudio+1)},
+						if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter.at(indexAudio) and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter.at(indexAudio)} and: {duree >= durFilter.at(indexAudio)} and: {duree <= timeMaximum.at(indexAudio)},
 							{
 								if(freqTampon !=nil and: {ampTampon != nil},
 									{
@@ -1611,7 +1627,7 @@ Preset Wek",
 												},
 												{
 													if(i <= numFhzBand, {
-														if((time - lastTimeBand.at(indexAudio).at(i)) > timeMemory.at(indexAudio+1), {
+														if((time - lastTimeBand.at(indexAudio).at(i)) > timeMemory.at(indexAudio), {
 															listeDataOSC.at(indexAudio).put(i, []);
 															indexDataMusic.at(indexAudio).put(i, 0);
 															lastTimeBand.at(indexAudio).put(i, time);
@@ -1688,7 +1704,7 @@ Preset Wek",
 						// Set Bus OSC
 						if(flagDataOSC == 'on', {busOSC.at(0).set(freq, amp, duree, tempo, freqCentroid, flatness, energy, flux)});
 						//Analyze Data
-						if(duree > timeMemory.at(0) or: {duree > timeMaximum.at(0)} and: {flagDataOSC == 'on'}, {
+						if(duree > memKeybMidi or: {duree > maxKeybMidi} and: {flagDataOSC == 'on'}, {
 							x=[]; y=[]; z=[];
 							// Init Array
 							(numFhzBand + 1).do({arg i;
@@ -1703,7 +1719,7 @@ Preset Wek",
 							});
 							freqBefore=freq; ampBefore=amp; dureeBefore=duree; /*freqTampon = nil; ampTampon = nil;*/ lastTimeAnalyse = time;
 						});
-						if(duree <= timeMaximum.at(0),
+						if(duree <= maxKeybMidi,
 							{
 								if(freqTampon !=nil and: {ampTampon != nil},
 									{
@@ -1737,7 +1753,7 @@ Preset Wek",
 													},
 													{
 														if(i <= numFhzBand, {
-															if((time - lastTimeBand.at(audio).at(i)) > timeMemory.at(0), {
+															if((time - lastTimeBand.at(audio).at(i)) > memKeybMidi, {
 																listeDataOSC.at(audio).put(i, []);
 																indexDataMusic.at(audio).put(i, 0);
 																lastTimeBand.at(audio).put(i, time);
@@ -1830,7 +1846,7 @@ Preset Wek",
 					// Set Bus OSC
 					if(flagDataOSC == 'on', {busOSC.at(0).set(freqMIDI, ampMIDI, dureeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI)});
 					//Analyze Data
-					if(dureeMIDI > timeMemory.at(0) or: {dureeMIDI > timeMaximum.at(0)} and: {flagDataOSC == 'on'}, {
+					if(dureeMIDI > memKeybMidi or: {dureeMIDI > maxKeybMidi} and: {flagDataOSC == 'on'}, {
 						x=[]; y=[]; z=[];
 						// Init Array
 						(numFhzBand + 1).do({arg i;
@@ -1845,7 +1861,7 @@ Preset Wek",
 						});
 						freqBefore=freq; ampBefore=amp; dureeBefore=duree; /*freqTampon = nil; ampTampon = nil;*/ lastTimeMIDI = time;
 					});
-					if(duree <= timeMaximum.at(0),
+					if(duree <= maxKeybMidi,
 						{
 							if(freqTampon !=nil and: {ampTampon != nil},
 								{
@@ -1879,7 +1895,7 @@ Preset Wek",
 												},
 												{
 													if(i <= numFhzBand, {
-														if((time - lastTimeBand.at(audio).at(i)) > timeMemory.at(0), {
+														if((time - lastTimeBand.at(audio).at(i)) > memKeybMidi, {
 															listeDataOSC.at(audio).put(i, []);
 															indexDataMusic.at(audio).put(i, 0);
 															lastTimeBand.at(audio).put(i, time);
@@ -1933,27 +1949,10 @@ Preset Wek",
 				var x, y;
 				tdefOSCdata = Tdef("WatchOSCdata", {
 					loop({
-						var x, y, z, b;
-						b = listeDataOSC.size-1;
-						numberAudioIn.do({arg a;
-							x=[]; y=[];
-							// Init Array
-							(numFhzBand + 1).do({arg i;
-								x = x.add([]);
-								y = y.add(0);
-								z = z.add(Main.elapsedTime);
-							});
-							if(a <= b, {
-								listeDataOSC.put(a, x.deepCopy);
-								indexDataMusic.put(a, y.deepCopy);
-							}, {
-								listeDataOSC = listeDataOSC.add(x.deepCopy);
-								indexDataMusic = indexDataMusic.add(y.deepCopy);
-							});
-						});
+						var x, y;
 						// Watch musicdata
 						numberAudioIn.do({arg a;
-							if((Main.elapsedTime - dureeOSCdata.at(a)) > timeMemory.at(a+1) and: {flagDataOSC == 'on'}, {
+							if((Main.elapsedTime - dureeOSCdata.at(a)) > timeMemory.at(a) and: {flagDataOSC == 'on'}, {
 								x=[]; y=[];
 								// Init Array
 								(numFhzBand + 1).do({arg i;
@@ -2137,18 +2136,18 @@ Preset Wek",
 						listeWindowSynth.do({|window|
 							if(window.view.children.at(54).value == 1 and: {window.view.children.at(61).value == 1}, {
 								window.value.view.children.at(42).children.do({arg subView, subItem;
-									if(subItem == 2, {subView.activeLo_(q1A / timeMaximum); subView.activeHi_(q3A / timeMaximum)})
+									if(subItem == 2, {subView.activeLo_(q1A / maxKeybMidi); subView.activeHi_(q3A / maxKeybMidi)})
 								});
 							});
 						});
 					});
 					// Stretch
 					if(rrand(0.0, 100.0) < pourcentDurT.value, {
-						controlDureeTranSlider.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign);
+						controlDureeTranSlider.valueAction_(medianeA * maxKeybMidi  + 1 * dissymetrie.sign);
 						listeWindowSynth.do({|window|
 							if(window.view.children.at(54).value == 1 and: {window.view.children.at(62).value == 1}, {
 								window.value.view.children.at(43).children.do({arg subView, subItem;
-									if(subItem == 2, {subView.valueAction_(medianeA * timeMaximum  + 1 * dissymetrie.sign)});
+									if(subItem == 2, {subView.valueAction_(medianeA * maxKeybMidi  + 1 * dissymetrie.sign)});
 								});
 							});
 						});
@@ -2571,7 +2570,7 @@ Preset Wek",
 
 		// Fonction Commandes
 		fonctionCommandes = {arg window, commandeExecute, number;
-			var file, data, dataControlSynth, tampon, tampon2, listeFreeze=[];
+			var file, data, dataControlSynth, tampon, tampon2, listeFreeze=[], x, y, z, b;
 			// Save Preset
 			if(commandeExecute == 'Save Preset',{
 				windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
@@ -2634,6 +2633,23 @@ Preset Wek",
 						//fonctionLoadSynthesizer.value(data.at(0), tampon);
 						data.do({arg val, index; fonctionLoadSynthesizer.value(val, tampon2.at(index))});// Load Synthesizer
 						listeDataOSC = tampon;
+						b = listeDataOSC.size-1;
+						numberAudioIn.do({arg a;
+							x=[]; y=[];
+							// Init Array
+							(numFhzBand + 1).do({arg i;
+								x = x.add([]);
+								y = y.add(0);
+								z = z.add(Main.elapsedTime);
+							});
+							if(a <= b, {
+								listeDataOSC.put(a, x.deepCopy);
+								indexDataMusic.put(a, y.deepCopy);
+							}, {
+								listeDataOSC = listeDataOSC.add(x.deepCopy);
+								indexDataMusic = indexDataMusic.add(y.deepCopy);
+							});
+						});
 						listeWindowFreeze = tampon2;
 						/*// Init Band for Synth
 						fonctionInitBand.value(numFhzBand);*/
@@ -3363,7 +3379,7 @@ Preset Wek",
 		fonctionShortCut.value(windowControlSynth);
 
 		////////////////////////////// Control Panel //////////////////////
-		windowControl =Window("WekMatrix Control", Rect(300, 0, 410, 545), scroll: true);
+		windowControl =Window("WekMatrix Control", Rect(300, 0, 410, 563), scroll: true);
 		windowControl.alpha=1.0;
 		windowControl.front;
 		windowControl.view.decorator = FlowLayout(windowControl.view.bounds);
@@ -3901,7 +3917,7 @@ Preset Wek",
 				var z;
 				timeMaximum = string.value;
 				z = timeMaximum.size-1;
-				(numberAudioIn+1).do({arg a;
+				numberAudioIn.do({arg a;
 					if(a <= z, {nil}, {timeMaximum = timeMaximum.add(4)});
 					windowControl.view.children.at(25).children.at(1).value_(timeMaximum.asString);
 				});
@@ -3914,7 +3930,7 @@ Preset Wek",
 				var z;
 				timeMemory = string.value;
 				z = timeMemory.size-1;
-				(numberAudioIn+1).do({arg a;
+				numberAudioIn.do({arg a;
 					if(a <= z, {nil}, {timeMemory = timeMemory.add(4)});
 					windowControl.view.children.at(26).children.at(1).value_(timeMemory.asString);
 				});
@@ -3957,6 +3973,14 @@ Preset Wek",
 		rangeBand = EZText(windowControl, Rect(0, 0, 390, 15), "RangeBand",
 			{arg range; bandFHZ = range.value.midicps},
 			[[0, 127], [0.0, 48], [48, 72], [72, 127.0] ], true).font = Font( "Helvetica", 11);
+		// MaxTime Keyb+midi
+		EZSlider(windowControl, 195 @ 15, "MaxTime K+M", ControlSpec(0.01, 60, \exp, 0.01),
+			{arg val; maxKeybMidi = val.value;
+		}, 4, labelWidth: 70, numberWidth: 30);
+		// Memrory time Keb+midi
+		EZSlider(windowControl, 195 @ 15, "MemTime K+M", ControlSpec(0.01, 60, \exp, 0.01),
+			{arg val; memKeybMidi = val.value;
+		}, 4, labelWidth: 70, numberWidth: 30);
 		// Wek
 		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
@@ -4716,7 +4740,7 @@ Preset Wek",
 				flagChord = flag.value
 			});
 			// Chord Time
-			EZSlider(windowSynth, 90 @ 15, "ChdT", ControlSpec(0.01, 1, \exp, 0),
+			EZSlider(windowSynth, 90 @ 15, "ChdT", ControlSpec(0.01, 60, \exp, 0.01),
 				{|ez| chordDuree = ez.value}, 0.0833, labelWidth: 23, numberWidth: 25);
 			// Chord Size
 			EZSlider(windowSynth, 90 @ 15, "ChdS", ControlSpec(0, 12, \lin, 1),
@@ -4831,13 +4855,13 @@ Preset Wek",
 										// Set Duree Sliders
 										if(window.view.children.at(61).value == 1, {
 											window.view.children.at(42).children.do({arg subView, subItem;
-												if(subItem == 2, {subView.activeLo_(q1Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum / 60)); subView.activeHi_(q3Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum / 60))});
+												if(subItem == 2, {subView.activeLo_(q1Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum.at(audioInID) / 60)); subView.activeHi_(q3Duree + rand2(ecartsemiqDuree * window.view.children.at(56).children.at(1).value) * (timeMaximum.at(audioInID) / 60))});
 											});
 										});
 										// Set Duree Stretch
 										if(window.view.children.at(62).value == 1, {
 											window.view.children.at(43).children.do({arg subView, subItem;
-												if(subItem == 1, {subView.valueAction_(ecartqDuree + rand(window.view.children.at(56).children.at(1).value) / timeMaximum * dissymetrieDuree.sign / 50 + 0.5)});
+												if(subItem == 1, {subView.valueAction_(ecartqDuree + rand(window.view.children.at(56).children.at(1).value) / timeMaximum.at(audioInID) * dissymetrieDuree.sign / 50 + 0.5)});
 											});
 										});
 										// Set Duree Quant
@@ -5120,7 +5144,7 @@ Preset Wek",
 				// Normalize NewList
 				newFreq = listeDataAlgo.at(0).cpsmidi / 127;
 				newAmp = listeDataAlgo.at(1);
-				newDuree = listeDataAlgo.at(2) / timeMaximum;
+				newDuree = listeDataAlgo.at(2) / timeMaximum.at(audioInID);
 				switch(stringAlgorithm,
 					"Default", {}, // No Action
 					"Probability", {
@@ -5309,7 +5333,7 @@ Preset Wek",
 				);
 				newFreq = (newFreq * 127).midicps;
 				//newAmp
-				newDuree = newDuree * timeMaximum;
+				newDuree = newDuree * timeMaximum.at(audioInID);
 				[newFreq, newAmp, newDuree].value;
 			};
 
@@ -5409,7 +5433,7 @@ Preset Wek",
 													indexMusicData = indexMusicData + 1;
 											});
 											// Set Music Data
-											duree = duree / timeMaximum.at(audioInID+1) * (durHi - durLo) + durLo;
+											duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
 											duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
 											duree = if(duree <= 0, quanta.reciprocal, duree);
 											dureeTdef = (duree * durM).max(0.01);
@@ -5578,7 +5602,7 @@ Preset Wek",
 																indexMusicData = indexMusicData + 1;
 														});
 														// Set Music Data
-														duree = duree / timeMaximum.at(audioInID+1) * (durHi - durLo) + durLo;
+														duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
 														duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
 														duree = if(duree <= 0, quanta.reciprocal, duree);
 														dureeTdef = (duree * durM).max(0.01);
@@ -5744,7 +5768,7 @@ Preset Wek",
 																				indexMusicData = indexMusicData + 1;
 																		});
 																		// Set Music Data
-																		duree = duree / timeMaximum.at(audioInID+1) * (durHi - durLo) + durLo;
+																		duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
 																		duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
 																		duree = if(duree <= 0, quanta.reciprocal, duree);
 																		dureeTdef = (duree * durM).max(0.01);
@@ -5925,7 +5949,7 @@ Preset Wek",
 																					indexMusicData = indexMusicData + 1;
 																			});
 																			// Set Music Data
-																			duree = duree / timeMaximum.at(audioInID+1) * (durHi - durLo) + durLo;
+																			duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
 																			duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
 																			duree = if(duree <= 0, quanta.reciprocal, duree);
 																			dureeTdef = (duree * durM).max(0.01);
