@@ -4749,8 +4749,7 @@ Preset Wek",
 			PopUpMenu(windowSynth,Rect(0, 0, 100, 15)).items_(textAudioIn).action_({arg in;
 				arrayAudioIN.remove(audioInID);
 				audioInID = in.value; arrayAudioIN = arrayAudioIN.add(audioInID);
-				synthAnalyzeIn.at(audioInID).set(\in, audioInID, \busAnalyze, busAnalyze.at(audioInID).index);
-				if(startStop.value == 1, {
+				if(startSystem.value == 1 and: {startStop.value == 1}, {
 					synthAnalyzeIn.at(audioInID).run(true);
 					if(algoAnalyse.value == 0, {synthAnalyseOnsets.at(audioInID).run(true)});
 					if(algoAnalyse.value == 1, {synthAnalysePitch.at(audioInID).run(true)});
