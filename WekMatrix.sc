@@ -3985,21 +3985,21 @@ Preset Wek",
 		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {sender.sendMsg("/wekinator/control/stopRecording")},
-				1, {windowControl.view.children.at(37).valueAction = 0;// run
+				1, {windowControl.view.children.at(39).valueAction = 0;// run
 					sender.sendMsg("/wekinator/control/startRecording");
 				}
 			);
 		});
 		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekTrain On", Color.magenta]]).action_({|view|
-			windowControl.view.children.at(35).valueAction = 0;// rec
-			windowControl.view.children.at(37).valueAction = 0;// run
+			windowControl.view.children.at(37).valueAction = 0;// rec
+			windowControl.view.children.at(39).valueAction = 0;// run
 			sender.sendMsg("/wekinator/control/train");
 		});
 		Button(windowControl, Rect(0, 0, 65, 15)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
 			switch(view.value,
 				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
 				},
-				1, {windowControl.view.children.at(35).valueAction = 0;// rec
+				1, {windowControl.view.children.at(37).valueAction = 0;// rec
 					flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
 				}
 			);
