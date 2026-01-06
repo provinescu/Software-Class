@@ -238,6 +238,7 @@ Matrix {
 			'Klang',
 			'Gendy3',
 			'Spring',
+			'FXsynthComb',
 			'Silent',
 			//// Sampler one sample
 			'SAMPLER 1 BUFFER (',
@@ -374,8 +375,6 @@ Matrix {
 			'WarpDelay',
 			'DJ_FX',
 			'PV_MagFreeze',
-			'PV_PlayBuf',
-			'PV_BinPlayBuf',
 			'PV_HPshiftDownFX',
 			//'PV_HPecartTypeFX',
 			'PV_HPfiltreFX',
@@ -401,10 +400,6 @@ Matrix {
 			'PV_MagShift+StretchFX',
 			'ConvolutionFX',
 			'PV_CutoffFX',
-			//// SYNTH + FX Special
-			'SPECIAL SYNTH + FX (',
-			'SpecialFX',
-			'SpecialSynth',
 			//// END SYNTH AND FX
 			'END (',
 		];
@@ -1044,23 +1039,23 @@ y ... -						Musical keys.
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
 			listeDataOSC = tampon;
-						b = listeDataOSC.size-1;
-						numberAudioIn.do({arg a;
-							x=[]; y=[];
-							// Init Array
-							(numFhzBand + 1).do({arg i;
-								x = x.add([]);
-								y = y.add(0);
-								z = z.add(Main.elapsedTime);
-							});
-							if(a <= b, {
-								listeDataOSC.put(a, x.deepCopy);
-								indexDataMusic.put(a, y.deepCopy);
-							}, {
-								listeDataOSC = listeDataOSC.add(x.deepCopy);
-								indexDataMusic = indexDataMusic.add(y.deepCopy);
-							});
-						});
+			b = listeDataOSC.size-1;
+			numberAudioIn.do({arg a;
+				x=[]; y=[];
+				// Init Array
+				(numFhzBand + 1).do({arg i;
+					x = x.add([]);
+					y = y.add(0);
+					z = z.add(Main.elapsedTime);
+				});
+				if(a <= b, {
+					listeDataOSC.put(a, x.deepCopy);
+					indexDataMusic.put(a, y.deepCopy);
+				}, {
+					listeDataOSC = listeDataOSC.add(x.deepCopy);
+					indexDataMusic = indexDataMusic.add(y.deepCopy);
+				});
+			});
 			listeWindowFreeze = tampon2;
 		};
 
@@ -4031,8 +4026,8 @@ y ... -						Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer one
 			knobOffset1 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset1, ez.value); ctrlBuffer.put(3, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
-			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
-			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
+			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\preLevel, ez.value); bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
+			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\postLevel, ez.value); bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
 			knobRecOn1 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)], ["Rec @", Color.black, Color.red(0.8, 0.25)], ["Rec !", Color.black, Color.blue(0.8, 0.25)]];
 			knobRecOn1.action = {|view| if(view.value == 2, {bufferRecording1.set(\loop, 0); ctrlBuffer.put(2, 1); loopRec1 = 0},
 				{bufferRecording1.set(\loop, view.value); ctrlBuffer.put(2, view.value); loopRec1 = view.value});
@@ -4643,9 +4638,7 @@ y ... -						Musical keys.
 																// FFT Piano + Sample
 																if(synthNumber > choiceSynth.indexOf('FFT PIANO + SAMPLE (') and: {synthNumber < 	choiceSynth.indexOf('FX (')}, {newSynth = rrand(choiceSynth.indexOf('FFT PIANO + SAMPLE (') + 1, choiceSynth.indexOf('FX (') - 1)});
 																// FX
-																if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf	('SPECIAL SYNTH + FX (')}, {newSynth = rrand(choiceSynth.indexOf('FX (') + 1, choiceSynth.indexOf('SPECIAL SYNTH + FX (') - 1)});
-																// FX SPECIAL
-																if(synthNumber > choiceSynth.indexOf('SPECIAL SYNTH + FX (') and: {synthNumber < 	choiceSynth.indexOf('END (')}, {newSynth = rrand(choiceSynth.indexOf('SPECIAL SYNTH + FX (') + 1, choiceSynth.indexOf('END (') - 1)});
+																if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf	('END (')}, {newSynth = rrand(choiceSynth.indexOf('FX (') + 1, choiceSynth.indexOf('END (') - 1)});
 														});
 														window.view.children.at(11).valueAction_(newSynth);
 												});
@@ -4672,9 +4665,7 @@ y ... -						Musical keys.
 																// FFT Piano + Sample
 																if(synthNumber > choiceSynth.indexOf('FFT PIANO + SAMPLE (') and: {synthNumber < 	choiceSynth.indexOf('FX (')}, {newSynth = rrand(choiceSynth.indexOf('FFT PIANO + SAMPLE (') + 1, choiceSynth.indexOf('FX (') - 1)});
 																// FX
-																if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf	('SPECIAL SYNTH + FX (')}, {newSynth = rrand(choiceSynth.indexOf('FX (') + 1, choiceSynth.indexOf('SPECIAL SYNTH + FX (') - 1)});
-																// FX SPECIAL
-																if(synthNumber > choiceSynth.indexOf('SPECIAL SYNTH + FX (') and: {synthNumber < 	choiceSynth.indexOf('END (')}, {newSynth = rrand(choiceSynth.indexOf('SPECIAL SYNTH + FX (') + 1, choiceSynth.indexOf('END (') - 1)});
+																if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf	('END (')}, {newSynth = rrand(choiceSynth.indexOf('FX (') + 1, choiceSynth.indexOf('END (') - 1)});
 														});
 														window.view.children.at(11).valueAction_(newSynth);
 												});
@@ -4761,11 +4752,11 @@ y ... -						Musical keys.
 				if(synthNumber > choiceSynth.indexOf('FFT 2 BUFFER (') and: {synthNumber < choiceSynth.indexOf('PIANO (')}, {sendLocalBuf.enabled_(false);
 				});
 				// Piano
-				if(synthNumber > choiceSynth.indexOf('PIANO (') and: {synthNumber < choiceSynth.indexOf('FFT PIANO + SAMPLE (')}, {switchBufferOne.enabled_(false); switchBufferOneAction.enabled_(false);  loopBufferOne.enabled_(false); durSampleOneSlider.enabled_(false); textBufferOne.enabled_(false);switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); controlsAntiClick.enabled_(false); sendLocalBuf.enabled_(false); automationSliderBuffer.enabled_(false);
+				if(synthNumber > choiceSynth.indexOf('PIANO (') and: {synthNumber < choiceSynth.indexOf('FFT PIANO + SAMPLE (')}, {switchBufferOne.enabled_(false); switchBufferOneAction.enabled_(false); loopBufferOne.enabled_(true); durSampleOneSlider.enabled_(true); textBufferOne.enabled_(false);switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); controlsAntiClick.enabled_(false); sendLocalBuf.enabled_(false); automationSliderBuffer.enabled_(false);
 					reverseBufferOneAction.enabled_(false);
 					knobOffset1.enabled_(false);
-					knobPreLevel1.enabled_(false);
-					knobPostLevel1.enabled_(false);
+					knobPreLevel1.enabled_(true);
+					knobPostLevel1.enabled_(true);
 					knobRecOn1.enabled_(false);
 					reverseBufferTwoAction.enabled_(false);
 					knobOffset2.enabled_(false);
@@ -4774,7 +4765,7 @@ y ... -						Musical keys.
 					knobRecOn2.enabled_(false);
 				});
 				// FFT Piano + Sample
-				if(synthNumber > choiceSynth.indexOf('FFT PIANO + SAMPLE (') and: {synthNumber < choiceSynth.indexOf('FX (')}, {switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); sendLocalBuf.enabled_(false);
+				if(synthNumber > choiceSynth.indexOf('FFT PIANO + SAMPLE (') and: {synthNumber < choiceSynth.indexOf('FX (')}, {switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); sendLocalBuf.enabled_(false); loopBufferOne.enabled_(true);
 					reverseBufferTwoAction.enabled_(false);
 					knobOffset2.enabled_(false);
 					knobPreLevel2.enabled_(false);
@@ -4782,7 +4773,7 @@ y ... -						Musical keys.
 					knobRecOn2.enabled_(false);
 				});
 				// FX
-				if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf('SPECIAL SYNTH + FX (')}, {switchBufferOne.enabled_(false); switchBufferOneAction.enabled_(false);  loopBufferOne.enabled_(false); textBufferOne.enabled_(false);switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); freqSlider.enabled_(false); freqTranSlider.enabled_(false);
+				if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf('END (')}, {switchBufferOne.enabled_(false); switchBufferOneAction.enabled_(false);  loopBufferOne.enabled_(false); durSampleOneSlider.enabled_(true); textBufferOne.enabled_(false);switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); freqSlider.enabled_(false); freqTranSlider.enabled_(false);
 					quantaSlider.enabled_(false);
 					envelopeSynth.enabled_(false);
 					/*automationSliderPan.enabled_(false);
@@ -4797,21 +4788,8 @@ y ... -						Musical keys.
 					automationSliderBuffer.enabled_(false);*/
 					reverseBufferOneAction.enabled_(false);
 					knobOffset1.enabled_(false);
-					knobPreLevel1.enabled_(false);
-					knobPostLevel1.enabled_(false);
-					knobRecOn1.enabled_(false);
-					reverseBufferTwoAction.enabled_(false);
-					knobOffset2.enabled_(false);
-					knobPreLevel2.enabled_(false);
-					knobPostLevel2.enabled_(false);
-					knobRecOn2.enabled_(false);
-				});
-				// FX SPECIAL
-				if(synthNumber > choiceSynth.indexOf('SPECIAL SYNTH + FX ('), {switchBufferOne.enabled_(false); switchBufferOneAction.enabled_(false);  loopBufferOne.enabled_(false); textBufferOne.enabled_(false);switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); automationSliderBuffer.enabled_(false);
-					reverseBufferOneAction.enabled_(false);
-					knobOffset1.enabled_(false);
-					knobPreLevel1.enabled_(false);
-					knobPostLevel1.enabled_(false);
+					knobPreLevel1.enabled_(true);
+					knobPostLevel1.enabled_(true);
 					knobRecOn1.enabled_(false);
 					reverseBufferTwoAction.enabled_(false);
 					knobOffset2.enabled_(false);
@@ -5056,7 +5034,7 @@ y ... -						Musical keys.
 
 				var musicData, music, indexAudio;
 
-				if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf('SPECIAL SYNTH + FX (')}, {
+				if(synthNumber > choiceSynth.indexOf('FX (') and: {synthNumber < choiceSynth.indexOf('END (')}, {
 					// FX Synth (special treatment)
 					// Set Music Data
 					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -5601,7 +5579,7 @@ y ... -						Musical keys.
 								},
 								// Mode Stream 1 and 2
 								{
-									if(flagModeSynth == 'Stream1' or: {flagModeSynth == 'Stream2'} and: {synthNumber > choiceSynth.indexOf('SPECIAL SYNTH + FX (') or: {synthNumber < choiceSynth.indexOf('PIANO (')}}, {
+									if(flagModeSynth == 'Stream1' or: {flagModeSynth == 'Stream2'} and: {synthNumber > choiceSynth.indexOf('END (') or: {synthNumber < choiceSynth.indexOf('PIANO (')}}, {
 										tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
 											var music, musicData, r;
 											music = msg[1].asString.interpret;
@@ -9735,7 +9713,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -9743,7 +9721,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_HPshiftDown(chain, ctrl1 * 64);
 				chain = IFFT(chain);
@@ -9781,7 +9759,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -9789,7 +9767,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagShift(chain, ctrl1 * 4, ctrl2 * 128 - 64);
 				chain = IFFT(chain);
@@ -9827,7 +9805,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -9835,7 +9813,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_LocalMax(chain, ctrl1 * 64);
 				chain = IFFT(chain);
@@ -9873,7 +9851,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -9881,7 +9859,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagSmear(chain, ctrl1 * 64);
 				chain = IFFT(chain);
@@ -9919,7 +9897,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -9927,7 +9905,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_RandComb(chain, ctrl1, LFNoise2.kr(ctrl2 * 64));
 				chain = IFFT(chain);
@@ -9965,7 +9943,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -9973,7 +9951,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_BinShift(chain, ctrl1 * 4, ctrl2 * 256 - 128);
 				chain = IFFT(chain);
@@ -10011,7 +9989,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10019,7 +9997,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_BinScramble(chain, ctrl1, ctrl2,  LFNoise2.kr(ctrl3.reciprocal));
 				chain = IFFT(chain);
@@ -10057,7 +10035,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10065,7 +10043,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_BrickWall(chain, ctrl1 * 2 - 1);
 				chain = IFFT(chain);
@@ -10103,7 +10081,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10111,7 +10089,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_ConformalMap(chain, ctrl1 * 2 - 1, ctrl2 * 2 - 1);
 				chain = IFFT(chain);
@@ -10149,7 +10127,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10157,7 +10135,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1*100), (ctrl2*100).reciprocal));
 				chain = IFFT(chain);
@@ -10195,7 +10173,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10203,7 +10181,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagAbove(chain, ctrl1 * 64);
 				chain = IFFT(chain);
@@ -10241,7 +10219,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10249,7 +10227,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagBelow(chain, ctrl1 * 64);
 				chain = IFFT(chain);
@@ -10287,7 +10265,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10295,7 +10273,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagClip(chain, ctrl1 * 16);
 				chain = IFFT(chain);
@@ -10333,7 +10311,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10341,7 +10319,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagNoise(chain);
 				chain = IFFT(chain);
@@ -10379,7 +10357,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10387,7 +10365,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagSquared(chain);
 				chain = IFFT(chain) * 0.1;
@@ -10425,7 +10403,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10433,7 +10411,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_RectComb(chain, ctrl1 * 32, ctrl2, ctrl3);
 				chain = IFFT(chain);
@@ -10471,7 +10449,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10479,7 +10457,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagSmooth(chain, ctrl1);
 				chain = IFFT(chain);
@@ -10517,7 +10495,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic;
 				// Set Music Data
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -10525,7 +10503,7 @@ y ... -						Musical keys.
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(chain, bufferOne);
+				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_Compander(chain, 80*ctrl1.clip(0.1, 1), (ctrl2*5).clip(2, 5), ctrl3);
 				chain = IFFT(chain);
@@ -10565,7 +10543,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10580,7 +10558,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10620,7 +10598,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer, local;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10635,7 +10613,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10675,7 +10653,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10690,7 +10668,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10730,7 +10708,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10745,7 +10723,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10785,7 +10763,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10800,7 +10778,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10840,7 +10818,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10855,7 +10833,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10895,7 +10873,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10910,7 +10888,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -10950,7 +10928,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -10965,7 +10943,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -11005,7 +10983,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -11020,7 +10998,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -11060,7 +11038,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, fft1, fft2, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -11075,7 +11053,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
@@ -11115,7 +11093,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, envelope, ambisonic, rate, dureeSample, in1, in2, buffer;
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
@@ -11130,7 +11108,7 @@ y ... -						Musical keys.
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1));
+				RecordBuf.ar(in1, LocalBuf(s.sampleRate * BufDur.kr(buffer), 1), 0, preLevel, postLevel);
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				chain = Convolution(in1, in2, 1024) * 0.1;
 				// Switch Audio Out
@@ -11747,6 +11725,58 @@ y ... -						Musical keys.
 						if(switchAudioOut == 1,
 							// Rotate2 v1
 							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
+								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+				Out.ar(out, chain * flagAmpOnOff);
+		}).add;
+
+		SynthDef('FXsynthComb',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, envelope, ambisonic;
+				// Set Music Data
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Normalize
+				freqCentroid = (freqCentroid / 12544 * (ctrl2 - ctrl1).abs + ctrl1 * 12544).clip(20, 12544);
+				energy = (energy / 12544 * (ctrl4 - ctrl3).abs + ctrl3 * 12544).clip(20, 12544);
+				flux = flux *  ctrl5;
+				flatness = flatness *  ctrl6 * 10000;
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp]);
+				// Synth
+				chain = Saw.ar(freq.lag(tempo));
+				chain = HPF.ar(chain, freqCentroid.clip(20, 20000), 1, LPF.ar(chain, energy.clip(20,20000), 1));
+				chain = CombC.ar(chain, 0.2, flux.clip(0.0001, 10000), flatness.clip(0.0001, 10000), 0.5);
+				// Switch Audio Out
+				chain = if(switchAudioOut == 0,
+					if(flagMC == 0,
+						// Pan v1
+						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
+						// Pan v2
+						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
+					if(switchAudioOut == 2,
+						if(flagMC == 0,
+							// PanAz v1
+							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
+							// PanAz v2
+							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
+						if(switchAudioOut == 1,
+							// Rotate2 v1
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
 							// Ambisonic v1
 							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
@@ -12677,14 +12707,14 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, in, local, ambisonic;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				local = LocalIn.ar(1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
+				RecordBuf.ar(in, bufferOne, 0, preLevel, postLevel, loop: 1);
 				//FX
 				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, mul: amp);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl6, ctrl7));
@@ -12722,7 +12752,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, in, local, ambisonic;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -12767,7 +12797,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, in, local, reverse, buffer, ambisonic;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -12776,110 +12806,10 @@ y ... -						Musical keys.
 				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
+				RecordBuf.ar(in, bufferOne, 0, preLevel, postLevel);
 				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, ctrl2 * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagFreeze(chain, SinOsc.kr(ctrl3 * duree.reciprocal));
-				chain= IFFT(chain);
-				chain = chain * amp;
-				// Switch Audio Out
-				chain = chain * amp;
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
-
-		SynthDef('PV_PlayBuf',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, local, reverse, buffer, ambisonic;
-				// Set AMP
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Set Reverse sample
-				reverse = if(ctrl4.value >= 0.5, 1.neg, 1);
-				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
-				// Set inFX + Direct AudioIn (levelLocalIn)
-				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
-				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, 0, 1, ctrlHP1, ctrlHP2);
-				chain = FFT(LocalBuf(512, 1), chain);
-				chain = PV_PlayBuf(chain, local, ctrl2, ctrl3 * BufFrames.kr(local), 1, 1);
-				chain= IFFT(chain);
-				chain = chain * amp;
-				// Switch Audio Out
-				chain = chain * amp;
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
-
-		SynthDef('PV_BinPlayBuf',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, local, reverse, buffer, ambisonic;
-				// Set AMP
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Set Reverse sample
-				reverse = if(ctrl7.value >= 0.5, 1.neg, 1);
-				local = LocalBuf(s.sampleRate * BufDur.kr(bufferOne), 1);
-				// Set inFX + Direct AudioIn (levelLocalIn)
-				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
-				RecordBuf.ar(in, bufferOne, recLevel: 1, preLevel: 0.333, loop: 1);
-				chain = HPplayBuf.ar(1, bufferOne, (ctrl1 * 2).clip(0.0625, 2.0) * reverse, 1.0, 0, 1, ctrlHP1, ctrlHP2);
-				chain = FFT(LocalBuf(512, 1), chain);
-				chain = PV_BinPlayBuf(chain, local, ctrl2, ctrl3 * BufFrames.kr(local), ctrl4 * 16, ctrl5 * 8 + 1, ctrl6 * 63 + 1, 1, 1);
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
@@ -13952,7 +13882,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
 				var chain, in, buffer, trig, ambisonic;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -13961,7 +13891,7 @@ y ... -						Musical keys.
 				//FX
 				buffer = LocalBuf(s.sampleRate, 1).clear;
 				trig = Dust.kr(duree.reciprocal);
-				RecordBuf.ar(in, buffer, Saw.kr(freq).abs, trigger: trig);
+				RecordBuf.ar(in, buffer, Saw.kr(freq).abs, preLevel, postLevel, trigger: trig);
 				chain = Convolution2L.ar(in, buffer, trig * tempo, 1024) * 0.1;
 				chain = chain * amp;
 				// Switch Audio Out
@@ -13989,121 +13919,6 @@ y ... -						Musical keys.
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
-		//////////////// Synth + FX SPECIAL /////////////
-
-		SynthDef('SpecialFX',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, rate, local, trig, envelope, reverse, ambisonic;
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-				// Set AMP
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Set DUREE
-				duree = duree * (durHi - durLo) + durLo;
-				duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
-				duree = if(duree <= 0, quanta.reciprocal, duree);
-				duree = (duree * durM * tempo.reciprocal).max(0.01);
-				// Envelope
-				envelope = Select.kr(mode, [
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
-				// Set Reverse sample
-				reverse = if(ctrl1.value >= 0.5, 1.neg, 1);
-				ctrl2 = if(reverse < 0, 1 - ctrl2, ctrl2);
-				// Set offset
-				ctrl2 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2*4, 1, Rand(0, 1)));
-				// Set inFX + Direct AudioIn (levelLocalIn)
-				local = LocalIn.ar(1);
-				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn)  + (local * flatness));
-				RecordBuf.ar(in, bufferOne, 0, 1, 0, 1, 1);
-				//FX
-				chain = HPplayBuf.ar(1, bufferOne, BufRateScale.kr(bufferOne) * rate * reverse + SinOsc.kr(flux), 1.0,  flatness * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2) * envelope;
-				LocalOut.ar(DelayC.ar(chain, 4, tempo, tempo.reciprocal));
-				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
-
-		SynthDef('SpecialSynth',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, envelope, ambisonic;
-				// Set Music Data
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Normalize
-				freqCentroid = (freqCentroid / 12544 * (ctrl2 - ctrl1).abs + ctrl1 * 12544).clip(20, 12544);
-				energy = (energy / 12544 * (ctrl4 - ctrl3).abs + ctrl3 * 12544).clip(20, 12544);
-				flux = flux *  ctrl5;
-				flatness = flatness *  ctrl6 * 10000;
-				// Envelope
-				envelope = Select.kr(mode, [
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
-				// Synth
-				chain = Saw.ar(freq.lag(tempo));
-				chain = HPF.ar(chain, freqCentroid.clip(20, 20000), 1, LPF.ar(chain, energy.clip(20,20000), 1));
-				chain = CombC.ar(chain, 0.2, flux.clip(0.0001, 10000), flatness.clip(0.0001, 10000), 0.5);
-				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
 	}
 
 }
