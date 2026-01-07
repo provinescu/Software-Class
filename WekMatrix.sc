@@ -4754,14 +4754,14 @@ Preset Wek",
 				listAudioIN = fonctionArrayAudioIN.value(arrayAudioIN);
 				// Stop Synth inactif
 				numberAudioIn.do({arg i;
-					if(listAudioIN.includes(i), {("Audio Canal"+ i.asString + " ON").postln},
+					if(listAudioIN.includes(i), {("Audio Canal"+ (i+1).asString + " ON").postln},
 						{
 							synthAnalyzeIn.at(i).run(false);
 							synthAnalyseOnsets.at(i).run(false);
 							synthAnalysePitch.at(i).run(false);
 							synthAnalysePitch2.at(i).run(false);
 							synthAnalyseKeyTrack.at(i).run(false);
-							("Audio Canal"+ i.asString + " OFF").postln;
+							("Audio Canal"+ (i+1).asString + " OFF").postln;
 					});
 				});
 			});
@@ -6061,7 +6061,7 @@ Preset Wek",
 						if(flagVST =='on', {~fxVST.midi.allNotesOff(canalMIDIinstr)});
 					});
 					arrayAudioIN.remove(audioInID);
-					if(arrayAudioIN.includes(audioInID), {("Another Synth is Listening Audio"+ audioInID.asString).postln},
+					if(arrayAudioIN.includes(audioInID), {("Another Synth is Listening Audio"+ (audioInID+1).asString).postln},
 						{
 							if(algoAnalyse.value == 0, {synthAnalyseOnsets.at(audioInID).run(false)});
 							if(algoAnalyse.value == 1, {synthAnalysePitch.at(audioInID).run(false)});
