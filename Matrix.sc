@@ -4721,7 +4721,7 @@ y ... -						Musical keys.
 				});
 				// Synthese
 				if(synthNumber > choiceSynth.indexOf('SYNTHESE (') and: {synthNumber < choiceSynth.indexOf('SAMPLER 1 BUFFER (')}, {switchBufferOne.enabled_(false); switchBufferOneAction.enabled_(false);  loopBufferOne.enabled_(false); durSampleOneSlider.enabled_(false); textBufferOne.enabled_(false); switchBufferTwo.enabled_(false); loopBufferTwo.enabled_(false); switchBufferTwoAction.enabled_(false); loopBufferTwo.enabled_(false); durSampleTwoSlider.enabled_(false); textBufferTwo.enabled_(false); controlsAntiClick.enabled_(false); sendLocalBuf.enabled_(false);  automationSliderBuffer.enabled_(false);
-					reverseBufferOneAction.enabled_(false);
+					reverseBufferOneAction.enabled_(true);
 					knobOffset1.enabled_(false);
 					knobPreLevel1.enabled_(false);
 					knobPostLevel1.enabled_(false);
@@ -4786,7 +4786,7 @@ y ... -						Musical keys.
 					automationSliderBuffer.enabled_(false);
 					automationSliderSynth.enabled_(false);
 					automationSliderBuffer.enabled_(false);*/
-					reverseBufferOneAction.enabled_(false);
+					reverseBufferOneAction.enabled_(true);
 					knobOffset1.enabled_(false);
 					knobPreLevel1.enabled_(true);
 					knobPostLevel1.enabled_(true);
@@ -12707,7 +12707,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0, reverse1;
 				var chain, in, local, ambisonic;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -12716,7 +12716,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, 0, preLevel, postLevel, loop: 1);
 				//FX
-				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, mul: amp);
+				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, mul: amp);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl6, ctrl7));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -12752,7 +12752,7 @@ y ... -						Musical keys.
 				ctrlHP1=0.33, ctrlHP2=0.5,
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0, reverse1;
 				var chain, in, local, ambisonic;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
@@ -12761,7 +12761,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, 0, 1, 0.333, 1, 1);
 				//FX
-				chain = HPplayBuf.ar(1, bufferOne, LFNoise2.kr(ctrl1.reciprocal) + (ctrl2*4), Dust.kr(ctrl3.reciprocal), Logistic.kr(ctrl4 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2) + local * amp;
+				chain = HPplayBuf.ar(1, bufferOne, LFNoise2.kr(ctrl1.reciprocal) + (ctrl2*4) * reverse1, Dust.kr(ctrl3.reciprocal), Logistic.kr(ctrl4 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2) + local * amp;
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl5/1000, ctrl6));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
