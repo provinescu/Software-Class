@@ -1115,7 +1115,7 @@ Preset Wek",
 					{nil});
 				// EZSlider
 				arrayData=[];
-				if(item == 15 or: {item == 16} or: {item == 33},
+				if(item == 33,
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
