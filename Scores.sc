@@ -374,6 +374,7 @@ Score Commandes:
 											items = startItems;
 											item = 0;
 											{startTdefScore.valueAction_(0)}.defer;
+											windows.value(5);
 											thisThread.stop;
 											thisThread.remove;
 										},
@@ -391,9 +392,9 @@ Score Commandes:
 										items = startItems;
 										item = 0;
 										{startTdefScore.valueAction_(0)}.defer;
+										windows.value(5);
 										thisThread.stop;
 										thisThread.remove;
-										wScore.front;
 									},
 									{
 										items = startItems;
@@ -409,7 +410,8 @@ Score Commandes:
 			{
 				wScore.front;
 				wScore.view.children.at(num.value).focus;
-			}.defer(2);
+				wScore.front;
+			}.defer(4);
 		};
 
 		wScore.view.children.at(5).valueAction_(1);
@@ -581,7 +583,7 @@ Score Commandes:
 											flagManualPlaying = 'off';
 											items = startItems;
 											item = 0;
-											wScore.front;
+											windows.value(3);
 										},
 										{
 											items = startItems;
