@@ -55,7 +55,7 @@ Matrix {
 
 		// Safety Limiter
 		Safety(s);
-		//makeGui;
+		//s.makeGui;
 
 		// MIDI INIT
 		// Connect first device by default
@@ -1109,11 +1109,11 @@ y ... -						Musical keys.
 							{bpm = data.at(item).at(subItem).value})});
 				});
 				// StaticText
-				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 27} or: {item == 29} or: {item == 30},
+				if(item == 0 or: {item == 3} or: {item == 4} or: {item == 9} or: {item == 10} or: {item == 15} or: {item == 16} or: {item == 27} or: {item == 29} or: {item == 30},
 					{nil});
 				// EZSlider
 				arrayData=[];
-				if(item == 15 or: {item == 16} or: {item == 33},
+				if(item == 33,
 					{view.children.do({arg subView, subItem;
 						if(subItem == 0, {nil},
 							{subView.valueAction_(data.at(item).at(subItem).value)})});
