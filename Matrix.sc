@@ -6245,9 +6245,9 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Set Buffer
-				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				inputSig = if(switchBuffer1.value > 0, HPplayBuf.ar(1, bufferOne, BufRateScale.kr(bufferOne) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2), In.ar(busIn));
 				// Synth
-				inputSig = In.ar(busIn);
+				//inputSig = In.ar(busIn);
 				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
 				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
 				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
