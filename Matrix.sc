@@ -211,9 +211,9 @@ Matrix {
 			hiPass= hiPass.add(127);
 			threshAlgo = threshAlgo.add(0.5);
 			filterAlgo = filterAlgo.add(0.5);
-			fhzFilter = fhzFilter.add(0.5);
-			ampFilter = ampFilter.add(1);
-			durFilter = durFilter.add(0.03);
+			fhzFilter = fhzFilter.add(0);
+			ampFilter = ampFilter.add(0);
+			durFilter = durFilter.add(0.01);
 			signalBuffer = signalBuffer.add(12);
 		});
 		listAudioIN = [];
@@ -4113,7 +4113,7 @@ y ... -						Musical keys.
 			windowSynth.view.decorator.nextLine;
 			// Amp
 			ampSlider = EZRanger(windowSynth, 400 @ 15, "Amp", \db,
-				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-inf, 0],labelWidth: 50, numberWidth: 50);
+				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-12, -6],labelWidth: 50, numberWidth: 50);
 			windowSynth.view.decorator.nextLine;
 			// Duree
 			dureeSlider = EZRanger(windowSynth, 400 @ 15, "Dur", ControlSpec(0, 60, \lin, 0),
@@ -4157,6 +4157,7 @@ y ... -						Musical keys.
 			.xOffset_(4)
 			.thumbSize_(19)
 			.elasticMode_(1);
+			//.showIndex_(true);
 			controlsAntiClick.action={|controls| groupe.setn(\ctrlHP1, controls.value.at(0), \ctrlHP2, controls.value.at(1)); ctrlHP = controls.value};
 			// Controls Nodes
 			controlsNode=MultiSliderView(windowSynth, Rect(10, 0, 335, 100)).value_([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
@@ -4939,7 +4940,8 @@ y ... -						Musical keys.
 						});
 						newAmp = newAmp.mod(1);
 						// Duree
-						if(coin(cv.frac), {newDuree = newDuree / distances},{newDuree = newDuree * distances});
+						[cv, ecartType, dissymetrie, ecartSemiQ];
+						if(coin(cv.frac), {newDuree = newDuree / distances}, {newDuree = newDuree * distances});
 						// Transpose
 						if(coin(cv.frac), {newDuree = newDuree + (ecartType * dissymetrie.sign);
 						});
@@ -4950,7 +4952,7 @@ y ... -						Musical keys.
 						{
 							newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
 						});
-						newDuree = newDuree.mod(1);
+						newDuree = newDuree.abs.mod(1);
 					},
 					"Genetic", {
 						freqGen = [];

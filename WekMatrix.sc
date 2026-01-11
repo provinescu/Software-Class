@@ -184,9 +184,9 @@ WekMatrix {
 			hiPass= hiPass.add(127);
 			threshAlgo = threshAlgo.add(0.5);
 			filterAlgo = filterAlgo.add(0.5);
-			fhzFilter = fhzFilter.add(0.5);
-			ampFilter = ampFilter.add(1);
-			durFilter = durFilter.add(0.03);
+			fhzFilter = fhzFilter.add(0);
+			ampFilter = ampFilter.add(0);
+			durFilter = durFilter.add(0.01);
 			signalBuffer = signalBuffer.add(12);
 		});
 		listAudioIN = [];
@@ -4394,7 +4394,7 @@ Preset Wek",
 			windowSynth.view.decorator.nextLine;
 			// Amp
 			ampSlider = EZRanger(windowSynth, 400 @ 15, "Amp", \db,
-				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-12, -3],labelWidth: 50, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
+				{|ez| groupe.set(\ampLo, ez.lo.dbamp);groupe.set(\ampHi, ez.hi.dbamp); dbLo = ez.lo.dbamp; dbHi = ez.hi.dbamp},[-12, -6],labelWidth: 50, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 			windowSynth.view.decorator.nextLine;
 			// Duree
 			dureeSlider = EZRanger(windowSynth, 400 @ 15, "Dur", ControlSpec(0, 60, \lin, 0),
@@ -5233,7 +5233,7 @@ Preset Wek",
 						{
 							newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
 						});
-						newDuree = newDuree.mod(1);
+						newDuree = newDuree.abs.mod(1);
 					},
 					"Genetic", {
 						freqGen = [];
