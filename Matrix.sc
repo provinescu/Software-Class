@@ -5263,7 +5263,7 @@ y ... -						Musical keys.
 												// Setup Data Music
 												if(flagFreezeDataOSC == 'on',
 													{music = freezeDataOSC.at(audioInID).at(0);
-														musicData = freezeDataOSC.at(audioInID).at(0);
+														musicData = freezeDataOSC.at(audioInID);
 													};
 												);
 												// Calcul new music
