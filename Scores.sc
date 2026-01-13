@@ -351,10 +351,6 @@ Score Commandes:
 											{
 												"Bad or Unknow Command".postln;
 												item = item + 1;
-												/*items = startItems;
-												{startTdefScore.valueAction_(0)}.defer;
-												thisThread.stop;
-												thisThread.remove;*/
 											};
 										);
 										// Commande

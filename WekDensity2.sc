@@ -4264,14 +4264,9 @@ Preset Wek",
 					synthFileIn.run(false);
 					synthAnalyzeAudioIn.run(false);
 					synthRecAudioIn.run(false);
-					// Setup GUI Value
-					//windowEar.view.children.at(2).enabled_(false);
 					playInstruments.stop;
 					watchSilence.stop;
 					memoryMusic.stop;
-					TempoClock.default.clear;
-					//	listeDataInstruments = []; listeBusOff = [];
-					// maximumInstruments.do({arg i; listeBusOff = listeBusOff.add(i)});
 					dataFlux = [];
 					dataFlatness = [];
 					dataCentroid = [];
