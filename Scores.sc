@@ -4,7 +4,7 @@ Scores {
 
 	classvar s;
 
-	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes, loopScore, windows, numView, fonctionCommandes2, startItems, stopItems, bpm, dimScore;
+	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes, loopScore, windows, numView, fonctionCommandes2, startItems, stopItems, bpm, dimScore, pathScore;
 
 	*new	{arg path=nil;
 
@@ -45,6 +45,7 @@ Scores {
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// button valid score
+		pathScore = "~/Documents/"; // path par default
 
 		foncLoadSaveScore = {arg flag;
 			var path, file, score;
@@ -59,8 +60,7 @@ Scores {
 						scorePlaying = score.interpret;
 						wEditScore.string_(score);
 						file.close;
-						//wScore.name="Score Editor/Player and Shortcuts Controls for HP Software " + path.asPathName.fileName;
-						wScore.view.children.at(0).string = "Score Editor/Player and Shortcuts Controls for HP Software | " + path.asPathName.fileName;
+						wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + path.asPathName.fileName;
 						dimScore = scorePlaying.size - 1;
 						items = 0;
 						startItems = 0;
@@ -74,8 +74,7 @@ Scores {
 					Dialog.savePanel({arg path;
 						file=File(path,"w");
 						file.write(wEditScore.string);file.close;
-						//wScore.name="Score Editor/Player and Shortcuts Controls for HP Software " + path.asPathName.fileName;
-						wScore.view.children.at(0).string = "Score Editor/Player and Shortcuts Controls for HP Software | " + path.asPathName.fileName;
+						wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + path.asPathName.fileName;
 					},
 					{"cancelled".postln});
 				}
@@ -83,9 +82,9 @@ Scores {
 		};
 
 		//Score
-		wScore = Window("Scores (Score Editor/Player and Shortcuts Controls for HP Software)", Rect(250, 250, 625, 525));
+		wScore = Window("Score (Score Editor/Player for HP Software)", Rect(250, 250, 625, 525));
 		wScore.view.decorator = FlowLayout(wScore.view.bounds);
-		StaticText(wScore, Rect(0, 0, 620, 24)).string_("Scores (A Score Editor/Player and Shortcuts Controls)").stringColor_(Color.yellow(1.0,1.0));
+		StaticText(wScore, Rect(0, 0, 620, 24)).string_("Score (A Score Editor/Player)").stringColor_(Color.yellow(1.0,1.0));
 		wScore.view.decorator.nextLine;
 		// Load Score
 		menuScore = PopUpMenu(wScore,Rect(0, 0, 110, 20)).background_(Color.grey(0.5, 0.8)).items = ["Score menu", "Load Score", "Save Score"];
@@ -182,6 +181,9 @@ l Load preset for all soft
 k wekinator start all soft
 j or crtrl + k wekinator stop all soft
 < or - next commande manual score
+o Load score
+v Save score
+f Choose Folder for load save Score
 
 r robot preset
 R wekrobot preset
@@ -595,6 +597,23 @@ Score Commandes:
 				{
 					commande = ["all", "preset"];
 			});
+			// key o -> Load Score
+			if(char == $o and: {modifiers==0},
+				{
+					commande = 'load';
+			});
+			// key v -> Save Score
+			if(char == $v and: {modifiers==0},
+				{
+					commande = 'save';
+			});
+			//key f  Choose folder for load save score
+			if(char == $f, {
+				FileDialog.new({arg path;
+					pathScore = path.at(0).asString ++"/";
+					wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + pathScore;
+				}, fileMode: 2);
+			});
 			// key esc -> stop all soft
 			if(char == 27.asAscii and: {modifiers==0},
 				{
@@ -873,12 +892,40 @@ Score Commandes:
 
 		// Fonction Commandes
 		fonctionCommandes = {arg commandeExecute, number;
-			var cmd=[];
-			windows.value(numView.value);
-			cmd = commandeExecute.add(number).postcs;
-			netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
-			windows.value(numView.value);
-			{wScore.view.children.at(12).string_("Shortcuts: "++commandeExecute)}.defer;
+			var cmd=[], file, score;
+			if(commandeExecute != 'load' and: {commandeExecute != 'save'},
+				{
+					windows.value(numView.value);
+					cmd = commandeExecute.add(number).postcs;
+					netScoreAddr.do({arg net; net.sendMsg(\score, *cmd)});
+					windows.value(numView.value);
+					{wScore.view.children.at(12).string_("Shortcuts: "++commandeExecute)}.defer;
+				},
+				{
+					if(commandeExecute == 'load',
+						{
+							if(File.exists(pathScore++"score"+number.asString),
+								{
+									file=File(pathScore++"score"+number.asString,"r");
+									score = file.readAllString;
+									scorePlaying = score.interpret;
+									wEditScore.string_(score);
+									file.close;
+									wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + pathScore++"score"+number.asString;
+									dimScore = scorePlaying.size - 1;
+									items = 0;
+									startItems = 0;
+									stopItems = dimScore;
+									wScore.view.children.at(8).children.at(1).value_(startItems);
+									wScore.view.children.at(9).children.at(1).value_(stopItems);
+							});
+						},
+						{
+							file=File(pathScore++"score"+number.asString,"w");
+							file.write(wEditScore.string);file.close;
+							wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + pathScore++"score"+number.asString;
+					});
+			});
 			commande = [];
 		};
 		// Fonction Commandes Special
