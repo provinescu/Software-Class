@@ -45,7 +45,7 @@ Scores {
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// button valid score
-		pathScore = "~/Documents/"; // path par default
+		pathScore = "~/Documents/".standardizePath; // path par default
 
 		foncLoadSaveScore = {arg flag;
 			var path, file, score;
@@ -409,7 +409,7 @@ Score Commandes:
 				wScore.front;
 				wScore.view.children.at(num.value).focus;
 				wScore.front;
-			}.defer(4);
+			}.defer(2);
 		};
 
 		wScore.view.children.at(5).valueAction_(1);
@@ -607,7 +607,7 @@ Score Commandes:
 				{
 					commande = 'save';
 			});
-			//key f  Choose folder for load save score
+			//key f Choose folder for load save score
 			if(char == $f, {
 				FileDialog.new({arg path;
 					pathScore = path.at(0).asString ++"/";
@@ -918,16 +918,19 @@ Score Commandes:
 									stopItems = dimScore;
 									wScore.view.children.at(8).children.at(1).value_(startItems);
 									wScore.view.children.at(9).children.at(1).value_(stopItems);
-							});
-						},
-						{
-							file=File(pathScore++"score"+number.asString,"w");
-							file.write(wEditScore.string);file.close;
-							wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + pathScore++"score"+number.asString;
+							}, {"Score not Found".postln});
 					});
-			});
+					//Save Score
+					if(commandeExecute == 'save',
+						{
+									file=File(pathScore++"Score"+number.asString,"w");
+									file.write(wEditScore.string);file.close;
+									wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + pathScore++"score"+number.asString;
+							});
+					});
 			commande = [];
 		};
+
 		// Fonction Commandes Special
 		fonctionCommandes2 = {arg commandeExecute;
 			windows.value(numView.value);
