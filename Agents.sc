@@ -2944,7 +2944,7 @@ G                       Init Genome Agent (solo).
 							{
 								newDuree = newDuree + (ecartSemiQ * dissymetrie.sign)
 							});
-							newDuree = newDuree.mod(1) * ~dureeanalysemax;
+							newDuree = newDuree.abs.mod(1) * ~dureeanalysemax;
 							~listeagentduree.wrapPut(agent, newDuree);
 						},
 						"Genetic", {

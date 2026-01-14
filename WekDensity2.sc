@@ -2497,7 +2497,7 @@ Preset Wek",
 						{
 							duree = duree + (ecartSemiQ * dissymetrie.sign)
 						});
-						duree = duree.mod(1);
+						duree = duree.abs.mod(1);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {

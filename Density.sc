@@ -836,10 +836,16 @@ Density {
 			// Free Buffer
 			listeBuffer.soloArray.do({arg buffer; buffer.free});
 			s.sync;
-			listeBuffer=[];
+			listeBuffer=[] ;
 			listeSound.do({arg arraySound, file, rawData, collect=[];
 				arraySound.do({arg path;
-					path = path.standardizePath;
+					path = PathName.new(path);
+					path = path.fileName;//Name of soundFile
+					path = "mdfind -name" + path;
+					path = Pipe.new(path, "r");
+					rawData = path.getLine;// get the first line
+					path.close;
+					path = rawData;// New Path
 					file = SoundFile.new;
 					s.sync;
 					file.openRead(path);
@@ -1992,7 +1998,7 @@ Density {
 						{
 							duree = duree + (ecartSemiQ * dissymetrie.sign)
 						});
-						duree = duree.mod(1);
+						duree = duree.abs.mod(1);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
