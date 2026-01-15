@@ -913,12 +913,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						Platform.resourceDir  +/+ "sounds/Buffer/2048samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/4096samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample1.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:2.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:4.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:8.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:16.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:32.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:64.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_2.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_4.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_8.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_16.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_32.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_64.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample2.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample4.aiff"
 					];
@@ -1165,15 +1165,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~busreclevel=[];
 
 				// init les synth buffer pour les sons sampler
-				~nombrebuffer.do({arg i;
+				~nombrebuffer.do({arg i, path;
 					~looprecordingValue=~looprecordingValue.add(0);
 					~busreclevel=~busreclevel.add(Bus.control(s, 2));// 1 controls reclevel1 sample
+					path = PathName.new(~sounds.wrapAt(i));
+					path = path.fileName;//Name of soundFile
+					path = "mdfind -name" + path;
+					path = Pipe.new(path, "r");
+					~rawData = path.getLine;// get the first line
+					path.close;
+					path = ~rawData;// New Path
 					~file = SoundFile.new;
 					s.sync;
-					~file.openRead(~sounds.wrapAt(i).standardizePath);
+					~file.openRead(path.standardizePath);
 					s.sync;
 					if(~file.numChannels == 1,
-						{	~listebuffer=~listebuffer.add(Buffer.read(s, ~sounds.wrapAt(i).standardizePath, action: {Post << i << ~sounds.wrapAt(i).standardizePath << " Finished" << Char.nl}));
+						{	~listebuffer=~listebuffer.add(Buffer.read(s, path.standardizePath, action: {Post << i <<  " " << PathName(path).fileName << " Finished" << Char.nl}));
 							s.sync;
 						},
 						{~rawData= FloatArray.newClear(~file.numFrames * 2);
@@ -1182,11 +1189,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							s.sync;
 							~rawData = Array.newFrom(~rawData);
 							s.sync;
-							Post << "Loading stereo sound" << " " << ~sounds.wrapAt(i).standardizePath << Char.nl;
+							Post << "Loading stereo sound" << " " << PathName(path).fileName << Char.nl;
 							s.sync;
 							~rawData = ~rawData.unlace(2).sum / 2;
 							s.sync;
-							~listebuffer=~listebuffer.add(Buffer.loadCollection(s, ~rawData, 1, action: {Post << i << ~sounds.wrapAt(i).standardizePath << " Finished" << Char.nl}));
+							~listebuffer=~listebuffer.add(Buffer.loadCollection(s, ~rawData, 1, action: {Post << i << " " << PathName(path).fileName << " Finished" << Char.nl}));
 							s.sync;
 					});
 					//~listebuffer.wrapPut(i, ~listebuffer.wrapAt(i).normalize(1.0));

@@ -1158,12 +1158,12 @@ G                       Init Genome Agent (solo).
 						Platform.resourceDir  +/+ "sounds/Buffer/2048samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/4096samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample1.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:2.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:4.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:8.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:16.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:32.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1:64.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_2.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_4.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_8.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_16.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_32.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample1_64.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample2.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample4.aiff"
 					];
@@ -1591,16 +1591,23 @@ G                       Init Genome Agent (solo).
 			~posSamplesSons=[];
 			~reverseSynthSons=[];
 			~audioInputSons=[];
-			~sounds.size.do({arg i;
-				~displaySons=~displaySons.add(PathName(~sounds.wrapAt(i)).fileName);//Set son affichage
-				s.sync;
+			"Please Wait... Loading Agents... Sending SynthDef on Server... Loading Sounds...".postln;
+			~sounds.do({arg path, i;
+				~displaySons=~displaySons.add(PathName(path).fileName);//Set son affichage
+				path = PathName.new(path);
+					path = path.fileName;//Name of soundFile
+					path = "mdfind -name" + path;
+					path = Pipe.new(path, "r");
+					rawData = path.getLine;// get the first line
+					path.close;
+					path = rawData;// New Path
 				file = SoundFile.new;
 				s.sync;
-				file.openRead(~sounds.wrapAt(i).standardizePath);
+				file.openRead(path.standardizePath);
 				s.sync;
 				if(file.numChannels == 1,
-					{Post << "Loading mono sound" << " " << ~sounds.wrapAt(i).standardizePath << Char.nl;
-						~bufferSons=~bufferSons.add(Buffer.read(s, ~sounds.wrapAt(i).standardizePath, action: {Post << "Finished" << Char.nl}));
+					{Post << "Loading mono sound" << " " << PathName(path).fileName << Char.nl;
+						~bufferSons=~bufferSons.add(Buffer.read(s, path.standardizePath, action: {Post << "Finished" << Char.nl}));
 						s.sync;
 					},
 					{rawData= FloatArray.newClear(file.numFrames * 2);
@@ -1609,7 +1616,7 @@ G                       Init Genome Agent (solo).
 						s.sync;
 						rawData = Array.newFrom(rawData);
 						s.sync;
-						Post << "Loading stereo sound" << " " << ~sounds.wrapAt(i).standardizePath << Char.nl;
+						Post << "Loading stereo sound" << " " << PathName(path).fileName << Char.nl;
 						s.sync;
 						rawData = rawData.unlace(2).sum / 2;
 						s.sync;
@@ -1631,9 +1638,8 @@ G                       Init Genome Agent (solo).
 				s.sync;
 				//File IN
 				~recFiles=~recFiles.add(Synth.newPaused("RecFileIn",['buffer',~bufferSons.wrapAt(i).bufnum, 'in', ~busFileIn.index , 'run',0,'loop',0],~groupeBuffer, \addToTail));
-			});
 			s.sync;
-			"Please Wait... Loading Agents... Sending SynthDef on Server... Loading Sounds...".postln;
+			});
 		};
 		~initAllBuffer.value;
 		~listesamplein=~recSamples;//Init sample avec audioIn
