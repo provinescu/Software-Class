@@ -6,7 +6,7 @@ Scores {
 
 	var flagManualPlaying, wScore, menuScore, startManualScore, startTdefScore, routineScore, flagManualPlaying, scorePlaying, wEditScore, startsysteme, tempoMusicPlay, startsysteme, validScore, netScoreAddr, items, foncLoadSaveScore, commande, fonctionCommandes, loopScore, windows, numView, fonctionCommandes2, startItems, stopItems, bpm, dimScore, pathScore;
 
-	*new	{arg path=nil;
+	*new	{arg path="~/Documents/".standardizePath;
 
 		^super.new.init(path);
 
@@ -17,7 +17,8 @@ Scores {
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
 
-		flagManualPlaying = 'off';
+		pathScore = path;
+
 		// Standalone
 		// Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134
 		// WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
@@ -37,6 +38,7 @@ Scores {
 
 	edit {
 
+		flagManualPlaying = 'off';
 		items = 0;
 		startItems = 0;
 		stopItems = 2;
@@ -45,7 +47,6 @@ Scores {
 		scorePlaying = [];
 		loopScore = 'off';
 		numView = 5;// button valid score
-		pathScore = "~/Documents/".standardizePath; // path par default
 
 		foncLoadSaveScore = {arg flag;
 			var path, file, score;
