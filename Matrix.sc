@@ -11771,6 +11771,7 @@ y ... -						Musical keys.
 				chain = HPF.ar(chain, freqCentroid.clip(20, 20000), 1, LPF.ar(chain, energy.clip(20,20000), 1));
 				chain = CombC.ar(chain, 0.2, flux.clip(0.0001, 10000), flatness.clip(0.0001, 10000), 0.5);
 				// Switch Audio Out
+				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
 						// Pan v1
@@ -11785,7 +11786,7 @@ y ... -						Musical keys.
 							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
 						if(switchAudioOut == 1,
 							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
+							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
 							// Ambisonic v1
 							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
 								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
