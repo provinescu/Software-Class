@@ -11348,7 +11348,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(Formant.ar(freq, LFNoise0.kr(ctrl1.reciprocal) * (ctrl2 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl3 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl4.reciprocal) * (ctrl5 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl6 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl7.reciprocal) * (ctrl8 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl9 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl10.reciprocal) * (ctrl11 * 127).midicps, LFNoise0.kr(duree.reciprocal)*(ctrl12 * 127).midicps, amp));
+				chain = Mix(Formant.ar(freq, LFNoise0.kr(ctrl1.reciprocal) * (ctrl2 * 127).midicps, LFNoise0.kr(ctrl3.reciprocal)*(ctrl4 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl5.reciprocal) * (ctrl6 * 127).midicps, LFNoise0.kr(ctrl7.reciprocal)*(ctrl8 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl9.reciprocal) * (ctrl10 * 127).midicps, LFNoise0.kr(ctrl11.reciprocal)*(ctrl12 * 127).midicps, amp));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11442,7 +11442,7 @@ y ... -						Musical keys.
 				// Synth
 				freq = freq.clip(20,12544);
 				chain = Saw.ar(freq, 0.5);
-				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl1*4000, ctrl2*4000, \minmax), ctrl3, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4*2000, ctrl5*2000, \minmax), ctrl6));
+				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0.01, 1, ctrl1.clip(0.01,1)*4000, ctrl2*4000, \minmax), ctrl3, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0.01, 1, ctrl4.clip(0.01,1)*2000, ctrl5*2000, \minmax), ctrl6));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
