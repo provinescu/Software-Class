@@ -9,7 +9,7 @@ WekMatrix {
 	var fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, listeDataOSC, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard;
 	var keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze;
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
-	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi;
+	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, controlsNode;
 
 	*new	{arg path="~/Documents/WekWekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekWekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -1221,6 +1221,7 @@ Preset Wek",
 					});
 				});
 			});
+			fonctionPlotNode.value(item.value);// Plot le bon nombre de controls
 		};
 
 		fonctionInitBand = {arg band;
@@ -1264,6 +1265,179 @@ Preset Wek",
 						});
 				});
 			});
+		};
+
+		// Init les plot controls des synth
+		fonctionPlotNode = {arg item, plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
+			// SynthDef
+			switch(item.value,
+				//Synthese
+				2, {plot=[]},
+				3, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				4, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				5, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				6, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				7, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				8, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				9, {plot=[0.5, 0.5]},
+				10, {plot=[0.5, 0.5]},
+				11, {plot=[0.5]},
+				12, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				13, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				14, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
+				15, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				16, {plot=[]},
+				// Sampler
+				18, {plot=[0.5, 0.5]},
+				19, {plot=[0.5, 0.5, 0.5]},
+				20, {plot=[0.5]},
+				21, {plot=[0.5]},
+				22, {plot=[0.5, 0.5]},
+				23, {plot=[0.5, 0.5]},
+				24, {plot=[0.5, 0.5, 0.5, 0.5]},
+				25, {plot=[0.5, 0.5, 0.5]},
+				26, {plot=[0.5, 0.5]},
+				27, {plot=[0.5, 0.5, 0.5, 0.5]},
+				28, {plot=[0.5, 0.5]},
+				29, {plot=[0.5, 0.5]},
+				30, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				31, {plot=[0.5, 0.5]},
+				32, {plot=[0.5, 0.5]},
+				33, {plot=[0.5, 0.5, 0.5]},
+				34, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
+				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
+				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
+				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				38, {plot=[0.5, 0.5, 0.5]},
+				39, {plot=[0.5, 0.5, 0.5]},
+				40, {plot=[0.5, 0.5, 0.5, 0.5]},
+				41, {plot=[0.5]},
+				// PV 1 Sample
+				43, {plot=[0.5]},
+				44, {plot=[0.5]},
+				45, {plot=[]},
+				46, {plot=[0.5]},
+				47, {plot=[0.5]},
+				48, {plot=[0.5]},
+				49, {plot=[0.5, 0.5]},
+				50, {plot=[0.5]},
+				51, {plot=[0.5]},
+				52, {plot=[]},
+				53, {plot=[0.5]},
+				54, {plot=[0.5]},
+				55, {plot=[0.5, 0.5]},
+				56, {plot=[0.5, 0.5]},
+				57, {plot=[0.5, 0.5]},
+				58, {plot=[0.5, 0.5]},
+				59, {plot=[0.5, 0.5, 0.5]},
+				60, {plot=[0.5, 0.5]},
+				61, {plot=[0.5, 0.5, 0.5]},
+				62, {plot=[0.5, 0.5, 0.5]},
+				63, {plot=[0.5]},
+				64, {plot=[0.5, 0.5]},
+				65, {plot=[0.5]},
+				//PV 2 Sample
+				67, {plot=[]},
+				68, {plot=[]},
+				69, {plot=[]},
+				70, {plot=[]},
+				71, {plot=[]},
+				72, {plot=[]},
+				73, {plot=[0.5, 0.5]},
+				74, {plot=[0.5]},
+				75, {plot=[0.5, 0.5, 0.5]},
+				76, {plot=[0.5]},
+				77, {plot=[]},
+				78, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				// Mda Piano
+				80, {plot=[]},
+				81, {plot=[0.5, 0.5, 0.5, 0.5]},
+				82, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				83, {plot=[0.5, 0.5]},
+				84, {plot=[0.5, 0.5, 0.5]},
+				85, {plot=[0.5, 0.5]},
+				86, {plot=[0.5, 0.5]},
+				87, {plot=[0.5]},
+				88, {plot=[]},
+				89, {plot=[0.5]},
+				90, {plot=[0.5]},
+				91, {plot=[0.5]},
+				92, {plot=[0.5, 0.5]},
+				93, {plot=[0.5]},
+				94, {plot=[0.5]},
+				95, {plot=[]},
+				96, {plot=[0.5]},
+				97, {plot=[0.5]},
+				98, {plot=[0.5, 0.5]},
+				99, {plot=[0.5, 0.5]},
+				100, {plot=[0.5, 0.5, 0.5]},
+				101, {plot=[0.5, 0.5]},
+				102, {plot=[0.5, 0.5, 0.5]},
+				103, {plot=[0.5, 0.5]},
+				104, {plot=[0.5, 0.5, 0.5]},
+				// PV Piano
+				106, {plot=[]},
+				107, {plot=[]},
+				108, {plot=[]},
+				109, {plot=[]},
+				110, {plot=[0.5]},
+				111, {plot=[]},
+				112, {plot=[0.5, 0.5]},
+				113, {plot=[0.5]},
+				114, {plot=[0.5, 0.5, 0.5]},
+				115, {plot=[0.5]},
+				116, {plot=[]},
+				// FX
+				118, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				119, {plot=[0.5, 0.5, 0.5]},
+				120, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				121, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				122, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				123, {plot=[0.5, 0.5, 0.5]},
+				124, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				125, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				126, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				127, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				128, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				129, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				130, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				131, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				132, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				133, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				134, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				135, {plot=[0.5]},
+				136, {plot=[0.5]},
+				137, {plot=[0.5, 0.5]},
+				138, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				139, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				140, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				141, {plot=[0.5, 0.5, 0.5]},
+				142, {plot=[0.5]},
+				143, {plot=[0.5, 0.5]},
+				144, {plot=[]},
+				145, {plot=[0.5]},
+				146, {plot=[0.5]},
+				147, {plot=[0.5]},
+				148, {plot=[0.5, 0.5]},
+				149, {plot=[0.5]},
+				150, {plot=[0.5]},
+				151, {plot=[]},
+				152, {plot=[0.5]},
+				153, {plot=[0.5]},
+				154, {plot=[0.5, 0.5]},
+				155, {plot=[0.5, 0.5]},
+				156, {plot=[0.5, 0.5]},
+				157, {plot=[0.5, 0.5]},
+				158, {plot=[0.5, 0.5, 0.5]},
+				159, {plot=[0.5, 0.5]},
+				160, {plot=[0.5, 0.5, 0.5]},
+				161, {plot=[0.5, 0.5, 0.5]},
+				162, {plot=[0.5]},
+				163, {plot=[0.5, 0.5]},
+				164, {plot=[]},
+				165, {plot=[0.5]}
+			);
+			controlsNode.valueAction = plot;
 		};
 
 		// Run Soft
@@ -4056,7 +4230,7 @@ Preset Wek",
 		///////////////////
 
 		fonctionWindowSynth={arg name, groupe, synthNumber, bufferOne, bufferTwo, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN;
-			var windowSynth, startStop, sourceOut, sendBusOut, sendBusFX, sendLocalBuf, panSlider, freqSlider, freqTranSlider, ampSlider, dureeSlider, dureeTranSlider, quantaSlider, moveNodeAfter, moveNodeBefore, controlsAntiClick, controlsNode, startAutomationSynthControls, jitterAutomationSynthControls, tempoAutomationSynthControls, startAutomationSynthMusicData, tempoAutomationSynthMusicData, jitterAutomationMusicData, tdefControls, tdefMusicData, switchBufferOne, textBufferOne, switchBufferTwo, textBufferTwo, loopBufferOne, loopBufferTwo, switchBufferOneAction, reverseBufferOneAction, reverseBufferTwoAction, knobPreLevel1, knobPostLevel1, knobRecOn1, knobOffset1, knobPreLevel2, knobPostLevel2, knobRecOn2, knobOffset2,
+			var windowSynth, startStop, sourceOut, sendBusOut, sendBusFX, sendLocalBuf, panSlider, freqSlider, freqTranSlider, ampSlider, dureeSlider, dureeTranSlider, quantaSlider, moveNodeAfter, moveNodeBefore, controlsAntiClick, startAutomationSynthControls, jitterAutomationSynthControls, tempoAutomationSynthControls, startAutomationSynthMusicData, tempoAutomationSynthMusicData, jitterAutomationMusicData, tdefControls, tdefMusicData, switchBufferOne, textBufferOne, switchBufferTwo, textBufferTwo, loopBufferOne, loopBufferTwo, switchBufferOneAction, reverseBufferOneAction, reverseBufferTwoAction, knobPreLevel1, knobPostLevel1, knobRecOn1, knobOffset1, knobPreLevel2, knobPostLevel2, knobRecOn2, knobOffset2,
 			switchBufferTwoAction, sourceBusIn, sourceBusOut, sourceFXin, sourceFXout, synthRec, userOperatingSystemSynth, windowView=[], envelopeSynth, tdefSynthesizer, bufferRecording1, bufferRecording2, changeSynth, fonctionEnabledSlider, fonctionEnabledControls, fonctionSynthTdefFX, synthAndFX=nil, recBuffer1, recBuffer2, automationSliderFreq, automationSliderDur, automationSliderSynth, automationNumberSynth, automationSliderBuffer, durSampleOneSlider, durSampleTwoSlider,
 			freq=0, amp=0, duree=0.01, dureeTdef=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0, indexMusicData=9999, compteurChord=0, listeFreq=[], listeAmp=[],
 			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM=1, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
@@ -4251,6 +4425,7 @@ Preset Wek",
 						s.sync;
 						fonctionSynthTdefFX.value;// Setup SynthFX
 						s.sync;
+						fonctionPlotNode.value(synthNumber);// Plot le bon nombre de controls
 						s.sync;
 						ctrlSynth=controlsNode.value;
 						s.sync;
@@ -4780,9 +4955,10 @@ Preset Wek",
 						// Update controls
 						{
 							if(window.isClosed  == false, {
-								if(window.view.children.at(0).value == 1 and: {window.view.children.at(51).value == 1}, {
+								if(window.view.children.at(0).value == 1 and: {window.view.children.at(51).value == 1} and: {controlsNode.value != []}, {
 									// Controls Synth
-									ctrlSynth = (window.view.children.at(49).value + [window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0)]).clip(0.001, 0.99);
+									ctrlSynth = (window.view.children.at(49).value + [window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view
+										.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0), window.view.children.at(53).children.at(1).value * rrand(-1.0, 1.0)]).clip(0.001, 0.99);
 									groupe.setn(\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
 								});
 								newTempo = rrand(window.view.children.at(52).children.at(1).value, window.view.children.at(52).children.at(3).value);
