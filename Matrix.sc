@@ -7,7 +7,7 @@ Matrix {
 
 	var <> synthAnalyzeIn, busAnalyze, bufferPlayFile, busFileIn, groupeAnalyse, groupeSynth, groupeMasterFX, oscMusicalData, serverAdresse, busIn, busFX, busOSC, fonctionSynthDef, cmdperiodfunc, listeGroupeSynth, masterFX, initSynthDef, createGUI, windowMasterFX, windowMasterFXLimit, windowMasterFXPostAmp, menuMatrix, bufferFile, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, fonctionRecOn, fonctionRecOff, fonctionRecPause, flagRecording, windowControl, startSystem, switchAudioIn, algoAnalyse, volumeFileIn, offsetFileIn, fonctionLoadFileForAnalyse, choiceSynth, addNewSynth, listeWindowSynth, fonctionWindowSynth, displayOSC, fonctionLoadSample, listeBusInOut, listeBusFX, sendBusIn, userOperatingSystem, listeGroupeSynthID, fonctionUserOperatingSystem, fonctionLoadSynthesizer, fonctionSaveSynthesizer, fonctionAddSynthFX, textFileAnalyze, fonctionLoadPreset, fonctionSavePreset, fonctionLoadControl, fonctionSaveControl, userOSchoiceInstrument, userOSchoiceControl, fonctionTdefControls, fonctionTdefMusicData, listeWindows, indexWindows, fonctionShortCut, fonctionCommandes, pathMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpMatrix, fonctionOSCsynth, listeDataOSC, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard, flagKeyboard, keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze;
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
-	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, controlsNode;
+	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode;
 
 	*new	{arg path="~/Documents/Matrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="Matrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -219,7 +219,7 @@ Matrix {
 		listAudioIN = [];
 
 		choiceSynth = [
-			'Add a New Synthesizer or FX',
+			'                                           Add a New Synthesizer or FX',
 			//// Synthese witout sample
 			'SYNTHESE (',
 			'SinOsc',
@@ -922,7 +922,7 @@ y ... -						Musical keys.
 		};
 
 		fonctionLoadSynthesizer = {arg data, freezeOSC=[];
-			var name, index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, audioIN;
+			var name, index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, audioIN, ctrls;
 			// Set name Synthesizer or FX
 			name = data.last.split($[).at(0);
 			choiceSynth.do({arg synth, item; if(name == synth.asString, {index = item})});
@@ -933,6 +933,7 @@ y ... -						Musical keys.
 			timeBuf1 = data.at(20);
 			timeBuf2 = data.at(30);
 			audioIN = data.at(93).mod(numberAudioIn);
+			ctrls = data.at(49); // Ctrls Plot
 			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN);
 			listeWindowSynth.last.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
@@ -961,17 +962,6 @@ y ... -						Musical keys.
 								subView.activeLo = data.at(item).at(subItem).at(0).value;
 							});
 						});
-				});
-				// Play
-				if(item == 0, {
-					if(data.at(item).value == 0, {
-						s.bind{
-							view.valueAction_(1);
-							s.sync;
-							view.valueAction_(0);
-							s.sync;
-						};
-					}, {view.valueAction_(1)});
 				});
 				// User Operation + nodes
 				if(item == 1 or: {item == 9} or: {item == 10} or: {item == 11}, {nil});
@@ -1010,6 +1000,7 @@ y ... -						Musical keys.
 					});
 				});
 			});
+			listeWindowSynth.last.view.children.at(49).valueAction = ctrls;// Plot Ctrls
 		};
 
 		fonctionSavePreset = {arg listeWindow;
@@ -1203,7 +1194,7 @@ y ... -						Musical keys.
 		};
 
 		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN;
-			var window, freeze;
+			var window, freeze, x, y;
 			// New Group
 			listeGroupeSynth=listeGroupeSynth.add(Group.new(groupeSynth, \addToTail));
 			listeGroupeSynthID = listeGroupeSynthID.add(listeGroupeSynth.at(listeGroupeSynth.size - 1).nodeID);
@@ -1219,7 +1210,8 @@ y ... -						Musical keys.
 					});
 				});
 			});
-			fonctionPlotNode.value(item.value);// Plot le bon nombre de controls
+			# x, y = fonctionPlotNode.value(item.value);// Plot le bon nombre de controls
+			window.view.children.at(49).value_(x); window.view.children.at(47).string_(y);
 		};
 
 		fonctionInitBand = {arg band;
@@ -1267,176 +1259,176 @@ y ... -						Musical keys.
 		};
 
 		// Init les plot controls des synth
-		fonctionPlotNode = {arg item, plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
+		fonctionPlotNode = {arg item, plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], string="c";
 			// SynthDef
 			switch(item.value,
 				//Synthese
-				2, {plot=[]},
-				3, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				4, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				5, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				6, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				7, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				8, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				9, {plot=[0.5, 0.5]},
-				10, {plot=[0.5, 0.5]},
-				11, {plot=[0.5]},
-				12, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				13, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				14, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
-				15, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				16, {plot=[]},
+				2, {plot=[]; string="AntiClick (HP Plugins) | "},
+				3, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"},
+				4, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"},
+				5, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"},
+				6, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | fundfreq(1..6) - formfreq(7..12)"},
+				7, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF freqLow - freqHi - rq - RHPF freqLow- freqHi - rq"},
+				8, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig(1..6) - decayTime(7..12) "},
+				9, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | numharm low - numharm hi"},
+				10, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | iPhase - width"},
+				11, {plot=[0.5]; string="AntiClick (HP Plugins) | width"},
+				12, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | specificationsArrayRef(1..12)"},
+				13, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | ampdist - durdist - adparam - ddparam - ampscale - durscale"},
+				14, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq - k - d - pmindex Lo - pmindex Hi"},
+				15, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freqCentroid(1..2) - energy(2..3) - flux -flatness"},
+				16, {plot=[]; string="AntiClick (HP Plugins) | "},
 				// Sampler
-				18, {plot=[0.5, 0.5]},
-				19, {plot=[0.5, 0.5, 0.5]},
-				20, {plot=[0.5]},
-				21, {plot=[0.5]},
-				22, {plot=[0.5, 0.5]},
-				23, {plot=[0.5, 0.5]},
-				24, {plot=[0.5, 0.5, 0.5, 0.5]},
-				25, {plot=[0.5, 0.5, 0.5]},
-				26, {plot=[0.5, 0.5]},
-				27, {plot=[0.5, 0.5, 0.5, 0.5]},
-				28, {plot=[0.5, 0.5]},
-				29, {plot=[0.5, 0.5]},
-				30, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				31, {plot=[0.5, 0.5]},
-				32, {plot=[0.5, 0.5]},
-				33, {plot=[0.5, 0.5, 0.5]},
-				34, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
-				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
-				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]},
-				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				38, {plot=[0.5, 0.5, 0.5]},
-				39, {plot=[0.5, 0.5, 0.5]},
-				40, {plot=[0.5, 0.5, 0.5, 0.5]},
-				41, {plot=[0.5]},
+				18, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | startpos - startloop"},
+				19, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- dur - pitch - pos"},
+				20, {plot=[0.5]; string="AntiClick (HP Plugins) | end"},
+				21, {plot=[0.5]; string="AntiClick (HP Plugins) | "},
+				22, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mod"},
+				23, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mul"},
+				24, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- centerpos- dur"},
+				25, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - startpos"},
+				26, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - bwr"},
+				27, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"},
+				28, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | length"},
+				29, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - phase"},
+				30, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio(1..10) - pitchdispersion - timedispertion"},
+				31, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"},
+				32, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | drop - outof"},
+				33, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | windowSize - overlaps - windowRandRatio"},
+				34, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam - freq - rate"},
+				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - freqRd - freqWr"},
+				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - combDelay - combDecay"},
+				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - RndCombDelay - RndCombDecay"},
+				38, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freqScale - freqOffset - decayScale"},
+				39, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | end - noise"},
+				40, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RHPF freq - rq - BandPass freq"},
+				41, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
 				// PV 1 Sample
-				43, {plot=[0.5]},
-				44, {plot=[0.5]},
-				45, {plot=[]},
-				46, {plot=[0.5]},
-				47, {plot=[0.5]},
-				48, {plot=[0.5]},
-				49, {plot=[0.5, 0.5]},
-				50, {plot=[0.5]},
-				51, {plot=[0.5]},
-				52, {plot=[]},
-				53, {plot=[0.5]},
-				54, {plot=[0.5]},
-				55, {plot=[0.5, 0.5]},
-				56, {plot=[0.5, 0.5]},
-				57, {plot=[0.5, 0.5]},
-				58, {plot=[0.5, 0.5]},
-				59, {plot=[0.5, 0.5, 0.5]},
-				60, {plot=[0.5, 0.5]},
-				61, {plot=[0.5, 0.5, 0.5]},
-				62, {plot=[0.5, 0.5, 0.5]},
-				63, {plot=[0.5]},
-				64, {plot=[0.5, 0.5]},
-				65, {plot=[0.5]},
+				43, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
+				44, {plot=[0.5]; string="AntiClick (HP Plugins) | index"},
+				45, {plot=[]; string="AntiClick (HP Plugins) | "},
+				46, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				47, {plot=[0.5]; string="AntiClick (HP Plugins) | factor"},
+				48, {plot=[0.5]; string="AntiClick (HP Plugins) | bins"},
+				49, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
+				50, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
+				51, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				52, {plot=[]; string="AntiClick (HP Plugins) | "},
+				53, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				54, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				55, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe- trig"},
+				56, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				57, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | wipe- width- trig"},
+				58, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				59, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase - width"},
+				60, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | areal - aimag"},
+				61, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"},
+				62, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numPartials - ratio - strength"},
+				63, {plot=[0.5]; string="AntiClick (HP Plugins) | stretch"},
+				64, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				65, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
 				//PV 2 Sample
-				67, {plot=[]},
-				68, {plot=[]},
-				69, {plot=[]},
-				70, {plot=[]},
-				71, {plot=[]},
-				72, {plot=[]},
-				73, {plot=[0.5, 0.5]},
-				74, {plot=[0.5]},
-				75, {plot=[0.5, 0.5, 0.5]},
-				76, {plot=[0.5]},
-				77, {plot=[]},
-				78, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
+				67, {plot=[]; string="AntiClick (HP Plugins) | "},
+				68, {plot=[]; string="AntiClick (HP Plugins) | "},
+				69, {plot=[]; string="AntiClick (HP Plugins) | "},
+				70, {plot=[]; string="AntiClick (HP Plugins) | "},
+				71, {plot=[0.5]; string="AntiClick (HP Plugins) | zeroed"},
+				72, {plot=[]; string="AntiClick (HP Plugins) | "},
+				73, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
+				74, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
+				75, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase -width"},
+				76, {plot=[0.5]; string="AntiClick (HP Plugins) | morph"},
+				77, {plot=[]; string="AntiClick (HP Plugins) | "},
+				78, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | strsize - sktime - skdur - length - frzstore - zcr - lms - sc - st - rndscore"},
 				// Mda Piano
-				80, {plot=[]},
-				81, {plot=[0.5, 0.5, 0.5, 0.5]},
-				82, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				83, {plot=[0.5, 0.5]},
-				84, {plot=[0.5, 0.5, 0.5]},
-				85, {plot=[0.5, 0.5]},
-				86, {plot=[0.5, 0.5]},
-				87, {plot=[0.5]},
-				88, {plot=[]},
-				89, {plot=[0.5]},
-				90, {plot=[0.5]},
-				91, {plot=[0.5]},
-				92, {plot=[0.5, 0.5]},
-				93, {plot=[0.5]},
-				94, {plot=[0.5]},
-				95, {plot=[]},
-				96, {plot=[0.5]},
-				97, {plot=[0.5]},
-				98, {plot=[0.5, 0.5]},
-				99, {plot=[0.5, 0.5]},
-				100, {plot=[0.5, 0.5, 0.5]},
-				101, {plot=[0.5, 0.5]},
-				102, {plot=[0.5, 0.5, 0.5]},
-				103, {plot=[0.5, 0.5]},
-				104, {plot=[0.5, 0.5, 0.5]},
+				80, {plot=[]; string="AntiClick (HP Plugins) | "},
+				81, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF freqLo - freqHi - RHPF freqLo- freqHi"},
+				82, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"},
+				83, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - phase"},
+				84, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchRatio - pitchDispersion - timeDispersion"},
+				85, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"},
+				86, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | drop - outof"},
+				87, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
+				88, {plot=[]; string="AntiClick (HP Plugins) | "},
+				89, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				90, {plot=[0.5]; string="AntiClick (HP Plugins) | factor"},
+				91, {plot=[0.5]; string="AntiClick (HP Plugins) | bins"},
+				92, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
+				93, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
+				94, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				95, {plot=[]; string="AntiClick (HP Plugins) | "},
+				96, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				97, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				98, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
+				99, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				100, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | wipe- width - trig"},
+				101, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				102, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase - width"},
+				103, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | areal - aimag"},
+				104, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"},
 				// PV Piano
-				106, {plot=[]},
-				107, {plot=[]},
-				108, {plot=[]},
-				109, {plot=[]},
-				110, {plot=[0.5]},
-				111, {plot=[]},
-				112, {plot=[0.5, 0.5]},
-				113, {plot=[0.5]},
-				114, {plot=[0.5, 0.5, 0.5]},
-				115, {plot=[0.5]},
-				116, {plot=[]},
+				106, {plot=[]; string="AntiClick (HP Plugins) | "},
+				107, {plot=[]; string="AntiClick (HP Plugins) | "},
+				108, {plot=[]; string="AntiClick (HP Plugins) | "},
+				109, {plot=[]; string="AntiClick (HP Plugins) | "},
+				110, {plot=[0.5]; string="AntiClick (HP Plugins) | zeroed"},
+				111, {plot=[]; string="AntiClick (HP Plugins) | "},
+				112, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
+				113, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
+				114, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase- width"},
+				115, {plot=[0.5]; string="AntiClick (HP Plugins) | morph"},
+				116, {plot=[]; string="AntiClick (HP Plugins) | "},
 				// FX
-				118, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				119, {plot=[0.5, 0.5, 0.5]},
-				120, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				121, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				122, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				123, {plot=[0.5, 0.5, 0.5]},
-				124, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				125, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				126, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				127, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				128, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				129, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				130, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				131, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				132, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				133, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				134, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				135, {plot=[0.5]},
-				136, {plot=[0.5]},
-				137, {plot=[0.5, 0.5]},
-				138, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				139, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				140, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},
-				141, {plot=[0.5, 0.5, 0.5]},
-				142, {plot=[0.5]},
-				143, {plot=[0.5, 0.5]},
-				144, {plot=[]},
-				145, {plot=[0.5]},
-				146, {plot=[0.5]},
-				147, {plot=[0.5]},
-				148, {plot=[0.5, 0.5]},
-				149, {plot=[0.5]},
-				150, {plot=[0.5]},
-				151, {plot=[]},
-				152, {plot=[0.5]},
-				153, {plot=[0.5]},
-				154, {plot=[0.5, 0.5]},
-				155, {plot=[0.5, 0.5]},
-				156, {plot=[0.5, 0.5]},
-				157, {plot=[0.5, 0.5]},
-				158, {plot=[0.5, 0.5, 0.5]},
-				159, {plot=[0.5, 0.5]},
-				160, {plot=[0.5, 0.5, 0.5]},
-				161, {plot=[0.5, 0.5, 0.5]},
-				162, {plot=[0.5]},
-				163, {plot=[0.5, 0.5]},
-				164, {plot=[]},
-				165, {plot=[0.5]}
+				118, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | delaytime(1..6) - decaytime(7..12)"},
+				119, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | mix - room - damp"},
+				120, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | roomsize - revtime - damping - imputbw - drylevel - earlylevel - taillevel"},
+				121, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | t60 - damp - size - early - depth - freq - lo - mid - hi - locut - hicut"},
+				122, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | delaytime(1..12)"},
+				123, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - timescale"},
+				124, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
+				125, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
+				126, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
+				127, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - radius(7..12)"},
+				128, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..10) - delaytime  - decaytime"},
+				129, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
+				130, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
+				131, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - decaytime(7..12)"},
+				132, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..10) - attacktime - decaytime"},
+				133, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - bwr(7..12)"},
+				134, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | specificationsArrayRef(1..12)"},
+				135, {plot=[0.5]; string="AntiClick (HP Plugins) | lenght"},
+				136, {plot=[0.5]; string="AntiClick (HP Plugins) | coef"},
+				137, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | coef - lenght"},
+				138, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchRatio(1..10) - pitchDispersion - timeDispersion"},
+				139, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pointer - frqScale - size - overlaps - randRatio - delay - time - mul"},
+				140, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | noisefreq - add - dust - chaos - delaytime - mul"},
+				141, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitch - startposition - freeze"},
+				142, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
+				143, {plot=[0.5]; string="AntiClick (HP Plugins) | index"},
+				144, {plot=[]; string="AntiClick (HP Plugins) | "},
+				145, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				146, {plot=[0.5]; string="AntiClick (HP Plugins) | factor"},
+				147, {plot=[0.5]; string="AntiClick (HP Plugins) | bins"},
+				148, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
+				149, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
+				150, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				151, {plot=[]; string="AntiClick (HP Plugins) | "},
+				152, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				153, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
+				154, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
+				155, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				156, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - width- trig"},
+				157, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				158, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase - width"},
+				159, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | areal - aimag"},
+				160, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"},
+				161, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numPartials - ratio - strength"},
+				162, {plot=[0.5]; string="AntiClick (HP Plugins) | stretch"},
+				163, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
+				164, {plot=[]; string="AntiClick (HP Plugins) | "},
+				165, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"}
 			);
-			controlsNode.valueAction = plot;
+			[plot, string].value; // Sortie
 		};
 
 		// Run Soft
@@ -3954,7 +3946,7 @@ y ... -						Musical keys.
 			switchBufferTwoAction, sourceBusIn, sourceBusOut, sourceFXin, sourceFXout, synthRec, userOperatingSystemSynth, windowView=[], envelopeSynth, tdefSynthesizer, bufferRecording1, bufferRecording2, changeSynth, fonctionEnabledSlider, fonctionEnabledControls, fonctionSynthTdefFX, synthAndFX=nil, recBuffer1, recBuffer2, automationSliderFreq, automationSliderDur, automationSliderSynth, automationNumberSynth, automationSliderBuffer, durSampleOneSlider, durSampleTwoSlider,
 			freq=0, amp=0, duree=0.01, dureeTdef=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0, indexMusicData=9999, compteurChord=0, listeFreq=[], listeAmp=[],
 			onOff, loop1, loop2, levelOut, levelFX, levelLocal, panLo, panHi, fhzLo, fhzHi, fhzT, dbLo, dbHi, durLo, durHi, durM=1, quanta, ctrlHP, ctrlSynth, ctrlBuffer=[1, 0, 1, 0, 1, 0, 1, 0, 1], flagAmp, out, busIn, busOut, busFXin, busFXout,
-			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off', indexModeSynth=0;
+			envLevel, envDuree=[0.015625, 0.109375, 0.25, 0.25, 0.125, 0.125, 0.125], envTime, switch1, switch2, modeSynth, flagModeSynth='Tdef', octave, ratio, degre, difL, difH, pos, flagAccord = 'off', lastFreqMidi = [], instrCanalMidiOut, canalMIDIinstr=0, midiFreq, midiAmp, menuAlgorithm, stringAlgorithm, newFreq=[], newAmp=[], newDuree=[], listeDataAlgo=[[], [], []], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances, maxTraining, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, freqGen = [], ampGen = [], durGen = [], calculNewMusic, neuralFAD, freqNeu=[], ampNeu=[], durNeu=[], flagMidiOut = 'off', indexModeSynth=0, controlsNode;
 			var indexNumFhzBand, guiNumFhzBand, flagBand, rangeNumFhzBand, flagIndexBand, loopRec1=0, loopRec2=0;
 			var scale, tuning, degrees, root, flagScaling, flagRoot, fonctionBand, flagFreezeDataOSC = 'off', freezeDataOSC = [ ], flagChord, chordDuree, chordSize;
 			var freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, audioInID;
@@ -4129,9 +4121,10 @@ y ... -						Musical keys.
 			}, masterFX.nodeID+1, labelWidth: 68, numberWidth: 52).setColors(numTypingColor: Color.red);
 			//Change Synthesizer or FX
 			changeSynth=PopUpMenu(windowSynth, Rect(0, 0, 140, 15)).font_(Font( "Palatino-BoldItalic", 10)).stringColor_(Color.red).items = changeChoiceSynth;
-			changeSynth.action = {arg item;
+			changeSynth.action = {arg item, lastName,x, y;
 				s.bind{
 					if(item.value != 1, {
+						lastName = windowSynth.name;
 						tdefSynthesizer.clear;
 						s.sync;
 						tdefSynthesizer.remove;
@@ -4145,11 +4138,15 @@ y ... -						Musical keys.
 						s.sync;
 						fonctionSynthTdefFX.value;// Setup SynthFX
 						s.sync;
-						fonctionPlotNode.value(synthNumber);// Plot le bon nombre de controls
+						if(lastName != (name ++ "[" ++ groupe.nodeID.asString ++ "]"), {
+							# x, y = fonctionPlotNode.value(synthNumber);// Plot le bon nombre de controls
+							controlsNode.valueAction_(x); windowSynth.view.children.at(47).string_(y);
+						});
 						s.sync;
 						ctrlSynth=controlsNode.value;
 						s.sync;
 						changeSynth.value=0;
+						if(startStop.value == 0, {if(synthAndFX != nil, {synthAndFX.run(false)})});
 						if(startStop.value == 1, {startStop.valueAction_(0); s.sync; startStop.valueAction_(1); s.sync});
 					});
 				};
@@ -4360,7 +4357,7 @@ y ... -						Musical keys.
 			startAutomationSynthControls.action = {|view| if(view.value == 0, {tdefControls.stop; ctrlSynth=controlsNode.value; jitterAutomationSynthControls.enabled_(false); tempoAutomationSynthControls.enabled_(false)}, {ctrlSynth=controlsNode.value; tdefControls.play; jitterAutomationSynthControls.enabled_(true); tempoAutomationSynthControls.enabled_(true)});
 			};
 			// Tempo AutomationControls Synth
-			tempoAutomationSynthControls=EZRanger(windowSynth, 180 @ 15, "BPM", ControlSpec(16.reciprocal, 100.0, \exp, 0), {|tempo| }, [12, 24], labelWidth: 25, numberWidth: 30);
+			tempoAutomationSynthControls=EZRanger(windowSynth, 180 @ 15, "Time", ControlSpec(16.reciprocal, 100.0, \exp, 0), {|tempo| }, [12, 24], labelWidth: 25, numberWidth: 30);
 			// Jitter AutomationControls Synth
 			jitterAutomationSynthControls=EZSlider(windowSynth, 100 @ 15, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 20, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
@@ -4370,7 +4367,7 @@ y ... -						Musical keys.
 			startAutomationSynthMusicData.action = {|view| if(view.value == 0, {tdefMusicData.stop; tempoAutomationSynthMusicData.enabled_(false); jitterAutomationMusicData.enabled_(false)}, {tdefMusicData.play; tempoAutomationSynthMusicData.enabled_(true);jitterAutomationMusicData.enabled_(true)}); fonctionEnabledSlider.value(view.value);
 			};
 			// Tempo AutomationSynthMusicData Synth
-			tempoAutomationSynthMusicData = EZRanger(windowSynth, 180 @ 15, "BPM", ControlSpec(60.reciprocal, 100.0, \exp, 0), {|tempo| }, [0.125, 1.0], labelWidth: 25, numberWidth: 30);
+			tempoAutomationSynthMusicData = EZRanger(windowSynth, 180 @ 15, "Time", ControlSpec(60.reciprocal, 100.0, \exp, 0), {|tempo| }, [0.125, 1.0], labelWidth: 25, numberWidth: 30);
 			// Jitter AutomationMusic Synth
 			jitterAutomationMusicData=EZSlider(windowSynth, 100 @ 15, "Jitter", ControlSpec(0.0, 1.0, \lin, 0), {|jitter| }, 0.1, labelWidth: 20, numberWidth: 30);
 			windowSynth.view.decorator.nextLine;
@@ -4999,7 +4996,6 @@ y ... -						Musical keys.
 			fonctionEnabledControls.value;
 
 			// Setup Variables Synth
-			//onOff=startStop.value;
 			out=sourceOut.value; if(out == 32, {flagAmp=0}, {flagAmp=1});
 			busIn=sourceBusIn.value; busFXin=sourceFXin.value;
 			busOut=sourceBusOut.value; busFXout=sourceFXout.value;
@@ -6867,7 +6863,7 @@ y ... -						Musical keys.
 				// Synth
 				freq = freq.clip(20, 12544);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), 0.333), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl3+1.midicps, 108.midicps*ctrl4+1.midicps, \minmax).clip(0, 20000), 0.333));
+				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), ctrl3), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl4+1.midicps, 108.midicps*ctrl5+1.midicps, \minmax).clip(0, 20000), ctrl6));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6921,7 +6917,7 @@ y ... -						Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1 * 10, ctrl2 * 10);
+				chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1.max(0.1) * 10, ctrl2.max(0.1) * 10, ctrl3.max(0.1));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -6975,7 +6971,7 @@ y ... -						Musical keys.
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1 * 40, 40, abs(ctrl2 * 2 - 1));
+				chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1 * 40, ctrl2 * 40);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -8021,7 +8017,7 @@ y ... -						Musical keys.
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(1024, 1), chain);
-				chain = PV_BinScramble(chain, ctrl1, ctrl2, LFNoise2.kr(dureeSample.reciprocal));
+				chain = PV_BinScramble(chain, ctrl1, ctrl2, Impulse.kr(ctrl3*100));
 				chain= IFFT(chain);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -8131,7 +8127,7 @@ y ... -						Musical keys.
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = FFT(LocalBuf(1024, 1), chain);
-				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1*100), (ctrl2*100).reciprocal));
+				chain = PV_Diffuser(chain, Impulse.kr(ctrl1*100));
 				chain= IFFT(chain);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -9060,7 +9056,7 @@ y ... -						Musical keys.
 				Out.ar(out, chain * flagAmpOnOff);
 		}).add;
 
-		SynthDef('PV_Div',
+		/*SynthDef('PV_Div',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
 				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
 				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
@@ -9117,7 +9113,7 @@ y ... -						Musical keys.
 				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
 				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
 				Out.ar(out, chain * flagAmpOnOff);
-		}).add;
+		}).add;*/
 
 		SynthDef('PV_Add',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
@@ -9212,7 +9208,7 @@ y ... -						Musical keys.
 				chain2 = HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, 0, BufFrames.kr(buffer2) * offset2, loopTwo, ctrlHP1, ctrlHP2);
 				fft1 = FFT(LocalBuf(1024, 1), chain1);
 				fft2 = FFT(LocalBuf(1024, 1), chain2);
-				chain = PV_RandWipe(fft1, fft2, ctrl1, LFNoise2.kr(ctrl2.reciprocal));
+				chain = PV_RandWipe(fft1, fft2, ctrl1, Impulse.kr(ctrl2*100));
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -9735,7 +9731,7 @@ y ... -						Musical keys.
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 10, ctrl2 *10);
+				chain = Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 10, ctrl2 *10, ctrl3);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -10092,7 +10088,7 @@ y ... -						Musical keys.
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
-				chain = PV_RandComb(chain, ctrl1, LFNoise2.kr(ctrl2 * 64));
+				chain = PV_RandComb(chain, ctrl1, Impulse.kr(ctrl2*100));
 				chain = IFFT(chain);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -10184,7 +10180,7 @@ y ... -						Musical keys.
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
-				chain = PV_BinScramble(chain, ctrl1, ctrl2,  LFNoise2.kr(ctrl3.reciprocal));
+				chain = PV_BinScramble(chain, ctrl1, ctrl2,  Impulse.kr(ctrl3*100));
 				chain = IFFT(chain);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -10322,7 +10318,7 @@ y ... -						Musical keys.
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				RecordBuf.ar(chain, bufferOne, 0, preLevel, postLevel);
 				chain = FFT(LocalBuf(1024, 1), chain);
-				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1*100), (ctrl2*100).reciprocal));
+				chain = PV_Diffuser(chain, Impulse.kr(ctrl1*100));
 				chain = IFFT(chain);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11022,7 +11018,7 @@ y ... -						Musical keys.
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				fft1 = FFT(LocalBuf(1024, 1), in1);
 				fft2 = FFT(LocalBuf(1024, 1), in2);
-				chain = PV_RandWipe(fft1, fft2, ctrl1, LFNoise2.kr(ctrl2.reciprocal));
+				chain = PV_RandWipe(fft1, fft2, ctrl1, Impulse.kr(ctrl2*100));
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11387,7 +11383,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(SinOsc.ar(freq + SinOsc.ar(250*ctrl1, mul: 250 * ctrl2), mul: amp) + SinOsc.ar(freq + SinOsc.ar(500*ctrl3, mul: 500 * ctrl4), mul: amp) + SinOsc.ar(freq + SinOsc.ar(750*ctrl5, mul: 750 * ctrl6), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1000*ctrl7, mul: 1000 * ctrl8), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1250*ctrl9, mul: 1250 * ctrl10), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1500*ctrl11, mul: 1500 * ctrl12), mul: amp));
+				chain = Mix(SinOsc.ar(freq + SinOsc.ar(250*ctrl1, mul: 250 * ctrl7), mul: amp) + SinOsc.ar(freq + SinOsc.ar(500*ctrl2, mul: 500 * ctrl8), mul: amp) + SinOsc.ar(freq + SinOsc.ar(750*ctrl3, mul: 750 * ctrl9), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1000*ctrl4, mul: 1000 * ctrl10), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1250*ctrl5, mul: 1250 * ctrl11), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1500*ctrl6, mul: 1500 * ctrl12), mul: amp));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11434,7 +11430,7 @@ y ... -						Musical keys.
 				// Set Direct AudioIn (levelLocalIn)
 				in = In.ar(busIn);
 				// Synth
-				chain = Mix(SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl1, mul: 1000 * ctrl2), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl3, mul: 1000 * ctrl4), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl5, mul: 1000 * ctrl6), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl7, mul: 1000 * ctrl8), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl9, mul: 1000 * ctrl10), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl11, mul: 1000 * ctrl12), mul: amp));
+				chain = Mix(SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl1, mul: 1000 * ctrl7), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl2, mul: 1000 * ctrl8), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl3, mul: 1000 * ctrl9), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl4, mul: 1000 * ctrl10), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl5, mul: 1000 * ctrl11), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl6, mul: 1000 * ctrl12), mul: amp));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11479,7 +11475,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(SinOsc.ar(SinOsc.kr(ctrl1*8, mul: TRand.kr(0, ctrl2*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl3*16, mul: TRand.kr(0, ctrl4*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl5*24, mul: TRand.kr(0, ctrl6*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl7*32, mul: TRand.kr(0, ctrl8*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl1*9, mul: TRand.kr(0, ctrl10*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl11*128, mul: TRand.kr(0, ctrl12*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp));
+				chain = Mix(SinOsc.ar(SinOsc.kr(ctrl1*8, mul: TRand.kr(0, ctrl7*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl2*16, mul: TRand.kr(0, ctrl8*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl3*24, mul: TRand.kr(0, ctrl9*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl4*32, mul: TRand.kr(0, ctrl10*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl5*9, mul: TRand.kr(0, ctrl11*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl6*128, mul: TRand.kr(0, ctrl12*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11524,7 +11520,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(Formant.ar(freq, LFNoise0.kr(ctrl1.reciprocal) * (ctrl2 * 127).midicps, LFNoise0.kr(ctrl3.reciprocal)*(ctrl4 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl5.reciprocal) * (ctrl6 * 127).midicps, LFNoise0.kr(ctrl7.reciprocal)*(ctrl8 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl9.reciprocal) * (ctrl10 * 127).midicps, LFNoise0.kr(ctrl11.reciprocal)*(ctrl12 * 127).midicps, amp));
+				chain = Mix(Formant.ar(freq, LFNoise0.kr(ctrl1.reciprocal) * (ctrl7 * 127).midicps, LFNoise0.kr(ctrl2.reciprocal)*(ctrl8 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl3.reciprocal) * (ctrl9 * 127).midicps, LFNoise0.kr(ctrl4.reciprocal)*(ctrl10 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl5.reciprocal) * (ctrl11 * 127).midicps, LFNoise0.kr(ctrl6.reciprocal)*(ctrl12 * 127).midicps, amp));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -11569,7 +11565,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Mix(BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl1 * 24)), ctrl2)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl3 * 24)), ctrl4)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl5 * 24)), ctrl6)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl7 * 24)), ctrl8)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl9 * 24)), ctrl10)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl11 * 24)), ctrl12)));
+				chain = Mix(BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl1 * 24)), ctrl7)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl2 * 24)), ctrl8)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl3 * 24)), ctrl9)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl4 * 24)), ctrl10)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl5 * 24)), ctrl11)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl6 * 24)), ctrl12)));
 				chain = CombL.ar(chain, freq.reciprocal, freq.reciprocal, duree, amp);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
@@ -11943,7 +11939,7 @@ y ... -						Musical keys.
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
 					amp]);
 				// Synth
-				chain = Saw.ar(freq.lag(tempo));
+				chain = Saw.ar(freq.lag(tempo), 0.5);
 				chain = HPF.ar(chain, freqCentroid.clip(20, 20000), 1, LPF.ar(chain, energy.clip(20,20000), 1));
 				chain = CombC.ar(chain, 0.2, flux.clip(0.0001, 10000), flatness.clip(0.0001, 10000), 0.5);
 				// Switch Audio Out
@@ -13131,7 +13127,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
 				chain = FFT(LocalBuf(512, 1), in);
-				chain = PV_HPfiltre(chain, ctrl1 * 256 + 4, ctrl2 * 256 + 4);
+				chain = PV_HPfiltre(chain, ctrl1 * 256 + 4);
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
@@ -13356,7 +13352,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
 				chain = FFT(LocalBuf(1024, 1), in);
-				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(ctrl1*100), (ctrl2*100).reciprocal));
+				chain = PV_Diffuser(chain, Impulse.kr(ctrl1*100));
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
@@ -13626,7 +13622,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
 				chain = FFT(LocalBuf(1024, 1), in);
-				chain = PV_RandComb(chain, ctrl1, LFNoise2.kr(ctrl2 * 64));
+				chain = PV_RandComb(chain, ctrl1, Impulse.kr(ctrl2*100));
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
@@ -13716,7 +13712,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
 				chain = FFT(LocalBuf(1024, 1), in);
-				chain = PV_BinScramble(chain, ctrl1, ctrl2, LFNoise2.kr(duree.reciprocal));
+				chain = PV_BinScramble(chain, ctrl1, ctrl2, Impulse.kr(ctrl3*100));
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
