@@ -1259,7 +1259,7 @@ y ... -						Musical keys.
 		};
 
 		// Init les plot controls des synth
-		fonctionPlotNode = {arg item, plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], string="c";
+		fonctionPlotNode = {arg item, plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], string="AntiClick (HP Plugins) | ";
 			// SynthDef
 			switch(item.value,
 				//Synthese
@@ -1280,12 +1280,12 @@ y ... -						Musical keys.
 				16, {plot=[]; string="AntiClick (HP Plugins) | "},
 				// Sampler
 				18, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | startpos - startloop"},
-				19, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- dur - pitch - pos"},
+				19, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - pitch - pos"},
 				20, {plot=[0.5]; string="AntiClick (HP Plugins) | end"},
 				21, {plot=[0.5]; string="AntiClick (HP Plugins) | "},
 				22, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mod"},
 				23, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mul"},
-				24, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- centerpos- dur"},
+				24, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- centerpos- dur(3..4)"},
 				25, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - startpos"},
 				26, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - bwr"},
 				27, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"},
@@ -1298,10 +1298,10 @@ y ... -						Musical keys.
 				34, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam - freq - rate"},
 				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - freqRd - freqWr"},
 				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - combDelay - combDecay"},
-				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - RndCombDelay - RndCombDecay"},
+				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaos(2..3) - RndCombDelay(4..7)"},
 				38, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freqScale - freqOffset - decayScale"},
-				39, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | end - noise"},
-				40, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RHPF freq - rq - BandPass freq"},
+				39, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | end - lag - noise"},
+				40, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RHPF formant(1..2) - rq - BandPass"},
 				41, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
 				// PV 1 Sample
 				43, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
