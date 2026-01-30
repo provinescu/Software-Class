@@ -436,7 +436,7 @@ alt + P					Stop all Synthesizer.
 p						Play Synthesizer on front.
 alt + p					Stop Synthesizer on front.
 q						Switch Algo Analyze.
-ctrl + alt + r				Start Recording.
+alt + r				Start Recording.
 R						Switch Pause Recording on/off.
 ctrl + alt + r				Stop Recording.
 w / ctrl + w				Windows navigation.
@@ -1297,8 +1297,8 @@ Preset Wek",
 				32, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | drop - outof"},
 				33, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | windowSize - overlaps - windowRandRatio"},
 				34, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam(2..3) - freq - rate"},
-				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - freqRd - freqWr"},
-				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosRaram - freq - combDelay - combDecay"},
+				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam - freq - freqRd - freqWr"},
+				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam - freq - combDelay - combDecay"},
 				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaos(2..3) - RndCombDelay(4..7)"},
 				38, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freqScale - freqOffset - decayScale"},
 				39, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | end - lag - noise"},
