@@ -1039,7 +1039,7 @@ Preset Wek",
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
 			listeDataOSC = tampon;
-			b = listeDataOSC.size-1;
+			/*b = listeDataOSC.size-1;
 			numberAudioIn.do({arg a;
 				x=[]; y=[];
 				// Init Array
@@ -1055,7 +1055,7 @@ Preset Wek",
 					listeDataOSC = listeDataOSC.add(x.deepCopy);
 					indexDataMusic = indexDataMusic.add(y.deepCopy);
 				});
-			});
+			});*/
 			listeWindowFreeze = tampon2;
 		};
 
@@ -1213,7 +1213,9 @@ Preset Wek",
 				});
 			});
 			# x, y = fonctionPlotNode.value(item.value);// Plot le bon nombre de controls
-			window.view.children.at(49).value_(x); window.view.children.at(47).string_(y);
+			window.view.children.at(49).value_(x);
+			//window.view.children.at(49).size = x.size;
+			window.view.children.at(47).string_(y);
 		};
 
 		fonctionInitBand = {arg band;
@@ -4420,7 +4422,9 @@ Preset Wek",
 						s.sync;
 						if(lastName != (name ++ "[" ++ groupe.nodeID.asString ++ "]"), {
 							# x, y = fonctionPlotNode.value(synthNumber);// Plot le bon nombre de controls
-							controlsNode.valueAction_(x); windowSynth.view.children.at(47).string_(y);
+							controlsNode.valueAction_(x);
+							//controlsNode.size = x.size;
+							windowSynth.view.children.at(47).string_(y);
 						});
 						s.sync;
 						ctrlSynth=controlsNode.value;
