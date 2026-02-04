@@ -6479,9 +6479,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6513,9 +6513,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6549,9 +6549,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6585,9 +6585,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6625,9 +6625,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6661,9 +6661,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6698,9 +6698,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6732,9 +6732,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(trigger, rate, recHead * TRand.kr(0, offset, trigger), BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6762,9 +6762,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6792,9 +6792,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6822,9 +6822,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6856,9 +6856,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6889,9 +6889,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6929,9 +6929,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -6965,9 +6965,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7002,9 +7002,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7035,9 +7035,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(trigger, rate, recHead, BufFrames.kr(buffer) * TRand.kr(-1.0, 1.0, trigger).sign, BufFrames.kr(buffer) * TRand.kr(0.0, offset, trigger), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7068,9 +7068,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset).lag(flatness.log10.abs/3)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7098,9 +7098,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7128,9 +7128,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7158,9 +7158,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7196,9 +7196,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7232,9 +7232,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7275,9 +7275,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7317,9 +7317,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7357,9 +7357,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7394,9 +7394,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(trigger, rate, recHead, BufFrames.kr(buffer) * TRand.kr(-1.0, 1.0, trigger).sign, BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7431,9 +7431,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset).lag(flatness.log10.abs/3)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -7463,7 +7463,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7499,7 +7499,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7537,7 +7537,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7575,7 +7575,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7614,7 +7614,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7652,7 +7652,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7688,7 +7688,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7726,7 +7726,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7764,7 +7764,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7803,7 +7803,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7847,7 +7847,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7889,7 +7889,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7931,7 +7931,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -7973,7 +7973,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -8015,7 +8015,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(Trig1.kr(Impulse.kr(flux * 100), flatness), rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -8083,7 +8083,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -8117,7 +8117,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -8157,7 +8157,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(gate, rate, recHead, BufFrames.kr(postBuffer), BufFrames.kr(postBuffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
 					Phasor.ar(0, 1, 0, BufFrames.kr(postBuffer));
 				);
@@ -8231,9 +8231,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(trig, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -8263,9 +8263,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(trig, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// RecBuffer
 				BufWr.ar(inputSig, buffer, recHead);
@@ -8440,9 +8440,9 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					// rate > 1
 					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
 				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, playHead),
+				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
 					// rate > 1
-					Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
+					Phasor.ar(0, 1, 0, playHead);
 				);
 				// Rec Buffer
 				BufWr.ar(inputSig, buffer, recHead);
