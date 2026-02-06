@@ -1037,7 +1037,7 @@ y ... -						Musical keys.
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
 			listeDataOSC = tampon;
-			/*b = listeDataOSC.size-1;
+			b = listeDataOSC.size-1;
 			numberAudioIn.do({arg a;
 				x=[]; y=[];
 				// Init Array
@@ -1047,13 +1047,13 @@ y ... -						Musical keys.
 					z = z.add(Main.elapsedTime);
 				});
 				if(a <= b, {
-					listeDataOSC.put(a, x.deepCopy);
-					indexDataMusic.put(a, y.deepCopy);
+					/*listeDataOSC.put(a, x.deepCopy);
+					indexDataMusic.put(a, y.deepCopy);*/
 				}, {
 					listeDataOSC = listeDataOSC.add(x.deepCopy);
 					indexDataMusic = indexDataMusic.add(y.deepCopy);
 				});
-			});*/
+			});
 			listeWindowFreeze = tampon2;
 		};
 
