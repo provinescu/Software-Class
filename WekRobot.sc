@@ -952,12 +952,12 @@ Preset Wek",
 						Platform.resourceDir  +/+ "sounds/Buffer/2048samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/4096samples.wav",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample1.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1_2.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1_4.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1_8.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1_16.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1_32.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1_64.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample12.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample14.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample18.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample116.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample132.aiff",
+						Platform.resourceDir  +/+ "sounds/Buffer/sample164.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample2.aiff",
 						Platform.resourceDir  +/+ "sounds/Buffer/sample4.aiff"
 					];
@@ -1549,7 +1549,7 @@ Preset Wek",
 				~flagScaling = ~flagScaling.add('off');
 				// Audio In Rec
 				~canalAudioInInstr = ~canalAudioInInstr.add(0);
-				~flagByPassSynth = ~flagByPassSynth.add(1);
+				~flagByPassSynth = ~flagByPassSynth.add(0);
 			});
 		};
 
