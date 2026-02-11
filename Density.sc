@@ -23,7 +23,7 @@ Density {
 		MainMenu.initBuiltInMenus;
 
 		pathData = PathName.new(path).pathOnly;
-		pathSound = Platform.resourceDir;
+		pathSound = "/Applications/SuperCollider.app/Contents/Resources/";
 
 		// MIDI INIT
 		// Connect first device by default

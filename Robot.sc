@@ -53,7 +53,7 @@ Robot {
 		Safety(s);
 		//s.makeGui;
 
-		~samplePourAnalyse = Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff";
+		~samplePourAnalyse = "/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff";
 		~listeSamplePourAnalyse = [];
 		~listeNameSamplePourAnalyse = [];
 
@@ -804,15 +804,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							~startsysteme.valueAction_(0);
-							}.defer;
+								{
+									~startsysteme.valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							~startsysteme.valueAction_(1);
-							}.defer;
+								{
+									~startsysteme.valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -823,104 +823,104 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		s.bind{
 
 			// FONCTION POUR LOADER REPERTOIRE
-
+			//"/Applications/SuperCollider.app/Contents/Resources/sounds/"
 			~initAllSound={arg path, file;
 				if(File.exists(path++file), {file=File(path++file,"r");~sounds=file.readAllString.interpret.soloArray;file.close},{~sounds=
 					[
 						//Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff"
 						// Array Voice Sound
-						Platform.resourceDir  +/+ "sounds/Voice/voix.aiff",
-						Platform.resourceDir  +/+ "sounds/Voice/Choeur.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Voice/voix.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Voice/Choeur.aiff",
 						// Array String Sound
-						Platform.resourceDir  +/+ "sounds/String/Contrebasse1.wav",
-						Platform.resourceDir  +/+ "sounds/String/Contrebasse2.wav",
-						Platform.resourceDir  +/+ "sounds/String/Violoncelle1.wav",
-						Platform.resourceDir  +/+ "sounds/String/Alto1.wav",
-						Platform.resourceDir  +/+ "sounds/String/Alto2.wav",
-						Platform.resourceDir  +/+ "sounds/String/Violon1.wav",
-						Platform.resourceDir  +/+ "sounds/String/cordes.aiff",
-						Platform.resourceDir  +/+ "sounds/String/String1.wav",
-						Platform.resourceDir  +/+ "sounds/String/String2.wav",
-						Platform.resourceDir  +/+ "sounds/String/String3.wav",
-						Platform.resourceDir  +/+ "sounds/String/ContrebasseST1.wav",
-						Platform.resourceDir  +/+ "sounds/String/AltoST1.wav",
-						Platform.resourceDir  +/+ "sounds/String/ViolonST1.wav",
-						Platform.resourceDir  +/+ "sounds/String/StringST1.wav",
-						Platform.resourceDir  +/+ "sounds/String/AltoST1.wav",
-						Platform.resourceDir  +/+ "sounds/String/ViolonST1.wav",
-						Platform.resourceDir  +/+ "sounds/String/ContrebassePizz1.wav",
-						Platform.resourceDir  +/+ "sounds/String/ContrebassePizz2.wav",
-						Platform.resourceDir  +/+ "sounds/String/pizzacato.aiff",
-						Platform.resourceDir  +/+ "sounds/String/ViolonPizz1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/Contrebasse1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/Contrebasse2.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/Violoncelle1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/Alto1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/Alto2.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/Violon1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/cordes.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/String1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/String2.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/String3.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/ContrebasseST1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/AltoST1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/ViolonST1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/StringST1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/AltoST1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/ViolonST1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/ContrebassePizz1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/ContrebassePizz2.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/pizzacato.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/String/ViolonPizz1.wav",
 						// Array Woodwind Sound
-						Platform.resourceDir  +/+ "sounds/Woodwind/clarinette basse.aiff",
-						Platform.resourceDir  +/+ "sounds/Woodwind/clarinette.aiff",
-						Platform.resourceDir  +/+ "sounds/Woodwind/hautbois.aiff",
-						Platform.resourceDir  +/+ "sounds/Woodwind/flute.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Woodwind/clarinette basse.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Woodwind/clarinette.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Woodwind/hautbois.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Woodwind/flute.aiff",
 						// Array Brass Sound
-						Platform.resourceDir  +/+ "sounds/Brass/Tuba Sustain P.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Tuba Sustain Soft.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Tuba Sustain MF.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Tuba Sustain F.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Trombone Sustain MF.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Trombone Sustain F.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Cor Sustain MF.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Cor Sustain F.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/French Horn Sustain MF.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/French Horn Sustain F.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Tuba Attack F.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Trombone Attack F.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/Trombone Attack FFF.aiff",
-						Platform.resourceDir  +/+ "sounds/Brass/French Horn Attack F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Tuba Sustain P.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Tuba Sustain Soft.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Tuba Sustain MF.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Tuba Sustain F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Trombone Sustain MF.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Trombone Sustain F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Cor Sustain MF.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Cor Sustain F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/French Horn Sustain MF.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/French Horn Sustain F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Tuba Attack F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Trombone Attack F.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/Trombone Attack FFF.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Brass/French Horn Attack F.aiff",
 						// Array Keyboard Sound
-						Platform.resourceDir  +/+ "sounds/Keyboard/piano m.aiff",
-						Platform.resourceDir  +/+ "sounds/Keyboard/piano f.aiff",
-						Platform.resourceDir  +/+ "sounds/Keyboard/fender rhode.aiff",
-						Platform.resourceDir  +/+ "sounds/Keyboard/glockenspiel.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Keyboard/piano m.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Keyboard/piano f.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Keyboard/fender rhode.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Keyboard/glockenspiel.aiff",
 						// Array Percussion Sound
-						Platform.resourceDir  +/+ "sounds/Percussion/HPbassdrum.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/HPsnare.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/HPsnareRoll.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/HPrimshot.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/tom.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/tomHigh.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/HPhihat.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/CymbaleLow.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/bloc chinois.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/tambourin.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/crapeau.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/crecelle.aiff",
-						Platform.resourceDir  +/+ "sounds/Percussion/batonDePluie.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/HPbassdrum.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/HPsnare.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/HPsnareRoll.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/HPrimshot.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/tom.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/tomHigh.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/HPhihat.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/CymbaleLow.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/bloc chinois.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/tambourin.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/crapeau.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/crecelle.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Percussion/batonDePluie.aiff",
 						// Array Special Sound
-						Platform.resourceDir  +/+ "sounds/Special/MicroSound1.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/MicroSine.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/MicroSaw.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/MicroSquare.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/MicroNoise.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/Pluck.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/RissetPercu.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/CordeMetal.aiff",
-						Platform.resourceDir  +/+ "sounds/Special/Roach.wav",
-						Platform.resourceDir  +/+ "sounds/Special/Synth 1.wav",
-						Platform.resourceDir  +/+ "sounds/Special/Synth 2.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/MicroSound1.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/MicroSine.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/MicroSaw.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/MicroSquare.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/MicroNoise.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/Pluck.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/RissetPercu.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/CordeMetal.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/Roach.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/Synth 1.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Special/Synth 2.wav",
 						// Free Buffer different time
-						Platform.resourceDir  +/+ "sounds/Buffer/100milliseconde.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/64samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/128samples.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/256samples.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/512samples.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/1024samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/2048samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/4096samples.wav",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample1.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample12.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample14.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample18.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample116.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample132.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample164.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample2.aiff",
-						Platform.resourceDir  +/+ "sounds/Buffer/sample4.aiff"
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/100milliseconde.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/64samples.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/128samples.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/256samples.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/512samples.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/1024samples.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/2048samples.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/4096samples.wav",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample1.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample12.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample14.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample18.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample116.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample132.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample164.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample2.aiff",
+						"/Applications/SuperCollider.app/Contents/Resources/sounds/Buffer/sample4.aiff"
 					];
 					file=File(~nompathdata++"List Sounds.scd","w");file.write("~sounds="++~sounds.asCompileString);file.close});
 			};
@@ -1180,7 +1180,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~file.openRead(path.standardizePath);
 					s.sync;
 					if(~file.numChannels == 1,
-						{	~listebuffer=~listebuffer.add(Buffer.read(s, path.standardizePath, action: {Post << i <<  " " << PathName(path).fileName << " Finished" << Char.nl}));
+						{	~listebuffer=~listebuffer.add(Buffer.read(s, path.standardizePath, action: {Post << i <<  " " << path << " Finished" << Char.nl}));
 							s.sync;
 						},
 						{~rawData= FloatArray.newClear(~file.numFrames * 2);
@@ -1189,11 +1189,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 							s.sync;
 							~rawData = Array.newFrom(~rawData);
 							s.sync;
-							Post << "Loading stereo sound" << " " << PathName(path).fileName << Char.nl;
+							Post << "Loading stereo sound" << " " << path << Char.nl;
 							s.sync;
 							~rawData = ~rawData.unlace(2).sum / 2;
 							s.sync;
-							~listebuffer=~listebuffer.add(Buffer.loadCollection(s, ~rawData, 1, action: {Post << i << " " << PathName(path).fileName << " Finished" << Char.nl}));
+							~listebuffer=~listebuffer.add(Buffer.loadCollection(s, ~rawData, 1, action: {Post << i << " " << path << " Finished" << Char.nl}));
 							s.sync;
 					});
 					//~listebuffer.wrapPut(i, ~listebuffer.wrapAt(i).normalize(1.0));
@@ -1207,21 +1207,29 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 				// Set buffer tampon
 				~nombreinstrument.do({arg instr; var listebuffer;
+					Post << "Instrument" << " " << instr << Char.nl;
 					~looprecordingValue=~looprecordingValue.add(0);
 					~flagBufferFreeze=~flagBufferFreeze.add('Freeze buffer off');
 					~bufferTampon=~bufferTampon.add(nil);
 					~bufferAddTampon=~bufferAddTampon.add(nil);
 					listebuffer=[];
-					~nombrebuffer.do({arg buffer;
+					~nombrebuffer.do({arg buffer, path;
 						// Init buffer tampon
+						path = PathName.new(~sounds.wrapAt(buffer));
+						path = path.fileName;//Name of soundFile
+						path = "mdfind -name" + path;
+						path = Pipe.new(path, "r");
+						~rawData = path.getLine;// get the first line
+						path.close;
+						path = ~rawData;// New Path
 						~file = SoundFile.new;
 						s.sync;
-						~file.openRead(~sounds.wrapAt(buffer).standardizePath);
+						~file.openRead(path.standardizePath);
 						s.sync;
 						if(~file.numChannels == 1,
-							{Post << "Loading mono sound" << " " << ~sounds.wrapAt(buffer).standardizePath << Char.nl;
+							{Post << "Loading mono sound" << " " << path << Char.nl;
 								s.sync;
-								listebuffer=listebuffer.add(Buffer.read(s, ~sounds.wrapAt(buffer).standardizePath));
+								listebuffer=listebuffer.add(Buffer.read(s, path.standardizePath));
 								s.sync;
 							},
 							{~rawData= FloatArray.newClear(~file.numFrames * 2);
@@ -1230,7 +1238,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								s.sync;
 								~rawData = Array.newFrom(~rawData);
 								s.sync;
-								Post << "Loading stereo sound" << " " << ~sounds.wrapAt(buffer).standardizePath << Char.nl;
+								Post << "Loading stereo sound" << " " << path << Char.nl;
 								s.sync;
 								~rawData = ~rawData.unlace(2).sum / 2;
 								s.sync;
@@ -2208,30 +2216,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						);
 						// Set Tuning and Scaling
 						if(~flagScaling.at(i) != 'off', {
-						freq = freq.collect({arg item, index;
-							octave = item.cpsmidi / 12;
-							ratio = (octave.frac * 12).round(0.1);
-							octave = octave.floor;
-							degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
-							if(degre == nil,
-								{
-									degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
-									if(degre == nil,
-										{
-											degre = ~scale.at(i).degrees.last;
-										},
-										{
-											degre = ~scale.at(i).degrees.at(degre);
-										}
-									);
-								},
-								{
-									degre = ~scale.at(i).degrees.at(degre);
-								}
-							);
+							freq = freq.collect({arg item, index;
+								octave = item.cpsmidi / 12;
+								ratio = (octave.frac * 12).round(0.1);
+								octave = octave.floor;
+								degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+								if(degre == nil,
+									{
+										degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+										if(degre == nil,
+											{
+												degre = ~scale.at(i).degrees.last;
+											},
+											{
+												degre = ~scale.at(i).degrees.at(degre);
+											}
+										);
+									},
+									{
+										degre = ~scale.at(i).degrees.at(degre);
+									}
+								);
 								item = (octave * 12 + degre).midicps;
+							});
 						});
-					});
 						// Set MIDI Off
 						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 							~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
@@ -2749,7 +2757,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			w = Window("Robot by HP Instrument"+(i+1).asString, Rect(i*20, 200 - (i*33.33), 905, 525), scroll: true);
 			w.alpha=1.0;w.front;
 			w.view.decorator = FlowLayout(w.view.bounds);
-			StaticText(w, Rect(0, 0, 890, 12)).string_("SYSTEM PARAMETERS").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("SYSTEM PARAMETERS").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			w.view.decorator.nextLine;
 			// Bouton start stop playing
 			~startbutton = ~startbutton.add(Button(w,Rect(0,0,50,18)));
@@ -2793,7 +2801,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~kchaosviewdur",ez.value);~instanceChaosD.wrapAt(i).init(ez.value)},
 				3.852,labelWidth: 75,numberWidth: 50));
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 890, 12)).string_("FILTER ANALYSE").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("FILTER ANALYSE").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			w.view.decorator.nextLine;
 			// inter fhz
 			~differencefreqinstrument = ~differencefreqinstrument.add(EZSlider(w, 200 @ 18, "Dist Freq",ControlSpec(0.0, 12.0, \lin, 0.0),
@@ -2827,7 +2835,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{|ez| ~writepartitions.value(i,'normal','off',"~datassizeinstrument",ez.value);~listedatassize.wrapPut(i,ez.value)},
 				24,labelWidth: 65,numberWidth: 25));
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 890, 12)).string_("ALGORITHM PARAMETERS").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("ALGORITHM PARAMETERS").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			w.view.decorator.nextLine;
 			//neurone button
 			~neuroneviewmode = ~neuroneviewmode.add(Button(w,Rect(0,0,115,18)));
@@ -2910,7 +2918,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(algo.value == 1, {~flagalgoinstrneuroneduree.wrapPut(i,"NeuroneAlgo1")});
 				if(algo.value == 2, {~flagalgoinstrneuroneduree.wrapPut(i,"NeuroneAlgo2")})};
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 890, 12)).string_("SYNTHESIZEUR").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 890, 12)).string_("SYNTHESIZEUR").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			w.view.decorator.nextLine;
 			// Set Synth
 			~synthcontrol=~synthcontrol.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~listSynth);
@@ -3002,7 +3010,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~soncontrolfft=~soncontrolfft.add(PopUpMenu(w,Rect(0,0,150,18)).items = ~displaySons2);
 			~soncontrolfft.wrapAt(i).action = {arg son;~writepartitions.value(i,'normal','off',"~soncontrolfft",son.value);~numerobufferAdd.wrapPut(i,son.value)};
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0, 0, 100, 12)).string_("SYNTH").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 100, 12)).string_("SYNTH").stringColor_(Color.yellow).font_(Font("Helvetica", 10)).align_(\right);
 			// number box synth
 			~synthparametresnumber=~synthparametresnumber.add(NumberBox(w,Rect(0,0,50,12)));
 			~synthparametresnumber.wrapAt(i).action={arg nombre;var c, datas;
@@ -3014,7 +3022,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				datas=~synthcontrolviewparametresdatas.wrapAt(i).value;
 				datas.wrapPut(~synthcontrol.wrapAt(i).value,c);
 				~synthcontrolviewparametresdatas.wrapPut(i,datas.value)};
-			StaticText(w, Rect(0, 0, 135, 12)).string_("Envelope").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 135, 12)).string_("Envelope").stringColor_(Color.yellow).font_(Font("Helvetica", 10)).align_(\right);
 			// Controles envelope
 			~synthenvelopenumberx=~synthenvelopenumberx.add(NumberBox(w,Rect(0,0,46,12)));
 			~synthenvelopenumberx.wrapAt(i).action={arg nombre;var val, index;
@@ -3036,7 +3044,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				//// Version avec envelope pour chaque synth
 				//~levelenvsynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value,val.wrapAt(1));
 				~synthsliderenvelope.wrapAt(i).value=val};
-			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)));
+			~displayRecLevel = ~displayRecLevel.add(StaticText(w, Rect(0, 0, 50, 12)).string_("    LEVEL").stringColor_(Color.yellow).font_(Font("Helvetica", 10)));
 			~numRecLevel1 = ~numRecLevel1.add(NumberBox(w,Rect(0,0,35,12)).minDecimals_(5).maxDecimals_(5));
 			~numRecLevel1.wrapAt(i).action={arg level;
 				var levels;
@@ -3053,7 +3061,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				levels.put(1, level.value);
 				~synthcontrolviewlevels.wrapAt(i).valueAction_(levels);
 			};
-			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 80, 12)).string_("Pre FX").stringColor_(Color.yellow).font_(Font("Helvetica", 10)).align_(\right);
 			~syntheffetsPrenumber=~syntheffetsPrenumber.add(NumberBox(w,Rect(0,0,50,12)).minDecimals_(4).maxDecimals_(4));
 			~syntheffetsPrenumber.wrapAt(i).action={arg nombre;var datas;
 				~writepartitions.value(i,'normal','off',"~syntheffetsPrenumber",nombre.value);
@@ -3073,7 +3081,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~dataseffetsPres=~synthcontrolvieweffetsPredatas.wrapAt(i).value;
 				~dataseffetsPres.wrapPut(~listenodeeffetsPresynth.wrapAt(i).value,~synthcontrolvieweffetsPre.wrapAt(i).value);
 				~synthcontrolvieweffetsPredatas.wrapPut(i,~dataseffetsPres.value)};
-			StaticText(w, Rect(0, 0, 150, 12)).string_("Post FX").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10)).align_(\right);
+			StaticText(w, Rect(0, 0, 150, 12)).string_("Post FX").stringColor_(Color.yellow).font_(Font("Helvetica", 10)).align_(\right);
 			~syntheffetsPostnumber=~syntheffetsPostnumber.add(NumberBox(w,Rect(0,0,50,12)).minDecimals_(4).maxDecimals_(4));
 			~syntheffetsPostnumber.wrapAt(i).action={arg nombre;var datas;
 				~writepartitions.value(i,'normal','off',"~syntheffetsPostnumber",nombre.value);
@@ -3221,7 +3229,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			~automationparametres.wrapAt(i).states = [["Random Instrument Off", Color.black,  Color.green(0.8, 0.25)],["Random Instrument On", Color.white, Color.red(0.8, 0.25)]];
 			~automationparametres.wrapAt(i).action = {|view| ~writepartitions.value(i,'normal','off',"~automationparametres",view.value);
 				~randomValueParametreSynth.wrapAt(i).wrapPut(~synthcontrol.wrapAt(i).value, view.value)};
-			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			// EFFET PRE
 			~syntheffetsPrecontrol= ~syntheffetsPrecontrol.add(PopUpMenu(w,Rect(0,0,161,18)).items = ~fxPre);
 			~syntheffetsPrecontrol.wrapAt(i).action = {arg effetsPre;
@@ -3280,7 +3288,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					//// Version avec pan pour chaque synth
 					//~synthpancontrolValue.wrapAt(i).wrapPut(~numeroSynth.wrapAt(i).value, [ez.lo, ez.hi]);
 			}, [-0.1, 0.1], false, 42, 35));
-			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 52, 12)).string_("").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			// PRE pan
 			~synthpaneffetsPrestep = ~synthpaneffetsPrestep.add(EZSlider(w, 205 @ 18, "Pan_pre", \bipolar,
 				{|ez| ~writepartitions.value(i,'pan_pre',~listenodeeffetsPresynth.wrapAt(i).value,"~synthpaneffetsPrestep",ez.value);~listeeffetsPresynth.wrapAt(i).wrapAt(~listenodeeffetsPresynth.wrapAt(i).value).set(\pan, ez.value);
@@ -3311,7 +3319,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					freq.size.do({arg ii;~busfreqsynth.wrapAt(i).wrapAt(ii).set(freq.wrapAt(ii))});
 					freqRate.size.do({arg ii;~busfreqRatesynth.wrapAt(i).wrapAt(ii).set(freqRate.wrapAt(ii))})},
 				0,labelWidth: 42,numberWidth: 35));
-			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			// pre AMP
 			~synthampeffetsPrestep = ~synthampeffetsPrestep.add(EZSlider(w, 205 @ 18, "Amp_pre", ControlSpec(-inf, 12, \db),
 				{|ez| ~writepartitions.value(i,'amp_pre',~listenodeeffetsPresynth.wrapAt(i).value,"~synthampeffetsPrestep",ez.value);~listeeffetsPresynth.wrapAt(i).wrapAt(~listenodeeffetsPresynth.wrapAt(i).value).set(\amp, ez.value.dbamp);
@@ -3346,7 +3354,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~gsynth.at(i).setn(\ampPost, ez.value.dbamp);
 				},
 				-120,labelWidth: 33,numberWidth: 25));
-			//StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			//StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			// Automation pan effets_pre
 			~automationeffetpanpre = ~automationeffetpanpre.add(Button(w,Rect(0,0,205,18)));
 			~automationeffetpanpre.wrapAt(i).states = [["Random Pan Effect_Pre Off", Color.black,  Color.green(0.8, 0.25)],["Random Pan Effect_Pre On", Color.white, Color.red(0.8, 0.25)]];
@@ -3369,7 +3377,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~dureeMul.wrapPut(i, tempo);
 					~writepartitions.value(i,'special','off',"~dureestep", tempo)},
 				1,labelWidth: 42,numberWidth: 35));
-			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0, 0, 50, 10)).string_("").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
 			// Automation controls effets_pre
 			~automationeffetpre = ~automationeffetpre.add(Button(w,Rect(0,0,205,18)));
 			~automationeffetpre.wrapAt(i).states = [["Random Effect_Pre Off", Color.black,  Color.green(0.8, 0.25)],["Random Effect_Pre On", Color.white, Color.red(0.8, 0.25)]];
@@ -3556,7 +3564,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				[[0, 127], [0, 42], [42, 84], [84, 127] ], true, 60);
 			);
 			w.view.decorator.nextLine;
-			StaticText(w, Rect(0,0, 50, 18)).string_("Tuning").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 10));
+			StaticText(w, Rect(0,0, 50, 18)).string_("Tuning").stringColor_(Color.white).font_(Font("Helvetica", 10));
 			// Tuning Analyze 101
 			~listTuning = ~listTuning.add(PopUpMenu(w, Rect(0, 0, 130, 18)).
 				items_(["No Scale", "- Tempered -", "Chromatic", "Whole Tone", "Major", "Minor", "Diminued", "Octatonic 1", "Octatonic 2", "Nonatonique", "Messiaen 4", "Messiaen 5", "Messiaen 6", "Messiaen 7", "Bi-Pentaphonic", "Major Pentatonic", "Minor Pentatonic", "Blues", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi", "- Indian Shrutis -", "22tet", "12tet", "Asavari", "Bhairava", "Bhairavi", "Bilaval", "Kafi", "Kalyan", "Khammaj", "Marava", "Pooravi", "Todi"]).
@@ -6105,11 +6113,11 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
 					inputSig = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*reverse, 1, BufFrames.kr(buffer)*pos, loop);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				main = del.sum;
+					rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+					phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+					envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+					del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+					main = del.sum;
 					//main = Limiter.ar(main, 1.0, 0.01);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,

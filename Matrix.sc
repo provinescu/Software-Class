@@ -1574,7 +1574,7 @@ y ... -						Musical keys.
 				};
 				bufferFile.value;
 			};
-			fonctionLoadFileForAnalyse.value(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff");
+			fonctionLoadFileForAnalyse.value("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff");
 
 			// Analyze
 			oscMusicData = OSCFunc.newMatching({arg msg, time, addr, recvPort;

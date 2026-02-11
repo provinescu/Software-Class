@@ -922,7 +922,7 @@ f						Switch File for Analyze.
 				listeBusOutFX=listeBusOutFX.add(Bus.audio(s, 1));
 				listeBusInDolby=listeBusInDolby.add(Bus.audio(s, 1));
 				// Load Sample
-				bufferAndSoundFile = fonctionLoadSample.value(Platform.resourceDir.postln +/+ "sounds/a11wlk01-44_1.aiff", listeGroupSynth.at(synth), nil, nil);
+				bufferAndSoundFile = fonctionLoadSample.value("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff", listeGroupSynth.at(synth), nil, nil);
 				// Setup Data Sample
 				listeBuffer=listeBuffer.add(bufferAndSoundFile.at(0));
 				listeSoundFile=listeSoundFile.add(bufferAndSoundFile.at(1));
@@ -955,7 +955,7 @@ f						Switch File for Analyze.
 			synthOSCFFT = Synth.new("Time FFT", [\busIn, busAudioIn, \speed, 24], groupeAudioRec, \addToHead);
 
 			// Init FileIn
-			fonctionLoadFileForAnalyse.value(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff");
+			fonctionLoadFileForAnalyse.value("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff");
 
 			// Create Synth FileIn
 			synthFileIn = Synth.newPaused("FileIn", [\bufferFile, bufferFile, \busIn, busAudioIn], groupeAudioRec, \addToHead);
@@ -2655,7 +2655,7 @@ f						Switch File for Analyze.
 			if(view.value == 0, {flagTempo = 0}, {flagTempo = 1});
 		};
 
-		audioFileText = StaticText(windowExternalControlGUI, Rect(0, 0, 105, 20)).string_(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 10)).align_(\right);
+		audioFileText = StaticText(windowExternalControlGUI, Rect(0, 0, 105, 20)).string_("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 10)).align_(\right);
 
 		windowExternalControlGUI.view.decorator.nextLine;
 
@@ -3249,7 +3249,7 @@ f						Switch File for Analyze.
 			});
 
 			// Text Buffer
-			StaticText(windowControlGUI, Rect(synth * 315 + 50, numberSynth * 25 + 175, 260, 20)).string_(Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 10)).align_(\right);
+			StaticText(windowControlGUI, Rect(synth * 315 + 50, numberSynth * 25 + 175, 260, 20)).string_("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff").stringColor_(Color.white(1.0,1.0)).font_(Font("Georgia", 10)).align_(\right);
 
 			// SynthBand
 			StaticText(windowControlGUI, Rect(synth * 315 + 5, numberSynth * 25 + 200, 40, 20)).string = "Band";// 20
