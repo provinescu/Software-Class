@@ -1,6 +1,6 @@
 // NewAlgo
 
-Density2 {
+Density {
 
 	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi, transFreqintruments, transDureeintruments;
 
@@ -58,6 +58,7 @@ Density2 {
 		s.options.hardwareBufferSize_(size);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.recChannels_(recChannels);
+		s.options.safetyClipThreshold = 1;// Pour test
 		widthMC = wid;
 		orientationMC = ori;
 

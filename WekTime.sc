@@ -55,6 +55,7 @@ WekTime {
 		s.options.numInputBusChannels_(numberAudioIn);
 		s.options.numOutputBusChannels_(numberOut);
 		s.options.hardwareBufferSize_(size);
+		s.options.safetyClipThreshold = 1;// Pour test
 		typeMasterOut = switch(format,
 			0, {"Stereo"},
 			1, {"Rotate2"},

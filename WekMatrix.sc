@@ -47,6 +47,7 @@ WekMatrix {
 		s.recChannels_(recChannels);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.options.hardwareBufferSize_(size);
+		s.options.safetyClipThreshold = 1;// Pour test
 		headerFormat = "aiff";
 		s.recHeaderFormat_(headerFormat);
 		sampleFormat = "float";

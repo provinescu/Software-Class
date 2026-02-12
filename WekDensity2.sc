@@ -1,6 +1,6 @@
 // Wekinator + SuperCollider
 
-WekDensity2 {
+WekDensity {
 
 	classvar <> s, numPreset, lastNumPreset, lastTimeWekData, timeWekPreset, timeWekData, lastTimeWekPreset, listeWekPreset, flagWTD, flagWTP, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi, transFreqintruments, transDureeintruments;
 
@@ -64,6 +64,7 @@ WekDensity2 {
 		s.options.hardwareBufferSize_(size);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.recChannels_(recChannels);
+		s.options.safetyClipThreshold = 1;// Pour test
 		widthMC = wid;
 		orientationMC = ori;
 

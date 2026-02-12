@@ -1,4 +1,4 @@
-// Wekinator + SuperCollider
+/*// Wekinator + SuperCollider
 
 WekDensity {
 
@@ -64,6 +64,7 @@ WekDensity {
 		s.options.hardwareBufferSize_(size);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.recChannels_(recChannels);
+		s.options.safetyClipThreshold = 1;// Pour test
 		widthMC = wid;
 		orientationMC = ori;
 
@@ -10657,5 +10658,5 @@ Preset Wek",
 
 	}
 
-}
+}*/
 

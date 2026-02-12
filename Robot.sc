@@ -42,6 +42,7 @@ Robot {
 		s.recHeaderFormat_(~headerFormat);
 		~sampleFormat = "float";
 		s.recSampleFormat_(~sampleFormat);
+		s.options.safetyClipThreshold = 1;// Pour test
 		~startChannelAudioOut = 0;
 		~switchAudioOut = f;
 		flagMC = flag;

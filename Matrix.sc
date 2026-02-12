@@ -47,6 +47,7 @@ Matrix {
 		s.recHeaderFormat_(headerFormat);
 		sampleFormat = "float";
 		s.recSampleFormat_(sampleFormat);
+		s.options.safetyClipThreshold = 1;// Pour test
 		flagMC = flag;
 		widthMC = wid;
 		orientationMC = ori;

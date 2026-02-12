@@ -1,4 +1,4 @@
-// NewAlgo
+/*// NewAlgo
 
 Density {
 
@@ -58,6 +58,7 @@ Density {
 		s.options.hardwareBufferSize_(size);
 		s.options.numOutputBusChannels_(numberAudioOut);
 		s.recChannels_(recChannels);
+		s.options.safetyClipThreshold = 1;// Pour test
 		widthMC = wid;
 		orientationMC = ori;
 
@@ -10492,5 +10493,5 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 	}
 
-}
+}*/
 

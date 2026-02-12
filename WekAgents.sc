@@ -41,6 +41,7 @@ WekAgents {
 		s.options.numInputBusChannels_(numberAudioIn);
 		s.options.numOutputBusChannels_(~numberAudioOut);
 		s.options.hardwareBufferSize_(size);
+		s.options.safetyClipThreshold = 1;// Pour test
 		~headerFormat = "aiff";
 		~sampleFormat = "float";
 		~startChannelAudioOut = 0;
