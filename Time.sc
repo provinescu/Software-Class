@@ -134,7 +134,7 @@ Single commandes:
 esc	or SpaceBar			System on/off.
 alt + r					Start Recording.
 ctrl + alt + r			Stop Recording.
-R						Pause Recording.
+shift + alt + r			Pause Recording.
 t						Switch Type Sequencer.
 m						Switch MIDI Mode.
 i						Init Preset.
@@ -2100,8 +2100,8 @@ f						Switch File for Analyze.
 				if(modifiers==786432 and: {unicode==18} and: {keycode==15}, {
 					fonctionRecOff.value;
 				});
-				// Key R -> Pause Recording
-				if(modifiers==131072 and: {unicode==82} and: {keycode==15}, {
+				// Key shift + alt + r -> Pause Recording
+				if(modifiers==655360 and: {unicode==85} and: {keycode==15}, {
 					fonctionRecPause.value;
 				});
 				// Key t -> Switch Mode Sequencer

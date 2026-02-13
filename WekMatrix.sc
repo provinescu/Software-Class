@@ -2652,8 +2652,8 @@ Preset Wek",
 				if(modifiers==786432 and: {unicode==18} and: {keycode==15}, {
 					fonctionRecOff.value;
 				});
-				// Key R -> Pause Recording
-				if(modifiers==131072 and: {unicode==82} and: {keycode==15}, {
+				// Key shift + alt + r -> Pause Recording
+				if(modifiers==655360 and: {unicode==85} and: {keycode==15}, {
 					fonctionRecPause.value;
 				});
 				// Key d -> Synchro Synthesizer

@@ -448,7 +448,7 @@ d						Temporal Synchronizing Synthesizer.
 f						Load sound file for analyser.
 F						Sound file analyser  Loop On.
 alt + f					Sound file analyse Loop Off.
-ctrl + f					Load and Add sound file for analyse.
+ctrl + f				Load and Add sound file for analyse.
 h						Switch Source In.
 i						Close all synthesizer.
 alt + i					Clear musical data (OSC data).
@@ -463,10 +463,10 @@ alt + P					Stop all Synthesizer.
 p						Play Synthesizer on front.
 alt + p					Stop Synthesizer on front.
 q						Switch Algo Analyze.
-alt + r				Start Recording.
-R						Switch Pause Recording on/off.
-ctrl + alt + r				Stop Recording.
-w / ctrl + w				Windows navigation.
+alt + r				    Start Recording.
+shift + alt + r			Switch Pause Recording on/off.
+ctrl + alt + r			Stop Recording.
+w / ctrl + w			Windows navigation.
 alt + w					Window Control Panel.
 y						Display NodesTree.
 z						Load Random Preset.
@@ -475,8 +475,8 @@ Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shi
 
 l			 			Load Preset.
 L						Load Synthesizer.
-ctrl + l					Load preset without close others synthesizer.
-ctrl + L					Load Synthesizer without close others synthesize.
+ctrl + l				Load preset without close others synthesizer.
+ctrl + L				Load Synthesizer without close others synthesize.
 j						Load OSCmusicData.
 s				 		Save preset.
 S				 		Save synthesizer.
@@ -2427,8 +2427,8 @@ y ... -						Musical keys.
 					if(modifiers==786432 and: {unicode==18} and: {keycode==15}, {
 						fonctionRecOff.value;
 					});
-					// Key R -> Pause Recording
-					if(modifiers==131072 and: {unicode==82} and: {keycode==15}, {
+					// Key shift + alt + r -> Pause Recording
+					if(modifiers==655360 and: {unicode==85} and: {keycode==15}, {
 						fonctionRecPause.value;
 					});
 					// Key d -> Synchro Synthesizer

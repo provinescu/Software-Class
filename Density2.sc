@@ -2820,13 +2820,16 @@ h						Switch Source IN.
 i						Init Synth.
 ctrl+i					Init System.
 alt+i					Reset System.
-ctrl + f				Load and Add File for Analyze.
+ctrl + f				Load and Add File for Analyze
 w / ctrl + w			Switch Window.
 z						Load Random Preset.
 k                       New Environment.
 a                       Init Genetic
 shift + a               Init Kohonen
 alt + a                 Init Neural
+alt + r                 Start Recording
+shift + alt + r			Switch pause recording on/off
+ctrl + alt + a          Stop Recording
 
 Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
@@ -3479,6 +3482,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(modifiers == 524288 and: {unicode==97} and: {keycode==0}, {
 					// For Neural
 					neuralFAD = HPNeuralNet.new(3, 1, [9], 3);
+				});
+				// Key alt + r -> Start Recording
+				if(modifiers==524288 and: {unicode==114} and: {keycode==15}, {
+					fonctionRecOn.value;
+				});
+				// Key ctrl + alt + r -> Stop Recording
+				if(modifiers==786432 and: {unicode==18} and: {keycode==15}, {
+					fonctionRecOff.value;
+				});
+				// Key shift + alt + r -> Pause Recording
+				if(modifiers==655360 and: {unicode==85} and: {keycode==15}, {
+					fonctionRecPause.value;
 				});
 			};
 		};
