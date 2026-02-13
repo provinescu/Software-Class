@@ -9,7 +9,7 @@ WekMatrix {
 	var fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, listeDataOSC, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard;
 	var keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze;
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
-	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode;
+	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, menuFreeze;
 
 	*new	{arg path="~/Documents/WekWekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -639,6 +639,28 @@ Preset Wek",
 			});
 		);
 		MainMenu.register(menuAlgo.title_("Wekinator"), "WekMatrixTools");
+
+		menuFreeze = MenuAction("Copy Freeze Data", {
+			var source="[  1  ,  1  ,  1  ]", target="[  1 ,  1 ,  1  ]", freeze=[], i=1, a=1, b=1;
+			SCRequestString(source, "Copy Data [Instrument, Audio_In, Band]",
+				{arg strg;
+					source = strg.interpret;
+					i=source.at(0)-1;
+					a=source.at(1)-1;
+					b=source.at(2);
+					SCRequestString(target, "on [Instrument, Audio_In, Band]",
+						{arg strg;
+							target = strg.interpret;
+							// Copy Freeze Data
+							freeze = listeWindowFreeze.at(i).at(a).at(b);//Freeze data instr, Audio, Band
+							i=target.at(0)-1;
+							a=target.at(1)-1;
+							b=target.at(2);
+							listeWindowFreeze.at(i).at(a).put(b, freeze);
+						});
+				});
+		});
+		MainMenu.register(menuFreeze, "WekMatrixTools");
 
 		menuHelp = MenuAction("ShortCut", {
 			//Document.new("ShortCut for WekMatrix", helpWekMatrix);
