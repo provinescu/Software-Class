@@ -1214,7 +1214,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					~bufferTampon=~bufferTampon.add(nil);
 					~bufferAddTampon=~bufferAddTampon.add(nil);
 					listebuffer=[];
-					~nombrebuffer.do({arg buffer, path;
+					/*~nombrebuffer.do({arg buffer, path;
 						// Init buffer tampon
 						path = PathName.new(~sounds.wrapAt(buffer));
 						path = path.fileName;//Name of soundFile
@@ -1249,8 +1249,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						//listebuffer.wrapPut(buffer, ~listebuffer.wrapAt(buffer).normalize(1.0));
 						~file.close;
 						s.sync;
-					});
-					~listebufferTampon = ~listebufferTampon.add(listebuffer);
+					});*/
+					~listebufferTampon = ~listebufferTampon.add(~listebuffer);
 				});
 			};
 			~initAllBuffer.value;
