@@ -42,9 +42,9 @@ Launcher {
 		StaticText(w, Rect(0, 0, 50, 20)).string_("Server").stringColor_(Color.yellow);
 		NumberBox(w, 50@20).value_(57110).action_{arg ez; scPort = ez.value.asInteger};
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Internal", "Local"]).stringColor_(Color.white).action = {|source| if(source.value == 0,
-			{Server.default = Server.internal},
-			{Server.default = Server.local});
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Local", "Internal"]).stringColor_(Color.white).action = {|source| if(source.value == 0,
+			{Server.default = Server.local},
+			{Server.default = Server.internal});
 		};
 
 		//Text File In

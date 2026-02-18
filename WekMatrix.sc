@@ -640,27 +640,32 @@ Preset Wek",
 		);
 		MainMenu.register(menuAlgo.title_("Wekinator"), "WekMatrixTools");
 
-		menuFreeze = MenuAction("Copy Freeze Data", {
-			var source="[  1  ,  1  ,  1  ]", target="[  1 ,  1 ,  1  ]", freeze=[], i=1, a=1, b=1;
-			SCRequestString(source, "Copy Data [Instrument, Audio_In, Band]",
-				{arg strg;
-					source = strg.interpret;
-					i=source.at(0)-1;
-					a=source.at(1)-1;
-					b=source.at(2);
-					SCRequestString(target, "on [Instrument, Audio_In, Band]",
-						{arg strg;
-							target = strg.interpret;
-							// Copy Freeze Data
-							freeze = listeWindowFreeze.at(i).at(a).at(b);//Freeze data instr, Audio, Band
-							i=target.at(0)-1;
-							a=target.at(1)-1;
-							b=target.at(2);
-							listeWindowFreeze.at(i).at(a).put(b, freeze);
+		menuFreeze = Menu(
+			MenuAction("Copy Music (Freeze) Data", {
+				var source="[  1  ,  1  ,  0  ]", target="[  1 ,  1 ,  0  ]", freeze=[], i=1, a=1, b=1;
+				SCRequestString(source, "Copy Data [Instrument, Audio_In, Band]",
+					{arg strg;
+						source = strg.interpret;
+						i=source.at(0)-1;
+						a=source.at(1)-1;
+						b=source.at(2);
+						SCRequestString(target, "on [Instrument, Audio_In, Band]",
+							{arg strg;
+								target = strg.interpret;
+								// Copy Freeze Data
+								freeze = listeWindowFreeze.at(i).at(a).at(b);//Freeze data instr, Audio, Band
+								i=target.at(0)-1;
+								a=target.at(1)-1;
+								b=target.at(2);
+								listeWindowFreeze.at(i).at(a).put(b, freeze);
 						});
 				});
-		});
-		MainMenu.register(menuFreeze, "WekMatrixTools");
+			}),
+			MenuAction("Edit Music (Freeze) Data", {
+				MatrixMusicData.new;
+			});
+		);
+		MainMenu.register(menuFreeze.title_("Music Data"), "MatrixTools");
 
 		menuHelp = MenuAction("ShortCut", {
 			//Document.new("ShortCut for WekMatrix", helpWekMatrix);
@@ -1308,7 +1313,7 @@ Preset Wek",
 				18, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | startpos - startloop"},
 				19, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - pos"},
 				20, {plot=[0.5]; string="AntiClick (HP Plugins) | end"},
-				21, {plot=[0.5]; string="AntiClick (HP Plugins) | "},
+				21, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
 				22, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mod"},
 				23, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mul"},
 				24, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- centerpos- dur(3..4)"},
@@ -1317,7 +1322,7 @@ Preset Wek",
 				27, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"},
 				28, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | length - coef"},
 				29, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - phase"},
-				30, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio(1..10) - pitchdispersion - timedispertion"},
+				30, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaos(2..3) - pitchratio(4..10) - pitchdispersion - timedispertion"},
 				31, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"},
 				32, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | drop - outof"},
 				33, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | windowSize - overlaps - windowRandRatio"},
