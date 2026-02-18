@@ -665,7 +665,7 @@ Preset Wek",
 				MatrixMusicData.new;
 			});
 		);
-		MainMenu.register(menuFreeze.title_("Music Data"), "MatrixTools");
+		MainMenu.register(menuFreeze.title_("Music Data"), "WekMatrixTools");
 
 		menuHelp = MenuAction("ShortCut", {
 			//Document.new("ShortCut for WekMatrix", helpWekMatrix);
