@@ -4,7 +4,7 @@ MatrixMusicData {
 
 	var w, wMenu, wInstrument, instrument, wAudio, audio, wBand, band, upDatePreset, wPreset, preset, musicData, cmdperiodfunc, source, target, si, sa, sb, ti, ta, tb;
 
-	*new	{arg data=[], i=0, a=0, b=0;
+	*new	{arg data=nil, i=0, a=0, b=0;
 
 		^super.new.init(data, i, a, b);
 
@@ -19,14 +19,22 @@ MatrixMusicData {
 
 	}
 
-	edit {arg data, i, a, b;
+	edit {arg data, i, a, b, f;
 
 		instrument = i;
 		audio = a;
 		band = b;
-		preset = data;
 		source = [  1  ,  1  ,  0  ];
 		target = [  1  ,  1  ,  0  ];
+		if(data != nil,
+			{
+				f = File(data.standardizePath,"r");
+				preset = f.readAllString.interpret;
+				f.close;
+				musicData = preset.last;
+				preset.remove(preset.last);
+			},
+			{"Load a Preset".postln});
 
 		w = Window("Matrix Music Data Editor", Rect(500, 100, 625, 530));
 		w.view.decorator = FlowLayout(w.view.bounds);
@@ -198,7 +206,7 @@ MatrixMusicData {
 		});
 		w.view.decorator.nextLine;
 
-		StaticText(w, Rect(0, 0, 400, 20)).string_("(Freeze) Music Data (MIDI-pitch / DB-amp / ...").stringColor_(Color.yellow);
+		StaticText(w, Rect(0, 0, 600, 20)).string_("(Freeze) Music Data (Pitch (midi),  Amp (db),  duree,  BPM,  Centroid,  Flatness,  Energy,  Flux)").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
 		wPreset = TextView(w, Rect(0, 0, 600, 400));
 		wPreset.hasVerticalScroller_(true);
