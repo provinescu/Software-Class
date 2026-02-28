@@ -851,14 +851,13 @@ Density {
 			listeSound.do({arg arraySound, file, rawData, collect=[];
 				arraySound.do({arg path, i;
 					path = PathName.new(path);
-					i = path.deepCopy;
 					path = path.fileName;//Name of soundFile
 					path = "mdfind -name" + path;
 					path = Pipe.new(path, "r");
 					rawData = path.getLine;// get the first line
 					path.close;
 					path = rawData;// New Path
-					if(path == nil , {path = i.fullPath; ["Warning File Init or not exist:" + i].postcs});// File not found
+					if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found
 					file = SoundFile.new;
 					s.sync;
 					file.openRead(path);

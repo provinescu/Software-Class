@@ -956,7 +956,7 @@ WekDensity {
 					rawData = path.getLine;// get the first line
 					path.close;
 					path = rawData;// New Path
-					if(path == nil , {path = i.fullPath; ["Warning File Init or not exist:" + i].postcs});// File not found
+					if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found
 					file = SoundFile.new;
 					s.sync;
 					file.openRead(path);
