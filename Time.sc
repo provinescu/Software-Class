@@ -1445,7 +1445,7 @@ f						Switch File for Analyze.
 			// NoteOff
 			MIDIdef.noteOff(\midiNoteOff, {arg amp, freq, canal, src;
 
-				if(canal == canalMIDI and: {flagMIDI == 1}, {
+				/*if(canal == canalMIDI and: {flagMIDI == 1}, {
 					for(1, numFhzBand, {arg i;
 						if(freq.midicps > bandFHZ.at(i).at(0) and: {freq.midicps < bandFHZ.at(i).at(1)}, {
 							listeDataBand.put(i, []);
@@ -1454,7 +1454,7 @@ f						Switch File for Analyze.
 					});
 					listeDataBand.put(0, []);
 					lastTimeBand.put(0, Main.elapsedTime);
-				});
+				});*/
 			}, (0..127), nil);
 
 			// PitchBend

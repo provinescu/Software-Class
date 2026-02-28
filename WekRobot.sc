@@ -844,15 +844,15 @@ Preset Wek",
 							});
 							// Stop
 							if(cmd == 'stop', {
-							{
-							~startsysteme.valueAction_(0);
-							}.defer;
+								{
+									~startsysteme.valueAction_(0);
+								}.defer;
 							});
 							// Start
 							if(cmd == 'start', {
-							{
-							~startsysteme.valueAction_(1);
-							}.defer;
+								{
+									~startsysteme.valueAction_(1);
+								}.defer;
 							});
 					});
 					item = item + 3;
@@ -1215,6 +1215,7 @@ Preset Wek",
 					~rawData = path.getLine;// get the first line
 					path.close;
 					path = ~rawData;// New Path
+					if(path == nil , {path = PathName.new(~sounds.wrapAt(i)).fullPath; ["Warning File Init or not exist:" + ~sounds.wrapAt(i).asString ].postcs});// File not found
 					~file = SoundFile.new;
 					s.sync;
 					~file.openRead(path.standardizePath);
@@ -1757,18 +1758,18 @@ Preset Wek",
 
 			wekOut = msg[1..];
 			{
-			// Preset
-			numPreset = wekOut[0].asInteger.clip(1, 40);
-			if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
-				// load new preset
-				{
+				// Preset
+				numPreset = wekOut[0].asInteger.clip(1, 40);
+				if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+					// load new preset
+					{
 						if(File.exists(~nompathdata++"instruments"+numPreset.asInteger.asString++".scd"),
 							{
 								lastNumPreset = numPreset;
 								lastTimeWekPreset = time;
 								~fonctionLoadInstruments.value(numPreset.asInteger);
 						});
-			});
+				});
 			}.defer(0);
 		},'/wek/outputs');
 
@@ -2233,30 +2234,30 @@ Preset Wek",
 						);
 						// Set Tuning and Scaling
 						if(~flagScaling.at(i) != 'off', {
-						freq = freq.collect({arg item, index;
-							octave = item.cpsmidi / 12;
-							ratio = (octave.frac * 12).round(0.1);
-							octave = octave.floor;
-							degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
-							if(degre == nil,
-								{
-									degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
-									if(degre == nil,
-										{
-											degre = ~scale.at(i).degrees.last;
-										},
-										{
-											degre = ~scale.at(i).degrees.at(degre);
-										}
-									);
-								},
-								{
-									degre = ~scale.at(i).degrees.at(degre);
-								}
-							);
+							freq = freq.collect({arg item, index;
+								octave = item.cpsmidi / 12;
+								ratio = (octave.frac * 12).round(0.1);
+								octave = octave.floor;
+								degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+								if(degre == nil,
+									{
+										degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+										if(degre == nil,
+											{
+												degre = ~scale.at(i).degrees.last;
+											},
+											{
+												degre = ~scale.at(i).degrees.at(degre);
+											}
+										);
+									},
+									{
+										degre = ~scale.at(i).degrees.at(degre);
+									}
+								);
 								item = (octave * 12 + degre).midicps;
+							});
 						});
-					});
 						// Set MIDI Off
 						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 							~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
@@ -6211,11 +6212,11 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					//pos = if(controls.at(1).value <= 0.5 , pos, Logistic.kr(controls.at(2) * 4, 1, Rand(0, 1)));
 					// Sample
 					inputSig = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer)*reverse, 1, BufFrames.kr(buffer)*pos, loop);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				main = del.sum;
+					rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+					phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+					envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+					del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+					main = del.sum;
 					//main = Limiter.ar(main, 1.0, 0.01);
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,

@@ -1698,12 +1698,13 @@ Preset Wek",
 			~sounds.do({arg path, i;
 				~displaySons=~displaySons.add(PathName(path).fileName);//Set son affichage
 				path = PathName.new(path);
-					path = path.fileName;//Name of soundFile
-					path = "mdfind -name" + path;
-					path = Pipe.new(path, "r");
-					rawData = path.getLine;// get the first line
-					path.close;
-					path = rawData;// New Path
+				path = path.fileName;//Name of soundFile
+				path = "mdfind -name" + path;
+				path = Pipe.new(path, "r");
+				rawData = path.getLine;// get the first line
+				path.close;
+				path = rawData;// New Path
+				if(path == nil , {path = PathName.new(~sounds.wrapAt(i)).fullPath; ["Warning File Init or not exist:" + ~sounds.wrapAt(i).asString ].postcs});// File not found
 				file = SoundFile.new;
 				s.sync;
 				file.openRead(path.standardizePath);
@@ -1741,7 +1742,7 @@ Preset Wek",
 				s.sync;
 				//File IN
 				~recFiles=~recFiles.add(Synth.newPaused("RecFileIn",['buffer',~bufferSons.wrapAt(i).bufnum, 'in', ~busFileIn.index , 'run',0,'loop',0],~groupeBuffer, \addToTail));
-			s.sync;
+				s.sync;
 			});
 		};
 		~initAllBuffer.value;

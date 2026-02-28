@@ -1596,12 +1596,13 @@ G                       Init Genome Agent (solo).
 			~sounds.do({arg path, i;
 				~displaySons=~displaySons.add(PathName(path).fileName);//Set son affichage
 				path = PathName.new(path);
-					path = path.fileName;//Name of soundFile
-					path = "mdfind -name" + path;
-					path = Pipe.new(path, "r");
-					rawData = path.getLine;// get the first line
-					path.close;
-					path = rawData;// New Path
+				path = path.fileName;//Name of soundFile
+				path = "mdfind -name" + path;
+				path = Pipe.new(path, "r");
+				rawData = path.getLine;// get the first line
+				path.close;
+				path = rawData;// New Path
+				if(path == nil , {path = PathName.new(~sounds.wrapAt(i)).fullPath; ["Warning File Init or not exist:" + ~sounds.wrapAt(i).asString ].postcs});// File not found
 				file = SoundFile.new;
 				s.sync;
 				file.openRead(path.standardizePath);
@@ -1639,7 +1640,7 @@ G                       Init Genome Agent (solo).
 				s.sync;
 				//File IN
 				~recFiles=~recFiles.add(Synth.newPaused("RecFileIn",['buffer',~bufferSons.wrapAt(i).bufnum, 'in', ~busFileIn.index , 'run',0,'loop',0],~groupeBuffer, \addToTail));
-			s.sync;
+				s.sync;
 			});
 		};
 		~initAllBuffer.value;
@@ -8048,15 +8049,15 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					// envelope
-			envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
+					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					inputSig = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * reverse, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-				rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
-				phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
-				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
-				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
-				main = del.sum;
+					rate = (freq.cpsmidi - 60).midiratio - 1 / maxDel;
+					phase = LFSaw.ar(rate.neg, [1, 0]).range(0, maxDel);
+					envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
+					del = DelayC.ar(inputSig, maxDel, phase) * envDel;
+					main = del.sum;
 					// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,

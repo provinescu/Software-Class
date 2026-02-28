@@ -948,7 +948,7 @@ WekDensity {
 			s.sync;
 			listeBuffer=[] ;
 			listeSound.do({arg arraySound, file, rawData, collect=[];
-				arraySound.do({arg path;
+				arraySound.do({arg path, i;
 					path = PathName.new(path);
 					path = path.fileName;//Name of soundFile
 					path = "mdfind -name" + path;
@@ -956,6 +956,7 @@ WekDensity {
 					rawData = path.getLine;// get the first line
 					path.close;
 					path = rawData;// New Path
+					if(path == nil , {path = i.fullPath; ["Warning File Init or not exist:" + i].postcs});// File not found
 					file = SoundFile.new;
 					s.sync;
 					file.openRead(path);
