@@ -475,7 +475,7 @@ y ... -						Musical keys.
 					bufferFile.free;
 					fonctionLoadFileForAnalyse.value(path);
 					// Setup GUI Value
-					windowControl.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
+					windowControl.view.children.at(9).string_("FileIn :" + PathName.new(path).fileName)},{"cancelled".postln})}),
 			Menu(
 				MenuAction("On", {synthPlayFile.set('loop', 1)}),
 				MenuAction("Off", { synthPlayFile.set('loop', 0)});
