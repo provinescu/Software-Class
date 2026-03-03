@@ -439,13 +439,12 @@ Single commandes:
 esc	or SpaceBar			System on/off.
 a                       FreezeDataOSC for Synth on Front.
 A                       FreezeDataOSC for All Synth.
-ctrl + a FrezzeDataOSC on for all synth.
-ctrl + A FrezzeDataOSC off for all synth.
+ctrl + a                FrezzeDataOSC on for all synth.
+ctrl + A                FrezzeDataOSC off for all synth.
 b						Switch recording buffer data OSC on/off.
 alt + c					Copy Preset.
 C						Copy Synthesizer.
 d						Temporal Synchronizing Synthesizer.
-f						Load sound file for analyser.
 F						Sound file analyser  Loop On.
 alt + f					Sound file analyse Loop Off.
 ctrl + f				Load and Add sound file for analyse.
@@ -454,6 +453,7 @@ i						Close all synthesizer.
 alt + i					Clear musical data (OSC data).
 I						Init Algo All Synth.
 alt + I					Init Algo Synth on front.
+ctrl + alt + i          Init Audio Analyze Parametres
 k						New Environment.
 m						Switch Algo Tempo.
 N						Add a New Synthesizer (SinOsc by default).
@@ -2186,6 +2186,15 @@ y ... -						Musical keys.
 			switchAudioIn.valueAction_(0);
 			startSystem.valueAction_(0);
 
+			// Create Init Audio Analyze Parametres
+			s.bind{arg file;
+				Post << "Init Audio Analyze" <<  Char.nl;
+				file=File(pathMatrix++"Init Control.scd","w");
+				file.write(fonctionSaveControl.value(windowControl).asCompileString);
+				file.close;
+				s.sync;
+			};
+
 		});
 
 	}
@@ -2396,6 +2405,12 @@ y ... -						Musical keys.
 				// Key alt + I -> Init Algo Synth on front
 				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "Matrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(88).valueAction_(1);
+				});
+				// Key ctrl + alt + I -> Init Audio Analyze Parametres
+				if(modifiers==786432 and: {unicode==9} and: {keycode==34}, {
+					file=File(pathMatrix ++ "Init Control.scd","r");
+					fonctionLoadControl.value(windowControl, file.readAllString.interpret);
+					file.close;
 				});
 				// key f -> Switch File for Analyze
 				if(modifiers==0 and: {unicode==102} and: {keycode==3}, {
@@ -6082,8 +6097,11 @@ y ... -						Musical keys.
 			// Matrix Audio Analyze Onsets
 			SynthDef("OSC Matrix Onsets",
 				{arg busAnalyze, seuil=0.5, filtre=0.5, lock=0, loPass=0, hiPass=20000, id=0;
-					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0;
+					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, inputFilter;
 					input = In.ar(busAnalyze);
+					//Filtre Passe Bande
+					inputFilter = HPF.ar(input, loPass);
+					inputFilter = LPF.ar(inputFilter, hiPass);
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \power);
 					# freqIn, hasfreqIn = Tartini.kr(input, filtre, 2048, 1024, 512, 0.5);
 					ampIn = A2K.kr(Amplitude.ar(input));

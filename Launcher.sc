@@ -116,7 +116,7 @@ Launcher {
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "Scores"]).stringColor_(Color.white).action = {|source|
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "Scores", "MatrixMusicData"]).stringColor_(Color.white).action = {|source|
 			switch (source.value,
 				0, {
 					nameSoft = "Robot";// 57564
@@ -177,6 +177,12 @@ Launcher {
 					w.view.children.at(14).string_("Choose Soft");
 					nameSoft = "Scores";
 					path = "~/Documents/";
+				},
+				11,	{
+					w.view.children.at(14).string_("Choose Soft");
+					nameSoft = "MatrixMusicData";
+					path = nil;
+					ni = nil; o = nil; r = nil;
 				},
 			);
 		};

@@ -208,7 +208,7 @@ MatrixMusicData {
 
 		StaticText(w, Rect(0, 0, 600, 20)).string_("(Freeze) Music Data (Pitch (midi),  Amp (db),  duree,  BPM,  Centroid,  Flatness,  Energy,  Flux)").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		wPreset = TextView(w, Rect(0, 0, 600, 400));
+		wPreset = TextView(w, Rect(0, 0, 600, 400)).autohidesScrollers_(true);
 		wPreset.hasVerticalScroller_(true);
 		wPreset.hasHorizontalScroller_(true);
 		wPreset.autohidesScrollers_(true);

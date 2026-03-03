@@ -11,7 +11,7 @@ WekMatrix {
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
 	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, menuFreeze;
 
-	*new	{arg path="~/Documents/WekWekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
+	*new	{arg path="~/Documents/WekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
 		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
@@ -413,21 +413,21 @@ Single commandes:
 esc	or SpaceBar			System on/off.
 a                       FreezeDataOSC for Synth on Front.
 A                       FreezeDataOSC for All Synth.
-ctrl + a FrezzeDataOSC on for all synth.
-ctrl + A FrezzeDataOSC off for all synth.
+ctrl + a                FrezzeDataOSC on for all synth.
+ctrl + A                FrezzeDataOSC off for all synth.
 b						Switch recording buffer data OSC on/off.
 alt + c					Copy Preset.
 C						Copy Synthesizer.
 d						Temporal Synchronizing Synthesizer.
-f						Load sound file for analyser.
 F						Sound file analyser  Loop On.
 alt + f					Sound file analyse Loop Off.
-ctrl + f					Load and Add sound file for analyse.
+ctrl + f				Load and Add sound file for analyse.
 h						Switch Source In.
 i						Close all synthesizer.
 alt + i					Clear musical data (OSC data).
 I						Init Algo All Synth.
 alt + I					Init Algo Synth on front.
+ctrl + alt + i          Init Audio Analyze Parametres
 k						New Environment.
 m						Switch Algo Tempo.
 N						Add a New Synthesizer (SinOsc by default).
@@ -437,10 +437,10 @@ alt + P					Stop all Synthesizer.
 p						Play Synthesizer on front.
 alt + p					Stop Synthesizer on front.
 q						Switch Algo Analyze.
-alt + r				Start Recording.
-R						Switch Pause Recording on/off.
-ctrl + alt + r				Stop Recording.
-w / ctrl + w				Windows navigation.
+alt + r				    Start Recording.
+shift + alt + r			Switch Pause Recording on/off.
+ctrl + alt + r			Stop Recording.
+w / ctrl + w			Windows navigation.
 alt + w					Window Control Panel.
 y						Display NodesTree.
 z						Load Random Preset.
@@ -449,9 +449,8 @@ Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shi
 
 l			 			Load Preset.
 L						Load Synthesizer.
-ctrl + l					Load preset without close others synthesizer.
-ctrl + L					Load Synthesizer without close others synthesizer.
-J						Save OSCmusicData.
+ctrl + l				Load preset without close others synthesizer.
+ctrl + L				Load Synthesizer without close others synthesize.
 j						Load OSCmusicData.
 s				 		Save preset.
 S				 		Save synthesizer.
@@ -2407,6 +2406,14 @@ Preset Wek",
 			switchAudioIn.valueAction_(0);
 			startSystem.valueAction_(0);
 
+			// Create Init Audio Analyze Parametres
+			s.bind{arg file;
+				Post << "Init Audio Analyze" <<  Char.nl;
+				file=File(pathWekMatrix++"Init Control.scd","w");
+				file.write(fonctionSaveControl.value(windowControl).asCompileString);
+				file.close;
+				s.sync;
+			};
 		});
 
 	}
@@ -2621,6 +2628,12 @@ Preset Wek",
 				// Key alt + I -> Init Algo Synth on front
 				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(88).valueAction_(1);
+				});
+				// Key ctrl + alt + I -> Init Audio Analyze Parametres
+				if(modifiers==786432 and: {unicode==9} and: {keycode==34}, {
+					file=File(pathWekMatrix ++ "Init Control.scd","r");
+					fonctionLoadControl.value(windowControl, file.readAllString.interpret);
+					file.close;
 				});
 				// key f -> Switch File for Analyze
 				if(modifiers==0 and: {unicode==102} and: {keycode==3}, {
@@ -6357,9 +6370,12 @@ Preset Wek",
 
 			// WekMatrix Audio Analyze Onsets
 			SynthDef("OSC WekMatrix Onsets",
-				{arg busAnalyze, seuil=0.5, filtre=0.5, lock=0, id=0;
-					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, array;
+				{arg busAnalyze, seuil=0.5, filtre=0.5, lock=0, loPass=0, hiPass=20000, id=0;
+					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, array, inputFilter;
 					input = In.ar(busAnalyze);
+					//Filtre Passe Bande
+					inputFilter = HPF.ar(input, loPass);
+					inputFilter = LPF.ar(inputFilter, hiPass);
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \power);
 					# freqIn, hasfreqIn = Tartini.kr(input, filtre, 2048, 1024, 512, 0.5);
 					ampIn = A2K.kr(Amplitude.ar(input));
