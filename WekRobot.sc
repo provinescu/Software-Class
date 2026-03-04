@@ -1248,7 +1248,7 @@ Preset Wek",
 
 				// Set buffer tampon
 				~nombreinstrument.do({arg instr; var listebuffer;
-					Post << "Instrument" << " " << instr << Char.nl;
+					//Post << "Instrument" << " " << instr << Char.nl;
 					~looprecordingValue=~looprecordingValue.add(0);
 					~flagBufferFreeze=~flagBufferFreeze.add('Freeze buffer off');
 					~bufferTampon=~bufferTampon.add(nil);
@@ -1290,7 +1290,7 @@ Preset Wek",
 						~file.close;
 						s.sync;
 					});*/
-					~listebufferTampon = ~listebufferTampon.add(listebuffer);
+					~listebufferTampon = ~listebufferTampon.add(~listebuffer);
 				});
 			};
 			~initAllBuffer.value;
