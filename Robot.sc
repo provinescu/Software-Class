@@ -1283,9 +1283,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 			~groupeMasterFX=Group.new(s, \addToTail);
 			// Buffer read file pour analyse
+			~path = PathName.new(~samplePourAnalyse);
+			~path = ~path.fileName;//Name of soundFile
+			~path = "mdfind -name" + ~path;
+			~path = Pipe.new(~path, "r");
+			~rawData = ~path.getLine;// get the first line
+			~path.close;
+			~path = ~rawData;// New Path
+			if(~path == nil , {~path = PathName.new(~samplePourAnalyse).fullPath; ["Warning File Init or not exist:" + ~samplePourAnalyse.asString ].postcs});// File not found
 			~file = SoundFile.new;
 			s.sync;
-			~file.openRead(~samplePourAnalyse);
+			~file.openRead(~path);
 			s.sync;
 			if(~file.numChannels == 1,
 				{~rawData= FloatArray.newClear(~file.numFrames * 2);

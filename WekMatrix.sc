@@ -1499,9 +1499,16 @@ Preset Wek",
 				s.bind{
 					synthPlayFile.set(\trigger, 0);
 					s.sync;
+					p = PathName.new(p);
+					p = p.fileName;//Name of soundFile
+					p = "mdfind -name" + p;
+					p = Pipe.new(p, "r");
+					d = p.getLine;// get the first line
+					p.close;
+					p = d;// New Path
 					f = SoundFile.new;
 					s.sync;
-					f.openRead(p);
+					f.openRead(p.standardizePath);
 					s.sync;
 					if(f.numChannels == 1,
 						{d= FloatArray.newClear(f.numFrames * 2);
@@ -1524,15 +1531,12 @@ Preset Wek",
 					s.sync;
 					synthPlayFile.set(\bufferplay, bufferFile);
 					s.sync;
-					//synthPlayFile.run(true);
-					//s.sync;
 					synthPlayFile.set(\trigger, 1);
 					s.sync;
 					textFileAnalyze.string_(p);
 				};
 				bufferFile.value;
 			};
-
 			fonctionLoadFileForAnalyse.value("/Applications/SuperCollider.app/Contents/Resources/sounds/a11wlk01-44_1.aiff");
 
 			s.bind{

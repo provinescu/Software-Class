@@ -708,12 +708,12 @@ f						Switch File for Analyze.
 				buffer2.free;
 				s.sync;
 				p = PathName.new(p);
-					p = p.fileName;//Name of soundFile
-					p = "mdfind -name" + p;
-					p = Pipe.new(p, "r");
-					d = p.getLine;// get the first line
-					p.close;
-					p = d;// New Path
+				p = p.fileName;//Name of soundFile
+				p = "mdfind -name" + p;
+				p = Pipe.new(p, "r");
+				d = p.getLine;// get the first line
+				p.close;
+				p = d;// New Path
 				f = SoundFile.new;
 				s.sync;
 				f.openRead(p.standardizePath);
@@ -747,9 +747,16 @@ f						Switch File for Analyze.
 		fonctionLoadFileForAnalyse={arg p;
 			var f, d;
 			s.bind{
+				p = PathName.new(p);
+				p = p.fileName;//Name of soundFile
+				p = "mdfind -name" + p;
+				p = Pipe.new(p, "r");
+				d = p.getLine;// get the first line
+				p.close;
+				p = d;// New Path
 				f = SoundFile.new;
 				s.sync;
-				f.openRead(p);
+				f.openRead(p.standardizePath);
 				s.sync;
 				if(f.numChannels == 1,
 					{d= FloatArray.newClear(f.numFrames * 2);
