@@ -2935,9 +2935,7 @@ Preset Wek",
 							\loop, Pfuncn({
 								if(flagRec == 1, {
 									recBuffer.set(\trigger, 1);
-									s.sync;
 									recBuffer.set(\trigger, 0);
-									s.sync;
 								});
 								loopSound}, inf),
 							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, inf),
