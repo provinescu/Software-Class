@@ -2210,20 +2210,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					# freq, amp, duree = ~setdatasplaying.value(i, flagInstrPlay, listeoutfreq, listeoutamp, listeoutduree);
 					~duree.wrapPut(i,duree);
 					if(~playinstrument.wrapAt(i) != "off",{
+						// Freeze
 						if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
-							// Copy buffers
-							if(~looprecordingValue.wrapAt(~numerobuffer.wrapAt(i)).value == 1 ,{
-								~listebuffer.wrapAt(~numerobuffer.wrapAt(i)).copyData(~listebufferTampon.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)));
-							});
-							if(~looprecordingValue.wrapAt(~numerobufferAdd.wrapAt(i)).value == 1 ,{
-								~listebuffer.wrapAt(~numerobufferAdd.wrapAt(i)).copyData(~listebufferTampon.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)));
-							});
-							~bufferTampon.wrapPut(i, ~listebufferTampon.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)));
-							~bufferAddTampon.wrapPut(i, ~listebufferTampon.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)));
+							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, 1);
+							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, 1);
 						},
-						{~bufferTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobuffer.wrapAt(i)));
-							~bufferAddTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobufferAdd.wrapAt(i)))};
+						{
+							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobuffer.wrapAt(i)).value);
+							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobufferAdd.wrapAt(i)).value);
+						}
 						);
+						~bufferTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobuffer.wrapAt(i)));
+						~bufferAddTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobufferAdd.wrapAt(i)));
 						// Set Tuning and Scaling
 						if(~flagScaling.at(i) != 'off', {
 							freq = freq.collect({arg item, index;
@@ -2286,6 +2284,16 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 								~listeeffetsPresynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
 							~nombreEffetsPost.do({arg ii;
 								~listeeffetsPostsynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
+							// Freeze
+						if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
+							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, 0);
+							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, 0);
+						},
+						{
+							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobuffer.wrapAt(i)).value);
+							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobufferAdd.wrapAt(i)).value);
+						}
+						);
 						});
 					});
 					~duree.wrapAt(i).wait;
@@ -2996,7 +3004,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			// loop rec sample
 			~looprecsamplebutton = ~looprecsamplebutton.add(Button(w,Rect( 0, 0, 60, 18)));
 			~looprecsamplebutton.wrapAt(i).states = [["LoopR off", Color.black,  Color.green(0.8, 0.25)],["LoopR on", Color.white, Color.red(0.8, 0.25)]];
-			~looprecsamplebutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'loop rec sample',~numerobuffer.wrapAt(i),"~looprecsamplebutton",view.value);~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\loop, view.value);
+			~looprecsamplebutton.wrapAt(i).action = {|view| ~writepartitions.value(i,'loop rec sample',~numerobuffer.wrapAt(i),"~looprecsamplebutton",view.value);
+				~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\loop, view.value);
 				~looprecordingValue.wrapPut(~numerobuffer.wrapAt(i), view.value);
 				~nombreinstrument.do({arg instr;
 					if(~numerobuffer.wrapAt(instr) == ~numerobuffer.wrapAt(i),{~listesamplein.wrapAt(~numerobuffer.wrapAt(instr)).set(\loop, view.value);
