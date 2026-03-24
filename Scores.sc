@@ -61,7 +61,7 @@ Scores {
 						scorePlaying = score.interpret;
 						wEditScore.string_(score);
 						file.close;
-						wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + path.asPathName.fileName;
+						wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + PathName(path).fileName;
 						dimScore = scorePlaying.size - 1;
 						items = 0;
 						startItems = 0;
@@ -75,7 +75,7 @@ Scores {
 					Dialog.savePanel({arg path;
 						file=File(path,"w");
 						file.write(wEditScore.string);file.close;
-						wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + path.asPathName.fileName;
+						wScore.view.children.at(0).string = "Score Editor/Player for HP Software | " + PathName(path).fileName;
 					},
 					{"cancelled".postln});
 				}
