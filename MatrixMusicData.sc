@@ -206,16 +206,10 @@ MatrixMusicData {
 		});
 		w.view.decorator.nextLine;
 
-		StaticText(w, Rect(0, 0, 600, 20)).string_("(Freeze) Music Data (Pitch (midi),  Amp (db),  duree,  BPM,  Centroid,  Flatness,  Energy,  Flux)").stringColor_(Color.yellow);
-		w.view.decorator.nextLine;
-		wPreset = TextView(w, Rect(0, 0, 600, 400)).autohidesScrollers_(true);
-		wPreset.hasVerticalScroller_(true);
-		wPreset.hasHorizontalScroller_(true);
-		wPreset.autohidesScrollers_(true);
-		w.view.decorator.nextLine;
+		StaticText(w, Rect(0, 0, 495, 20)).string_("Music Data (Pitch (midi),  Amp (db),  duree,  BPM,  Centroid,  Flatness,  Energy,  Flux)").stringColor_(Color.yellow);
 
-		Button(w, Rect(0, 0, 175, 20)).
-		states_([["Put (Freeze) Music !", Color.black, Color.red]]).
+		Button(w, Rect(0, 0, 100, 20)).
+		states_([["UpDate", Color.black, Color.red]]).
 		action_({arg but, music, data;
 			music = wPreset.string.interpret;
 			music.do({arg i;
@@ -224,6 +218,12 @@ MatrixMusicData {
 				data.put(1, data.at(1).dbamp);//Set DB to amp
 			});
 			musicData.at(instrument).at(audio).put(band, music)});
+		w.view.decorator.nextLine;
+
+		wPreset = TextView(w, Rect(0, 0, 600, 420)).autohidesScrollers_(true);
+		wPreset.hasVerticalScroller_(true);
+		wPreset.hasHorizontalScroller_(true);
+		wPreset.autohidesScrollers_(true);
 		w.view.decorator.nextLine;
 
 		// Update Music Data
