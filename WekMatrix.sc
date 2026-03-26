@@ -7864,7 +7864,7 @@ Preset Wek",
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 *100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, 1));
+				chain = Mix(PitchShift.ar(chain, 1, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 4, ctrl11, ctrl12, 1));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -10198,7 +10198,7 @@ Preset Wek",
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), 1, 1, 0, duree, 2);
 				// Synth
-				chain = PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 0.2, ctrl1.clip(0.01, 1) * 8, ctrl2, ctrl3, 1);
+				chain = PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 1, ctrl1.clip(0.01, 1) * 4, ctrl2, ctrl3, 1);
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
@@ -13195,7 +13195,7 @@ Preset Wek",
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
-				chain = Mix(PitchShift.ar(in, 0.2, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 8, ctrl11, ctrl12, amp));
+				chain = Mix(PitchShift.ar(in, 1, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 4, ctrl11, ctrl12, amp));
 				// Switch Audio Out
 				chain = if(switchAudioOut == 0,
 					if(flagMC == 0,
