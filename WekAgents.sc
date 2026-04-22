@@ -5,7 +5,7 @@ WekAgents {
 
 	classvar  < s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP, nom;
 
 	*new	{arg path="~/Documents/WekAgents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448, wekPort=57120, scPort=57110;
 
@@ -1655,9 +1655,11 @@ Preset Wek",
 			// Buffer read file pour analyse
 			~path = PathName.new(~samplePourAnalyse);
 			~path = ~path.fileName;//Name of soundFile
+			nom = ~path;
 			~path = "mdfind -name" + ~path;
 			~path = Pipe.new(~path, "r");
 			~rawData = ~path.getLine;// get the first line
+			while({~rawData.notNil and: {~rawData.contains(nom).not}}, {~rawData = ~path.getLine}); // while to find
 			~path.close;
 			~path = ~rawData;// New Path
 			if(~path == nil , {~path = PathName.new(~samplePourAnalyse).fullPath; ["Warning File Init or not exist:" + ~samplePourAnalyse.asString ].postcs});// File not found
@@ -1708,9 +1710,11 @@ Preset Wek",
 				~displaySons=~displaySons.add(PathName(path).fileName);//Set son affichage
 				path = PathName.new(path);
 				path = path.fileName;//Name of soundFile
+				nom = path;
 				path = "mdfind -name" + path;
 				path = Pipe.new(path, "r");
 				rawData = path.getLine;// get the first line
+				while({rawData.notNil and: {rawData.contains(nom).not}}, {rawData = path.getLine}); // while to find
 				path.close;
 				path = rawData;// New Path
 				if(path == nil , {path = PathName.new(~sounds.wrapAt(i)).fullPath; ["Warning File Init or not exist:" + ~sounds.wrapAt(i).asString ].postcs});// File not found

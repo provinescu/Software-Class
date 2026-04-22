@@ -701,7 +701,7 @@ f						Switch File for Analyze.
 
 		// Fonction Load Sample
 		fonctionLoadSample={arg p, group, buffer, buffer2;
-			var f, d, b, b2;
+			var f, d, b, b2, n;
 			s.bind{
 				buffer.free;
 				s.sync;
@@ -709,9 +709,11 @@ f						Switch File for Analyze.
 				s.sync;
 				p = PathName.new(p);
 				p = p.fileName;//Name of soundFile
+				n = p;
 				p = "mdfind -name" + p;
 				p = Pipe.new(p, "r");
 				d = p.getLine;// get the first line
+				while({d.notNil and: {d.contains(n).not}}, {d = p.getLine}); // while to find
 				p.close;
 				p = d;// New Path
 				f = SoundFile.new;
@@ -745,13 +747,15 @@ f						Switch File for Analyze.
 
 		//Fonction Load file for analyze
 		fonctionLoadFileForAnalyse={arg p;
-			var f, d;
+			var f, d, n;
 			s.bind{
 				p = PathName.new(p);
 				p = p.fileName;//Name of soundFile
+				n = p;
 				p = "mdfind -name" + p;
 				p = Pipe.new(p, "r");
 				d = p.getLine;// get the first line
+				while({d.notNil and: {d.contains(n).not}}, {d = p.getLine}); // while to find
 				p.close;
 				p = d;// New Path
 				f = SoundFile.new;

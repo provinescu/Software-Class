@@ -848,13 +848,15 @@ Density {
 			listeBuffer.soloArray.do({arg buffer; buffer.free});
 			s.sync;
 			listeBuffer=[];
-			listeSound.do({arg arraySound, file, rawData, collect=[];
+			listeSound.do({arg arraySound, file, rawData, collect=[], nom;
 				arraySound.do({arg path, i;
 					path = PathName.new(path);
 					path = path.fileName;//Name of soundFile
+					nom = path;
 					path = "mdfind -name" + path;
 					path = Pipe.new(path, "r");
 					rawData = path.getLine;// get the first line
+					while({rawData.notNil and: {rawData.contains(nom).not}}, {rawData = path.getLine}); // while to find
 					path.close;
 					path = rawData;// New Path
 					if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found

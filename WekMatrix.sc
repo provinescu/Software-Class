@@ -856,15 +856,17 @@ Preset Wek",
 		};
 
 		fonctionLoadSample={arg p, synth, buffer;
-			var f, d, b;
+			var f, d, b, n;
 			s.bind{
 				buffer.free;
 				s.sync;
 				p = PathName.new(p);
 				p = p.fileName;//Name of soundFile
+				n = p;
 				p = "mdfind -name" + p;
 				p = Pipe.new(p, "r");
 				d = p.getLine;// get the first line
+				while({d.notNil and: {d.contains(n).not} }, { d = p.getLine }); // while to find
 				p.close;
 				p = d;// New Path
 				f = SoundFile.new;
@@ -1495,15 +1497,17 @@ Preset Wek",
 
 			//Fonction Load file for analyze
 			fonctionLoadFileForAnalyse={arg p;
-				var f, d;
+				var f, d, n;
 				s.bind{
 					synthPlayFile.set(\trigger, 0);
 					s.sync;
 					p = PathName.new(p);
 					p = p.fileName;//Name of soundFile
+					n = p;
 					p = "mdfind -name" + p;
 					p = Pipe.new(p, "r");
 					d = p.getLine;// get the first line
+					while({d.notNil and: {d.contains(n).not}}, {d = p.getLine}); // while to find
 					p.close;
 					p = d;// New Path
 					f = SoundFile.new;
