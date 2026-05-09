@@ -7847,7 +7847,7 @@ Preset Wek",
 					input= SoundIn.ar(in);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(1024, 1), input);
 					array = MFCC.kr(fft);// 13 a 40 Bands
@@ -7886,10 +7886,10 @@ Preset Wek",
 					inputFilter, harmonic, percussive, array;
 					input= SoundIn.ar(in);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
+					fft2 = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
@@ -7960,7 +7960,7 @@ Preset Wek",
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(1024, 1), input);
 					array = MFCC.kr(fft);// 13 a 40 Bands
@@ -7999,10 +7999,10 @@ Preset Wek",
 					inputFilter, harmonic, percussive, array;
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
+					fft2 = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));

@@ -5852,10 +5852,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg in = 0, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin,
 					inputFilter;
-					input= Mix(Limiter.ar(SoundIn.ar(in)));
+					input= Mix(LeakDC.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5865,7 +5865,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg in = 0, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin,
 					inputFilter;
-					input= Mix(Limiter.ar(SoundIn.ar(in)));
+					input= Mix(LeakDC.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
 					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
@@ -5877,12 +5877,12 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("OSC Robot Pitch2",
 				{arg in = 0, seuil=0.25, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, fft2, inputFilter, harmonic, percussive;
-					input= Mix(Limiter.ar(SoundIn.ar(in)));
+					input= Mix(LeakDC.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
+					fft2 = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
@@ -5893,7 +5893,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("OSC Robot KeyTrack",
 				{arg in = 0, seuil=0.125, filtre=0.5;
 					var input, detect, freqin, ampin, key;
-					input= Mix(Limiter.ar(SoundIn.ar(in)));
+					input= Mix(LeakDC.ar(SoundIn.ar(in)));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);// \rcomplex
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
@@ -5913,10 +5913,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg bufferplay, busFileIn, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin,
 					inputFilter;
-					input = In.ar(busFileIn);
+					input = LeakDC.ar(In.ar(busFileIn));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter,filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter,filtre, 1024, 512, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					freqin=(freqin.cpsmidi)/127;// Convertir hertz en midi puis entre (0 et 1) !!!!!
 					SendReply.kr(detect, '/Robot_Analyse_Audio', values: [freqin, ampin], replyID: [1, 2]);
@@ -5926,7 +5926,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg bufferplay, busFileIn,  seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin,
 					inputFilter;
-					input = In.ar(busFileIn);
+					input = LeakDC.ar(In.ar(busFileIn));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);// \rcomplex
 					# freqin, hasfreqin = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
@@ -5938,12 +5938,12 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("OSC Robot File Pitch2",
 				{arg bufferplay, busFileIn,  seuil=0.25, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, fft2, inputFilter, harmonic, percussive;
-					input = In.ar(busFileIn);
+					input = LeakDC.ar(In.ar(busFileIn));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
+					fft2 = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
@@ -5954,7 +5954,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("OSC Robot File KeyTrack",
 				{arg bufferplay, busFileIn,  seuil=0.125, filtre=0.5;
 					var input, detect, freqin, ampin, key;
-					input = In.ar(busFileIn);
+					input = LeakDC.ar(In.ar(busFileIn));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);// \rcomplex
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqin = (key + 60).midicps, freqin = (key - 12 + 60).midicps);
@@ -5966,14 +5966,14 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("SampleIn",
 				{arg in = 0, buffer, offset=0, run=0, loop=0, trigger=0, reclevel1=1, reclevel2=0;
 					var samplein;
-					samplein=Mix(Limiter.ar(SoundIn.ar(in)));
+					samplein=Mix(LeakDC.ar(SoundIn.ar(in)));
 					RecordBuf.ar(samplein, buffer, offset, reclevel1, reclevel2, run, loop, trigger);
 			}).send(s);
 
 			SynthDef("FileIn",
 				{arg in=[0, 1], buffer, bufferPlay, offset=0, run=0, loop=0, trigger=0, reclevel1=1, reclevel2=0;
 					var fileIn;
-					fileIn=In.ar(in);
+					fileIn=LeakDC.ar(In.ar(in));
 					RecordBuf.ar(fileIn, buffer, offset, reclevel1, reclevel2, run, loop, trigger);
 			}).send(s);
 
@@ -6003,7 +6003,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("OSC Robot Tempo AudioIn",
 				{arg in = 0, lock=0;
 					var trackb,trackh,trackq,tempo, source;
-					source = Mix(Limiter.ar(SoundIn.ar(in)));
+					source = Mix(LeakDC.ar(SoundIn.ar(in)));
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source), lock);
 					SendReply.kr(trackb, '/Robot_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
@@ -6012,7 +6012,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			SynthDef("OSC Robot Tempo FileIn",
 				{arg busFileIn, lock=0;
 					var trackb,trackh,trackq,tempo, source;
-					source = Limiter.ar(In.ar(busFileIn));
+					source = LeakDC.ar(In.ar(busFileIn));
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source), lock);
 					SendReply.kr(trackb, '/Robot_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
@@ -6022,7 +6022,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				{arg out=0, xFade=0.5, panLo=0, panHi=0, gainIn=0.5, bpm=1;
 					var signal, chain, ambisonic;
 					bpm = if(bpm > 1, bpm.reciprocal, bpm);
-					signal = Mix(In.ar(0, ~numberAudioOut)) * gainIn;
+					signal = Mix(LeakDC.ar(In.ar(0, ~numberAudioOut))) * gainIn;
 					chain = Mix(VSTPlugin.ar(signal, ~numberAudioOut));
 					chain = if(~switchAudioOut == 0,
 						if(flagMC == 0,

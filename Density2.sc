@@ -5158,7 +5158,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				input = In.ar(busIn);
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);
-				# freqIn, hasfreqIn = Tartini.kr(inputFilter);//, filtre, 2048, 1024, 512, 0.5);
+				# freqIn, hasfreqIn = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
@@ -5185,10 +5185,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				input = In.ar(busIn);
 				ampInput = if(ampLoPass < 1, 1, if(ampHiPass < 0, 1, 0));
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-				fft = FFT(LocalBuf(512, 1), inputFilter);
-				harmonic = FFT(LocalBuf(512, 1), inputFilter);
-				percussive = FFT(LocalBuf(512, 1), inputFilter);
-				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
+				fft = FFT(LocalBuf(1024, 1), inputFilter);
+				harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+				percussive = FFT(LocalBuf(1024, 1), inputFilter);
+				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 1024, 5, 1, 2, 1);
 				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));

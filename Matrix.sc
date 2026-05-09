@@ -862,6 +862,7 @@ y ... -						Musical keys.
 				p = PathName.new(p);
 				p = p.fileName;//Name of soundFile
 				n = p;
+				n.postcs;
 				p = "mdfind -name" + p;
 				p = Pipe.new(p, "r");
 				d = p.getLine;// get the first line
@@ -1569,7 +1570,7 @@ y ... -						Musical keys.
 
 			//Fonction Load file for analyze
 			fonctionLoadFileForAnalyse={arg p;
-				var f, d, n;
+				var f, d, n, t;
 				s.bind{
 					synthPlayFile.set(\trigger, 0);
 					s.sync;
@@ -1579,7 +1580,10 @@ y ... -						Musical keys.
 					p = "mdfind -name" + p;
 					p = Pipe.new(p, "r");
 					d = p.getLine;// get the first line
-					while({d.notNil and: {d.contains(n).not}}, {d = p.getLine}); // while to find
+					t = PathName(d);
+					t = t.fileName;
+					while({d.notNil and: {t != n}}, {d = p.getLine; t = PathName(d);
+					t = t.fileName}); // while to find
 					p.close;
 					p = d;// New Path
 					f = SoundFile.new;
@@ -1587,6 +1591,7 @@ y ... -						Musical keys.
 					f.openRead(p.standardizePath);
 					s.sync;
 					if(f.numChannels == 1,
+
 						{d= FloatArray.newClear(f.numFrames * 2);
 							s.sync;
 							f.readData(d);
@@ -6109,12 +6114,12 @@ y ... -						Musical keys.
 			SynthDef("OSC Matrix Onsets",
 				{arg busAnalyze, seuil=0.5, filtre=0.5, lock=0, loPass=0, hiPass=20000, id=0;
 					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, inputFilter;
-					input = In.ar(busAnalyze);
+					input = LeakDC.ar(In.ar(busAnalyze));
 					//Filtre Passe Bande
 					inputFilter = HPF.ar(input, loPass);
 					inputFilter = LPF.ar(inputFilter, hiPass);
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil, \power);
-					# freqIn, hasfreqIn = Tartini.kr(input, filtre, 2048, 1024, 512, 0.5);
+					# freqIn, hasfreqIn = Tartini.kr(input, filtre, 1024, 512, 512, 0.5);
 					ampIn = A2K.kr(Amplitude.ar(input));
 					fft = FFT(LocalBuf(1024, 1), input);
 					centroid = SpecCentroid.kr(fft);
@@ -6129,7 +6134,7 @@ y ... -						Musical keys.
 			SynthDef("OSC Matrix Pitch",
 				{arg busAnalyze, seuil=0.5, filtre=0, lock=0, loPass=0, hiPass=20000, id=0;
 					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0,inputFilter;
-					input = In.ar(busAnalyze);
+					input = LeakDC.ar(In.ar(busAnalyze));
 					//Filtre Passe Bande
 					inputFilter = HPF.ar(input, loPass);
 					inputFilter = LPF.ar(inputFilter, hiPass);
@@ -6150,15 +6155,16 @@ y ... -						Musical keys.
 			SynthDef("OSC Matrix Pitch2",
 				{arg busAnalyze, seuil=0.5, filtre=0, lock=0, loPass=0, hiPass=20000, id=0;
 					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, fft2, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, inputFilter, harmonic, percussive;
-					input = In.ar(busAnalyze);
+					// protection DC + nettoyage
+					input = LeakDC.ar(In.ar(busAnalyze));
 					//Filtre Passe Bande
 					inputFilter = HPF.ar(input, loPass);
 					inputFilter = LPF.ar(inputFilter, hiPass);
-					fft = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 512, 5, 1, 2, 1);
-					detect= Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \rcomplex);
+					fft = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 1024, 5, 1, 2, 1);
+					detect= Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampIn = A2K.kr(Amplitude.ar(input));
 					fft2 = FFT(LocalBuf(1024, 1), input);
@@ -6175,7 +6181,7 @@ y ... -						Musical keys.
 			SynthDef("OSC Matrix KeyTrack",
 				{arg busAnalyze, seuil=0.5, filtre=1, lock=0, id=0;
 					var input, detect, freqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, key;
-					input = In.ar(busAnalyze);
+					input = LeakDC.ar(In.ar(busAnalyze));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);
 					key = KeyTrack.kr(FFT(Buffer.alloc(s, 4096, 1), input), (filtre * 2).clip(0, 2));
 					if(key < 12, freqIn = (key + 60).midicps, freqIn = (key - 12 + 60).midicps);
@@ -6194,7 +6200,7 @@ y ... -						Musical keys.
 			SynthDef("Matrix AnalyzeIn",
 				{arg in=0, busAnalyze;
 					var input;
-					input=Mix(SoundIn.ar(in));
+					input=Mix(LeakDC.ar(SoundIn.ar(in)));
 					Out.ar(busAnalyze, input); // Bus Analyze In
 			}).add;
 
@@ -6204,7 +6210,7 @@ y ... -						Musical keys.
 		SynthDef("Matrix FileIn",
 			{arg in=0, busAnalyze;
 				var input;
-				input=In.ar(in);
+				input=LeakDC.ar(In.ar(in));
 				Out.ar(busAnalyze, input); // Bus Analyze In
 		}).add;
 
@@ -6222,7 +6228,7 @@ y ... -						Musical keys.
 		SynthDef("OSC Matrix Keyboard",
 			{arg busAnalyze, seuil=0.5, filtre=0, lock=0, note=0, amp=0, trigger=0;
 				var input, detect, freqIn, hasfreqIn, ampIn, centroid, flatness, fft, energy, timeIn=0, trackB, trackH, trackQ, tempo, flux;
-				input = In.ar(busAnalyze);
+				input = LeakDC.ar(In.ar(busAnalyze));
 				fft = FFT(LocalBuf(1024, 1), input);
 				centroid = SpecCentroid.kr(fft);
 				flatness =  SpecFlatness.kr(fft);
@@ -6237,7 +6243,7 @@ y ... -						Musical keys.
 		SynthDef("OSC Matrix MIDI",
 			{arg busAnalyze, seuil=0.5, filtre=0, lock=0, trigger=0;
 				var input, centroid, flatness, fft, energy, trackB, trackH, trackQ, tempo, flux;
-				input = In.ar(busAnalyze);
+				input = LeakDC.ar(In.ar(busAnalyze));
 				fft = FFT(LocalBuf(1024, 1), input);
 				centroid = SpecCentroid.kr(fft);
 				flatness =  SpecFlatness.kr(fft);
@@ -6251,7 +6257,7 @@ y ... -						Musical keys.
 		SynthDef("Matrix AudioIn",
 			{arg in=0, busIn;
 				var input;
-				input=Mix(SoundIn.ar(in));
+				input=Mix(LeakDC.ar(SoundIn.ar(in)));
 				Out.ar(busIn, input); // Bus In
 		}).add;
 
@@ -6265,7 +6271,7 @@ y ... -						Musical keys.
 		SynthDef("RecBuffer",
 			{arg out, busIn, buffer, offset=0, preLevel=1, postLevel=0, run=1, loop=1, trigger=0;
 				var in;
-				in = In.ar(busIn);
+				in = LeakDC.ar(In.ar(busIn));
 				RecordBuf.ar(in, buffer, offset, preLevel, postLevel, run, loop, trigger);
 		}).add;
 
@@ -6274,7 +6280,7 @@ y ... -						Musical keys.
 			{arg out=0, xFade=0.5, panLo=0, panHi=0, gainIn=0.5, freq, amp, duree, bpm=1, freqCentroid, flatness, energy, flux;
 				var signal, chain, ambisonic;
 				bpm = if(bpm > 1, bpm.reciprocal, bpm);
-				signal = Mix(In.ar(0, numberAudioOut)) * gainIn;
+				signal = Mix(LeakDC.ar(In.ar(0, numberAudioOut))) * gainIn;
 				chain = Mix(VSTPlugin.ar(signal, numberAudioOut));
 				//chain = Pan2.ar(chain, TRand.kr(panLo, panHi, Impulse.kr(bpm)).lag(bpm.reciprocal + 1));
 				chain = if(switchAudioOut == 0,

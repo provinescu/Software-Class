@@ -5921,7 +5921,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
@@ -5946,10 +5946,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					var input, detect, freqin, hasfreqin, ampin, fft2, inputFilter, harmonic, percussive, array;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
+					fft2 = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
@@ -5997,7 +5997,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 					detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);// \rcomplex
-					# freqin, hasfreqin = Tartini.kr(inputFilter,filtre, 2048, 1024, 512, 0.5);
+					# freqin, hasfreqin = Tartini.kr(inputFilter,filtre, 1024, 512, 512, 0.5);
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Convertir hertz en midi puis entre (0 et 1) !!!!!
@@ -6022,10 +6022,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					var input, detect, freqin, hasfreqin, ampin, fft2, inputFilter, harmonic, percussive, array;
 					input = In.ar(busFileIn);
 					inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-					fft2 = FFT(LocalBuf(512, 1), inputFilter);
-					harmonic = FFT(LocalBuf(512, 1), inputFilter);
-					percussive = FFT(LocalBuf(512, 1), inputFilter);
-					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 512, 5, 1, 2, 1);
+					fft2 = FFT(LocalBuf(1024, 1), inputFilter);
+					harmonic = FFT(LocalBuf(1024, 1), inputFilter);
+					percussive = FFT(LocalBuf(1024, 1), inputFilter);
+					#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 					detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 					# freqin, hasfreqin = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 					ampin = A2K.kr(Amplitude.ar(input));
