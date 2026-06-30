@@ -5,7 +5,7 @@ Launcher {
 
 	var <> name, ni, o, r, f, w, devIn, devOut, listDevIn, listDevOut, path, nameSoft, driverBlock, widthMC, orientationMC, flagMC, wek, wekPort, scPort;
 
-	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, wek=6448, wekPort = 57120, scPort = 57110;
+	*new	{arg path="~/Documents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, wek=6448, wekPort = 57120, scPort = 57120;
 
 		^super.new.init(path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
@@ -42,10 +42,10 @@ Launcher {
 		StaticText(w, Rect(0, 0, 50, 20)).string_("Server").stringColor_(Color.yellow);
 		NumberBox(w, 50@20).value_(57110).action_{arg ez; scPort = ez.value.asInteger};
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Local", "Internal"]).stringColor_(Color.white).action = {|source| if(source.value == 0,
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Local", "Internal"]).stringColor_(Color.white).action_({|source| if(source.value == 0,
 			{Server.default = Server.local},
 			{Server.default = Server.internal});
-		};
+	}).enabled_(false);
 
 		//Text File In
 		StaticText(w, Rect(0, 0, 200, 20)).string_("SoundCard (In / Out)").stringColor_(Color.yellow);

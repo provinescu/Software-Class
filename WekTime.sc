@@ -2,7 +2,7 @@
 
 WekTime {
 
-	classvar  < s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP, numSequencer, wekBPM;
+	classvar  <> s, sender, dimIn, choiceFilter, choiceFX, flagStreamMFCC, mfccData, numPreset, lastNumPreset, lastTimeWekPreset, timeWekPreset, listeWekPreset, timeWekData, lastTimeWekData, flagWTD, flagWTP, numSequencer, wekBPM, scAdr, udpAdr;
 
 	var pathWekTime, numberAudioOut, recChannels, groupeSynth, listeGroupSynth, listeGroupDolby, numberSynth, sequencer, windowControlGUI, cmdperiodfunc, listeBusInFilter, listeBusInFX, listeBusOutFX, listeBusInDolby, listeBuffer, listeSoundFile, fonctionLoadSample, synthLimiter, typeSequencer, listeOctave, listeActiveJitterOctave, listeJitterOctave, listeDemiTon, listeActiveJitterDemiTon, listeJitterDemiTon, listeCent, listeActiveJitterCent, listeJitterCent, listeAmp, listeActiveJitterAmp, listeJitterAmp, listeJitterWaveForm, listeStartPos, listeLenght, listeReverse, changeChoiceTrigger, densityBPM, indexSequence, listeEnvelopeSynth, listeFilters, listeFX, listeCtrl1Filter, listeActiveJitterCtrl1Filter, listeCtrl2Filter, listeActiveJitterCtrl2Filter;
 
@@ -29,6 +29,8 @@ WekTime {
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
+		udpAdr = NetAddr.langPort;
+		scAdr = NetAddr("localhost", scPort);
 
 		~pathWekTime = PathName.new(path).pathOnly;
 
@@ -64,7 +66,7 @@ WekTime {
 			4, {"Dolby5.1"},
 		);// Type Format stereo, ambisonic, etc...
 
-		thisProcess.openUDPPort(NetAddr.langPort);
+		thisProcess.openUDPPort(udpAdr);
 
 		Safety(s);
 		//s.makeGui;
@@ -137,7 +139,7 @@ WekTime {
 					item = item + 3;
 					cmd = msg[item];
 			});
-		}, \score, recvPort: NetAddr.langPort);
+		}, \score, recvPort: udpAdr);
 
 		fonctionCollectFolders = {
 			// Collect all Preset
@@ -238,6 +240,7 @@ f						Switch File for Analyze.
 			'TGrains',
 			'Warp1',
 			'BufRd',
+			'BufRdLive',
 			'LoopBuf',
 			'PlayBuf',
 			'PlayBufMedianLeakDC',
@@ -2522,7 +2525,7 @@ f						Switch File for Analyze.
 							Synth.new(typeSynthDef.at(synth),[
 								\out, listeBusInFilter.at(synth), \buffer, buffer.bufnum, \freq, freqSynth, \rate, rate, \amp, amp.dbamp, \duree, dureeSynth, \startPos, startPos, \endPos, endPos,
 								\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-								\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \loop, loopSample.at(synth), \hp1, hprec1, \hp2, hprec2], listeGroupSynth.at(synth), \addToHead).map(\oscFreq, busOSCfreq, \oscAmp, busOSCamp, \oscDuree, busOSCduree, \oscTempo, busOSCtempo, \oscFlux, busOSCflux, \oscFlatness, busOSCflatness, \oscEnergy, busOSCenergy, \oscCentroid, busOSCcentroid);
+								\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \loop, loopSample.at(synth), \hp1, hprec1, \hp2, hprec2, \level1, listeRecLevel.at(synth), \level2, listePreLevel.at(synth), \in, listeBusSynth.at(synth)], listeGroupSynth.at(synth), \addToHead).map(\oscFreq, busOSCfreq, \oscAmp, busOSCamp, \oscDuree, busOSCduree, \oscTempo, busOSCtempo, \oscFlux, busOSCflux, \oscFlatness, busOSCflatness, \oscEnergy, busOSCenergy, \oscCentroid, busOSCcentroid);
 							s.sync;
 						}, {if(flagMidiOut == 'on' and: {synthCanalMidiOut.wrapAt(synth).value >= 0}, {midiOut.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0);
 							if(flagVST == 'on', {~fxVST.midi.noteOff(synthCanalMidiOut.wrapAt(synth), freqMidi.wrapAt(synth), 0)});
@@ -2781,10 +2784,10 @@ f						Switch File for Analyze.
 					oscHPstart.free;
 					oscHPrec.free;
 					SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
-						SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
+						SCRequestString(scAdr.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
 							// Set OSC Addresse et Port Slave
 							SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-								SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
+								SCRequestString(scAdr.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
 									initOSCresponder.value;
 								});
 							});
@@ -3847,7 +3850,7 @@ Preset Wek",
 		// Auto Root
 		Button(windowControlGUI, Rect(615, 5, 105, 20))
 		.background_(Color.white).
-		states_([["Auto On", Color.green, Color.black(0.75, 0.25)],["Auto Off", Color.red(1, 1), Color.black(0.75, 0.25)]]).
+		states_([["Roots On", Color.green, Color.black(0.75, 0.25)],["Roots Off", Color.red(1, 1), Color.black(0.75, 0.25)]]).
 		action_({arg etat; if(etat.value == 0, {autoRoot = 'off'; /*windowControlGUI.view.children.at(7).children.at(2).valueAction_(0)*/}, {autoRoot = 'on'})});
 
 		// Tuning
@@ -4148,7 +4151,7 @@ Preset Wek",
 
 			// Band 0 to 12
 			Button.new(windowControlGUI, Rect(synth * 315 + 45 + (0 * 20), numberSynth * 25 + 200, 15, 20)).
-			states_([["0", Color.green], ["0", Color.red]]).
+			states_([["All", Color.green], ["All", Color.red]]).
 			action_({arg band; flagIndexBand.put(synth, flagIndexBand.at(synth).put(0, band.value)); fonctionBand.value(0, synth)});
 			Button.new(windowControlGUI, Rect(synth * 315 + 45 + (1 * 20), numberSynth * 25 + 200, 15, 20)).
 			states_([["1", Color.green], ["1", Color.red]]).
@@ -4923,7 +4926,7 @@ Preset Wek",
 
 	initSynthDef  {
 
-		//////////////////////// SYNTH  WekTime//////////////////////
+		//////////////////////// SYNTH  Time//////////////////////
 
 		/*BufRateScale.kr(buffer) * rate*/
 
@@ -4938,7 +4941,7 @@ Preset Wek",
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				chain = Mix(HPtGrains.ar(2, trig, buffer, rate, BufDur.kr(buffer) * abs(endPos - startPos / 2 + startPos), duree, 0, amp, hp1, hp2)) * envelope;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Warp1',
@@ -4951,8 +4954,8 @@ Preset Wek",
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = Warp1.ar(1, buffer, startPos, rate, duree, -1, 8, oscFlatness) * envelope;
-				Out.ar(out, chain);
+				chain = Warp1.ar(1, buffer, startPos, rate, duree, -1, 8, oscFlatness, interp: 4) * envelope;
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('BufRd',
@@ -4964,8 +4967,34 @@ Preset Wek",
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(0, rate, BufFrames.kr(buffer) * startPos, BufFrames.kr(buffer) * endPos), 1, loop, hp1, hp2) * envelope;
-				Out.ar(out, chain);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(0, rate, BufFrames.kr(buffer) * startPos, BufFrames.kr(buffer) * endPos), 1, loop, hp1, hp2, 4) * envelope;
+				Out.ar(out,  LeakDC.ar(chain.softclip));
+		}).add;
+
+		SynthDef('BufRdLive',
+			{arg out, buffer, freq, rate, amp, duree, startPos, endPos,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
+				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid, hp1=0.5, hp2=0.5, level1=1, level2=0, in=0;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, trig=0;
+				pitchRatio = Lag.kr(rate, 0.015);
+				frames = BufFrames.kr(buffer);
+				input = In.ar(in,1);
+				trig = Changed.kr(pitchRatio);
+				// Envelope
+				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
+				writePos = Phasor.ar(0, 1, 0, frames);
+				//BufWr.ar(input, buffer, writePos);
+				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: trig);
+				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+				readPosA = (writePos - phaseA - 128).wrap(0, frames);
+				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: hp1, sensibilite: hp2, interp:4) * winA;
+				sigB = HPbufRd.ar(1, buffer, readPosB, seuil: hp1, sensibilite: hp2, interp:4) * winB;
+				Out.ar(out, LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544)) * envelope);
 		}).add;
 
 		SynthDef('LoopBuf',
@@ -4978,8 +5007,8 @@ Preset Wek",
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
-				chain = LoopBuf.ar(1, buffer, rate, 1, BufFrames.kr(buffer) * startPos, BufFrames.kr(buffer) * startPos, BufFrames.kr(buffer) * endPos) * envelope;
-				Out.ar(out, chain);
+				chain = LoopBuf.ar(1, buffer, rate, 1, BufFrames.kr(buffer) * startPos, BufFrames.kr(buffer) * startPos, BufFrames.kr(buffer) * endPos, 4) * envelope;
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('PlayBuf',
@@ -4994,7 +5023,7 @@ Preset Wek",
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, hp1, hp2) * envelope;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('PlayBufMedianLeakDC',
@@ -5011,7 +5040,7 @@ Preset Wek",
 				oscFlatness = (oscFlatness * 30 + 1).clip(1, 31);
 				oscFlux = oscFlux.clip(0.01, 0.995);
 				chain = LeakDC.ar(Median.ar(oscFlatness, HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, hp1, hp2) * envelope), oscFlux);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Waveloss',
@@ -5027,7 +5056,7 @@ Preset Wek",
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, rate, trig, BufFrames.kr(buffer) * startPos, loop, hp1, hp2) * envelope;
 				chain = WaveLoss.ar(chain, oscFlux * 20 + 20, oscFlatness * 40 + 40);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('DelayHarmonic',
@@ -5047,7 +5076,7 @@ Preset Wek",
 				envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
 				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
 				chain = del.sum;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth HPshiftDown',
@@ -5065,7 +5094,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_HPshiftDown(chain, oscFlux.clip(0.001, 1) * 32);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagShift',
@@ -5083,7 +5112,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagShift(chain, oscFlux.clip(0.001, 1) * 4, oscFlatness.clip(0.001, 1) * 128 - 64);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth LocalMax',
@@ -5101,7 +5130,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_LocalMax(chain, oscFlux*64);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth RandComb',
@@ -5119,7 +5148,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_RandComb(chain, oscFlux,  LFNoise2.kr(oscFlatness*64));
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth BinShift',
@@ -5137,7 +5166,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_BinShift(chain, oscFlux * 4, oscFlatness * 256);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth BinScramble',
@@ -5156,7 +5185,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_BinScramble(chain, oscFlux,  oscFlatness, LFNoise2.kr(oscDuree.reciprocal));
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth BrickWall',
@@ -5174,7 +5203,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_BrickWall(chain, oscFlux*2 - 1);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth ConformalMap',
@@ -5192,7 +5221,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_ConformalMap(chain, oscFlux*2 - 1, oscFlatness*2 - 1);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth Diffuser',
@@ -5210,7 +5239,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_Diffuser(chain, Trig1.kr(LFNoise2.kr(oscFlux*100), (oscFlatness*100).reciprocal));
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagAbove',
@@ -5228,7 +5257,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagAbove(chain, oscFlux * 1024);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagBelow',
@@ -5246,7 +5275,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagBelow(chain,  oscFlux * 1024);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagClip',
@@ -5264,7 +5293,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagClip(chain, oscFlux * 1024);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagSquared',
@@ -5282,7 +5311,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagSquared(chain);
 				chain= IFFT(chain) * 0.01;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth RectComb',
@@ -5301,7 +5330,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_RectComb(chain, oscFlux * 1024, oscFlatness);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagSmooth',
@@ -5319,7 +5348,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagSmooth(chain, oscFlux);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth Compander',
@@ -5338,7 +5367,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_Compander(chain, 256 * oscFlux.clip(0.1, 1), (oscFlatness * 5).clip(2, 5), oscDuree);
 				chain= IFFT(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth SpectralEnhance',
@@ -5357,7 +5386,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_SpectralEnhance(chain, (oscFlux * 8 + 0.5).floor, oscFlatness * 4 + 1);
 				chain= IFFT(chain) * 0.125;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagStretch',
@@ -5375,7 +5404,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagShift(chain, oscFlux * 256);
 				chain= IFFT(chain) * 0.125;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth MagShift+Stretch',
@@ -5393,7 +5422,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_MagShift(chain, oscFlux * 256, oscFlatness * 128);
 				chain= IFFT(chain) * 0.125;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('Synth Cutoff',
@@ -5411,7 +5440,7 @@ Preset Wek",
 				chain = FFT(LocalBuf(1024, 1), chain);
 				chain = PV_Cutoff(chain, oscFlux * 2 - 1);
 				chain= IFFT(chain) * 0.125;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('SinOsc',
@@ -5458,7 +5487,7 @@ Preset Wek",
 				//chain = Decimator.ar(chain, oscFlatness * 48000, oscFlux * 24, mul: envelope);
 				//chain = Decimator.ar(chain, oscFlatness * 96000, oscFlatness * 24, mul: envelope);
 				chain = chain * envelope;
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		SynthDef('MdaPiano',
@@ -5801,7 +5830,7 @@ Preset Wek",
 				var chain;
 				chain = In.ar(in, 1);
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, In.ar(in, 1));
+				Out.ar(out, LeakDC.ar(In.ar(in, 1)));
 		}).add;
 
 		// LPF
@@ -5810,7 +5839,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain  = Mix(LPF.ar(signal, ctrl1, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// HPF
@@ -5819,7 +5848,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(HPF.ar(signal, ctrl1, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// RLPF
@@ -5828,7 +5857,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain  = Mix(RLPF.ar(signal, ctrl1, abs(ctrl2 - 1), vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// RHPF
@@ -5837,7 +5866,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(RHPF.ar(signal, ctrl1, abs(ctrl2 - 1), vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// BPF
@@ -5846,7 +5875,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(BPF.ar(signal, ctrl1, ctrl2, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// BRF
@@ -5855,7 +5884,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(BRF.ar(signal, ctrl1, ctrl2, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Ringz
@@ -5864,7 +5893,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(Ringz.ar(signal, ctrl1, ctrl2 * 4, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Resonz
@@ -5873,7 +5902,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(Resonz.ar(signal, ctrl1, abs(ctrl2 - 1), vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// CombCFilter
@@ -5882,7 +5911,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(CombC.ar(signal, 0.1, ctrl1 / 12544 / 10, ctrl2 * 4 * (ctrl3 - 0.5 + 0.001).sign, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Formlet
@@ -5891,7 +5920,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(Formlet.ar(signal, ctrl1, ctrl2, ctrl3 * 4, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// FreqShift
@@ -5900,7 +5929,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(FreqShift.ar(signal, ctrl1 / 12544 * 5000, ctrl2 * 2pi, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		// PitchShift
@@ -5909,7 +5938,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(PitchShift.ar(signal, 0.1, ctrl1 / 12544 * 4 + 0.08, ctrl2, ctrl3, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		// PV_MagFreeze
@@ -5923,7 +5952,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagNoise
@@ -5935,7 +5964,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagClip
@@ -5947,7 +5976,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagSmooth
@@ -5959,7 +5988,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_Diffuser
@@ -5971,7 +6000,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_BrickWall
@@ -5983,7 +6012,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_LocalMax
@@ -5995,7 +6024,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagSquared
@@ -6007,7 +6036,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (ctrl1 / 12544 * (vol - 1)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagBelow
@@ -6019,7 +6048,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagAbove
@@ -6031,7 +6060,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_RandComb
@@ -6043,7 +6072,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagShift
@@ -6055,7 +6084,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_BinScramble
@@ -6067,7 +6096,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_BinShift
@@ -6079,7 +6108,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_RectComb
@@ -6091,7 +6120,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_ConformalMap
@@ -6103,7 +6132,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_Compander
@@ -6115,7 +6144,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_SpectralEnhance
@@ -6127,7 +6156,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagShift
@@ -6139,7 +6168,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// PV_MagShift
@@ -6151,7 +6180,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// DJ_FX
@@ -6163,7 +6192,7 @@ Preset Wek",
 				LocalOut.ar(DelayC.ar(chain, 1, ctrl3.clip(0.01, 1)));
 				chain = Mix(chain  * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		// WaveLoss
@@ -6172,7 +6201,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain  = Mix(WaveLoss.ar(signal, ctrl1 / 12544 * 40, 40, abs(ctrl2 * 2 - 1), vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		// Median
@@ -6181,7 +6210,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(Median.ar(ctrl1 / 12544 * 30 + 1, signal, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		// LeakDC
@@ -6211,7 +6240,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = Mix(chain * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Delay
@@ -6222,7 +6251,7 @@ Preset Wek",
 				chain = Mix(DelayC.ar(local, 5.0, ctrl1 / 12544 * 5.0, vol, signal * (1 - vol)));
 				LocalOut.ar(chain);
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Warp+Delay
@@ -6234,7 +6263,7 @@ Preset Wek",
 				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 / 12544 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), 0.2, -1, 8, 0, 1, vol, signal * (1 - vol)));
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl3.clip(0.01, 4)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		////////////////////////////// FX ///////////////////////
@@ -6245,7 +6274,7 @@ Preset Wek",
 				var chain;
 				chain = In.ar(in, 1);
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// AllpassC
@@ -6256,7 +6285,7 @@ Preset Wek",
 				chain = Mix(AllpassC.ar(local, 0.1, ctrl1, ctrl2 * 4, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
 				LocalOut.ar(chain);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// FreeVerb
@@ -6265,7 +6294,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(FreeVerb.ar(signal, 1.0, ctrl1, ctrl2, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// GVerb
@@ -6274,7 +6303,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(GVerb.ar(signal, (ctrl1 * 300).clip(1, 300), (ctrl2 * 100).clip(0.01, 100), ctrl3.clip(0.01, 1), inputbw, spread, drylevel, ctrl5.clip(0.01, 1), ctrl4.clip(0.01, 1), maxroomsize, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// JPverb
@@ -6284,7 +6313,7 @@ Preset Wek",
 				chain = Mix(JPverb.ar(signal, ctrl1 * 60, ctrl2, ctrl3 , ctrl4, ctrl5 * 10));
 				chain = Mix(chain  * vol + (signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// CombCFX
@@ -6293,7 +6322,7 @@ Preset Wek",
 				var chain, signal=In.ar(in, 1);
 				chain = Mix(CombC.ar(signal, 0.1, ctrl1 / 10, ctrl2 * 4 * (ctrl3 - 0.5 + 0.001).sign, vol, signal * (1 - vol)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// DelayC
@@ -6304,7 +6333,7 @@ Preset Wek",
 				chain = Mix(DelayC.ar(local, 5.0, ctrl1 * 5.0, vol, signal * (1 - vol)));
 				LocalOut.ar(chain);
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// WarpDelay
@@ -6316,7 +6345,89 @@ Preset Wek",
 				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), ctrl3.clip(0.01, 1), -1, (ctrl4 * 16).clip(1, 16), 0, 1, vol, signal * (1 - vol)));
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl5.clip(0.01, 4)));
 				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
+		}).add;
+
+		////////////////////////////// FX ///////////////////////
+
+		// ByPassFX
+		SynthDef('ByPassFX',
+			{arg out, in, gate = 1;
+				var chain;
+				chain = In.ar(in, 1);
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// AllpassC
+		SynthDef('AllpassC',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
+				var chain, signal=In.ar(in, 1), local;
+				local = LocalIn.ar(1) + signal;
+				chain = Mix(AllpassC.ar(local, 0.1, ctrl1, ctrl2 * 4, vol, signal * (1 - vol)));
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				LocalOut.ar(chain);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// FreeVerb
+		SynthDef('FreeVerb',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(FreeVerb.ar(signal, 1.0, ctrl1, ctrl2, vol, signal * (1 - vol)));
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// GVerb
+		SynthDef('GVerb',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, spread = 15, drylevel = 0.01, inputbw = 0.5, maxroomsize = 300, vol, gate = 1;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(GVerb.ar(signal, (ctrl1 * 300).clip(1, 300), (ctrl2 * 100).clip(0.01, 100), ctrl3.clip(0.01, 1), inputbw, spread, drylevel, ctrl5.clip(0.01, 1), ctrl4.clip(0.01, 1), maxroomsize, vol, signal * (1 - vol)));
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// JPverb
+		SynthDef('JPverb',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(JPverb.ar(signal, ctrl1 * 60, ctrl2, ctrl3 , ctrl4, ctrl5 * 10));
+				chain = Mix(chain  * vol + (signal * (1 - vol)));
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// CombCFX
+		SynthDef('CombCFX',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate =1;
+				var chain, signal=In.ar(in, 1);
+				chain = Mix(CombC.ar(signal, 0.1, ctrl1 / 10, ctrl2 * 4 * (ctrl3 - 0.5 + 0.001).sign, vol, signal * (1 - vol)));
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// DelayC
+		SynthDef('DelayC',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, local, gate = 1;
+				var chain, signal=In.ar(in, 1);
+				local = LocalIn.ar(1) + signal;
+				chain = Mix(DelayC.ar(local, 5.0, ctrl1 * 5.0, vol, signal * (1 - vol)));
+				LocalOut.ar(chain);
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain));
+		}).add;
+
+		// WarpDelay
+		SynthDef('WarpDelay',
+			{arg out, in, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, vol, gate = 1;
+				var chain, signal=In.ar(in, 1), buffer=LocalBuf(s.sampleRate * 4, 1).clear;
+				LocalIn.ar(1).clear;
+				RecordBuf.ar(signal, buffer,  recLevel: 1, preLevel: 0.333, loop: 1);
+				chain = Mix(Warp1.ar(1, buffer, TRand.kr(0, 1, Dust.kr((ctrl1 * 64).clip(0.0625, 64))), (ctrl2 * 8).clip(0.125, 8), ctrl3.clip(0.01, 1), -1, (ctrl4 * 16).clip(1, 16), 0, 1, vol, signal * (1 - vol)));
+				LocalOut.ar(DelayC.ar(chain, 4, ctrl5.clip(0.01, 4)));
+				chain = chain * EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
+				Out.ar(out,  LeakDC.ar(chain.softclip));
 		}).add;
 
 		/////////////////////////// Dolby5.1 or Stereo //////////////////////
@@ -6325,7 +6436,7 @@ Preset Wek",
 		SynthDef("Dolby5.1",
 			{arg out=0, in, panX, panY;
 				var signal, chain, front, center, lfe, rear;
-				signal = In.ar(in, 1);
+				signal = LeakDC.ar(In.ar(in, 1));
 				//// FL FR Center LFE RL RR -> [0, 1, 2, 3, 4, 5]
 				front = Pan2.ar(signal, panX, panY + 1 / 2);
 				rear = Pan2.ar(signal, panX, 1 - (panY + 1 / 2));
@@ -6345,7 +6456,7 @@ Preset Wek",
 				var signal, chain;
 				signal = In.ar(in, 1);
 				chain = Pan2.ar(signal, panX, 1);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// MultiSpeaker
@@ -6354,7 +6465,7 @@ Preset Wek",
 				var signal, chain;
 				signal = In.ar(in, 1);
 				chain = PanAz.ar(numberAudioOut, signal, panX, 1, widthMC, orientationMC);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Rotate2
@@ -6363,7 +6474,7 @@ Preset Wek",
 				var signal, chain;
 				signal = In.ar(in, 1);
 				chain = Rotate2.ar(signal, signal, panX);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		// Ambisonic
@@ -6373,7 +6484,7 @@ Preset Wek",
 				signal = In.ar(in, 1);
 				ambisonic = PanB2.ar(signal, panX);
 				chain = DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2]);
-				Out.ar(out, chain);
+				Out.ar(out,  LeakDC.ar(chain));
 		}).add;
 
 		////////////////////////////// Pre + Post Production //////////////////////
@@ -6486,13 +6597,13 @@ Preset Wek",
 		// Synth AudioRec
 		SynthDef("AudioRec",
 			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1, trigger=1;
-				RecordBuf.ar(SoundIn.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: trigger, doneAction: 0);
+				RecordBuf.ar(LeakDC.ar(SoundIn.ar(busIn)), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: trigger, doneAction: 0);
 		}).add;
 
 		// Synth FileRec
 		SynthDef("FileRec",
 			{arg busIn, bufferAudioRec, recLevel=1, preLevel=0, loop=1, trigger=1;
-				RecordBuf.ar(In.ar(busIn), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: trigger, doneAction: 0);
+				RecordBuf.ar(LeakDC.ar(In.ar(busIn)), bufferAudioRec, offset: 0, recLevel: recLevel, preLevel: preLevel, run: 1, loop: loop, trigger: trigger, doneAction: 0);
 		}).add;
 
 		// Synth Post Production
@@ -6501,7 +6612,7 @@ Preset Wek",
 				var chain, in;
 				in = LeakDC.ar(In.ar(0, numberAudioOut));
 				chain = Limiter.ar(in * postAmp, limit);
-				ReplaceOut.ar(out, chain);
+				ReplaceOut.ar(out, LeakDC.ar(chain));
 		}).add;
 
 		//////////////// VST Plugin //////////////////////

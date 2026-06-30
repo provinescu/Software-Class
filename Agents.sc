@@ -5,7 +5,7 @@ Agents {
 
 	classvar  <> s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, nom;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, nom, foncSynthOut, foncFXOut, foncVerbOut, scAdr, udpAdr;
 
 	*new	{arg path="~/Documents/Agents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Agents", wek=6448, wekPort=57120, scPort=57110;
 
@@ -18,6 +18,8 @@ Agents {
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
+		udpAdr = NetAddr.langPort;
+		scAdr = NetAddr("localhost", scPort);
 
 		~nompathdata=PathName.new(path).pathOnly;
 
@@ -48,7 +50,7 @@ Agents {
 		~widthMC = wid;
 		~orientationMC = ori;
 
-		thisProcess.openUDPPort(NetAddr.langPort);
+		thisProcess.openUDPPort(udpAdr);
 
 		Safety(s);
 		//s.makeGui;
@@ -766,10 +768,10 @@ G                       Init Genome Agent (solo).
 					~oscHPstart.free;
 					~oscHPrec.free;
 					SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
-						SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); ~masterAppAddr = addrM;
+						SCRequestString(scAdr.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); ~masterAppAddr = addrM;
 							// Set OSC Addresse et Port Slave
 							SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-								SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); ~slaveAppAddr = addrS;
+								SCRequestString(scAdr.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); ~slaveAppAddr = addrS;
 									~initOSCresponder.value;
 								});
 							});
@@ -1189,6 +1191,7 @@ G                       Init Genome Agent (solo).
 					"HPplayBuf2",
 					"HPbufRd",
 					"HPbufRd2",
+					"HPbufRdLive",
 					"HPtGrains",
 					"HPplayBufMedianLeakDC",
 					"SampleResonz",
@@ -1328,6 +1331,7 @@ G                       Init Genome Agent (solo).
 			"PlayBuf2",
 			"BufRd",
 			"BufRd2",
+			"BufRdLive",
 			"TGrains",
 			"LoopBuf",
 			"GrainBuf",
@@ -1391,6 +1395,7 @@ G                       Init Genome Agent (solo).
 			"HPplayBuf2",
 			"HPbufRd",
 			"HPbufRd2",
+			"HPbufRdLive",
 			"HPtGrains",
 			"HPplayBufMedianLeakDC",
 			"SampleResonz",
@@ -1903,7 +1908,7 @@ G                       Init Genome Agent (solo).
 					item = item + 3;
 					cmd = msg[item];
 			});
-		}, \score, recvPort: NetAddr.langPort);
+		}, \score, recvPort: udpAdr);
 
 		// OSC analyse tempo
 		~oscTempoIn = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -4136,7 +4141,7 @@ G                       Init Genome Agent (solo).
 		StaticText(~wg, 40 @ 20).string_("FzBand").stringColor_(Color.white).font = Font("Helvetica", 8);// 57
 		// Band 0 to 12
 		~geneBand0 = Button.new(~wg, 16 @ 20).
-		states_([["0", Color.green], ["0", Color.red]]).font_(Font("Helvetica", 10)).
+		states_([["All", Color.green], ["All", Color.red]]).font_(Font("Helvetica", 10)).
 		action_({arg band; ~flagBandGenes.put(0, band.value);
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~geneBand0", band.value)});
 		}); // all Band 58
@@ -5018,7 +5023,7 @@ G                       Init Genome Agent (solo).
 		// SynthBand
 		// Band 0 to 12
 		~synthBand0 = Button.new(~wp, 16 @ 20).
-		states_([["0", Color.green], ["0", Color.red]]).
+		states_([["All", Color.green], ["All", Color.red]]).
 		action_({arg band; ~flagBandSynth.put(0, band.value);
 			if(~flagScoreRecordGUI == 'on', {~fonctionRecordScore.value("~synthBand0", band.value)});
 		}); // all Band 29
@@ -7435,6 +7440,69 @@ G                       Init Genome Agent (solo).
 
 		if(flag == true, {
 
+			foncSynthOut = {arg main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb;
+				// Switch Audio Out
+				main = if(~switchAudioOut == 0,
+					if(~flagMC == 0,
+						// Pan 1
+						Pan2.ar(main, Rand(panLo, panHi), envelope),
+						// Pan 2
+						Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
+					if(~switchAudioOut == 2,
+						if(~flagMC == 0,
+							// PanAz 1
+							PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
+							// PanAz 2
+							PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
+						if(~switchAudioOut == 1,
+							// Rotate2
+							Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
+							// Ambisonic
+							(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
+								DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				Out.ar(buseffets, Mix(main) * amp);
+				Out.ar(busverb, Mix(main) * amp);// * ampreal
+				Out.ar(out, main * amp * ampreal);
+			};
+
+			foncFXOut = {arg effet, pan, ambisonic, busverb, out;
+				// Switch Audio Out
+				effet = if(~switchAudioOut == 0,
+					// Pan
+					Pan2.ar(effet, pan),
+					if(~switchAudioOut == 2,
+						// PanAz
+						PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
+						if(~switchAudioOut == 1,
+							// Rotate2 v1
+							Rotate2.ar(effet, effet, pan),
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(effet, pan);
+								DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				Out.ar(busverb, Mix(effet));
+				Out.ar(out, effet);
+			};
+
+			foncVerbOut = {arg verb, pan, ambisonic, amp, out;
+				// Switch Audio Out
+				verb = if(~switchAudioOut == 0,
+					// Pan
+					Pan2.ar(verb, pan),
+					if(~switchAudioOut == 2,
+						// PanAz
+						PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
+						if(~switchAudioOut == 1,
+							// Rotate2 v1
+							Rotate2.ar(verb, verb, pan),
+							// Ambisonic v1
+							(ambisonic = PanB2.ar(verb, pan);
+								DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+				// Out
+				Out.ar(out, verb * amp);
+			};
+
 			// New Analyse Audio
 			SynthDef("OSC Agents Onsets",
 				{arg in=0,  seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
@@ -7726,36 +7794,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PlayBuf2",
@@ -7768,36 +7811,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=PlayBuf.ar(1, buffer,  BufRateScale.kr(buffer) * rate, Impulse.kr(controlF * 100), BufFrames.kr(buffer)*offset, loop);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("TGrains",
@@ -7810,36 +7828,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
-					main=Mix(TGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main=Mix(TGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp, interp: 4));
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("BufRd",
@@ -7852,36 +7845,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
-					main=BufRd.ar(1,buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), loop);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main=BufRd.ar(1,buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), loop, 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("BufRd2",
@@ -7894,38 +7862,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
 					// Main Synth
 					offset2 = (controlF+controlA).clip(0, 1);
-					main=BufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main=BufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("GrainBuf",
@@ -7938,36 +7881,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(offset <= 0, Logistic.kr(controlD*4, 1, Rand(0, 1)), offset);
 					main=GrainBuf.ar(1, Dust.kr(100*controlF), controlA*0.1, buffer, BufRateScale.kr(buffer) * rate, offset, 4, 0, -1, 512);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("LoopBuf",
@@ -7980,35 +7898,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate,  1, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlF, BufFrames.kr(buffer)*controlA);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate,  1, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlF, BufFrames.kr(buffer)*controlA, interpolation: 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBuf",
@@ -8021,36 +7914,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("DelayHarmonic",
@@ -8071,29 +7939,7 @@ G                       Init Genome Agent (solo).
 					envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
 					del = DelayC.ar(inputSig, maxDel, phase) * envDel;
 					main = del.sum;
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBufMedianLeakDC",
@@ -8106,36 +7952,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = LeakDC.ar(Median.ar(controlF * 30 + 1, HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2)), controlA);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBufVibrato",
@@ -8148,36 +7969,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, SinOsc.kr(controlA*dureesample.reciprocal*10, mul: controlD, add: rate), 0, BufFrames.kr(buffer)*offset,loop, antiClick1, antiClick2);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
 			}).send(s);
 
 			SynthDef("HPtGrains",
@@ -8190,36 +7985,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
-					main=Mix(HPtGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp, antiClick1, antiClick2));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main=Mix(HPtGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp, antiClick1, antiClick2, interp: 4));
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPbufRd",
@@ -8232,36 +8002,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
-					main = HPbufRd.ar(1, buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main = HPbufRd.ar(1, buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2, 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBuf2",
@@ -8274,36 +8019,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, Impulse.kr(controlF*100), BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPbufRd2",
@@ -8316,37 +8036,42 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
-					main = HPbufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2);
+					main = HPbufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2, 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+			}).send(s);
 
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+			SynthDef("HPbufRdLive",
+				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
+					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125, in=0;
+					var dureesample, main, ambisonic;
+					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+					// Set Rate Freq
+					pitchRatio=2**rate.cpsoct;
+					dureesample=BufDur.kr(buffer)/pitchRatio;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					pitchRatio=pitchRatio * reverse;
+					buffer = LocalBuf(s.sampleRate * dureesample, 1).clear;
+					frames = BufFrames.kr(buffer);
+					input = In.ar(in,1);
+					// Envelope
+					envelope = EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
+					writePos = Phasor.ar(0, 1, 0, frames);
+/*BufWr.ar(input, buffer, writePos);*/
+					RecordBuf.ar(input, buffer, offset: writePos, recLevel: controlF, preLevel: controlA, run: 1, loop: controlD);
+					phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+					readPosA = (writePos - phaseA - 128).wrap(0, frames);
+					readPosB = (writePos - phaseB - 128).wrap(0, frames);
+					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: antiClick1, sensibilite: antiClick2, interp:4) * winA;
+					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: antiClick1, sensibilite: antiClick2, interp:4) * winB;
+					main = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SampleResonz",
@@ -8359,36 +8084,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(rate.abs >= 1.0 , main=Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), main=Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Synthesizer",
@@ -8402,37 +8102,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20, 12544);
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+27.5, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+27.5, freq, duree*controlD), 0.333));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PlayBufSquiz",
@@ -8445,35 +8120,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Squiz.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 10, controlA * 10);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("WaveLoss",
@@ -8486,35 +8136,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=WaveLoss.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 40, 40, abs(controlA*2-1));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("FreqShift",
@@ -8527,35 +8152,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(FreqShift.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 1024 - 512, controlA * 2pi));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PitchShift",
@@ -8568,35 +8168,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(PitchShift.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), 0.2, controlF*4, controlA, controlD, 1));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Warp1",
@@ -8609,38 +8184,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					//pointer = if(reverse > 0, Line.kr(offset, controlF, dureesample), Line.kr(controlF, offset, dureesample));
 					//main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer), 1);
 					//RecordBuf.ar(main, buffer, 0, 1, 0);
-					main = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, controlF + 0.01, -1, controlA * 15 + 1, controlD);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, controlF + 0.01, -1, controlA * 15 + 1, controlD, interp: 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Warp0",
@@ -8653,36 +8203,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					//main = Warp0.ar(1, buffer, 1, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 7 + 1);
-					main = Warp1.ar(1, buffer, controlD, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 15 + 1);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main = Warp1.ar(1, buffer, controlD, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 15 + 1, interp: 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			/////////////////// SynthDef with PV ////////////////////
@@ -8697,38 +8222,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagShift",
@@ -8741,38 +8241,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_LocalMax",
@@ -8785,38 +8260,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagSmear",
@@ -8829,38 +8279,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RandComb",
@@ -8873,38 +8298,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BinShift",
@@ -8917,38 +8317,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BinScramble",
@@ -8961,38 +8336,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BrickWall",
@@ -9005,38 +8355,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_ConformalMap",
@@ -9049,38 +8374,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Diffuser",
@@ -9093,38 +8393,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagAbove",
@@ -9137,38 +8412,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagBelow",
@@ -9181,38 +8431,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagClip",
@@ -9225,38 +8450,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagNoise",
@@ -9269,38 +8469,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagSquared",
@@ -9313,38 +8488,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.01;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RectComb",
@@ -9357,38 +8507,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagSmooth",
@@ -9401,38 +8526,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Compander",
@@ -9445,38 +8545,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_SpectralEnhance",
@@ -9489,38 +8564,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_SpectralEnhance(main, (controlF*8+0.5).floor, controlA*4+1, controlD);
 					main= IFFT(main) * 0.125;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagStretch",
@@ -9533,38 +8583,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4));
 					main= IFFT(main) * 0.125;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagShift+Stretch",
@@ -9577,38 +8602,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4), controlA - 0.5 * 128);
 					main= IFFT(main) * 0.125;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Cutoff",
@@ -9621,38 +8621,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Cutoff(main, controlF * 2 - 1);
 					main= IFFT(main) * 0.125;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Max",
@@ -9665,7 +8640,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9674,31 +8648,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Min",
@@ -9711,7 +8661,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9720,31 +8669,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagDiv",
@@ -9757,7 +8682,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9766,31 +8690,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Mul",
@@ -9803,7 +8703,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9812,31 +8711,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.1;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Div",
@@ -9849,7 +8724,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9858,31 +8732,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Div(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Add",
@@ -9895,7 +8745,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9904,31 +8753,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RandWipe",
@@ -9941,7 +8766,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9950,31 +8774,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BinWipe",
@@ -9987,7 +8787,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -9996,31 +8795,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_CopyPhase",
@@ -10033,7 +8808,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10042,31 +8816,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RectComb2",
@@ -10079,7 +8829,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10088,31 +8837,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Morph",
@@ -10125,7 +8850,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
@@ -10134,31 +8858,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Convolution",
@@ -10171,38 +8871,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
 					main=Convolution.ar(in1, in2, 1024) * 0.1;
 					//main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			///////////////// SYNTH ////////////////////
@@ -10213,35 +8888,11 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main= SinOsc.ar(freq, 0, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);}).send(s);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+			}).send(s);
 
 			SynthDef("FMsynth",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
@@ -10249,35 +8900,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = SinOsc.ar(freq+SinOsc.ar(500*controlF, mul:1000*controlA), 0, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SawSynth",
@@ -10286,37 +8912,12 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20,12544);
 					main = Saw.ar(freq, 0.5);
 					main = RHPF.ar(main, Line.kr(controlF*4000, freq, duree*controlD), controlA, 0.5, RLPF.ar(main, Line.kr(controlF*2000, freq, duree*controlD), controlA));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SinOscVibrato",
@@ -10325,35 +8926,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, envelope, main, fc, osc, a, b, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = SinOsc.ar(SinOsc.kr(controlF*16, mul: Line.kr(0, controlA*100, controlD*duree), add: freq), 0, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Formant",
@@ -10362,33 +8938,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, dureesamplein, fft, in, dureesample, delay, filtreFreq=[], ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					main = Formant.ar(freq, LFNoise0.kr(controlD.reciprocal)*(controlA*127).midicps, LFNoise0.kr(duree.reciprocal)*(controlF*127).midicps, 0.5);
 					// main = Limiter.ar(main, 0.33, 0.01);
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Guitare",
@@ -10397,36 +8950,11 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
 					pluck = BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*controlF*24)), controlA));
 					main = CombL.ar(pluck, freq.reciprocal, freq.reciprocal, duree);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Klang",
@@ -10435,35 +8963,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
 					main = Klang.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], freq);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Klank",
@@ -10472,35 +8975,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = DynKlank.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], Dust2.ar(duree.reciprocal * 100), freq);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Klank2",
@@ -10509,35 +8987,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = DynKlank.ar(`[[Rand(32.7, 4186), Rand(32.7, 4186), Rand(32.7, 4186)] * controlF, [amp / 3, amp / 3, amp / 3], nil], Impulse.ar(duree.reciprocal * controlD * 64), freq);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Blip",
@@ -10546,35 +8999,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Blip.ar(freq, Line.kr(50 * controlF + 1,50 * controlA + 1, duree * controlD), 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Pulse",
@@ -10583,35 +9011,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Pulse.ar(freq, controlF, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("VarSaw",
@@ -10620,35 +9023,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = VarSaw.ar(freq, controlF, controlA, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Gendy3",
@@ -10657,35 +9035,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Gendy3.ar(controlF * 6, 4, controlA * 0.1, controlD * 0.1, freq, controlA * 0.1, controlD * 0.1, mul: 0.25);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Spring",
@@ -10694,7 +9047,6 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var main, envelope, pluck, ambisonic, k, d, inforce, outforce;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					//main = PMOsc.ar(freq, Spring.ar(LFPulse.ar(controlF * duree), duree / 10 / controlD, controlA * duree / 10) * controlF * 1000 + freq, 0.5);
@@ -10705,31 +9057,7 @@ G                       Init Genome Agent (solo).
 					outforce = outforce * freq + freq;
 					//main = SinOsc.ar(freq, 0, 0.5);
 					main = PMOsc.ar(freq, outforce, Line.kr(0, duree * 2pi), 0, 0.25);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			///////////////// SYNTHDEF PIANO//////
@@ -10740,35 +9068,10 @@ G                       Init Genome Agent (solo).
 					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var ambisonic, main, envelope, pluck;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Piano
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Synthesizer",
@@ -10780,37 +9083,12 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					freq = freq.clip(20,12544);
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+55, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+55, freq, duree*controlD), 0.333));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Resonz",
@@ -10822,36 +9100,11 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					main = if(rate.abs >= 1.0 , Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Squiz",
@@ -10863,35 +9116,10 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF * 10, controlA * 10);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano WaveLoss",
@@ -10903,35 +9131,10 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF* 40, 40, abs(controlF*2-1));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano FreqShift",
@@ -10943,35 +9146,10 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF * 1024 - 512, controlA * 2pi));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PitchShift",
@@ -10983,35 +9161,10 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 0.2, controlF*4, controlA, controlD, 1));
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			/////////////////// SynthDef PIANO with PV ////////////////////
@@ -11025,7 +9178,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11035,31 +9187,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagShift",
@@ -11071,7 +9199,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11081,31 +9208,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_LocalMax",
@@ -11117,7 +9220,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11127,31 +9229,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagSmear",
@@ -11163,7 +9241,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11173,31 +9250,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RandComb",
@@ -11209,7 +9262,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11219,31 +9271,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BinShift",
@@ -11255,7 +9283,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11265,31 +9292,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BinScramble",
@@ -11301,7 +9304,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11311,31 +9313,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BrickWall",
@@ -11347,7 +9325,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11357,31 +9334,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_ConformalMap",
@@ -11393,7 +9346,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11403,31 +9355,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Diffuser",
@@ -11439,7 +9367,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11449,31 +9376,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagAbove",
@@ -11485,7 +9388,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11495,31 +9397,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagBelow",
@@ -11531,7 +9409,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11541,31 +9418,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagClip",
@@ -11577,7 +9430,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11587,31 +9439,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagNoise",
@@ -11623,7 +9451,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11633,31 +9460,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagSquared",
@@ -11669,7 +9472,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11679,31 +9481,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.1;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RectComb",
@@ -11715,7 +9493,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11725,31 +9502,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagSmooth",
@@ -11761,7 +9514,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11771,31 +9523,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Compander",
@@ -11807,7 +9535,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11817,31 +9544,7 @@ G                       Init Genome Agent (solo).
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Max",
@@ -11853,7 +9556,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11865,31 +9567,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Min",
@@ -11901,7 +9579,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11913,31 +9590,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagDiv",
@@ -11949,7 +9602,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -11961,31 +9613,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Mul",
@@ -11997,7 +9625,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12009,31 +9636,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Add",
@@ -12045,7 +9648,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12057,31 +9659,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RandWipe",
@@ -12093,7 +9671,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12105,31 +9682,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BinWipe",
@@ -12141,7 +9694,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12153,31 +9705,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_CopyPhase",
@@ -12190,7 +9718,6 @@ G                       Init Genome Agent (solo).
 					rate=rate * reverse;
 					// enveloperate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12202,31 +9729,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RectComb2",
@@ -12238,7 +9741,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12250,31 +9752,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Morph",
@@ -12286,7 +9764,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12298,31 +9775,7 @@ G                       Init Genome Agent (solo).
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Convolution",
@@ -12334,7 +9787,6 @@ G                       Init Genome Agent (solo).
 					rate=2**rate.cpsoct;
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					in1 = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
@@ -12343,31 +9795,7 @@ G                       Init Genome Agent (solo).
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
 					main=Convolution.ar(in1, in2, 1024) * 0.5;
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), duree), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Granulation1",
@@ -12381,38 +9809,14 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(Rand(3, 4), 1, Rand(0, 1)));
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop)  * envelope;
-					main = BufRd.ar(1, local, Phasor.ar(0, controlF+1, 0, BufFrames.kr(local)), 1);
+					main = BufRd.ar(1, local, Phasor.ar(0, controlF+1, 0, BufFrames.kr(local)), 1, interpolation: 4);
 					BufWr.ar(DelayC.ar(in1, 1.0, controlD/100), local, Phasor.ar(0, controlA+0.001, 0, BufFrames.kr(local)), 1);
 					// main = Limiter.ar(main+in1, 1.0, 0.01);
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Granulation2",
@@ -12426,38 +9830,13 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
-					main = BufRd.ar(1, local, Phasor.ar(0, controlA.neg, 0, BufFrames.kr(local)), 1);
+					main = BufRd.ar(1, local, Phasor.ar(0, controlA.neg, 0, BufFrames.kr(local)), 1, interpolation: 4);
 					BufWr.ar(in1 + main * 0.5, local, Phasor.ar(0, controlD, 0, BufFrames.kr(local)), 1);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Toupie",
@@ -12471,39 +9850,14 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop) * envelope;
-					in2 = BufRd.ar(1, local, Phasor.ar(0, controlA+1, 0, BufFrames.kr(local)), 1);
+					in2 = BufRd.ar(1, local, Phasor.ar(0, controlA+1, 0, BufFrames.kr(local)), 1, interpolation: 4);
 					main = in1 + in2 * 0.5;
 					BufWr.ar(main, local, Phasor.ar(0, controlD+0.001, 0, BufFrames.kr(local)), 1);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Elastique",
@@ -12516,36 +9870,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = CombC.ar(main, 0.1, Line.kr(controlF.clip(0.01, 0.99)/100, controlA.clip(0.01, 0.99)/100, controlD.clip(0.01, 1.0)*dureesample), 1, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("RandElastique",
@@ -12558,36 +9887,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = CombC.ar(main, 0.1, Line.kr(Rand(controlF.clip(0.01, 0.99), controlA.clip(0.01, 0.99))/100, Rand(controlF.clip(0.01, 0.99), controlA.clip(0.01, 0.99))/100, controlD.clip(0.01, 1.0)*dureesample), 1, 0.5);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("RandKlankSample",
@@ -12600,36 +9904,11 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], main, controlF, controlD, controlA);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("DjScratch",
@@ -12642,35 +9921,10 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
-					main = BufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureesample.reciprocal), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)* controlF, BufFrames.kr(buffer)* controlA ).lag(controlD)*LFNoise2.kr(controlD).sign, 1);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					main = BufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureesample.reciprocal), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)* controlF, BufFrames.kr(buffer)* controlA ).lag(controlD)*LFNoise2.kr(controlD).sign, 1, interpolation: 4);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("LiquidFilter",
@@ -12688,37 +9942,12 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					source = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					effet= Mix(RHPF.ar(source,  formantfreqs*freq*controlF.clip(0.01, 1), formantbandwidths/(formantfreqs*freq*controlF.clip(0.01, 1.0)), 0.5));
 					main = BBandPass.ar(effet, LFNoise2.kr(controlA)+1*4186, controlD.clip(0.1, 1.0), 1);
-
-
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SynthOnFly",
@@ -12731,7 +9960,6 @@ G                       Init Genome Agent (solo).
 					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					rate=rate * reverse;
 					// envelope
-
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
@@ -12740,29 +9968,7 @@ G                       Init Genome Agent (solo).
 					local = DelayN.ar(local, 1.0, controlD);
 					LocalOut.ar(local);
 					main = local;
-					// Switch Audio Out
-					main = if(~switchAudioOut == 0,
-						if(~flagMC == 0,
-							// Pan 1
-							Pan2.ar(main, Rand(panLo, panHi), envelope),
-							// Pan 2
-							Pan2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope)),
-						if(~switchAudioOut == 2,
-							if(~flagMC == 0,
-								// PanAz 1
-								PanAz.ar(~numberAudioOut, main, Rand(panLo, panHi), envelope, ~widthMC, ~orientationMC),
-								// PanAz 2
-								PanAz.ar(~numberAudioOut, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope, ~widthMC, ~orientationMC)),
-							if(~switchAudioOut == 1,
-								// Rotate2
-								Rotate2.ar(main, main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample)) * envelope,
-								// Ambisonic
-								(ambisonic = PanB2.ar(main, Line.kr(Rand(panLo, panHi), Rand(panLo, panHi), dureesample), envelope);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(buseffets, Mix(main) * amp);
-					Out.ar(busverb, Mix(main) * amp * ampreal);
-					Out.ar(out, main * amp * ampreal);
+					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			///////////////////////////////////////////////////////////////////
@@ -12776,24 +9982,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*4,control6*4,control7*4,control8*4], amp/4 * 0.6));
-					//
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("DelayC",
@@ -12803,24 +9992,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("BPF",
@@ -12830,24 +10002,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(BPF.ar(ineffet, [control1*1000+27.5,control2*1000+500,control3*1000+1000,control4*1000+1500], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("BRF",
@@ -12857,24 +10012,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(BRF.ar(ineffet,[control1*1000+27.5,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("RHPF",
@@ -12884,24 +10022,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+320.24370022528, control2*4186+320.24370022528, control3*4186+320.24370022528, control4*4186+320.24370022528], [control5, control6, control7, control8], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("RLPF",
@@ -12911,24 +10032,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(RLPF.ar(ineffet, [control1*320.24370022528+27.5, control2*320.24370022528+27.5, control3*320.24370022528+27.5, control4*320.24370022528+27.5], [control5, control6, control7, control8], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PitchShiftFX",
@@ -12938,24 +10042,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(PitchShift.ar(ineffet, 0.1,[control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Ringz",
@@ -12965,24 +10052,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Formlet",
@@ -12992,24 +10062,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Formlet.ar(ineffet, [control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Resonz",
@@ -13019,24 +10072,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Resonz.ar(ineffet, [control1*500,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6, control7, control8], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("TwoPole",
@@ -13046,24 +10082,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("FOS",
@@ -13073,24 +10092,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Median",
@@ -13100,24 +10102,8 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
-
 					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("LeakDC",
@@ -13128,23 +10114,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=LeakDC.ar(ineffet, control1, amp);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Median+LeakDC",
@@ -13154,24 +10124,7 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
-
-					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("MidEQ",
@@ -13181,24 +10134,8 @@ G                       Init Genome Agent (solo).
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(MidEQ.ar(ineffet, [control1, control2, control3, control4]*4186+27.5, 0.5, [control5, control6, control7, control8]*48-24, amp/2));
-
 					effet = effet * amp;
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("DynKlank",
@@ -13209,23 +10146,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(DynKlank.ar(`[[control1, control2, control3, control4]*4186+37, [amp / 4, amp /4, amp /4, amp / 4] / 4, [control5, control6, control7, control8]], ineffet));
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("LiveWarp",
@@ -13239,30 +10160,14 @@ G                       Init Genome Agent (solo).
 					rate = control1*4;
 					//if(rate < 0.5 , BufRateScale.kr(buffer) * rate, BufRateScale.kr(buffer) * rate, * 20 - 9);
 					// effet
-					effet = Warp1.ar(1, localBuf, control2, BufRateScale.kr(buffer) * rate, control3, -1, control4*16, control5, 2);// + ou - local;
+					effet = Warp1.ar(1, localBuf, control2, BufRateScale.kr(buffer) * rate, control3, -1, control4*16, control5, interp: 4);// + ou - local;
 					//effet = effet * EnvGen.kr(Env.sine(1,1), Impulse.kr(control1*16+0.0625), levelScale: amp);
 					//effet = effet * EnvGen.kr(Env.perc(0.05, 1, 1, -5), Impulse.kr(control1*16+0.0625));
 					effet = Mix(effet);
 					LocalOut.ar(effet);
 					//LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("LivePlayBuf",
@@ -13280,25 +10185,7 @@ G                       Init Genome Agent (solo).
 					effet = effet * EnvGen.kr(Env.sine(1,1), Impulse.kr(control2*64+0.0625), levelScale: amp);
 					//effet = effet * EnvGen.kr(Env.perc(0.05, 1, 1, -5), Impulse.kr(control2*64+0.0625));
 					effet = Mix(effet);
-
-					LocalOut.ar(effet);
-					//LocalOut.ar(DelayC.ar(effet, 4, control4, amp));
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("WarpDelay",
@@ -13309,24 +10196,9 @@ G                       Init Genome Agent (solo).
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
 					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
-					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, 2);// + ou - local;
+					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, interp: 4);// + ou - local;
 					LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("DJ_FX",
@@ -13335,27 +10207,12 @@ G                       Init Genome Agent (solo).
 					// Input
 					local = LocalIn.ar(1);
 					localBuf = LocalBuf(s.sampleRate, 1).clear;
-					RecordBuf.ar(Mix(In.ar(in, 2)) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
+					RecordBuf.ar(LeakDC.ar(Mix(In.ar(in, 2))) * EnvGen.kr(Env.perc(0.1,0.9,1,-5), Impulse.kr(control1), levelScale: amp, timeScale: control1.reciprocal), localBuf, 0, 1, 0.333, loop: 0, trigger: Impulse.kr(control1));
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2.reciprocal) + (control3*4), Dust.kr(control4.reciprocal), Logistic.kr(control5 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(localBuf), 1, 0.333, 0.5) + local * amp;
 
 					LocalOut.ar(DelayC.ar(effet, 4, control6, control7));
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagFreeze",
@@ -13368,23 +10225,7 @@ G                       Init Genome Agent (solo).
 					effet = FFT(LocalBuf(1024, 1), effet);
 					effet = PV_MagFreeze(effet, SinOsc.kr(control2 * control4.reciprocal));
 					effet= IFFT(effet);
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_PlayBuf",
@@ -13397,23 +10238,7 @@ G                       Init Genome Agent (solo).
 					effet = FFT(LocalBuf(512, 1), effet);
 					effet = PV_PlayBuf(effet, localBuf, control2, control3 * BufFrames.kr(localBuf), 1, 1);
 					effet= IFFT(effet);
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BinPlayBuf",
@@ -13426,23 +10251,7 @@ G                       Init Genome Agent (solo).
 					effet = FFT(LocalBuf(1024, 1), effet);
 					effet = PV_BinPlayBuf(effet, localBuf, control2, control6 * BufFrames.kr(localBuf), control3 * 16, control4 * 8 + 1, control5 * 63 + 1, 1, 1);
 					effet= IFFT(effet);
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_HPshiftDownFX",
@@ -13455,23 +10264,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_HPshiftDown(effet, control1*32);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_HPfiltreFX",
@@ -13484,23 +10277,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_HPfiltre(effet, control1 * 32 + 1, control2 * 32 + 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagNoiseFX",
@@ -13513,23 +10290,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagNoise(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagClipFX",
@@ -13542,23 +10303,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagClip(effet, control1 * 16);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagSmoothFX",
@@ -13571,23 +10316,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagSmooth(effet, control1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagSmearFX",
@@ -13600,23 +10329,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagSmear(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_DiffuserFX",
@@ -13629,23 +10342,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_Diffuser(effet, Trig1.kr(LFNoise2.kr(control1*100), (control2*100).reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BrickWallFX",
@@ -13658,23 +10355,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_BrickWall(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_LocalMaxFX",
@@ -13687,23 +10368,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_LocalMax(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagSquaredFX",
@@ -13716,23 +10381,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagSquared(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagBelowFX",
@@ -13745,23 +10394,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagBelow(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagAboveFX",
@@ -13774,23 +10407,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagAbove(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_RandCombFX",
@@ -13803,23 +10420,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_RandComb(effet, control1*64, LFNoise2.kr(control2 * 64));
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagShiftFX",
@@ -13832,23 +10433,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, control1 * 4, control2 * 128 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BinScrambleFX",
@@ -13861,23 +10446,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_BinScramble(effet, control1, control2, LFNoise2.kr(control2.reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BinShiftFX",
@@ -13890,23 +10459,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_BinShift(effet, control1 * 4, control2 * 256 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_RectCombFX",
@@ -13919,23 +10472,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_RectComb(effet, control1*32, control2, control3);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_ConformalMapFX",
@@ -13948,23 +10485,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_ConformalMap(effet, control1 * 2 - 1, control2 * 2 -1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_CompanderFX",
@@ -13977,23 +10498,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_Compander(effet, control1 * 64, control2 * 10, control3 * 10);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_SpectralEnhanceFX",
@@ -14006,23 +10511,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4));
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagShift+StretchFX",
@@ -14035,23 +10524,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4), control2 - 0.5 * 128);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_CutoffFX",
@@ -14064,23 +10537,7 @@ G                       Init Genome Agent (solo).
 					effet = PV_Cutoff(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagStretchFX",
@@ -14123,23 +10580,7 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet=Mix(Convolution2L.ar(ineffet, buffer, trig * control3, 1024));
 					effet = effet * amp;
-
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("FXonFly",
@@ -14153,24 +10594,8 @@ G                       Init Genome Agent (solo).
 					// effet
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2)+(BufRateScale.kr(buffer) * rate), Dust.kr(control3), Logistic.kr(control4/2+3.5, 100, Rand(0, 1))* BufFrames.kr(localBuf), 1, 0.05, 0.1) + local * amp / 2;
 					effet = Mix(effet) * amp;
-
 					LocalOut.ar(DelayC.ar(effet, 4, control5/1000, control6));
-					// Switch Audio Out
-					effet = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(effet, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, effet, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(effet, effet, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(effet, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(busverb, Mix(effet));
-					Out.ar(out, effet);
+					foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			/////////////////////////////////////
@@ -14184,22 +10609,7 @@ G                       Init Genome Agent (solo).
 					inverb=Mix(In.ar(in, 1));
 					// verb
 					verb=Mix(AllpassC.ar(inverb, 0.2, [control1,control2/2,control3/3,control4/4], [control5, control6, control7, control8]*30));
-
-					// Switch Audio Out
-					verb = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(verb, verb, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(verb, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(out, verb * amp);
+					foncVerbOut.value(verb, pan, ambisonic, amp, out);
 			}).send(s);
 
 			SynthDef("FreeVerb",
@@ -14209,22 +10619,7 @@ G                       Init Genome Agent (solo).
 					inverb=Mix(In.ar(in, 1));
 					// verb
 					verb = FreeVerb.ar(inverb, control1, control2, control3);
-
-					// Switch Audio Out
-					verb = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(verb, verb, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(verb, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(out, verb * amp);
+					foncVerbOut.value(verb, pan, ambisonic, amp, out);
 			}).send(s);
 
 			SynthDef("GVerb",
@@ -14235,22 +10630,7 @@ G                       Init Genome Agent (solo).
 					// verb
 					#left, right = GVerb.ar(inverb, (control1*300).clip(1, 300), (control5*100).clip(0.01, 100), control6, control7, 15, control2, control3, control4, 300);
 					verb = Mix(left,right);
-
-					// Switch Audio Out
-					verb = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(verb, verb, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(verb, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(out, verb * amp);
+					foncVerbOut.value(verb, pan, ambisonic, amp, out);
 			}).send(s);
 
 			SynthDef("JPverb",
@@ -14260,22 +10640,7 @@ G                       Init Genome Agent (solo).
 					inverb=Mix(In.ar(in, 1));
 					// verb
 					verb = Mix(JPverb.ar(inverb, control1 * 60, control2, control3 * 5, control4, control5, control6, control7 *5900 + 100, control8 * 9000 + 1000));
-
-					// Switch Audio Out
-					verb = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(verb, verb, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(verb, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(out, verb * amp);
+					foncVerbOut.value(verb, pan, ambisonic, amp, out);
 			}).send(s);
 
 			SynthDef("SpinReverb",
@@ -14286,23 +10651,7 @@ G                       Init Genome Agent (solo).
 					// verb
 					#left, right = GVerb.ar(inverb, 300 - (control1*300), control5*100, control6, control7, 15, control2, control3, control4, 300);
 					verb = Mix(left,right);
-
-					pan = LFSaw.kr(control8, mul: pan.sign);
-					// Switch Audio Out
-					verb = if(~switchAudioOut == 0,
-						// Pan
-						Pan2.ar(verb, pan),
-						if(~switchAudioOut == 2,
-							// PanAz
-							PanAz.ar(~numberAudioOut, verb, pan, 1, ~widthMC, ~orientationMC),
-							if(~switchAudioOut == 1,
-								// Rotate2 v1
-								Rotate2.ar(verb, verb, pan),
-								// Ambisonic v1
-								(ambisonic = PanB2.ar(verb, pan);
-									DecodeB2.ar(~numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-					// Out
-					Out.ar(out, verb * amp);
+					foncVerbOut.value(verb, pan, ambisonic, amp, out);
 			}).send(s);
 
 

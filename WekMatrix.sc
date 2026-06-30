@@ -9,7 +9,7 @@ WekMatrix {
 	var fonctionCommandes, pathWekMatrix, system , bpmSlider, bpmOnOff, flagSystemBPM, commande, oscStateflag, masterAppAddr, slaveAppAddr, ardourOSC, oscHPtempo, oscHPstart, oscHPrec, oscState, oscTempoMaster, initOSCresponder, numberAudioOut, systemBPM, helpWekMatrix, fonctionOSCsynth, listeDataOSC, signalBuffer, timeMaximum, timeMemory, fhzFilter, ampFilter, durFilter, fhzFiltreGUI, ampFiltreGUI, durFiltreGUI, fonctionTdefOSCdata, tdefOSCdata, dureeOSCdata, changeChoiceSynth, flagDataOSC, sliderDataOSC, recChannels, windowControlSynth, controlFreqSlider, controlFreqTranSlider, controlAmpSlider, controlDureeSlider, controlDureeTranSlider, controlQuantaSlider, fonctionSaveControlSynth, fonctionLoadControlSynth, previousFreq, previousDuree, previousAmp, previousPan, controlPanSlider, switchMenuAudioOut, windowKeyboard, keyboard, keyboardTranslate, synthKeyboard;
 	var keyboardShortCut, setupKeyboardShortCut, musicAppAddr, startChannelAudioOut=0, switchChanelAudioOut, keyboardTranslateBefore=0, headerFormat, sampleFormat, formatRecordingMenu, headerRecordingMenu, sampleFormatRecordingMenu, algoChangePresetMenu, algoChangeMenu, varChangeMenu, midiKeyboard, switchCanalMIDI, canalMIDI, foldersToScanAll, foldersToScanPreset, foldersToScanSynthesizer, fonctionAutomationPreset, lastMeanProbaPresetFlux=0, lastMeanProbaPresetFlatness=0, midiMenu, synthAnalyseKeyTrack, lastTimeAutomationPreset, lastNumberChoiceConfig, fonctionCollectFolders, flagCollectFolders, limitTemps, variableChange, algoChange, onOffSynth, onOffSynthValue, fluxOnFly, flatnessOnFly, keyboardVolume, keyVolume, midiOut, listeFileAnalyze, listeNameFileAnalyze, indexDataMusic, listeAlgorithm, flagMemory, numFhzBand, bandFHZ, lastTimeBand, menuMIDI, menuFile, menuRecording, menuOSC, menuAudio, menuAlgo, menuHelp, fonctionInitBand, windowVST, flagVST, flagMC, widthMC, orientationMC, switchAudioOut, numberAudioIn, rangeBand, controlRootSlider, pourcentPan, pourcentFreq, pourcentFreqT, pourcentAmp, pourcentDur, pourcentDurT, pourcentQuant, pourcentRoot, listeWindowFreeze;
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
-	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, menuFreeze;
+	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, menuFreeze, foncSynthOut, scAdr, udpAdr;
 
 	*new	{arg path="~/Documents/WekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
 
@@ -23,6 +23,8 @@ WekMatrix {
 		//GUI.qt;
 		QtGUI.palette = QPalette.dark;// light / system
 		MainMenu.initBuiltInMenus;
+		udpAdr = NetAddr.langPort;
+		scAdr = NetAddr("localhost", scPort);
 
 		pathWekMatrix = PathName.new(path).pathOnly;
 
@@ -56,7 +58,7 @@ WekMatrix {
 		widthMC = wid;
 		orientationMC = ori;
 
-		thisProcess.openUDPPort(NetAddr.langPort);
+		thisProcess.openUDPPort(udpAdr);
 
 		// Safety Limiter
 		Safety(s);
@@ -214,12 +216,14 @@ WekMatrix {
 			'Gendy3',
 			'Spring',
 			'FXsynthComb',
+			'OB-Xa',
 			'Silent',
 			//// Sampler one sample
 			'SAMPLER 1 BUFFER (',
 			'LoopBuf',
 			'GrainBuf',
 			'HPbufRd',
+			'HPbufRdLive',
 			'HPplayBuf',
 			'HPplayBufBusFM',
 			'HPplayBufVibrato',
@@ -229,7 +233,10 @@ WekMatrix {
 			'Synthesizer',
 			'HPplayBufMedianLeakDC',
 			'FreqShift',
+			'FreqShift2',
 			'PitchShift',
+			'PitchShift2',
+			'PitchShift3',
 			'Squiz',
 			'WaveLoss',
 			'Warp1',
@@ -241,7 +248,9 @@ WekMatrix {
 			'DjScratch',
 			'LiquidFilter',
 			'DelayHarmonic',
-			//'FluidSynth',
+			'QuadReader',
+			'SmoothBufferMachine',
+			'MetaTape',
 			//// FFT 1 buffer
 			'FFT 1 BUFFER (',
 			'PV_HPshiftDown',
@@ -292,8 +301,6 @@ WekMatrix {
 			'Piano Squiz',
 			'Piano Waveloss',
 			'Piano PV_HPshiftDown',
-			//'Piano PV_HPecartType',
-			//'Piano PV_HPfiltre',
 			'Piano PV_MagNoise',
 			'Piano PV_MagClip',
 			'Piano PV_MagSmooth',
@@ -351,7 +358,6 @@ WekMatrix {
 			'DJ_FX',
 			'PV_MagFreeze',
 			'PV_HPshiftDownFX',
-			//'PV_HPecartTypeFX',
 			'PV_HPfiltreFX',
 			'PV_MagNoiseFX',
 			'PV_MagClipFX',
@@ -590,10 +596,10 @@ y ... -						Musical keys.
 				oscHPstart.free;
 				oscHPrec.free;*/
 				SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
-					SCRequestString(NetAddr.langPort.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
+					SCRequestString(scAdr.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
 						// Set OSC Addresse et Port Slave
 						SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-							SCRequestString(NetAddr.langPort.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
+							SCRequestString(scAdr.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
 								//initOSCresponder.value;
 							});
 						});
@@ -786,7 +792,9 @@ Preset Wek",
 				7, {
 					if(window.name.containsStringAt(0, "WekMatrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
+							s.bind{
 							data = fonctionSaveSynthesizer.value(window);
+								s.sync;
 							tampon = [];
 							listeWindowFreeze.do({arg freeze, index;
 								if(listeWindowSynth.at(index) != nil, {
@@ -794,17 +802,24 @@ Preset Wek",
 								});
 							});
 							listeWindowFreeze = listeWindowFreeze.add(tampon);
+								s.sync;
 							fonctionLoadSynthesizer.value(data, tampon);
+								s.sync;
+							};
 					});
 				},
 				// Copy Preset
 				8, {
+					s.bind{
 					data = fonctionSavePreset.value(listeWindowSynth);
+					s.sync;
 					tampon = data.last;// listeWindowFreeze
 					fonctionLoadPreset.value(data, [ ], [ ], listeDataOSC);
+					s.sync;
 					tampon.do({arg freeze, index;
 						listeWindowFreeze = listeWindowFreeze.add(freeze);
 					});
+					s.sync;
 					// Setup Font View Synth
 					listeWindowSynth.do({arg window;
 						window.view.do({arg view;
@@ -813,10 +828,16 @@ Preset Wek",
 							});
 						});
 					});
+					};
 				},
 				// Close All Windows
 				9, {
-					listeWindowSynth.do({arg window; window.close});
+					s.bind{
+					listeWindowSynth.do({arg window;
+							window.close;
+							s.sync;
+						});
+					};
 					listeWindowFreeze = [];
 				}
 			)
@@ -966,6 +987,7 @@ Preset Wek",
 			audioIN = data.at(93).mod(numberAudioIn);
 			ctrls = data.at(49); // Ctrls Plot
 			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN);
+			s.sync;
 			listeWindowSynth.last.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
 				// StaticText
@@ -1023,6 +1045,7 @@ Preset Wek",
 				if(item == 93,
 					{view.valueAction_(data.at(item).mod(numberAudioIn))});
 			});
+			s.sync;
 			// Setup Font View Synth
 			listeWindowSynth.do({arg window;
 				window.view.do({arg view;
@@ -1057,16 +1080,22 @@ Preset Wek",
 
 		fonctionLoadPreset = {arg preset, dataControlSynth=[], tampon=[], tampon2=[];
 			var x, y, z, b;
+			s.bind{
 			tampon2 = preset.last;// Load freezeDataOSC
 			preset.remove(preset.last);// Remove FreezeDataOSC
 			tampon = preset.last;// Load OSCmusicData
 			preset.remove(preset.last);// Remove OSCmusicData
+				s.sync;
 			fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
+				s.sync;
 			preset.remove(preset.last);// Remove control panel
 			dataControlSynth = preset.last; // ControlSynth Panel
+				s.sync;
 			fonctionLoadControlSynth.value(windowControlSynth, preset.last);//Load ControlSynth Panel
+				s.sync;
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
+				s.sync;
 			listeDataOSC = tampon;
 			b = listeDataOSC.size-1;
 			numberAudioIn.do({arg a;
@@ -1084,8 +1113,10 @@ Preset Wek",
 					listeDataOSC = listeDataOSC.add(x.deepCopy);
 					indexDataMusic = indexDataMusic.add(y.deepCopy);
 				});
+				s.sync;
 			});
 			listeWindowFreeze = tampon2;
+			};
 		};
 
 		fonctionSaveControl = {arg window;
@@ -1222,6 +1253,7 @@ Preset Wek",
 					});
 				});
 			});
+			s.sync;
 		};
 
 		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN;
@@ -1231,6 +1263,7 @@ Preset Wek",
 			listeGroupeSynthID = listeGroupeSynthID.add(listeGroupeSynth.at(listeGroupeSynth.size - 1).nodeID);
 			// New Window
 			# window, freeze = fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN);
+			s.sync;
 			listeWindowSynth=listeWindowSynth.add(window);
 			listeWindowFreeze = listeWindowFreeze.add(freeze.value);
 			// Setup Font View Synth
@@ -1245,6 +1278,7 @@ Preset Wek",
 			window.view.children.at(49).value_(x);
 			//window.view.children.at(49).size = x.size;
 			window.view.children.at(47).string_(y);
+			s.sync;
 		};
 
 		fonctionInitBand = {arg band;
@@ -1292,175 +1326,190 @@ Preset Wek",
 
 		// Init les plot controls des synth
 		fonctionPlotNode = {arg item, plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], string="AntiClick (HP Plugins) | ";
-			// SynthDef
-			switch(item.value,
-				//Synthese
-				2, {plot=[]; string="AntiClick (HP Plugins) | "},
-				3, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"},
-				4, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"},
-				5, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"},
-				6, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | fundfreq(1..6) - formfreq(7..12)"},
-				7, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF freqLow - freqHi - rq - RHPF freqLow- freqHi - rq"},
-				8, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig(1..6) - decayTime(7..12) "},
-				9, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | numharm low - numharm hi"},
-				10, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | iPhase - width"},
-				11, {plot=[0.5]; string="AntiClick (HP Plugins) | width"},
-				12, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | specificationsArrayRef(1..12)"},
-				13, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | ampdist - durdist - adparam - ddparam - ampscale - durscale"},
-				14, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq - k - d - pmindex Lo - pmindex Hi"},
-				15, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freqCentroid(1..2) - energy(2..3) - flux -flatness"},
-				16, {plot=[]; string="AntiClick (HP Plugins) | "},
+			var plotString, val;
+			plotString = [nil, nil,
+				// Synthese
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - mul(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | fundfreq(1..6) - formfreq(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | RLPF freqLow - freqHi - rq - RHPF freqLow- freqHi - rq"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig(1..6) - decayTime(7..12) "],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | numharm low - numharm hi"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | iPhase - width"],
+				[[0.5], "AntiClick (HP Plugins) | width"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | specificationsArrayRef(1..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | ampdist - durdist - adparam - ddparam - ampscale - durscale"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq - k - d - pmindex Lo - pmindex Hi"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freqCentroid(1..2) - energy(2..3) - flux -flatness"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pulse - ctrlfilter - filter"],
+				[[], "AntiClick (HP Plugins) | "],
+				nil,
 				// Sampler
-				18, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | startpos - startloop"},
-				19, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - pos"},
-				20, {plot=[0.5]; string="AntiClick (HP Plugins) | end"},
-				21, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
-				22, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mod"},
-				23, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - mul"},
-				24, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig- centerpos- dur(3..4)"},
-				25, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - startpos"},
-				26, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - bwr"},
-				27, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"},
-				28, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | length - coef"},
-				29, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - phase"},
-				30, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaos(2..3) - pitchratio(4..10) - pitchdispersion - timedispertion"},
-				31, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"},
-				32, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | drop - outof"},
-				33, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | windowSize - overlaps - windowRandRatio"},
-				34, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam(2..3) - freq - rate"},
-				35, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam - freq - freqRd - freqWr"},
-				36, {plot=[0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaosParam - freq - combDelay - combDecay"},
-				37, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - chaos(2..3) - RndCombDelay(4..7)"},
-				38, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freqScale - freqOffset - decayScale"},
-				39, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | end - lag - noise"},
-				40, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RHPF formant(1..2) - rq - BandPass"},
-				41, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
+				[[0.5, 0.5], "AntiClick (HP Plugins) | startpos - startloop"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - dur - pos"],
+				[[0.5], "AntiClick (HP Plugins) | end"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | freq - mod"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | freq - mul"],
+				[[0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig- centerpos- dur(3..4)"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - dur - startpos"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | freq - bwr"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | length - coef"],
+				[[0.5], "AntiClick (HP Plugins) | phase"],
+				[[0.5], "AntiClick (HP Plugins) | phase"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - chaos(2..3) - pitchratio(4..10) - pitchdispersion - timedispertion"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - pitchdispersion - timedispertion"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | pitchdispersion - timedispertion"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | drop - outof"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | windowSize - overlaps - windowRandRatio"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - chaosParam(2..3) - freq - rate"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - chaosParam - freq - freqRd - freqWr"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - chaosParam - freq - combDelay - combDecay"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - chaos(2..3) - RndCombDelay(4..7)"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freqScale - freqOffset - decayScale"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | end - lag - noise"],
+				[[0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | RHPF formant(1..2) - rq - BandPass"],
+				[[0.5], "AntiClick (HP Plugins) | trig"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5,0.5,0.5,0.5], "AntiClick (HP Plugins) | density - durGrain - spread - feedback"],
+				nil,
 				// PV 1 Sample
-				43, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
-				44, {plot=[0.5]; string="AntiClick (HP Plugins) | index"},
-				45, {plot=[]; string="AntiClick (HP Plugins) | "},
-				46, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				47, {plot=[0.5]; string="AntiClick (HP Plugins) | factor"},
-				48, {plot=[0.5]; string="AntiClick (HP Plugins) | bins"},
-				49, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
-				50, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
-				51, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				52, {plot=[]; string="AntiClick (HP Plugins) | "},
-				53, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				54, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				55, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe- trig"},
-				56, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				57, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | wipe- width- trig"},
-				58, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				59, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase - width"},
-				60, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | areal - aimag"},
-				61, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"},
-				62, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numPartials - ratio - strength"},
-				63, {plot=[0.5]; string="AntiClick (HP Plugins) | stretch"},
-				64, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				65, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
+				[[0.5], "AntiClick (HP Plugins) | shift"],
+				[[0.5], "AntiClick (HP Plugins) | index"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5], "AntiClick (HP Plugins) | factor"],
+				[[0.5], "AntiClick (HP Plugins) | bins"],
+				[[0.5], "AntiClick (HP Plugins) | trig"],
+				[[0.5], "AntiClick (HP Plugins) | wipe"],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | wipe- trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | wipe- width- trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numTeeth - phase - width"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | areal - aimag"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numPartials - ratio - strength"],
+				[[0.5], "AntiClick (HP Plugins) | stretch"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5], "AntiClick (HP Plugins) | wipe"],
+				nil,
 				//PV 2 Sample
-				67, {plot=[]; string="AntiClick (HP Plugins) | "},
-				68, {plot=[]; string="AntiClick (HP Plugins) | "},
-				69, {plot=[]; string="AntiClick (HP Plugins) | "},
-				70, {plot=[]; string="AntiClick (HP Plugins) | "},
-				71, {plot=[0.5]; string="AntiClick (HP Plugins) | zeroed"},
-				72, {plot=[]; string="AntiClick (HP Plugins) | "},
-				73, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
-				74, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
-				75, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase -width"},
-				76, {plot=[0.5]; string="AntiClick (HP Plugins) | morph"},
-				77, {plot=[]; string="AntiClick (HP Plugins) | "},
-				78, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | strsize - sktime - skdur - length - frzstore - zcr - lms - sc - st - rndscore"},
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | zeroed"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | wipe - trig"],
+				[[0.5], "AntiClick (HP Plugins) | wipe"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numTeeth - phase -width"],
+				[[0.5], "AntiClick (HP Plugins) | morph"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | strsize - sktime - skdur - length - frzstore - zcr - lms - sc - st - rndscore"],
+				nil,
 				// Mda Piano
-				80, {plot=[]; string="AntiClick (HP Plugins) | "},
-				81, {plot=[0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF freqLo - freqHi - RHPF freqLo- freqHi"},
-				82, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"},
-				83, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | freq - phase"},
-				84, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchRatio - pitchDispersion - timeDispersion"},
-				85, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"},
-				86, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | drop - outof"},
-				87, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
-				88, {plot=[]; string="AntiClick (HP Plugins) | "},
-				89, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				90, {plot=[0.5]; string="AntiClick (HP Plugins) | factor"},
-				91, {plot=[0.5]; string="AntiClick (HP Plugins) | bins"},
-				92, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
-				93, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
-				94, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				95, {plot=[]; string="AntiClick (HP Plugins) | "},
-				96, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				97, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				98, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
-				99, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				100, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | wipe- width - trig"},
-				101, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				102, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase - width"},
-				103, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | areal - aimag"},
-				104, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"},
-				// PV Piano
-				106, {plot=[]; string="AntiClick (HP Plugins) | "},
-				107, {plot=[]; string="AntiClick (HP Plugins) | "},
-				108, {plot=[]; string="AntiClick (HP Plugins) | "},
-				109, {plot=[]; string="AntiClick (HP Plugins) | "},
-				110, {plot=[0.5]; string="AntiClick (HP Plugins) | zeroed"},
-				111, {plot=[]; string="AntiClick (HP Plugins) | "},
-				112, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
-				113, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
-				114, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase- width"},
-				115, {plot=[0.5]; string="AntiClick (HP Plugins) | morph"},
-				116, {plot=[]; string="AntiClick (HP Plugins) | "},
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | RLPF freqLo - freqHi - RHPF freqLo- freqHi"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | RLPF lowfreq - hifreq - rq - RHPF lowfreq - hifreq - rq"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | freq - phase"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pitchRatio - pitchDispersion - timeDispersion"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pitchratio - zcperchunk - memlen"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | drop - outof"],
+				[[0.5], "AntiClick (HP Plugins) | shift"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5], "AntiClick (HP Plugins) | factor"],
+				[[0.5], "AntiClick (HP Plugins) | bins"],
+				[[0.5], "AntiClick (HP Plugins) | trig"],
+				[[0.5], "AntiClick (HP Plugins) | wipe"],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | wipe - trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | wipe- width - trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numTeeth - phase - width"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | areal - aimag"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"],
+				nil,
+				//PV Piano
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | zeroed"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | wipe - trig"],
+				[[0.5], "AntiClick (HP Plugins) | wipe"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numTeeth - phase- width"],
+				[[0.5], "AntiClick (HP Plugins) | morph"],
+				[[], "AntiClick (HP Plugins) | "],
+				nil,
 				// FX
-				118, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | delaytime(1..6) - decaytime(7..12)"},
-				119, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | mix - room - damp"},
-				120, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | roomsize - revtime - damping - imputbw - drylevel - earlylevel - taillevel"},
-				121, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | t60 - damp - size - early - depth - freq - lo - mid - hi - locut - hicut"},
-				122, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | delaytime(1..12)"},
-				123, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | trig - dur - timescale"},
-				124, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
-				125, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
-				126, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
-				127, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - radius(7..12)"},
-				128, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..10) - delaytime  - decaytime"},
-				129, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
-				130, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"},
-				131, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - decaytime(7..12)"},
-				132, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..10) - attacktime - decaytime"},
-				133, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | freq(1..6) - bwr(7..12)"},
-				134, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | specificationsArrayRef(1..12)"},
-				135, {plot=[0.5]; string="AntiClick (HP Plugins) | lenght"},
-				136, {plot=[0.5]; string="AntiClick (HP Plugins) | coef"},
-				137, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | coef - lenght"},
-				138, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitchRatio(1..10) - pitchDispersion - timeDispersion"},
-				139, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pointer - frqScale - size - overlaps - randRatio - delay - time - mul"},
-				140, {plot=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | noisefreq - add - dust - chaos - delaytime - mul"},
-				141, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | pitch - startposition - freeze"},
-				142, {plot=[0.5]; string="AntiClick (HP Plugins) | shift"},
-				143, {plot=[0.5]; string="AntiClick (HP Plugins) | index"},
-				144, {plot=[]; string="AntiClick (HP Plugins) | "},
-				145, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				146, {plot=[0.5]; string="AntiClick (HP Plugins) | factor"},
-				147, {plot=[0.5]; string="AntiClick (HP Plugins) | bins"},
-				148, {plot=[0.5]; string="AntiClick (HP Plugins) | trig"},
-				149, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"},
-				150, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				151, {plot=[]; string="AntiClick (HP Plugins) | "},
-				152, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				153, {plot=[0.5]; string="AntiClick (HP Plugins) | threshold"},
-				154, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - trig"},
-				155, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				156, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | wipe - width- trig"},
-				157, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				158, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numTeeth - phase - width"},
-				159, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | areal - aimag"},
-				160, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"},
-				161, {plot=[0.5, 0.5, 0.5]; string="AntiClick (HP Plugins) | numPartials - ratio - strength"},
-				162, {plot=[0.5]; string="AntiClick (HP Plugins) | stretch"},
-				163, {plot=[0.5, 0.5]; string="AntiClick (HP Plugins) | stretch - shift"},
-				164, {plot=[]; string="AntiClick (HP Plugins) | "},
-				165, {plot=[0.5]; string="AntiClick (HP Plugins) | wipe"}
-			);
-			[plot, string].value; // Sortie
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | delaytime(1..6) - decaytime(7..12)"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | mix - room - damp"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | roomsize - revtime - damping - imputbw - drylevel - earlylevel - taillevel"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | t60 - damp - size - early - depth - freq - lo - mid - hi - locut - hicut"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | delaytime(1..12)"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | trig - dur - timescale"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - radius(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..10) - delaytime  - decaytime"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - rq(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - decaytime(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..10) - attacktime - decaytime"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | freq(1..6) - bwr(7..12)"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | specificationsArrayRef(1..12)"],
+				[[0.5], "AntiClick (HP Plugins) | lenght"],
+				[[0.5], "AntiClick (HP Plugins) | coef"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | coef - lenght"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pitchRatio(1..10) - pitchDispersion - timeDispersion"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pointer - frqScale - size - overlaps - randRatio - delay - time - mul"],
+				[[0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "AntiClick (HP Plugins) | noisefreq - add - dust - chaos - delaytime - mul"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | pitch - startposition - freeze"],
+				[[0.5], "AntiClick (HP Plugins) | shift"],
+				[[0.5], "AntiClick (HP Plugins) | index"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5], "AntiClick (HP Plugins) | factor"],
+				[[0.5], "AntiClick (HP Plugins) | bins"],
+				[[0.5], "AntiClick (HP Plugins) | trig"],
+				[[0.5], "AntiClick (HP Plugins) | wipe"],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5], "AntiClick (HP Plugins) | threshold"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | wipe - trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | wipe - width- trig"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numTeeth - phase - width"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | areal - aimag"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | thresh - slopeBelow - slopeAbove"],
+				[[0.5, 0.5, 0.5], "AntiClick (HP Plugins) | numPartials - ratio - strength"],
+				[[0.5], "AntiClick (HP Plugins) | stretch"],
+				[[0.5, 0.5], "AntiClick (HP Plugins) | stretch - shift"],
+				[[], "AntiClick (HP Plugins) | "],
+				[[0.5], "AntiClick (HP Plugins) | wipe"]
+			];
+			val = plotString.at(item);
+			[val.at(0), val.at(1)].value; // Sortie Plot String
 		};
 
 		// Run Soft
@@ -1660,7 +1709,7 @@ Preset Wek",
 						item = item + 3;
 						cmd = msg[item];
 				});
-			}, \score, recvPort: NetAddr.langPort);
+			}, \score, recvPort: udpAdr);
 
 			lastTimeWekData = Main.elapsedTime; lastTimeWekPreset = Main.elapsedTime;
 
@@ -2637,7 +2686,7 @@ Preset Wek",
 				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(88).valueAction_(1);
 				});
-				// Key ctrl + alt + I -> Init Audio Analyze Parametres
+				// Key ctrl + alt + i -> Init Audio Analyze Parametres
 				if(modifiers==786432 and: {unicode==9} and: {keycode==34}, {
 					file=File(pathWekMatrix ++ "Init Control.scd","r");
 					fonctionLoadControl.value(windowControl, file.readAllString.interpret);
@@ -2736,7 +2785,10 @@ Preset Wek",
 				// key N -> Add a new synth or fx
 				if(char == $N, {
 					tampon = listeDataOSC;
+					s.bind{
 					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0);// Fonction Add SinOsc by default
+						s.sync;
+					};
 				});
 				// Key b -> switch recording buffer data OSC on/off
 				if(char == $b,  {
@@ -4162,8 +4214,8 @@ Preset Wek",
 		addNewSynth=PopUpMenu(windowControl, Rect(0, 0, 385, 15)).font_(Font( "Palatino-BoldItalic", 12)).stringColor_(Color.red).items = choiceSynth;
 		addNewSynth.action = {arg item, tampon;
 			tampon = listeDataOSC;
-			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0)});// Fonction Add Synth or FX
 			s.bind{
+			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0)});// Fonction Add Synth or FX
 				listeWindowSynth.last.view.children.at(0).valueAction_(1);// Synth Play On
 				s.sync;
 				listeWindowSynth.last.view.children.at(0).valueAction_(0);// Synth Play Off
@@ -4527,6 +4579,8 @@ Preset Wek",
 					s.sync;
 					recBuffer1 = Buffer.alloc(s, s.sampleRate * time.value, 1);
 					s.sync;
+					groupe.set(\recBuffer1, recBuffer1);
+					s.sync;
 				};
 			};
 			durSampleOneSlider.value_(timeBuf1);
@@ -4539,11 +4593,11 @@ Preset Wek",
 			windowSynth.view.decorator.nextLine;
 			// Knob for recording buffer one
 			knobOffset1 = EZSlider(windowSynth, 150 @ 15, "Offset", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\offset1, ez.value); ctrlBuffer.put(3, ez.value)}, 0, labelWidth: 40, numberWidth: 30);
-			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\preLevel, ez.value); bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
-			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\postLevel, ez.value); bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
+			knobPreLevel1 = EZSlider(windowSynth, 95 @ 15, "Pre", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\level1, ez.value); bufferRecording1.set(\preLevel, ez.value); ctrlBuffer.put(0, ez.value)}, 1, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
+			knobPostLevel1 = EZSlider(windowSynth, 95 @ 15, "Post", ControlSpec(0, 1, \lin, 0), {|ez| groupe.set(\level2, ez.value); bufferRecording1.set(\postLevel, ez.value); ctrlBuffer.put(1, ez.value)}, 0, labelWidth: 30, numberWidth: 30).view.children.at(2).decimals = 4;
 			knobRecOn1 = Button(windowSynth, Rect(0, 0, 40, 16)).states=[["Rec", Color.black, Color.green(0.8, 0.25)], ["Rec @", Color.black, Color.red(0.8, 0.25)], ["Rec !", Color.black, Color.blue(0.8, 0.25)]];
-			knobRecOn1.action = {|view| if(view.value == 2, {bufferRecording1.set(\loop, 0); ctrlBuffer.put(2, 1); loopRec1 = 0},
-				{bufferRecording1.set(\loop, view.value); ctrlBuffer.put(2, view.value); loopRec1 = view.value});
+			knobRecOn1.action = {|view| if(view.value == 2, {groupe.set(\loop, 0); bufferRecording1.set(\loop, 0); ctrlBuffer.put(2, 1); loopRec1 = 0},
+				{groupe.set(\loop, view.value); bufferRecording1.set(\loop, view.value); ctrlBuffer.put(2, view.value); loopRec1 = view.value});
 			};
 			windowSynth.view.decorator.nextLine;
 			// Button BufferTwo Action
@@ -4759,7 +4813,7 @@ Preset Wek",
 			StaticText(windowSynth, 25 @ 15).string = "Band"; // 70
 			// Band 0 to 12
 			Button.new(windowSynth, 25 @ 15).
-			states_([["0", Color.green], ["0", Color.red]]).
+			states_([["A", Color.green], ["A", Color.red]]).
 			action_({arg band; flagIndexBand.put(0, band.value); fonctionBand.value(0)}); // 71 all data
 			Button.new(windowSynth, 25 @ 15).
 			states_([["1", Color.green], ["1", Color.red]]).
@@ -5703,7 +5757,7 @@ Preset Wek",
 													\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
 													\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
 													\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-													\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1], groupe, \addToTail);
+													\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 											});
 											// Reset variables
 											listeFreq = [];
@@ -5874,7 +5928,7 @@ Preset Wek",
 																\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
 																\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
 																\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-																\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1], groupe, \addToTail);
+																\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 														});
 														// Reset variables
 														listeFreq = [];
@@ -6040,7 +6094,7 @@ Preset Wek",
 																				\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
 																				\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
 																				\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-																				\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1], groupe, \addToTail);
+																				\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 																		});
 																		// Reset variables
 																		listeFreq = [];
@@ -6274,7 +6328,7 @@ Preset Wek",
 											\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
 											\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
 											\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-											\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 0], groupe, \addToTail).mapn(\freq, busOSC.at(indexNumFhzBand), \ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
+											\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 0, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, loop1], groupe, \addToTail).mapn(\freq, busOSC.at(indexNumFhzBand), \ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11));
 									},
 									{
 										fork{1.wait; "Warning Synth or FX Mode not Valid for Streaming".postln};
@@ -6373,6 +6427,31 @@ Preset Wek",
 	// SynthDef
 
 	initSynthDef  {
+
+		foncSynthOut = {arg out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff;
+			chain = if(switchAudioOut == 0,
+				if(flagMC == 0,
+					// Pan v1
+					Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
+					// Pan v2
+					Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
+				if(switchAudioOut == 2,
+					if(flagMC == 0,
+						// PanAz v1
+						PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
+						// PanAz v2
+						PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
+					if(switchAudioOut == 1,
+						// Rotate2 v1
+						Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
+						// Ambisonic v1
+						(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
+							DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
+			// Out
+			Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
+			Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
+			Out.ar(out, chain * flagAmpOnOff);
+		};
 
 		numberAudioIn.do({arg i;
 
@@ -6549,7 +6628,7 @@ Preset Wek",
 		SynthDef("RecBuffer",
 			{arg out, busIn, buffer, offset=0, preLevel=1, postLevel=0, run=1, loop=1, trigger=0;
 				var in;
-				in = In.ar(busIn);
+				in = LeakDC.ar(In.ar(busIn));
 				RecordBuf.ar(in, buffer, offset, preLevel, postLevel, run, loop, trigger);
 		}).add;
 
@@ -6604,35 +6683,16 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],
+				1
+				);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = GrainBuf.ar(1, Dust.kr(ctrl1 * 100), ctrl2 * 0.1, buffer, BufRateScale.kr(buffer) * rate * reverse1, ctrl3, 4, 0, -1, 512);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('LoopBuf',
@@ -6658,36 +6718,15 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				//ctrl3 = if(ctrl3 <= 0, ctrl3, Logistic.kr(ctrl3 * 4, 1, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = LoopBuf.ar(1, buffer, rate* reverse1, 1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1, BufFrames.kr(buffer) * ctrl2);
+				chain = LoopBuf.ar(1, buffer, rate* reverse1, 1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1, BufFrames.kr(buffer) * ctrl2, interpolation: 4);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		// SynthDef with 1 Sample or Buffer
@@ -6714,34 +6753,53 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Main Synth
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(1, BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1.max(0.001)), 1, loopOne, ctrlHP1, ctrlHP2);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(1, BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer) * offset1, BufFrames.kr(buffer) * ctrl1.max(0.001)), 1, loopOne, ctrlHP1, ctrlHP2, interp: 4);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('HPbufRdLive',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, level1=1, level2=0, loop=1;
+				var chain, buffer, frames, ambisonic, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope,  pitchRatio=1.0;
+				// Set FHZ
+				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse1, 0.015);
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set Buffer
+				buffer = LocalBuf(s.sampleRate * BufDur.kr(recBuffer1), 1).clear;
+				frames = BufFrames.kr(buffer);
+				// Set input
+				input =  In.ar(busIn, 1);
+				writePos = Phasor.ar(0, 1, 0, frames);
+				/*BufWr.ar(input, buffer, writePos);*/
+				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loop);
+				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+				readPosA = (writePos - phaseA - 128).wrap(0, frames);
+				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
+				sigB = HPbufRd.ar(1, buffer, readPosB, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winB;
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				chain = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('DelayHarmonic',
@@ -6767,7 +6825,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				inputSig = if(switchBuffer1.value > 0, HPplayBuf.ar(1, bufferOne, BufRateScale.kr(bufferOne) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2), In.ar(busIn));
 				// Synth
@@ -6778,28 +6836,150 @@ Preset Wek",
 				del = DelayC.ar(inputSig, maxDel, phase) * envDel;
 				chain = del.sum;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('QuadReader',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample, localBuf, frames, phasors, windows;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				// Set Buffer
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				frames = BufFrames.kr(buffer);
+				// 4 phases décalées de 90°
+				phasors = 4.collect { |i|
+					var phase;
+					phase = Phasor.ar(0, Lag.kr(rate, 0.02), 0, frames);
+					(phase + (frames * i / 4)).wrap(0, frames);
+				};
+				windows = 4.collect { |i|
+					(
+						SinOsc.kr(1 / duree, i * (pi/2)) * 0.5 + 0.5).squared;
+				};
+				chain = Mix.fill(4, { |i|
+					HPbufRd.ar(1, buffer, phasors[i], 1, 1, ctrlHP1, ctrlHP2, interp: 4) * windows[i]
+				});
+				chain = chain / windows.sum.max(0.0001) * envelope * amp;
+				chain = LeakDC.ar(chain.softclip);
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('SmoothBufferMachine',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample;
+				var frames, phaseA, phaseB, readA, readB, envA, envB, phasorA, phasorB,  writeRate=1, writeHead;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				// Set Buffer
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				frames = BufFrames.kr(buffer);
+				// tête A
+				phasorA = Phasor.ar(0, Lag.kr(rate, 0.02), 0, frames
+				);
+				// tête B décalée de moitié buffer
+				phasorB = (phasorA + (frames * 0.5)) % frames;
+				// HANN WINDOWS
+				envA = 0.5 - (0.5 * cos((phasorA / frames) * 2pi));
+				envB = 0.5 - (0.5 * cos((phasorB / frames) * 2pi));
+				// BUFFER READ
+				readA = HPbufRd.ar(1, buffer, phaseA = phasorA, 1, 1, ctrlHP1, ctrlHP2, 4);
+				readB = HPbufRd.ar(1, buffer, phaseA = phasorB,  1, 1, ctrlHP1, ctrlHP2, 4);
+				// CROSSFADE
+				chain =	(readA * envA) + (readB * envB);
+				chain = chain * envelope * amp;
+				chain = LeakDC.ar(chain.softclip);
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('MetaTape',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample;
+				var frames, input, density=120, spread=2.5, feedback=0.35;
+				var ptr, trig, pos, smear, durGrain, buf;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				// Set Buffer
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				frames = BufFrames.kr(buffer);
+				input = In.ar(busIn);
+				ptr = Phasor.ar(0, 1, 0, frames);
+				BufWr.ar(input, buffer, ptr);
+				trig = Dust.ar(ctrl1.max(0.01) * 100);// density
+				durGrain = TRand.ar(0.01, ctrl2.max(0.01), trig);//duree
+				pos = ptr - (TRand.ar(0.02, ctrl3.max(0.01) * 4, trig) * SampleRate.ir);//spread
+				pos = pos.wrap(0, frames) / frames;
+				chain = GrainBuf.ar(1, trig, durGrain, buffer, rate, pos, 4);
+				smear = LocalIn.ar(1);
+				smear = DelayC.ar(smear, 0.25, [ctrl4, ctrl5].max(0.01));
+				LocalOut.ar(Mix(chain + smear) * ctrl6.min(0.5));//feedback
+				chain = Mix(chain + smear);
+				chain = HPF.ar(chain, 40);
+				chain = LPF.ar(chain,12000);
+				chain = chain.softclip;
+				chain = Limiter.ar(chain, 0.95);
+				chain = LeakDC.ar(chain);
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('HPplayBuf',
@@ -6825,34 +7005,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('HPplayBufMedianLeakDC',
@@ -6878,34 +7037,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = LeakDC.ar(Median.ar(ctrl1 * 30 + 1, HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2)), ctrl2);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('HPplayBufBusFM',
@@ -6931,7 +7069,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Set Direct AudioIn (levelLocalIn)
@@ -6939,28 +7077,7 @@ Preset Wek",
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1 + SinOsc.kr(in * 128 * ctrl1, mul: 128 * ctrl2), 0, BufFrames.kr(bufferOne) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('HPplayBufVibrato',
@@ -6986,34 +7103,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, SinOsc.kr(ctrl1 * dureeSample.reciprocal * 10, mul: ctrl2, add: BufRateScale.kr(buffer) * rate * reverse1), 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('HPtGrains',
@@ -7039,34 +7135,14 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = Mix(HPtGrains.ar(2, Impulse.kr(ctrl1*100), buffer, BufRateScale.kr(buffer) * rate * reverse1, BufDur.kr(buffer) * ctrl2, (duree*ctrl3)/(ctrl4*100), 0, 1, ctrlHP1, ctrlHP2));
+				chain = Mix(HPtGrains.ar(2, Impulse.kr(ctrl1*100), buffer, BufRateScale.kr(buffer) * rate * reverse1, BufDur.kr(buffer) * ctrl2, (duree*ctrl3)/(ctrl4*100), 0, 1, ctrlHP1, ctrlHP2, interp: 4));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Trig1PlayBuf',
@@ -7092,34 +7168,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Trig1.kr(Impulse.kr(ctrl1 * 100), ctrl2), BufFrames.kr(buffer) * ctrl3, loopOne, ctrlHP1, ctrlHP2);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('HPplayBufResonz',
@@ -7145,7 +7200,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
@@ -7153,28 +7208,7 @@ Preset Wek",
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = Resonz.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Synthesizer',
@@ -7201,7 +7235,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
@@ -7210,28 +7244,7 @@ Preset Wek",
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl1+1.midicps, 108.midicps*ctrl2+1.midicps, \minmax).clip(20, 20000), ctrl3), RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 108.midicps*ctrl4+1.midicps, 108.midicps*ctrl5+1.midicps, \minmax).clip(0, 20000), ctrl6));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Squiz',
@@ -7257,35 +7270,14 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = Squiz.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1.max(0.1) * 10, ctrl2.max(0.1) * 10, ctrl3.max(0.1));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('WaveLoss',
@@ -7311,34 +7303,14 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = WaveLoss.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1 * 40, ctrl2 * 40);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('FreqShift',
@@ -7364,35 +7336,51 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
-				chain = FreqShift.ar(HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2), ctrl1 * 1024 - 512, ctrl2 * 2pi);
+				chain = HPplayBuf.ar(1, buffer, 1 * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = FreqShift.ar(chain, freq, ctrl1);
+				chain =  LeakDC.ar(chain.softclip);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('FreqShift2',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				// Set offset
+				// Set Buffer
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				// Synth
+				chain = HPplayBuf.ar(1, buffer, 1 * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = FreqShift.ar(In.ar(busIn), freq, ctrl1);
+				chain =  LeakDC.ar(chain.softclip);
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Warp1',
@@ -7418,34 +7406,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = Warp1.ar(1, buffer, offset1, BufRateScale.kr(buffer) * rate * reverse1, ctrl1 + 0.01, -1, ctrl2 * 15 + 1, ctrl3, 2);
+				chain = Warp1.ar(1, buffer, offset1, BufRateScale.kr(buffer) * rate * reverse1, ctrl1 + 0.01, -1, ctrl2 * 15 + 1, ctrl3, 4);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Granulation',
@@ -7471,39 +7438,18 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				offset1 = if(ctrl2.value <= 0.0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				local = LocalBuf(4096, 1).clear;
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				in1 = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = HPbufRd.ar(1, local, Phasor.ar(0, ctrl4 + 1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2);
+				chain = HPbufRd.ar(1, local, Phasor.ar(0, ctrl4 + 1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2, interp: 4);
 				BufWr.ar(in1 + chain * 0.5, local, Phasor.ar(0, ctrl5 + 0.001, 0, BufFrames.kr(local)), 1);
 				// chain = Limiter.ar(chain + in1, 1.0, 0.01);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Toupie',
@@ -7529,39 +7475,18 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3 , ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				local = LocalBuf(4096, 1).clear;
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				in1=HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)* offset1,loopOne, ctrlHP1, ctrlHP2) * envelope;
-				in2 = HPbufRd.ar(1, local, Phasor.ar(0, ctrl4+1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2);
+				in2 = HPbufRd.ar(1, local, Phasor.ar(0, ctrl4+1, 0, BufFrames.kr(local)), 1, ctrlHP1, ctrlHP2, interp: 4);
 				chain = in1 + in2 * 0.5;
 				BufWr.ar(chain, local, Phasor.ar(0, ctrl5+0.01, 0, BufFrames.kr(local)), 1);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Elastic',
@@ -7587,7 +7512,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 10, Rand(0, 1)));
 				// Set Buffer
@@ -7595,28 +7520,7 @@ Preset Wek",
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4.clip(0.01, 0.99)/100, ctrl5.clip(0.01, 0.99)/100, \minmax), 1, 0.5);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('RandomElastic',
@@ -7642,36 +7546,15 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				offset1 = if(ctrl2.value <= 0 , offset1, Logistic.kr(ctrl2 + 3, ctrl3 * 100, Rand(0, 1)));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = CombC.ar(chain, 0.2, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
+				chain = CombC.ar(chain, 0.1, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0,1, Rand(ctrl4.clip(0.01, 0.99), ctrl5.clip(0.01, 0.99))/100, Rand(ctrl6.clip(0.01, 0.99), ctrl7.clip(0.01, 0.99))/100), 1, 0.5);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('RandKlankSample',
@@ -7697,34 +7580,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer)*offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], chain, ctrl1, ctrl2, ctrl3);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('DjScratch',
@@ -7750,35 +7612,14 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
-				chain = HPbufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureeSample.reciprocal), BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer)* offset1, BufFrames.kr(buffer)* ctrl1 ).lag(ctrl2) * LFNoise2.kr(ctrl3).sign, 1, ctrlHP1, ctrlHP2);
+				chain = HPbufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureeSample.reciprocal), BufRateScale.kr(buffer) * rate * reverse1, BufFrames.kr(buffer)* offset1, BufFrames.kr(buffer)* ctrl1 ).lag(ctrl2) * LFNoise2.kr(ctrl3).sign, 1, ctrlHP1, ctrlHP2, interp: 4);
 
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('LiquidFilter',
@@ -7808,35 +7649,14 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain =  HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
 				chain= Mix(RHPF.ar(chain,  formantfreqs * freq * ctrl1, formantbandwidths / (formantfreqs * freq * ctrl2.clip(0.01, 1.0)) * (ctrl3.clip(0.01, 1.0) / 33), 0.5));
 				chain = BBandPass.ar(chain, LFNoise2.kr(dureeSample) + 1 * 1000, ctrl4.clip(0.01, 1.0), 1);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PitchShift',
@@ -7862,35 +7682,75 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 				ctrl3 = if(ctrl2.value <= 0 , ctrl2.value, Logistic.kr(ctrl2 + 3, ctrl3 * 100, TRand(0, 1, Impulse.kr(duree.reciprocal))));
 				// Set Buffer
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, Impulse.kr(ctrl1 *100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
-				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 4, ctrl11, ctrl12, 1));
+				chain = Mix(PitchShift.ar(chain, 0.2, [ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 4, ctrl11, ctrl12));
+				chain =  LeakDC.ar(chain.softclip);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('PitchShift2',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample, local;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Set DUREE
+				dureeSample = if(switchBuffer1.value > 0, BufDur.kr(bufferOne) / BufRateScale.kr(bufferOne) * rate, BufDur.kr(recBuffer1) / BufRateScale.kr(recBuffer1) * rate);
+				dureeSample = dureeSample + (loopOne * (duree - dureeSample));
+				dureeSample = clip2(duree, dureeSample);
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				// Set Buffer
+				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
+				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * reverse1, Impulse.kr(ctrl1 * 100), BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
+				chain = PitchShift.ar(chain, 0.2, rate, ctrl2, ctrl3);
+				chain =  LeakDC.ar(chain.softclip);
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('PitchShift3',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, rate, buffer, envelope, ambisonic, dureeSample, local;
+				// Set FHZ
+				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+				// Set AMP
+				amp = amp * (ampHi - ampLo) + ampLo;
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
+				chain = PitchShift.ar(In.ar(busIn), 0.2, rate, ctrl2, ctrl3);
+				chain =  LeakDC.ar(chain.softclip);
+				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		//////////// FFT with 1 Sample /////////////
@@ -7918,7 +7778,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -7926,27 +7786,7 @@ Preset Wek",
 				chain = PV_HPshiftDown(chain, ctrl1 * 32);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_Cutoff',
@@ -7972,7 +7812,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -7980,28 +7820,7 @@ Preset Wek",
 				chain = PV_Cutoff(chain, ctrl1 * 2 - 1);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_HPfiltre',
@@ -8027,7 +7846,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8035,28 +7854,7 @@ Preset Wek",
 				chain = PV_HPfiltre(chain, 4, ctrl1 * 256 + 4);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagShift',
@@ -8082,7 +7880,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8090,28 +7888,7 @@ Preset Wek",
 				chain = PV_MagShift(chain, ctrl1 * 4, ctrl2 * 128 -64);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_LocalMax',
@@ -8137,7 +7914,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8145,28 +7922,7 @@ Preset Wek",
 				chain = PV_LocalMax(chain, ctrl1 * 64);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagSmear',
@@ -8192,7 +7948,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8200,28 +7956,7 @@ Preset Wek",
 				chain = PV_MagSmear(chain, ctrl1 * 64);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_RandComb',
@@ -8247,7 +7982,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8255,28 +7990,7 @@ Preset Wek",
 				chain = PV_RandComb(chain, ctrl1, LFNoise2.kr(ctrl2 * 64));
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BinShift',
@@ -8302,7 +8016,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8310,28 +8024,7 @@ Preset Wek",
 				chain = PV_BinShift(chain, ctrl1 * 4, ctrl2 * 256 -64);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BinScramble',
@@ -8357,7 +8050,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8365,28 +8058,7 @@ Preset Wek",
 				chain = PV_BinScramble(chain, ctrl1, ctrl2, Impulse.kr(ctrl3*100));
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BrickWall',
@@ -8412,7 +8084,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8420,28 +8092,7 @@ Preset Wek",
 				chain = PV_BrickWall(chain, ctrl1 * 2 - 1);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_Diffuser',
@@ -8467,7 +8118,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8475,28 +8126,7 @@ Preset Wek",
 				chain = PV_Diffuser(chain, Impulse.kr(ctrl1*100));
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagAbove',
@@ -8522,7 +8152,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8530,28 +8160,7 @@ Preset Wek",
 				chain = PV_MagAbove(chain, ctrl1 * 64);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagBelow',
@@ -8577,7 +8186,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8585,28 +8194,7 @@ Preset Wek",
 				chain = PV_MagBelow(chain, ctrl1 * 64);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagClip',
@@ -8632,7 +8220,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8640,28 +8228,7 @@ Preset Wek",
 				chain = PV_MagClip(chain, ctrl1 * 16);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagNoise',
@@ -8687,7 +8254,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8695,28 +8262,7 @@ Preset Wek",
 				chain = PV_MagNoise(chain);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagSquared',
@@ -8742,7 +8288,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8750,28 +8296,7 @@ Preset Wek",
 				chain = PV_MagSquared(chain);
 				chain= IFFT(chain) * 0.01;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_RectComb',
@@ -8797,7 +8322,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8805,28 +8330,7 @@ Preset Wek",
 				chain = PV_RectComb(chain, ctrl1 * 32, ctrl2, ctrl3);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagSmooth',
@@ -8852,7 +8356,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set offset
 
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
@@ -8862,28 +8366,7 @@ Preset Wek",
 				chain = PV_MagSmooth(chain, ctrl1);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_ConformalMap',
@@ -8909,7 +8392,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8917,28 +8400,7 @@ Preset Wek",
 				chain = PV_ConformalMap(chain, ctrl1 * 2 - 1, ctrl2 * 2 - 1);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_Compander',
@@ -8965,7 +8427,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -8973,28 +8435,7 @@ Preset Wek",
 				chain = PV_Compander(chain, 80*ctrl1.clip(0.1, 1), (ctrl2*5).clip(2, 5), ctrl3);
 				chain= IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_SpectralEnhance',
@@ -9020,7 +8461,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
@@ -9029,28 +8470,7 @@ Preset Wek",
 				chain = PV_SpectralEnhance(chain, (ctrl1*8+0.5).floor, ctrl2*4+1, ctrl3);
 				chain= IFFT(chain) * 0.125;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagStretch',
@@ -9076,7 +8496,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -9084,28 +8504,7 @@ Preset Wek",
 				chain = PV_MagShift(chain, (ctrl1 * 4).clip(0.25, 4));
 				chain= IFFT(chain) * 0.125;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagShift+Stretch',
@@ -9131,7 +8530,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				buffer = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				// Synth
 				chain = HPplayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 1, BufFrames.kr(buffer) * offset1, loopOne, ctrlHP1, ctrlHP2);
@@ -9139,28 +8538,7 @@ Preset Wek",
 				chain = PV_MagShift(chain, (ctrl1 * 4).clip(0.25, 4), ctrl2 - 0.5 * 128);
 				chain= IFFT(chain) * 0.125;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		//////////// FFT with 2 Sample ///////////////
@@ -9188,7 +8566,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9200,28 +8578,7 @@ Preset Wek",
 				chain = PV_Max(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_Min',
@@ -9247,7 +8604,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9259,28 +8616,7 @@ Preset Wek",
 				chain = PV_Min(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagDiv',
@@ -9306,7 +8642,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9318,28 +8654,7 @@ Preset Wek",
 				chain = PV_MagDiv(fft1, fft2, ctrl1 + 0.0001);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_Mul',
@@ -9365,7 +8680,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9377,28 +8692,7 @@ Preset Wek",
 				chain = PV_Mul(fft1, fft2);
 				chain = IFFT(chain) * 0.01;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		/*SynthDef('PV_Div',
@@ -9424,7 +8718,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9436,28 +8730,7 @@ Preset Wek",
 				chain = PV_Div(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;*/
 
 		SynthDef('PV_Add',
@@ -9484,7 +8757,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9496,28 +8769,7 @@ Preset Wek",
 				chain = PV_Add(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_RandWipe',
@@ -9544,7 +8796,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9556,28 +8808,7 @@ Preset Wek",
 				chain = PV_RandWipe(fft1, fft2, ctrl1, Impulse.kr(ctrl2*100));
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BinWipe',
@@ -9603,7 +8834,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9615,28 +8846,7 @@ Preset Wek",
 				chain = PV_BinWipe(fft1, fft2, ctrl1 * 2 - 1);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_CopyPhase',
@@ -9662,7 +8872,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9674,28 +8884,7 @@ Preset Wek",
 				chain = PV_CopyPhase(fft1, fft2);
 				chain = IFFT(chain)* 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_RectComb2',
@@ -9721,7 +8910,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9733,28 +8922,7 @@ Preset Wek",
 				chain = PV_RectComb2(fft1, fft2, ctrl1 * 32, ctrl2, ctrl3);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_Morph',
@@ -9780,7 +8948,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9792,28 +8960,7 @@ Preset Wek",
 				chain = PV_Morph(fft1, fft2, ctrl1);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Convolution',
@@ -9839,7 +8986,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9848,28 +8995,7 @@ Preset Wek",
 				chain2 = HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, 0, BufFrames.kr(buffer2) * offset2, loopTwo, ctrlHP1, ctrlHP2);
 				chain = Convolution.ar(chain1, chain2, 1024) * 0.01;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Concat',
@@ -9895,7 +9021,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Select In
 				buffer1 = if(switchBuffer1.value > 0, bufferOne, recBuffer1);
 				buffer2 = if(switchBuffer2.value > 0, bufferTwo, recBuffer2);
@@ -9904,28 +9030,7 @@ Preset Wek",
 				chain2 = HPplayBuf.ar(1, buffer2, BufRateScale.kr(buffer2) * rate * reverse2, 0, BufFrames.kr(buffer2) * offset2, loopTwo, ctrlHP1, ctrlHP2);
 				chain = Concat.ar(chain2, chain1, (ctrl1 * 4).clip(1, 4), ctrl2.clip(0.01, 1.0), (ctrl3 * 4).clip(1, 4), ctrl4.clip(0.01,0.5), ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, mul: 0.5);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		/////////////// Piano ///////////////////
@@ -9948,28 +9053,7 @@ Preset Wek",
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano Synthesizer',
@@ -9992,28 +9076,7 @@ Preset Wek",
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				chain = if(freq < 64.5.midicps , RLPF.ar(chain, XLine.kr(63.5.midicps*ctrl1+27.5, freq, duree*ctrl2), 0.333), RHPF.ar(chain, XLine.kr(127.midicps*ctrl3+27.5, freq, duree*ctrl4), 0.333));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano Resonz',
@@ -10034,30 +9097,8 @@ Preset Wek",
 				// Synth
 				chain = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 				chain = if(freq >= 60.midicps , Resonz.ar(chain, XLine.kr(127.midicps*ctrl1+21.midicps, 55*ctrl2 + 21.midicps, duree*ctrl3)), Resonz.ar(chain, XLine.kr(55*ctrl4+21.midicps, 127.midicps*ctrl5 + 21.midicps, duree*ctrl6)));
-
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano Squiz',
@@ -10078,28 +9119,7 @@ Preset Wek",
 				// Synth
 				chain = Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 10, ctrl2 *10, ctrl3);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano Waveloss',
@@ -10120,28 +9140,7 @@ Preset Wek",
 				// Synth
 				chain = WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 40, 40, abs(ctrl2 * 2 - 1));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano FreqShift',
@@ -10162,28 +9161,7 @@ Preset Wek",
 				// Synth
 				chain = FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), ctrl1 * 1024 - 512, ctrl2 * 2pi);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PitchShift',
@@ -10204,28 +9182,7 @@ Preset Wek",
 				// Synth
 				chain = PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 0.2, ctrl1.clip(0.01, 1) * 4, ctrl2, ctrl3, 1);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		/////////////// FFT Piano ////////////////
@@ -10252,28 +9209,7 @@ Preset Wek",
 				chain = PV_HPshiftDown(chain, ctrl1 * 64);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagShift',
@@ -10298,28 +9234,7 @@ Preset Wek",
 				chain = PV_MagShift(chain, ctrl1 * 4, ctrl2 * 128 - 64);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_LocalMax',
@@ -10344,28 +9259,7 @@ Preset Wek",
 				chain = PV_LocalMax(chain, ctrl1 * 64);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagSmear',
@@ -10390,28 +9284,7 @@ Preset Wek",
 				chain = PV_MagSmear(chain, ctrl1 * 64);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_RandComb',
@@ -10436,28 +9309,7 @@ Preset Wek",
 				chain = PV_RandComb(chain, ctrl1, Impulse.kr(ctrl2*100));
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_BinShift',
@@ -10482,28 +9334,7 @@ Preset Wek",
 				chain = PV_BinShift(chain, ctrl1 * 4, ctrl2 * 256 - 128);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_BinScramble',
@@ -10528,28 +9359,7 @@ Preset Wek",
 				chain = PV_BinScramble(chain, ctrl1, ctrl2,  Impulse.kr(ctrl3*100));
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_BrickWall',
@@ -10574,28 +9384,7 @@ Preset Wek",
 				chain = PV_BrickWall(chain, ctrl1 * 2 - 1);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_ConformalMap',
@@ -10620,28 +9409,7 @@ Preset Wek",
 				chain = PV_ConformalMap(chain, ctrl1 * 2 - 1, ctrl2 * 2 - 1);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_Diffuser',
@@ -10666,28 +9434,7 @@ Preset Wek",
 				chain = PV_Diffuser(chain, Impulse.kr(ctrl1*100));
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagAbove',
@@ -10712,28 +9459,7 @@ Preset Wek",
 				chain = PV_MagAbove(chain, ctrl1 * 64);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagBelow',
@@ -10758,28 +9484,7 @@ Preset Wek",
 				chain = PV_MagBelow(chain, ctrl1 * 64);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagClip',
@@ -10804,28 +9509,7 @@ Preset Wek",
 				chain = PV_MagClip(chain, ctrl1 * 16);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagNoise',
@@ -10850,28 +9534,7 @@ Preset Wek",
 				chain = PV_MagNoise(chain);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagSquared',
@@ -10896,28 +9559,7 @@ Preset Wek",
 				chain = PV_MagSquared(chain);
 				chain = IFFT(chain) * 0.1;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_RectComb',
@@ -10942,28 +9584,7 @@ Preset Wek",
 				chain = PV_RectComb(chain, ctrl1 * 32, ctrl2, ctrl3);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagSmooth',
@@ -10988,28 +9609,7 @@ Preset Wek",
 				chain = PV_MagSmooth(chain, ctrl1);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_Compander',
@@ -11034,28 +9634,7 @@ Preset Wek",
 				chain = PV_Compander(chain, 80*ctrl1.clip(0.1, 1), (ctrl2*5).clip(2, 5), ctrl3);
 				chain = IFFT(chain);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		////////////FFT Piano + Sample ////////
@@ -11091,28 +9670,7 @@ Preset Wek",
 				chain = PV_Max(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_Min',
@@ -11146,28 +9704,7 @@ Preset Wek",
 				chain = PV_Min(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_MagDiv',
@@ -11201,28 +9738,7 @@ Preset Wek",
 				chain = PV_MagDiv(fft1, fft2, ctrl1 + 0.0001);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_Mul',
@@ -11256,28 +9772,7 @@ Preset Wek",
 				chain = PV_Mul(fft1, fft2);
 				chain = IFFT(chain) * 0.1;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_Add',
@@ -11311,28 +9806,7 @@ Preset Wek",
 				chain = PV_Add(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_RandWipe',
@@ -11366,28 +9840,7 @@ Preset Wek",
 				chain = PV_RandWipe(fft1, fft2, ctrl1, Impulse.kr(ctrl2*100));
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_BinWipe',
@@ -11421,28 +9874,7 @@ Preset Wek",
 				chain = PV_BinWipe(fft1, fft2, ctrl1 * 2 - 1);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_CopyPhase',
@@ -11476,28 +9908,7 @@ Preset Wek",
 				chain = PV_CopyPhase(fft1, fft2);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_RectComb2',
@@ -11531,28 +9942,7 @@ Preset Wek",
 				chain = PV_RectComb2(fft1, fft2, ctrl1 * 32, ctrl2, ctrl3);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano PV_Morph',
@@ -11586,28 +9976,7 @@ Preset Wek",
 				chain = PV_Morph(fft1, fft2, ctrl1);
 				chain = IFFT(chain) * 0.5;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Piano Convolution',
@@ -11638,28 +10007,7 @@ Preset Wek",
 				in2 = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate * reverse1, 0, offset1 * BufFrames.kr(buffer), loopOne) * amp;
 				chain = Convolution(in1, in2, 1024) * 0.1;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		//////////// SynthDef Synthese ///////////////
@@ -11681,32 +10029,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = SinOsc.ar(freq);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('SynthFM',
@@ -11726,32 +10053,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(SinOsc.ar(freq + SinOsc.ar(250*ctrl1, mul: 250 * ctrl7), mul: amp) + SinOsc.ar(freq + SinOsc.ar(500*ctrl2, mul: 500 * ctrl8), mul: amp) + SinOsc.ar(freq + SinOsc.ar(750*ctrl3, mul: 750 * ctrl9), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1000*ctrl4, mul: 1000 * ctrl10), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1250*ctrl5, mul: 1250 * ctrl11), mul: amp) + SinOsc.ar(freq + SinOsc.ar(1500*ctrl6, mul: 1500 * ctrl12), mul: amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('SynthBusFM',
@@ -11771,34 +10077,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Set Direct AudioIn (levelLocalIn)
 				in = In.ar(busIn);
 				// Synth
 				chain = Mix(SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl1, mul: 1000 * ctrl7), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl2, mul: 1000 * ctrl8), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl3, mul: 1000 * ctrl9), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl4, mul: 1000 * ctrl10), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl5, mul: 1000 * ctrl11), mul: amp) + SinOsc.ar(freq + SinOsc.ar(in * 1000 * ctrl6, mul: 1000 * ctrl12), mul: amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('SinOscVibrato',
@@ -11818,32 +10103,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(SinOsc.ar(SinOsc.kr(ctrl1*8, mul: TRand.kr(0, ctrl7*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl2*16, mul: TRand.kr(0, ctrl8*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl3*24, mul: TRand.kr(0, ctrl9*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl4*32, mul: TRand.kr(0, ctrl10*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl5*9, mul: TRand.kr(0, ctrl11*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp) + SinOsc.ar(SinOsc.kr(ctrl6*128, mul: TRand.kr(0, ctrl12*100, Impulse.kr(duree.reciprocal)), add: freq), mul: amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Formant',
@@ -11863,32 +10127,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(Formant.ar(freq, LFNoise0.kr(ctrl1.reciprocal) * (ctrl7 * 127).midicps, LFNoise0.kr(ctrl2.reciprocal)*(ctrl8 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl3.reciprocal) * (ctrl9 * 127).midicps, LFNoise0.kr(ctrl4.reciprocal)*(ctrl10 * 127).midicps, amp) + Formant.ar(freq, LFNoise0.kr(ctrl5.reciprocal) * (ctrl11 * 127).midicps, LFNoise0.kr(ctrl6.reciprocal)*(ctrl12 * 127).midicps, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Guitare',
@@ -11908,33 +10151,12 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl1 * 24)), ctrl7)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl2 * 24)), ctrl8)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl3 * 24)), ctrl9)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl4 * 24)), ctrl10)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl5 * 24)), ctrl11)) + BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*ctrl6 * 24)), ctrl12)));
 				chain = CombL.ar(chain, freq.reciprocal, freq.reciprocal, duree, amp);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('SawSynth',
@@ -11955,34 +10177,13 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				freq = freq.clip(20,12544);
 				chain = Saw.ar(freq, 0.5);
 				chain = RHPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0.01, 1, ctrl1.clip(0.01,1)*4000, ctrl2*4000, \minmax), ctrl3, 1, RLPF.ar(chain, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0.01, 1, ctrl4.clip(0.01,1)*2000, ctrl5*2000, \minmax), ctrl6));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Gendy3',
@@ -12002,32 +10203,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(Gendy3.ar(ctrl1 * 6, ctrl2 * 6, ctrl3 * 0.1, ctrl4 * 0.1, freq, ctrl5 * 0.1, ctrl6 * 0.1));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Klang',
@@ -12047,32 +10227,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(DynKlang.ar(`[[ctrl1, ctrl2, ctrl3+1, ctrl4+1, ctrl5+2, ctrl6+2, ctrl7+3, ctrl8+3, ctrl9+4, ctrl10+4, ctrl11+5, ctrl12+5] , amp, 0], freq));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Blip',
@@ -12092,32 +10251,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(Blip.ar(freq, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, 50 * ctrl1 + 1, 50 * ctrl2 + 1, \minmax), 0.5));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('VarSaw',
@@ -12137,32 +10275,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(VarSaw.ar(freq, ctrl1, ctrl2, 0.5));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Pulse',
@@ -12182,32 +10299,11 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = Mix(Pulse.ar(freq, ctrl1, 0.5));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Spring',
@@ -12227,7 +10323,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				inforce = LFPulse.ar(ctrl1 * duree);
 				k = ctrl2 * 20;
@@ -12236,28 +10332,7 @@ Preset Wek",
 				outforce = outforce * freq + freq;
 				chain = PMOsc.ar(freq, outforce, Sweep.kr(Impulse.kr(duree.reciprocal), duree.reciprocal).linexp(0, 1, ctrl4.clip(0.01, 1), ctrl5.clip(0.01, 1) * 2pi, \minmax), 0, 0.25);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('FXsynthComb',
@@ -12282,35 +10357,72 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
-				chain = Saw.ar(freq.lag(tempo));
+				chain = Saw.ar(freq.lag(tempo), 0.5);
 				chain = HPF.ar(chain, freqCentroid.clip(20, 20000), 1, LPF.ar(chain, energy.clip(20,20000), 1));
 				chain = CombC.ar(chain, 0.2, flux.clip(0.0001, 10000), flatness.clip(0.0001, 10000), 0.5);
 				// Switch Audio Out
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
+		}).add;
+
+		SynthDef('OB-Xa',
+			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2,
+				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
+				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+				switchBuffer1=0, switchBuffer2=0,
+				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+				ctrlHP1=0.33, ctrlHP2=0.5,
+				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
+				var chain, envelope, ambisonic, oscErr=0.01, filtErr=1, res=0.15, osc1, osc2, drift1, drift2, aenv, cf,  envAmt=1, fenv;
+				// Normalize
+				flatness = flatness.clip(0.01, 1.0).lag(duree/3);
+				flux = flux.clip(0.01, 1.0).lag(duree/3);
+				energy = (energy / 8372 * 4186).clip(50, 4186).lag(duree/3);
+				freqCentroid = (freqCentroid / 12544 * 8372).clip(50, 8372).lag(duree/3);
+				drift1 = LFNoise2.kr(0.12).range(-0.002,0.002);
+				drift2 = LFNoise2.kr(0.18).range(-0.002,0.002);
+				// Set Music Data
+				amp = amp * (ampHi - ampLo) + ampLo;
+				osc1 = VarSaw.ar(
+					freq * (1 + oscErr + drift1),
+					width: 0.5
+				);
+				osc2 = Pulse.ar(
+					freq * (1.008 + oscErr + drift2),
+					ctrl1
+				);
+				chain = (osc1 + (osc2 * 0.8));
+				chain = tanh(chain * 1.3);
+				fenv = EnvGen.kr(
+					Env.adsr(
+						0.01,
+						0.35,
+						0.4,
+						tempo,
+						curve:-4
+					),
+					1
+				);
+				cf = (
+					freqCentroid * filtErr * (ctrl2 + (fenv * envAmt))
+				).clip(40,18000);
+				chain = SVF.ar(
+					chain,
+					cf,
+					ctrl3,
+					1,0,0
+				);
+				chain = chain.softclip;
+				// Envelope
+				envelope = Select.kr(mode, [
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
+					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
+					amp],  1);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), envelope, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) * envelope,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), envelope);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Silent',
@@ -12330,7 +10442,7 @@ Preset Wek",
 				envelope = Select.kr(mode, [
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
 					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp]);
+					amp],  1);
 				// Synth
 				chain = 0;
 				// Out
@@ -12351,7 +10463,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12359,28 +10471,7 @@ Preset Wek",
 				//FX
 				chain = Mix(AllpassC.ar(in, 0.2, [ctrl1,ctrl2/2,ctrl3/3,ctrl4/4,ctrl1,ctrl5/5,ctrl6/6], [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12]*30, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('FreeVerb',
@@ -12393,7 +10484,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12401,28 +10492,7 @@ Preset Wek",
 				//FX
 				chain = FreeVerb.ar(in, ctrl1, ctrl2, ctrl3, amp);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('GVerb',
@@ -12435,7 +10505,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, left, right, ambisonic;
+				var chain, in, left, right, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12444,28 +10514,7 @@ Preset Wek",
 				# left, right = GVerb.ar(in, (ctrl1*300).clip(1, 300), (ctrl2*100).clip(15, 100), ctrl3.clip(0.01, 1), ctrl4.clip(0.01, 1), 15, ctrl5.clip(0.01, 1), ctrl6.clip(0.01, 1), ctrl7.clip(0.01, 1), 300, amp);
 				chain = Mix(left, right);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('JPverb',
@@ -12478,7 +10527,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, left, right, ambisonic;
+				var chain, in, left, right, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12486,28 +10535,7 @@ Preset Wek",
 				//FX
 				chain = Mix(JPverb.ar(in, t60: ctrl1 * 60, damp: ctrl2, size: ctrl3 * 300, earlyDiff: ctrl4, modDepth: ctrl5, modFreq: ctrl6 * 10, low: ctrl7, mid: ctrl8, high: ctrl9, lowcut: ctrl10, highcut: ctrl11)) * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('DelayC',
@@ -12520,7 +10548,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12528,28 +10556,7 @@ Preset Wek",
 				//FX
 				chain = Mix(DelayC.ar(in, 4.0, [ctrl1*4.0,ctrl2*4.0,ctrl3*4.0,ctrl4*4.0,ctrl5*4.0,ctrl6*4.0,ctrl7*4.0,ctrl8*4.0,ctrl9*4.0,ctrl10*4.0,ctrl11*4.0,ctrl12*4.0].clip(0.01, 4.0), amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Trig1',
@@ -12562,7 +10569,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12570,28 +10577,7 @@ Preset Wek",
 				//FX
 				chain = in * EnvGen.kr(Env.perc, Trig1.kr(Impulse.kr(ctrl1 * 100), ctrl2), amp, 0, ctrl3);
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('BPF',
@@ -12604,7 +10590,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12612,28 +10598,7 @@ Preset Wek",
 				//FX
 				chain = Mix(BPF.ar(in,[ctrl1*1000+27.5,ctrl2*1000+750,ctrl3*1000+1500,ctrl4*1000+2250,ctrl5*1000+3000,ctrl6*1000+3750], [ctrl7,ctrl8,ctrl9,ctrl10,ctrl11,ctrl12]+0.001, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('BRF',
@@ -12646,7 +10611,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12654,28 +10619,7 @@ Preset Wek",
 				//FX
 				chain = Mix(BRF.ar(in,[ctrl1*1000+27.5,ctrl2*1000+750,ctrl3*1000+1500,ctrl4*1000+2250,ctrl5*1000+3000,ctrl6*1000+3750], [ctrl7,ctrl8,ctrl9,ctrl10,ctrl11,ctrl12]+0.001, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('MidEQ',
@@ -12688,7 +10632,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12696,28 +10640,7 @@ Preset Wek",
 				//FX
 				chain = Mix(MidEQ.ar(in, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6]*4186+27.5, 0.5, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12]*48-24, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('TwoPole',
@@ -12730,7 +10653,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12738,28 +10661,7 @@ Preset Wek",
 				//FX
 				chain = Mix(TwoPole.ar(in, [ctrl1*500,ctrl2*500+500,ctrl3*500+1000,ctrl4*500+1500,ctrl5*500+2000,ctrl6*500+2500], [ctrl7,ctrl8,ctrl9,ctrl10,ctrl11,ctrl12], amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Median',
@@ -12772,7 +10674,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12780,28 +10682,7 @@ Preset Wek",
 				//FX
 				chain = Mix(Median.ar(ctrl1 * 30 + 1, in, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('LeakDC',
@@ -12814,7 +10695,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12822,28 +10703,7 @@ Preset Wek",
 				//FX
 				chain = Mix(LeakDC.ar(in, ctrl1, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Median+LeakDC',
@@ -12856,7 +10716,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12864,28 +10724,7 @@ Preset Wek",
 				//FX
 				chain = Mix(LeakDC.ar(Median.ar(ctrl1 * 30 + 1, in, amp), ctrl2));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('CombC',
@@ -12898,37 +10737,15 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				//FX
 				chain = Mix(CombC.ar(in, 0.2, [ctrl1,ctrl2/2,ctrl3/3,ctrl4/4,ctrl1,ctrl5/5,ctrl6/6].clip(0.01, 1) / 100, [ctrl7*4, ctrl8*4, ctrl9*4, ctrl10*4, ctrl11*4, ctrl12*4].clip(0.0001, 4), amp));
-
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('RHPF',
@@ -12941,7 +10758,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12949,28 +10766,7 @@ Preset Wek",
 				//FX
 				chain = Mix(RHPF.ar(in, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6] * 108.midicps + 50, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12], amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('RLPF',
@@ -12983,7 +10779,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -12991,28 +10787,7 @@ Preset Wek",
 				//FX
 				chain = Mix(RLPF.ar(in, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6] * 108.midicps + 50, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12], amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Ringz',
@@ -13025,7 +10800,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13033,28 +10808,7 @@ Preset Wek",
 				//FX
 				chain = Mix(Ringz.ar(in, [ctrl1*500,ctrl2*500+500,ctrl3*500+1000,ctrl4*500+1500,ctrl5*500+2000,ctrl6*500+2500], [ctrl7,ctrl8,ctrl9,ctrl10, ctrl11, ctrl12] * 0.1, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Formlet',
@@ -13067,7 +10821,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13075,28 +10829,7 @@ Preset Wek",
 				//FX
 				chain = Mix(Formlet.ar(in, [ctrl1*300,ctrl2*300+300,ctrl3*300+600,ctrl4*300+900,ctrl5*300+1200,ctrl6*300+1500,ctrl7*300+1800,ctrl8*300+2100,ctrl9*300+2400,ctrl10*300+2700], ctrl11, ctrl12, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('Resonz',
@@ -13109,7 +10842,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13117,28 +10850,7 @@ Preset Wek",
 				//FX
 				chain = Mix(Resonz.ar(in, [ctrl1*1000,ctrl2*1000+1000,ctrl3*1000+2000,ctrl4*1000+3000,ctrl5*1000+4000,ctrl6*1000+5000], [ctrl7,ctrl8, ctrl9, ctrl10, ctrl11, ctrl12], amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('DynKlank',
@@ -13151,7 +10863,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13159,28 +10871,7 @@ Preset Wek",
 				//FX
 				chain = Mix(DynKlang.ar(`[[ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6] * 4186 + 37, amp, [ctrl7, ctrl8, ctrl9, ctrl10, ctrl11, ctrl12]], in));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PitchShiftFX',
@@ -13193,7 +10884,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13201,28 +10892,7 @@ Preset Wek",
 				//FX
 				chain = Mix(PitchShift.ar(in, 0.2, [ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6, ctrl7, ctrl8, ctrl9, ctrl10].clip(0.01, 1) * 4, ctrl11, ctrl12, amp));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('WarpDelay',
@@ -13235,7 +10905,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0, reverse1;
-				var chain, in, local, ambisonic;
+				var chain, in, local, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				local = LocalIn.ar(1);
@@ -13243,31 +10913,10 @@ Preset Wek",
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, 0, preLevel, postLevel, loop: 1);
 				//FX
-				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, mul: amp);
+				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, interp: 4, mul: amp);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl6, ctrl7));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('DJ_FX',
@@ -13280,7 +10929,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0, reverse1;
-				var chain, in, local, ambisonic;
+				var chain, in, local, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				local = LocalIn.ar(1);
@@ -13291,28 +10940,7 @@ Preset Wek",
 				chain = HPplayBuf.ar(1, bufferOne, LFNoise2.kr(ctrl1.reciprocal) + (ctrl2*4) * reverse1, Dust.kr(ctrl3.reciprocal), Logistic.kr(ctrl4 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(bufferOne), 1, ctrlHP1, ctrlHP2) + local * amp;
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl5/1000, ctrl6));
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagFreeze',
@@ -13325,7 +10953,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
-				var chain, in, local, reverse, buffer, ambisonic;
+				var chain, in, local, reverse, buffer, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set Reverse sample
@@ -13340,29 +10968,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = chain * amp;
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_HPshiftDownFX',
@@ -13375,7 +10981,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13386,28 +10992,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_CutoffFX',
@@ -13420,7 +11005,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13431,28 +11016,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_HPfiltreFX',
@@ -13465,7 +11029,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13476,28 +11040,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagNoiseFX',
@@ -13510,7 +11053,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13521,28 +11064,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagClipFX',
@@ -13555,7 +11077,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13566,28 +11088,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagSmoothFX',
@@ -13600,7 +11101,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13611,28 +11112,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagSmearFX',
@@ -13645,7 +11125,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13656,28 +11136,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_DiffuserFX',
@@ -13690,7 +11149,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13701,28 +11160,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BrickWallFX',
@@ -13735,7 +11173,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13746,28 +11184,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_LocalMaxFX',
@@ -13780,7 +11197,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13791,28 +11208,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagSquaredFX',
@@ -13825,7 +11221,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13836,28 +11232,7 @@ Preset Wek",
 				chain= IFFT(chain) * 0.015625;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagBelowFX',
@@ -13870,7 +11245,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13881,28 +11256,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagAboveFX',
@@ -13915,7 +11269,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13926,28 +11280,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_RandCombFX',
@@ -13960,7 +11293,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -13971,28 +11304,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagShiftFX',
@@ -14005,7 +11317,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14016,28 +11328,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BinScrambleFX',
@@ -14050,7 +11341,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14061,28 +11352,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_BinShiftFX',
@@ -14095,7 +11365,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14106,28 +11376,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_RectCombFX',
@@ -14140,7 +11389,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14151,28 +11400,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_ConformalMapFX',
@@ -14185,7 +11413,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14196,28 +11424,7 @@ Preset Wek",
 				chain= IFFT(chain);
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_CompanderFX',
@@ -14230,7 +11437,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14241,28 +11448,7 @@ Preset Wek",
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_SpectralEnhanceFX',
@@ -14275,7 +11461,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14286,28 +11472,7 @@ Preset Wek",
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagStretchFX',
@@ -14320,7 +11485,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14331,28 +11496,7 @@ Preset Wek",
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('PV_MagShift+StretchFX',
@@ -14365,7 +11509,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1;
-				var chain, in, ambisonic;
+				var chain, in, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14376,28 +11520,7 @@ Preset Wek",
 				chain= IFFT(chain) * 0.125;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 		SynthDef('ConvolutionFX',
@@ -14410,7 +11533,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, preLevel=1, postLevel=0;
-				var chain, in, buffer, trig, ambisonic;
+				var chain, in, buffer, trig, ambisonic, envelope=1;
 				// Set AMP
 				amp = amp * (ampHi - ampLo) + ampLo;
 				// Set inFX + Direct AudioIn (levelLocalIn)
@@ -14422,28 +11545,7 @@ Preset Wek",
 				chain = Convolution2L.ar(in, buffer, trig * tempo, 1024) * 0.1;
 				chain = chain * amp;
 				// Switch Audio Out
-				chain = if(switchAudioOut == 0,
-					if(flagMC == 0,
-						// Pan v1
-						Pan2.ar(chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1),
-						// Pan v2
-						Pan2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1)),
-					if(switchAudioOut == 2,
-						if(flagMC == 0,
-							// PanAz v1
-							PanAz.ar(numberAudioOut, chain, TRand.kr(panLo, panHi, Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), 1, widthMC, orientationMC),
-							// PanAz v2
-							PanAz.ar(numberAudioOut, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1, widthMC, orientationMC)),
-						if(switchAudioOut == 1,
-							// Rotate2 v1
-							Rotate2.ar(chain, chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo)) ,
-							// Ambisonic v1
-							(ambisonic = PanB2.ar(chain, LFSaw.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal, mul: TRand.kr(abs(panHi - panLo), abs(panHi - panLo), Dust.kr((duree * (durHi - durLo) + durLo * durM * tempo).reciprocal)), add: panLo), 1);
-								DecodeB2.ar(numberAudioOut, ambisonic[0], ambisonic[1], ambisonic[2])))));
-				// Out
-				Out.ar(busOut, Mix(chain * levelBusOut.value));// Send Bus Out Mono
-				Out.ar(busFXout, Mix(chain * levelBusFX.value));// Send Bus FX Mono
-				Out.ar(out, chain * flagAmpOnOff);
+				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
 	}
