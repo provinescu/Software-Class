@@ -2280,7 +2280,7 @@ Preset Wek",
 									if(File.exists(pathWekMatrix ++ foldersToScanAll.wrapAt(number)),
 										{listeWindowSynth.do({arg window; window.close});
 											file=File(pathWekMatrix ++ foldersToScanAll.wrapAt(number),"r");
-											windowControl.name="WekMatrix Control" + " | " + foldersToScanAll.wrapAt(number);
+											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
@@ -2312,7 +2312,7 @@ Preset Wek",
 									if(File.exists(pathWekMatrix ++ foldersToScanAll.wrapAt(number)),
 										{listeWindowSynth.do({arg window; window.close});
 											file=File(pathWekMatrix ++ foldersToScanAll.wrapAt(number),"r");
-											windowControl.name="WekMatrix Control" + " | " + foldersToScanAll.wrapAt(number);
+											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
@@ -2338,7 +2338,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentPan.value, {
 						controlPanSlider.valueAction_([rrand(-1.0, 0.0), rrand(0.0, 1.0)]);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(57).value == 0}, {
 								window.value.view.children.at(38).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_(rrand(1.0.neg, 1.0) + 1 / 2); subView.activeHi_(rrand(1.0.neg, 1.0) + 1 / 2)})
 								});
@@ -2352,7 +2352,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentFreq.value, {
 						controlFreqSlider.valueAction_([medianeA - ecartsemiqA, medianeA + ecartsemiqA].cpsmidi);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(58).value == 0}, {
 								window.value.view.children.at(39).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_((medianeA - ecartsemiqA).cpsmidi / 127); subView.activeHi_((medianeA + ecartsemiqA).cpsmidi / 127)})
 								});
@@ -2363,7 +2363,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentFreqT.value, {
 						controlFreqTranSlider.valueAction_(dissymetrie * 12);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(59).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(59).value == 0}, {
 								window.value.view.children.at(40).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_(dissymetrie * 12)});
 								});
@@ -2374,7 +2374,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentAmp.value, {
 						controlAmpSlider.valueAction_([rrand(-12.0, -6.0), rrand(-6.0, 0.0)]);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(60).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(60).value == 0}, {
 								window.value.view.children.at(41).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_(rrand(-12.0.dbamp, -6.0.dbamp)); subView.activeHi_(rrand(-6.0.dbamp, 0.0.dbamp))})
 								});
@@ -2388,7 +2388,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentDur.value, {
 						controlDureeSlider.valueAction_([q1A, q3A]);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(61).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(61).value == 0}, {
 								window.value.view.children.at(42).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.activeLo_(q1A / maxKeybMidi); subView.activeHi_(q3A / maxKeybMidi)})
 								});
@@ -2399,7 +2399,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentDurT.value, {
 						controlDureeTranSlider.valueAction_(medianeA * maxKeybMidi  + 1 * dissymetrie.sign);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(62).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(62).value == 0}, {
 								window.value.view.children.at(43).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_(medianeA * maxKeybMidi  + 1 * dissymetrie.sign)});
 								});
@@ -2410,7 +2410,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentQuant.value, {
 						controlQuantaSlider.valueAction_((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor));
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(63).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(63).value == 0}, {
 								window.value.view.children.at(44).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_(((((ecartsemiqA.reciprocal+0.5).floor / (ecartqA.reciprocal+0.5).floor + 0.5).floor * (ecartqA.reciprocal+0.5).floor)))});
 								});
@@ -2421,7 +2421,7 @@ Preset Wek",
 					if(rrand(0.0, 100.0) < pourcentRoot.value, {
 						controlRootSlider.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor);
 						listeWindowSynth.do({|window|
-							if(window.view.children.at(54).value == 1 and: {window.view.children.at(86).value == 1}, {
+							if(window.view.children.at(54).value == 1 and: {window.view.children.at(86).value == 0}, {
 								window.value.view.children.at(85).children.do({arg subView, subItem;
 									if(subItem == 2, {subView.valueAction_((freqCentroid.cpsoct.frac * 12 + 0.5).floor)});
 								});
