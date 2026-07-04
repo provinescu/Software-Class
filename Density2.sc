@@ -7,7 +7,7 @@ Density {
 	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse;
 	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
 	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
-	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, memoryDataFlux, memoryDataFlatness,	memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree, busOSCfreq, busOSCamp, busOSCduree, memoryMusic, flagMemory, flagFhzBand;
+	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, busOSCfreq, busOSCamp, busOSCduree, flagMemory, flagFhzBand;
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, loopMusic;
 
 	*new {arg path = "~/Documents/Density/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110;
@@ -171,20 +171,12 @@ Density {
 		indexDataCentroid = [];
 		indexDataEnergy = [];
 		indexDataBPM = [];
-		memoryDataFlux = [];
-		memoryDataFlatness = [];
-		memoryDataCentroid = [];
-		memoryDataEnergy = [];
-		memoryDataBPM = [];
 		dataFreq = [];
 		dataAmp = [];
 		dataDuree = [];
 		indexDataFreq = [];
 		indexDataAmp = [];
 		indexDataDuree = [];
-		memoryDataFreq = [];
-		memoryDataAmp = [];
-		memoryDataDuree = [];
 		lastTime = [];
 		// Init Array
 		(numFhzBand + 1).do({arg i;
@@ -198,20 +190,12 @@ Density {
 			indexDataCentroid = indexDataCentroid.add(0);
 			indexDataEnergy = indexDataEnergy.add(0);
 			indexDataBPM = indexDataBPM.add(0);
-			memoryDataFlux = memoryDataFlux.add([]);
-			memoryDataFlatness = memoryDataFlatness.add([]);
-			memoryDataCentroid = memoryDataCentroid.add([]);
-			memoryDataEnergy = memoryDataEnergy.add([]);
-			memoryDataBPM = memoryDataBPM.add([]);
 			dataFreq = dataFreq.add([]);
 			dataAmp = dataAmp.add([]);
 			dataDuree = dataDuree.add([]);
 			indexDataFreq = indexDataFreq.add(0);
 			indexDataAmp = indexDataAmp.add(0);
 			indexDataDuree = indexDataDuree.add(0);
-			memoryDataFreq = memoryDataFreq.add([]);
-			memoryDataAmp = memoryDataAmp.add([]);
-			memoryDataDuree = memoryDataDuree.add([]);
 			lastTime = lastTime.add(Main.elapsedTime);// Init Time for Analyze;
 		});
 		rangeSynthBand = [0, 1, 2, 3]; // Band active
@@ -668,7 +652,7 @@ Density {
 					if(item == 67, {autoRoot = data.at(item).at(1)});
 					// Check Sliders don't touch
 					// Setup GUI Value
-					if(index == 0 and: {item == 0 or: {item == 1} or: {item == 2} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7}} or: {item == 8} or: {item == 9}, {nil},
+					if(index == 0 and: {item == 0 or: {item == 1} or: {item == 2} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7}} or: {item == 8} or: {item == 9} or: {item == 14}, {nil},
 						{
 							// View or CompositeView
 							if(data.at(item).at(0) == "a View" or: {data.at(item).at(0) == "a CompositeView"} or: {data.at(item).at(0) == "a QView"} or: {data.at(item).at(0) == "a SCCompositeView"}, {
@@ -737,15 +721,6 @@ Density {
 			// fxOrchestra
 			fxOrchestra = allData.at(index);
 			index = index + 1;
-			// MemoryData
-			memoryDataFlux = allData.at(index).at(0);
-			memoryDataFlatness = allData.at(index).at(1);
-			memoryDataCentroid = allData.at(index).at(2);
-			memoryDataEnergy = allData.at(index).at(3);
-			memoryDataBPM = allData.at(index).at(4);
-			memoryDataFreq = allData.at(index).at(5);
-			memoryDataAmp = allData.at(index).at(6);
-			memoryDataDuree = allData.at(index).at(7);
 			// Data
 			dataFlux = allData.at(index).at(0);
 			dataFlatness = allData.at(index).at(1);
@@ -811,7 +786,7 @@ Density {
 			allData = allData.add(synthOrchestra);
 			allData = allData.add(soundOrchestra);
 			allData = allData.add(fxOrchestra);
-			allData = allData.add([memoryDataFlux, memoryDataFlatness, memoryDataCentroid, memoryDataEnergy, memoryDataBPM, memoryDataFreq, memoryDataAmp, memoryDataDuree]);
+			allData = allData.add([dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree]);
 			// Sortie Fonction Save Preset
 			allData.value;
 		};
@@ -1254,7 +1229,7 @@ Density {
 						duree =  time - lastTime.at(0);
 						dureeDisplay = time - lastTime.at(0);
 						// Setup Data
-						if(duree > dureeMaximumAnalyze or: {duree > memoryTime}, {
+						if(duree > dureeMaximumAnalyze or: {duree > memoryTime} and: {flagMemory == 'off'}, {
 							freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 							(numFhzBand + 1).do({arg i; lastTime.put(i, time)});
 						},
@@ -1342,7 +1317,7 @@ Density {
 														// Duree
 														// Set Bus
 														duree = time - lastTime.at(i);
-														if(duree > dureeMaximumAnalyze  or: {duree > memoryTime},
+														if(duree > dureeMaximumAnalyze  or: {duree > memoryTime} and: {flagMemory == 'off'},
 															{
 																freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 																(numFhzBand + 1).do({arg i; lastTime.put(i, time)});
@@ -1452,7 +1427,7 @@ Density {
 													// Init Array
 													if(i <= numFhzBand, {
 														duree = time - lastTime.at(i);
-														if(duree > dureeMaximumAnalyze or: {duree > memoryTime}, {
+														if(duree > dureeMaximumAnalyze or: {duree > memoryTime} and: {flagMemory == 'off'}, {
 															dataFlux.put(i, []);
 															dataFlatness.put(i, []);
 															dataCentroid.put(i, []);
@@ -2214,7 +2189,6 @@ Density {
 				/*flux = (13.287712379549 - fft.at(0).mediane.log2.abs / 13.287712379549).clip(0, 1);
 				// Flatness
 				flatness = (13.287712379549 - fft.at(1).mediane.log2.abs / 13.287712379549).clip(0, 1);*/
-				if(flagMemory == 'off', {
 					flux = dataFlux.at(indexBandFhz);
 					flatness = dataFlatness.at(indexBandFhz);
 					centroid = dataCentroid.at(indexBandFhz);
@@ -2223,17 +2197,6 @@ Density {
 					freq = dataFreq.at(indexBandFhz);
 					amp = dataAmp.at(indexBandFhz);
 					duree = dataDuree.at(indexBandFhz);
-				},
-				{
-					flux = memoryDataFlux.at(indexBandFhz);
-					flatness = memoryDataFlatness.at(indexBandFhz);
-					centroid = memoryDataCentroid.at(indexBandFhz);
-					energy = rootEnergy = memoryDataEnergy.at(indexBandFhz);
-					bpm = memoryDataBPM.at(indexBandFhz);
-					freq = memoryDataFreq.at(indexBandFhz);
-					amp = memoryDataAmp.at(indexBandFhz);
-					duree = memoryDataDuree.at(indexBandFhz);
-				});
 				flux = flux.mediane;
 				flux = flux + rrand(jitterControls.neg, jitterControls);
 				flux = flux.fold(0,1);
@@ -2590,7 +2553,7 @@ Density {
 					listeDataInstruments.do({arg data, index, tempo;
 						var bpm;
 						if(flagBPM == 'on', {
-							if(flagMemory == 'on', {bpm = memoryDataBPM.at(0)}, {bpm = dataBPM.at(0)});
+							bpm = dataBPM.at(0);
 							if(bpm.size >=3, {
 								tempo = bpm.mediane;
 								if((oldTempo - tempo).abs > 0.2, {
@@ -2636,28 +2599,15 @@ Density {
 							if(numIndexSynthBand >= rangeSynthBand.size, {numIndexSynthBand = 0});
 							indexBandFhz = rangeSynthBand.at(numIndexSynthBand);
 							numIndexSynthBand = numIndexSynthBand + 1;
-							if(flagMemory == 'on', {
-								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
-									{
-										buildSynth.value(indexBandFhz)});
-							},
-							{
 								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
 									{
 										buildSynth.value(indexBandFhz)});
-							});
 						},
 						// Build new Instrument without Band
 						{
 							indexBandFhz = 0;
-							if(flagMemory == 'on', {
-								if(memoryDataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
+							if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
 									{buildSynth.value(indexBandFhz)});
-							},
-							{
-								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
-									{buildSynth.value(indexBandFhz)});
-							});
 						});
 						lastTime = time;
 					});
@@ -2671,7 +2621,7 @@ Density {
 			watchSilence = Tdef("WatchSilence", {
 				loop({
 					// Watch musicdata
-					if((Main.elapsedTime - dureeAnalyzeOSCMusic) > memoryTime,
+					if((Main.elapsedTime - dureeAnalyzeOSCMusic) > memoryTime and: {flagMemory == 'off'},
 						{
 							dataFlux = [];
 							dataFlatness = [];
@@ -2683,20 +2633,12 @@ Density {
 							indexDataCentroid = [];
 							indexDataEnergy = [];
 							indexDataBPM = [];
-							memoryDataFlux = [];
-							memoryDataFlatness = [];
-							memoryDataCentroid = [];
-							memoryDataEnergy = [];
-							memoryDataBPM = [];
 							dataFreq = [];
 							dataAmp = [];
 							dataDuree = [];
 							indexDataFreq = [];
 							indexDataAmp = [];
 							indexDataDuree = [];
-							memoryDataFreq = [];
-							memoryDataAmp = [];
-							memoryDataDuree = [];
 							lastTime = [];
 							// Init Array
 							(numFhzBand + 1).do({arg i;
@@ -2710,20 +2652,12 @@ Density {
 								indexDataCentroid = indexDataCentroid.add(0);
 								indexDataEnergy = indexDataEnergy.add(0);
 								indexDataBPM = indexDataBPM.add(0);
-								memoryDataFlux = memoryDataFlux.add([]);
-								memoryDataFlatness = memoryDataFlatness.add([]);
-								memoryDataCentroid = memoryDataCentroid.add([]);
-								memoryDataEnergy = memoryDataEnergy.add([]);
-								memoryDataBPM = memoryDataBPM.add([]);
 								dataFreq = dataFreq.add([]);
 								dataAmp = dataAmp.add([]);
 								dataDuree = dataDuree.add([]);
 								indexDataFreq = indexDataFreq.add(0);
 								indexDataAmp = indexDataAmp.add(0);
 								indexDataDuree = indexDataDuree.add(0);
-								memoryDataFreq = memoryDataFreq.add([]);
-								memoryDataAmp = memoryDataAmp.add([]);
-								memoryDataDuree = memoryDataDuree.add([]);
 								lastTime = lastTime.add(Main.elapsedTime);
 							});
 							freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -2735,30 +2669,6 @@ Density {
 					// Waiting Time
 					//(1 - globalDensity + 0.01).wait;
 					quantizationDuree.reciprocal.wait;
-				});
-			});
-
-			// Tdef Memory
-			memoryMusic = Tdef("Memory", {
-				loop({
-					// Memory Setup
-					if(flagMemory == 'on',
-						{
-							// Init copy Array
-							(numFhzBand + 1).do({arg i;
-								memoryDataFlux.put(i, dataFlux.at(i).copy);
-								memoryDataFlatness.put(i, dataFlatness.at(i).copy);
-								memoryDataCentroid.put(i, dataCentroid.at(i).copy);
-								memoryDataEnergy.put(i, dataEnergy.at(i).copy);
-								memoryDataBPM.put(i, dataBPM.at(i).copy);
-								memoryDataFreq.put(i, dataFreq.at(i).copy);
-								memoryDataAmp.put(i, dataAmp.at(i).copy);
-								memoryDataDuree.put(i, dataDuree.at(i).copy);
-							});
-					});
-					{displayAnalyzeMusic.string = ("DATA MEMORY COPY")}.defer;
-					// Waiting
-					memoryTime.wait;
 				});
 			});
 
@@ -3310,20 +3220,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					indexDataCentroid = [];
 					indexDataEnergy = [];
 					indexDataBPM = [];
-					memoryDataFlux = [];
-					memoryDataFlatness = [];
-					memoryDataCentroid = [];
-					memoryDataEnergy = [];
-					memoryDataBPM = [];
 					dataFreq = [];
 					dataAmp = [];
 					dataDuree = [];
 					indexDataFreq = [];
 					indexDataAmp = [];
 					indexDataDuree = [];
-					memoryDataFreq = [];
-					memoryDataAmp = [];
-					memoryDataDuree = [];
 					lastTime = [];
 					// Init Array
 					(numFhzBand + 1).do({arg i;
@@ -3337,20 +3239,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						indexDataCentroid = indexDataCentroid.add(0);
 						indexDataEnergy = indexDataEnergy.add(0);
 						indexDataBPM = indexDataBPM.add(0);
-						memoryDataFlux = memoryDataFlux.add([]);
-						memoryDataFlatness = memoryDataFlatness.add([]);
-						memoryDataCentroid = memoryDataCentroid.add([]);
-						memoryDataEnergy = memoryDataEnergy.add([]);
-						memoryDataBPM = memoryDataBPM.add([]);
 						dataFreq = dataFreq.add([]);
 						dataAmp = dataAmp.add([]);
 						dataDuree = dataDuree.add([]);
 						indexDataFreq = indexDataFreq.add(0);
 						indexDataAmp = indexDataAmp.add(0);
 						indexDataDuree = indexDataDuree.add(0);
-						memoryDataFreq = memoryDataFreq.add([]);
-						memoryDataAmp = memoryDataAmp.add([]);
-						memoryDataDuree = memoryDataDuree.add([]);
 						lastTime = lastTime.add(Main.elapsedTime);
 					});
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -3377,20 +3271,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					indexDataCentroid = [];
 					indexDataEnergy = [];
 					indexDataBPM = [];
-					memoryDataFlux = [];
-					memoryDataFlatness = [];
-					memoryDataCentroid = [];
-					memoryDataEnergy = [];
-					memoryDataBPM = [];
 					dataFreq = [];
 					dataAmp = [];
 					dataDuree = [];
 					indexDataFreq = [];
 					indexDataAmp = [];
 					indexDataDuree = [];
-					memoryDataFreq = [];
-					memoryDataAmp = [];
-					memoryDataDuree = [];
 					lastTime = [];
 					// Init Array
 					(numFhzBand + 1).do({arg i;
@@ -3404,20 +3290,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						indexDataCentroid = indexDataCentroid.add(0);
 						indexDataEnergy = indexDataEnergy.add(0);
 						indexDataBPM = indexDataBPM.add(0);
-						memoryDataFlux = memoryDataFlux.add([]);
-						memoryDataFlatness = memoryDataFlatness.add([]);
-						memoryDataCentroid = memoryDataCentroid.add([]);
-						memoryDataEnergy = memoryDataEnergy.add([]);
-						memoryDataBPM = memoryDataBPM.add([]);
 						dataFreq = dataFreq.add([]);
 						dataAmp = dataAmp.add([]);
 						dataDuree = dataDuree.add([]);
 						indexDataFreq = indexDataFreq.add(0);
 						indexDataAmp = indexDataAmp.add(0);
 						indexDataDuree = indexDataDuree.add(0);
-						memoryDataFreq = memoryDataFreq.add([]);
-						memoryDataAmp = memoryDataAmp.add([]);
-						memoryDataDuree = memoryDataDuree.add([]);
 						lastTime = lastTime.add(Main.elapsedTime);
 					});
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -4165,7 +4043,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					synthRecAudioIn.run(false);
 					playInstruments.stop;
 					watchSilence.stop;
-					memoryMusic.stop;
 					dataFlux = [];
 					dataFlatness = [];
 					dataCentroid = [];
@@ -4176,20 +4053,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					indexDataCentroid = [];
 					indexDataEnergy = [];
 					indexDataBPM = [];
-					memoryDataFlux = [];
-					memoryDataFlatness = [];
-					memoryDataCentroid = [];
-					memoryDataEnergy = [];
-					memoryDataBPM = [];
 					dataFreq = [];
 					dataAmp = [];
 					dataDuree = [];
 					indexDataFreq = [];
 					indexDataAmp = [];
 					indexDataDuree = [];
-					memoryDataFreq = [];
-					memoryDataAmp = [];
-					memoryDataDuree = [];
 					lastTime = [];
 					// Init Array
 					(numFhzBand + 1).do({arg i;
@@ -4203,20 +4072,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						indexDataCentroid = indexDataCentroid.add(0);
 						indexDataEnergy = indexDataEnergy.add(0);
 						indexDataBPM = indexDataBPM.add(0);
-						memoryDataFlux = memoryDataFlux.add([]);
-						memoryDataFlatness = memoryDataFlatness.add([]);
-						memoryDataCentroid = memoryDataCentroid.add([]);
-						memoryDataEnergy = memoryDataEnergy.add([]);
-						memoryDataBPM = memoryDataBPM.add([]);
 						dataFreq = dataFreq.add([]);
 						dataAmp = dataAmp.add([]);
 						dataDuree = dataDuree.add([]);
 						indexDataFreq = indexDataFreq.add(0);
 						indexDataAmp = indexDataAmp.add(0);
 						indexDataDuree = indexDataDuree.add(0);
-						memoryDataFreq = memoryDataFreq.add([]);
-						memoryDataAmp = memoryDataAmp.add([]);
-						memoryDataDuree = memoryDataDuree.add([]);
 						lastTime = lastTime.add(Main.elapsedTime);
 					});
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -4231,7 +4092,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					//windowEar.view.children.at(2).enabled_(true);
 					playInstruments.play;
 					watchSilence.play;
-					memoryMusic.play;
 					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
 				}
 			);
@@ -4420,20 +4280,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				indexDataCentroid = [];
 				indexDataEnergy = [];
 				indexDataBPM = [];
-				memoryDataFlux = [];
-				memoryDataFlatness = [];
-				memoryDataCentroid = [];
-				memoryDataEnergy = [];
-				memoryDataBPM = [];
 				dataFreq = [];
 				dataAmp = [];
 				dataDuree = [];
 				indexDataFreq = [];
 				indexDataAmp = [];
 				indexDataDuree = [];
-				memoryDataFreq = [];
-				memoryDataAmp = [];
-				memoryDataDuree = [];
 				lastTime = [];
 				bandFHZ = Array.fill(numFhzBand, {arg i; [127 / numFhzBand * i, 127 / numFhzBand * i + (127 / numFhzBand )]}).midicps;
 				bandFHZ = bandFHZ.reverse;
@@ -4451,20 +4303,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					indexDataCentroid = indexDataCentroid.add(0);
 					indexDataEnergy = indexDataEnergy.add(0);
 					indexDataBPM = indexDataBPM.add(0);
-					memoryDataFlux = memoryDataFlux.add([]);
-					memoryDataFlatness = memoryDataFlatness.add([]);
-					memoryDataCentroid = memoryDataCentroid.add([]);
-					memoryDataEnergy = memoryDataEnergy.add([]);
-					memoryDataBPM = memoryDataBPM.add([]);
 					dataFreq = dataFreq.add([]);
 					dataAmp = dataAmp.add([]);
 					dataDuree = dataDuree.add([]);
 					indexDataFreq = indexDataFreq.add(0);
 					indexDataAmp = indexDataAmp.add(0);
 					indexDataDuree = indexDataDuree.add(0);
-					memoryDataFreq = memoryDataFreq.add([]);
-					memoryDataAmp = memoryDataAmp.add([]);
-					memoryDataDuree = memoryDataDuree.add([]);
 					lastTime = lastTime.add(Main.elapsedTime);
 				});
 				for(0, numFhzBand,
@@ -4521,35 +4365,15 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		)};
 		// FlagMemory on off
 		Button(windowEar,Rect(0, 0, 105, 20))
-		.states_([["MemoryData On", Color.green], ["MemoryData Off", Color.red]])
+		.states_([["Infinite Memory On", Color.green], ["Infinite Memory Off", Color.red]])
 		.action = {arg flag;
-			memoryMusic.stop;
 			if(flag.value == 0,
 				{
 					flagMemory = 'off';
-					memoryDataFlux = [];
-					memoryDataFlatness = [];
-					memoryDataCentroid = [];
-					memoryDataEnergy = [];
-					memoryDataBPM = [];
-					memoryDataFreq = [];
-					memoryDataAmp = [];
-					memoryDataDuree = [];
-					memoryDataFlux = [];
-					// Init Array
-					(numFhzBand + 1).do({arg i;
-						memoryDataFlux = memoryDataFlux.add([]);
-						memoryDataFlatness = memoryDataFlatness.add([]);
-						memoryDataCentroid = memoryDataCentroid.add([]);
-						memoryDataEnergy = memoryDataEnergy.add([]);
-						memoryDataBPM = memoryDataBPM.add([]);
-						memoryDataFreq = memoryDataFreq.add([]);
-						memoryDataAmp = memoryDataAmp.add([]);
-						memoryDataDuree = memoryDataDuree.add([]);
-					});
 				},
-				{flagMemory = 'on'});
-			memoryMusic.play;
+				{
+					flagMemory = 'on';
+			});
 		};
 		windowEar.view.decorator.nextLine;
 
@@ -4573,10 +4397,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			{|ez| dureeMaximumAnalyze = ez.value}, dureeMaximumAnalyze,layout: \vert2);
 		// Memory Time
 		EZKnob(windowEar, 80 @ 80, "MemoryTime", ControlSpec(0.01666, 3600, \exp, 0),
-			{|ez| memoryTime = ez.value;
-				memoryMusic.stop;
-				memoryMusic.play;
-		}, 6, layout: \vert2);
+			{|ez| memoryTime = ez.value}, 6, layout: \vert2);
 		// Data Maximum
 		EZKnob(windowEar, 80 @ 80, "Max Data", ControlSpec(1, 255, \lin, 1),
 			{|ez|
@@ -4591,20 +4412,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				indexDataCentroid = [];
 				indexDataEnergy = [];
 				indexDataBPM = [];
-				memoryDataFlux = [];
-				memoryDataFlatness = [];
-				memoryDataCentroid = [];
-				memoryDataEnergy = [];
-				memoryDataBPM = [];
 				dataFreq = [];
 				dataAmp = [];
 				dataDuree = [];
 				indexDataFreq = [];
 				indexDataAmp = [];
 				indexDataDuree = [];
-				memoryDataFreq = [];
-				memoryDataAmp = [];
-				memoryDataDuree = [];
 				lastTime = [];
 				// Init Array
 				(numFhzBand + 1).do({arg i;
@@ -4618,20 +4431,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					indexDataCentroid = indexDataCentroid.add(0);
 					indexDataEnergy = indexDataEnergy.add(0);
 					indexDataBPM = indexDataBPM.add(0);
-					memoryDataFlux = memoryDataFlux.add([]);
-					memoryDataFlatness = memoryDataFlatness.add([]);
-					memoryDataCentroid = memoryDataCentroid.add([]);
-					memoryDataEnergy = memoryDataEnergy.add([]);
-					memoryDataBPM = memoryDataBPM.add([]);
 					dataFreq = dataFreq.add([]);
 					dataAmp = dataAmp.add([]);
 					dataDuree = dataDuree.add([]);
 					indexDataFreq = indexDataFreq.add(0);
 					indexDataAmp = indexDataAmp.add(0);
 					indexDataDuree = indexDataDuree.add(0);
-					memoryDataFreq = memoryDataFreq.add([]);
-					memoryDataAmp = memoryDataAmp.add([]);
-					memoryDataDuree = memoryDataDuree.add([]);
 					lastTime = lastTime.add(Main.elapsedTime);
 				});
 				freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -4697,20 +4502,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				indexDataCentroid = [];
 				indexDataEnergy = [];
 				indexDataBPM = [];
-				memoryDataFlux = [];
-				memoryDataFlatness = [];
-				memoryDataCentroid = [];
-				memoryDataEnergy = [];
-				memoryDataBPM = [];
 				dataFreq = [];
 				dataAmp = [];
 				dataDuree = [];
 				indexDataFreq = [];
 				indexDataAmp = [];
 				indexDataDuree = [];
-				memoryDataFreq = [];
-				memoryDataAmp = [];
-				memoryDataDuree = [];
 				lastTime = [];
 				// Init Array
 				(numFhzBand + 1).do({arg i;
@@ -4724,20 +4521,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					indexDataCentroid = indexDataCentroid.add(0);
 					indexDataEnergy = indexDataEnergy.add(0);
 					indexDataBPM = indexDataBPM.add(0);
-					memoryDataFlux = memoryDataFlux.add([]);
-					memoryDataFlatness = memoryDataFlatness.add([]);
-					memoryDataCentroid = memoryDataCentroid.add([]);
-					memoryDataEnergy = memoryDataEnergy.add([]);
-					memoryDataBPM = memoryDataBPM.add([]);
 					dataFreq = dataFreq.add([]);
 					dataAmp = dataAmp.add([]);
 					dataDuree = dataDuree.add([]);
 					indexDataFreq = indexDataFreq.add(0);
 					indexDataAmp = indexDataAmp.add(0);
 					indexDataDuree = indexDataDuree.add(0);
-					memoryDataFreq = memoryDataFreq.add([]);
-					memoryDataAmp = memoryDataAmp.add([]);
-					memoryDataDuree = memoryDataDuree.add([]);
 					lastTime = lastTime.add(Main.elapsedTime);
 				});
 				freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
@@ -6990,7 +6779,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				Out.ar(out, chain);
 		}).add;
 
-				SynthDef("BufRdLiquidStreamPostBuf",
+		SynthDef("BufRdLiquidStreamPostBuf",
 			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
@@ -7205,7 +6994,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				Out.ar(out, chain);
 		}).add;
 
-			SynthDef("BufRdLiquidStreamPostBufEnv",
+		SynthDef("BufRdLiquidStreamPostBufEnv",
 			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
@@ -7246,7 +7035,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				Out.ar(out, chain);
 		}).add;
 
-			SynthDef("BufRdElasticStreamPostBufEnv",
+		SynthDef("BufRdElasticStreamPostBufEnv",
 			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
