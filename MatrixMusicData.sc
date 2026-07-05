@@ -1,6 +1,6 @@
 // A Software by Herve Provini
 
-MatrixMusicData {
+MatrixMusicMusicData {
 
 	var w, wMenu, wInstrument, instrument, wAudio, audio, wBand, band, upDatePreset, wPreset, preset, musicData, cmdperiodfunc, source, target, si, sa, sb, ti, ta, tb;
 
@@ -36,9 +36,9 @@ MatrixMusicData {
 			},
 			{"Load a Preset".postln});
 
-		w = Window("Matrix Music Data Editor", Rect(500, 100, 625, 530));
+		w = Window("MatrixMusic Music Data Editor", Rect(500, 100, 625, 530));
 		w.view.decorator = FlowLayout(w.view.bounds);
-		StaticText(w, Rect(0, 0, 500, 20)).string_("Matrix Music Data Editor (A software for editing Matrix (freeze) musical data)").stringColor_(Color.white(1.0,1.0));
+		StaticText(w, Rect(0, 0, 500, 20)).string_("MatrixMusic Music Data Editor (A software for editing MatrixMusic (freeze) musical data)").stringColor_(Color.white(1.0,1.0));
 		w.view.decorator.nextLine;
 
 		// menu Sequence

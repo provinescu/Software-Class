@@ -116,7 +116,7 @@ Launcher {
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "Scores", "MatrixMusicData"]).stringColor_(Color.white).action = {|source|
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "Scores", "MatrixMusicMusicData"]).stringColor_(Color.white).action = {|source|
 			switch (source.value,
 				0, {
 					nameSoft = "Robot";// 57564
@@ -127,7 +127,7 @@ Launcher {
 					path = "~/Documents/Agents/";
 				},
 				2,	{
-					nameSoft = "Matrix";// 57566
+					nameSoft = "MatrixMusic";// 57566
 					path = "~/Documents/Matrix/";
 				},
 				3,	{
@@ -154,7 +154,7 @@ Launcher {
 				},
 				7,	{
 					w.view.children.at(14).string_("Choose Soft" + "(Wek Data 13)");
-					nameSoft = "WekMatrix";// 57572
+					nameSoft = "WekMatrixMusic";// 57572
 					path = "~/Documents/WekMatrix/";
 					SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 					SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
