@@ -2583,9 +2583,9 @@ Preset Wek",
 						//maxTraining = freq.size;
 						// Calculate Neural Freq Amp Duree
 						freq.size.do({arg i, f, a, d;
-							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], nil, 1, 0.5, 0.5);
+							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], [freq.wrapAt(i+1).asArray, amp.wrapAt(i+1).asArray, duree.wrapAt(i+1).asArray], 1, 0.5, 0.5);
 							// Freq
-							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments).midicps);
+							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments));
 							freqNeu = freqNeu.min(135);
 							// Amp
 							ampNeu = ampNeu.add(a.at(0));

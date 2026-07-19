@@ -5308,7 +5308,7 @@ y ... -						Musical keys.
 						//maxTraining = newFreq.size;
 						// Calculate Neural
 						newFreq.size.do({arg i, f, a, d;
-							# f, a, d = neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], nil, 1, 0.5, 0.5);
+							# f, a, d = neuralFAD.next([newFreq.wrapAt(i).asArray, newAmp.wrapAt(i).asArray, newDuree.wrapAt(i).asArray], [newFreq.wrapAt(i+1).asArray, newAmp.wrapAt(i+1).asArray, newDuree.wrapAt(i+1).asArray], 1, 0.5, 0.5);
 							// Freq
 							freqNeu = freqNeu.add(f.at(0));
 							// Amp

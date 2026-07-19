@@ -3027,7 +3027,7 @@ G                       Init Genome Agent (solo).
 							//maxTraining = ~listeagentfreq.wrapAt(agent).size;
 							// Calculation algo new musical pattern
 							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
-								# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], nil, 1, 0.5, 0.5);
+								# f, a, d = ~neuralFAD.wrapAt(agent).next([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax], [~listeagentfreq.wrapAt(agent).wrapAt(i+1), ~listeagentamp.wrapAt(agent).wrapAt(i+1), ~listeagentduree.wrapAt(agent).wrapAt(i+1) / ~dureeanalysemax], 1, 0.5, 0.5);
 								newFreq = newFreq.add(f);
 								newAmp = newAmp.add(a);
 								newDuree = newDuree.add(d * ~dureeanalysemax);
