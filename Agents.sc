@@ -8052,7 +8052,7 @@ G                       Init Genome Agent (solo).
 					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
 					// Set Rate Freq
 					pitchRatio=2**rate.cpsoct;
-					dureesample=BufDur.kr(buffer)/pitchRatio;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					dureesample=BufDur.kr(buffer)/pitchRatio; dureesample=clip2(duree, dureesample);
 					pitchRatio=pitchRatio * reverse;
 					buffer = LocalBuf(s.sampleRate * dureesample, 1).clear;
 					frames = BufFrames.kr(buffer);
@@ -8064,8 +8064,8 @@ G                       Init Genome Agent (solo).
 					RecordBuf.ar(input, buffer, offset: writePos, recLevel: controlF, preLevel: controlA, run: 1, loop: controlD);
 					phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
 					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-					readPosA = (writePos - phaseA - 128).wrap(0, frames);
-					readPosB = (writePos - phaseB - 128).wrap(0, frames);
+					readPosA = (writePos - phaseA - 64).wrap(0, frames);
+					readPosB = (writePos - phaseB - 64).wrap(0, frames);
 					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: antiClick1, sensibilite: antiClick2, interp:4) * winA;

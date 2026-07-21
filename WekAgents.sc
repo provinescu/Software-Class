@@ -8495,7 +8495,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
 					// Set Rate Freq
 					pitchRatio=2**rate.cpsoct;
-					dureesample=BufDur.kr(buffer)/pitchRatio;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
+					dureesample=BufDur.kr(buffer)/pitchRatio; dureesample=clip2(duree, dureesample);
 					pitchRatio=pitchRatio * reverse;
 					buffer = LocalBuf(s.sampleRate * dureesample, 1).clear;
 					frames = BufFrames.kr(buffer);
