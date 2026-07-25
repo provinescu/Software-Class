@@ -7652,22 +7652,19 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					pitchRatio=2**freqRate.cpsoct;
 					dureesample=BufDur.kr(buffer)/pitchRatio;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					pitchRatio=pitchRatio * reverse;
-					buffer = LocalBuf(s.sampleRate * dureesample, 1).clear;
 					frames = BufFrames.kr(buffer);
-					input = if(flag.value == 0, SoundIn.ar(in,1), In.ar(in,1));// Switch in audio file
 					// Envelope
 					envelope = EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					writePos = Phasor.ar(0, 1, 0, frames);
 /*BufWr.ar(input, buffer, writePos);*/
-					RecordBuf.ar(input, buffer, offset: writePos, recLevel: controls.at(0), preLevel: controls.at(1), run: 1, loop: controls.at(2));
 					phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
 					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
 					readPosA = (writePos - phaseA - 128).wrap(0, frames);
 					readPosB = (writePos - phaseB - 128).wrap(0, frames);
 					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
-					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: controls.at(3), sensibilite: controls.at(4), interp:4) * winA;
-					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: controls.at(3), sensibilite: controls.at(4), interp:4) * winB;
+					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: 1, sensibilite: 1, interp:4) * winA;
+					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: 1, sensibilite: 1, interp:4) * winB;
 					main = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
 					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, buseffetsPre, buseffetsPost, ampPre, ampPost, byPass, amp, out);
 			}).send(s);

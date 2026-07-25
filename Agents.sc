@@ -8047,25 +8047,23 @@ G                       Init Genome Agent (solo).
 			SynthDef("HPbufRdLive",
 				{arg out=0, buseffets, busverb, freq=0, rate=0, amp=0,  ampreal=0, duree=1.0, panLo=0, panHi=0, offset=0, loop=0, reverse=1, buffer, buffer2,
 					antiClick1=0.33, antiClick2=0.5, controlF=0.5, controlA=0.5, controlD=0.5,
-					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125, in=0;
+					controlenvlevel1=0.0, controlenvlevel2=1.0, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.75, controlenvlevel6=0.5, controlenvlevel7=0.5, controlenvlevel8=0.0,  controlenvtime1=0.015625, controlenvtime2=0.109375, controlenvtime3=0.25, controlenvtime4=0.25, controlenvtime5=0.125, controlenvtime6=0.125, controlenvtime7=0.125;
 					var dureesample, main, ambisonic;
 					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
 					// Set Rate Freq
 					pitchRatio=2**rate.cpsoct;
-					dureesample=BufDur.kr(buffer)/pitchRatio; dureesample=clip2(duree, dureesample);
+					dureesample=BufDur.kr(buffer)/rate;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
 					pitchRatio=pitchRatio * reverse;
-					buffer = LocalBuf(s.sampleRate * dureesample, 1).clear;
 					frames = BufFrames.kr(buffer);
-					input = In.ar(in,1);
 					// Envelope
 					envelope = EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					writePos = Phasor.ar(0, 1, 0, frames);
 /*BufWr.ar(input, buffer, writePos);*/
-					RecordBuf.ar(input, buffer, offset: writePos, recLevel: controlF, preLevel: controlA, run: 1, loop: controlD);
+					//RecordBuf.ar(input, buffer, offset: writePos, recLevel: controlF, preLevel: controlA, run: 1, loop: controlD);
 					phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
 					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-					readPosA = (writePos - phaseA - 64).wrap(0, frames);
-					readPosB = (writePos - phaseB - 64).wrap(0, frames);
+					readPosA = (writePos - phaseA - 128).wrap(0, frames);
+					readPosB = (writePos - phaseB - 128).wrap(0, frames);
 					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: antiClick1, sensibilite: antiClick2, interp:4) * winA;
