@@ -987,7 +987,6 @@ Preset Wek",
 			audioIN = data.at(93).mod(numberAudioIn);
 			ctrls = data.at(49); // Ctrls Plot
 			fonctionAddSynthFX.value(index, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN);
-			s.sync;
 			listeWindowSynth.last.view.children.do({arg view, item;
 				var arrayData=[], subArrayData=[];
 				// StaticText
@@ -1045,7 +1044,6 @@ Preset Wek",
 				if(item == 93,
 					{view.valueAction_(data.at(item).mod(numberAudioIn))});
 			});
-			s.sync;
 			// Setup Font View Synth
 			listeWindowSynth.do({arg window;
 				window.view.do({arg view;
@@ -1253,7 +1251,6 @@ Preset Wek",
 					});
 				});
 			});
-			s.sync;
 		};
 
 		fonctionAddSynthFX = {arg item, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN;
@@ -1263,7 +1260,6 @@ Preset Wek",
 			listeGroupeSynthID = listeGroupeSynthID.add(listeGroupeSynth.at(listeGroupeSynth.size - 1).nodeID);
 			// New Window
 			# window, freeze = fonctionWindowSynth.value(choiceSynth.at(item.value), listeGroupeSynth.at(listeGroupeSynth.size - 1), item.value, buffer1, buffer2, canalIn, timeBuf1, timeBuf2, freezeOSC, audioIN);
-			s.sync;
 			listeWindowSynth=listeWindowSynth.add(window);
 			listeWindowFreeze = listeWindowFreeze.add(freeze.value);
 			// Setup Font View Synth
@@ -1278,7 +1274,6 @@ Preset Wek",
 			window.view.children.at(49).value_(x);
 			//window.view.children.at(49).size = x.size;
 			window.view.children.at(47).string_(y);
-			s.sync;
 		};
 
 		fonctionInitBand = {arg band;
