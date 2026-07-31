@@ -815,15 +815,9 @@ WekDensity {
 			if(allData.at(index) != soundOrchestra, {
 				"... LOAD SOUNDORCHESTRA... !!!".postln;
 				soundOrchestra = allData.at(index);
-				s.bind{
-					if(startSystem.value == 0, {flagPlay = 0}, {startSystem.valueAction_(0); flagPlay = 1});
-					s.sync;
 					fonctionLoadSoundOrchestra.value(soundOrchestra);
-					s.sync;
-					if(flagPlay == 1, {startSystem.valueAction_(1)});
-					s.sync;
-				};
-			}, {soundOrchestra = allData.at(index)});
+			},
+			{soundOrchestra = allData.at(index)});
 			index = index + 1;
 			// fxOrchestra
 			fxOrchestra = allData.at(index);
@@ -927,9 +921,10 @@ WekDensity {
 		// Fonction Load Sounds for Sampler
 		fonctionLoadSoundOrchestra = {arg listeSound;
 			// Free Buffer
+			s.bind{
 			listeBuffer.soloArray.do({arg buffer; buffer.free});
 			s.sync;
-			listeBuffer=[] ;
+			listeBuffer=[];
 			listeSound.do({arg arraySound, file, rawData, collect=[], nom;
 				arraySound.do({arg path, i;
 					path = PathName.new(path);
@@ -968,6 +963,7 @@ WekDensity {
 				});
 				listeBuffer = listeBuffer.add(collect);
 			});
+			};
 		};
 
 		// Fonction pour Recording

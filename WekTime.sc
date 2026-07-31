@@ -803,35 +803,17 @@ f						Switch File for Analyze.
 		fonctionLoadFileForAnalyse={arg p;
 			var f, d, n;
 			s.bind{
-				p = PathName.new(p);
-				p = p.fileName;//Name of soundFile
-				n = p;
-				p = "mdfind -name" + p;
-				p = Pipe.new(p, "r");
-				d = p.getLine;// get the first line
-				while({d.notNil and: {d.contains(n).not}}, {d = p.getLine}); // while to find
-				p.close;
-				p = d;// New Path
-				f = SoundFile.new;
-				s.sync;
-				f.openRead(p.standardizePath);
-				s.sync;
+			f = SoundFile.new;
+				f.openRead(p);
 				if(f.numChannels == 1,
 					{d= FloatArray.newClear(f.numFrames * 2);
-						s.sync;
 						f.readData(d);
-						s.sync;
 						Post << "Loading sound mono for analyze" << p << Char.nl;
-						s.sync;
 						d = Array.newFrom(d).stutter(2) / 2;
-						s.sync;
 						bufferFile=Buffer.loadCollection(s, d, 2, action: {arg buf; Post << "Finished" << Char.nl});
-						s.sync;
 					},
 					{Post << "Loading sound stereo for analyze" << p << Char.nl;
-						s.sync;
 						bufferFile=Buffer.readChannel(s, p, channels: [0, 1], action: {arg buf; Post << "Finished" << Char.nl});
-						s.sync;
 				});
 				f.close;
 				s.sync;
