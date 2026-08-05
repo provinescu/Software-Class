@@ -1078,22 +1078,22 @@ y ... -						Musical keys.
 
 		fonctionLoadPreset = {arg preset, dataControlSynth=[], tampon=[], tampon2=[];
 			var x, y, z, b;
-			s.bind{
+			//s.bind{
 			tampon2 = preset.last;// Load freezeDataOSC
 			preset.remove(preset.last);// Remove FreezeDataOSC
 			tampon = preset.last;// Load OSCmusicData
 			preset.remove(preset.last);// Remove OSCmusicData
-				s.sync;
+				//s.sync;
 			fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
-				s.sync;
+				//s.sync;
 			preset.remove(preset.last);// Remove control panel
 			dataControlSynth = preset.last; // ControlSynth Panel
-				s.sync;
+				//s.sync;
 			fonctionLoadControlSynth.value(windowControlSynth, preset.last);//Load ControlSynth Panel
-				s.sync;
+				//s.sync;
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
-				s.sync;
+				//s.sync;
 			listeDataOSC = tampon;
 			b = listeDataOSC.size-1;
 			numberAudioIn.do({arg a;
@@ -1111,10 +1111,10 @@ y ... -						Musical keys.
 					listeDataOSC = listeDataOSC.add(x.deepCopy);
 					indexDataMusic = indexDataMusic.add(y.deepCopy);
 				});
-				s.sync;
+				//s.sync;
 			});
 			listeWindowFreeze = tampon2;
-			};
+			//};
 		};
 
 		fonctionSaveControl = {arg window;
