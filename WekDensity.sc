@@ -4587,7 +4587,7 @@ Preset Wek",
 		EZRanger(windowEar , 550 @ 20, "Range Duree", ControlSpec(0, 60, \lin, 0),
 			{|ez| rangeDureeintruments = ez.value}, [0, dureeMaximumAnalyze], labelWidth: 100,numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
-		EZSlider(windowEar , 550 @ 15, "Trans Duree", ControlSpec(-60, 60, \lin, 0.01),
+		EZSliderTempo(windowEar , 550 @ 15, "Trans Duree", ControlSpec(-60, 60, \lin, 0.01),
 			{|ez| if(ez.value >= -1 and: {ez.value < 1},
 				{transDureeintruments = 1.0},
 				{
