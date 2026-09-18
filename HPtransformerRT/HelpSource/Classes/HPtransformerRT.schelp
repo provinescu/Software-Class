@@ -1,0 +1,24 @@
+TITLE:: HPtransformerRT
+SUMMARY:: Moteur vectoriel adaptatif V30.0 pour interaction temps réel
+CATEGORIES:: Machine Learning, Algorithms, Live Coding
+RELATED:: Classes/HPTransformerStudio, Guides/HPtransformerRTStudioGuide
+
+DESCRIPTION::
+code::HPtransformerRT:: combine attention multi-têtes, experts, mémoire longue, replay et mémoire de trajectoire. V30.0 sépare code::attentionTemperature::, code::routerTemperature:: et code::trajectoryRetrievalTemperature::.
+
+SECTION:: Preset prudent
+CODE::
+~hp.setParameters((
+    attentionTemperature: 0.85,
+    routerTemperature: 1.10,
+    trajectoryRetrievalTemperature: 0.25,
+    learningRate: 0.00025,
+    gradientClip: 0.60,
+    expertScale: 0.22,
+    replayRate: 0.08,
+    protectionStrength: 0.18
+), false);
+::
+
+SECTION:: Diagnostics
+Utiliser code::expertUsageEMA:: et code::routerEntropyEMA:: pour suivre la spécialisation des experts. code::interferenceTest:: est non destructif.

@@ -1,0 +1,27 @@
+TITLE:: HPtransformerRTStudioGuide
+SUMMARY:: Installation de HPtransformerRT V30.0 et HPTransformerStudio V8.1 dans l'IDE
+CATEGORIES:: Guides, Machine Learning, GUI
+RELATED:: Classes/HPtransformerRT, Classes/HPTransformerStudio
+
+SECTION:: Installation
+CODE::
+VotreExtension/
+|-- Classes/
+|   |-- HPtransformerRT.sc
+|   `-- HPTransformerStudio.sc
+`-- HelpSource/
+    |-- Classes/
+    |   |-- HPtransformerRT.schelp
+    |   `-- HPTransformerStudio.schelp
+    `-- Guides/
+        `-- HPtransformerRTStudioGuide.schelp
+::
+
+SECTION:: Mise à jour V8.1
+La GUI utilise un contraste élevé. Quatre nouveaux presets exploitent les températures séparées: Attention focalisée, Experts spécialisés, Trajectoire précise et RT V30 prudent.
+
+SECTION:: Index IDE
+CODE::
+thisProcess.recompile;
+SCDoc.indexAllDocuments(true);
+::
