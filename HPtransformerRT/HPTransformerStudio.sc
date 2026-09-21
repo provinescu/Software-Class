@@ -1,11 +1,11 @@
 /*
-HPTransformerStudio V8.1.1 for HPtransformerRT V30.0 - SuperCollider 3.14
+HPTransformerStudio V8.4.0 OSC temps reel sans file for HPtransformerRT V30.1.5 - SuperCollider 3.14
 High-contrast GUI update: white labels on dark panels, black text on white fields.
 New preset families: focused attention, specialized experts, precise trajectory, prudent RT V30.
 */
 
 HPTransformerStudio : Object {
-    var <transformer, <window, <refreshRoutine;
+    var <transformer, <window, <refreshRoutine, <controlBus;
 
     *new { |transformer|
         ^super.new.init(transformer)
@@ -39,8 +39,11 @@ HPTransformerStudio : Object {
         ^window.notNil
     }
 
+    attachControlBus { |bus| controlBus=bus; ^this }
+    detachControlBus { controlBus=nil; ^this }
+    controlBusConnected { ^controlBus.notNil }
     build {
-        // HPTransformer Studio Pro V8.1.1 CONFIGURATION SETS - HPtransformerRT V30.0 - SuperCollider 3.14
+        // HPTransformer Studio Pro V8.4.0 OSC temps reel sans file CONFIGURATION SETS - HPtransformerRT V30.1.5 - SuperCollider 3.14
         // Fenetre unique : Dashboard, Controls, Generation, Graphs, Heatmaps,
         // Generation, Memoire, Surprise, AutoTune et MetaLearn Presets, Snapshots RCU, Logs.
         var w, pages, pageButtons, activePage, routine, running=true, rate=0.35;
@@ -50,24 +53,31 @@ HPTransformerStudio : Object {
         var genPresetText, memoryPresetText, surprisePresetText;
         var generationLiveText, memoryLiveText, surpriseLiveText;
         var oscStatusText, oscEventsView, oscHostField, oscInPortBox, oscOutPortBox;
-        var oscInputPathField, oscOutputPathField, oscModeMenu, oscLearnButton, oscSendButton;
-        var oscRunning=false, oscLearning=true, oscSendOutput=true, oscDef=nil, oscTarget=nil;
-        var oscMode=0, oscOutputPath="/hptransformer/output";
+        var oscInputPathField, oscOutputPathField, oscModeMenu, oscLearnButton, oscSendButton, oscBusButton;
+        var oscRunning=false, oscLearning=true, oscSendOutput=true, oscBusOutput=true, oscDef=nil, oscTarget=nil;
+        var oscMode=0, oscOutputPath="/hptransformer/output", oscFollowMix=0.35, oscFollowMixBox;
         var oscInCount=0, oscOutCount=0, oscErrorCount=0, oscInRate=0.0, oscOutRate=0.0;
         var oscLastInCount=0, oscLastOutCount=0, oscLastRateTime, oscLastInput=nil, oscLastOutput=nil;
-        var oscEventLines=List.new, oscStart, oscStop, oscRecordEvent, oscUpdateStatus;
+        var oscEventLines=List.new, oscStart, oscStop, oscRecordEvent, oscUpdateStatus, oscFlushEvents;
+        // File OSC bornee a une valeur : la valeur la plus recente remplace
+        // toute valeur non encore traitee. La latence ne peut plus s'accumuler.
+        var oscProcessRoutine=nil, oscPendingInput=nil, oscBusy=false;
+        var oscProcessedCount=0, oscDroppedCount=0, oscProcessHz=50.0, oscLearningDivider=2;
+        var oscDetailedEvents=false, oscEventsDirty=false;
+        var oscProcessHzBox, oscLearningDividerBox, oscDetailedButton, oscProcessInput;
         var logs=List.new, loss=List.new, surprise=List.new, entropy=List.new;
         var memRecall=List.new, trajRecall=List.new, lastStatus, widgets=IdentityDictionary.new;
         var lossEMA=List.new,surpriseEMAPlot=List.new,entropyEMA=List.new,memRecallEMA=List.new,trajRecallEMA=List.new;
         var graphSmoothAlpha=0.10,lossScaleMode=1,metricScaleMode=1;
         var lossScaleMenu,metricScaleMenu,smoothingBox,addGraphSample,clearGraphs;
         var showPage, addLog, addSlider, button, title, trim, refresh, drawLine;
+        var formatFixed;
         var styleButton, buttonColorForText, navIdleColor, navActiveColor;
         var exportCSV, exportLogs, exportHeat, loadSettings, savePreset, loadPreset;
         var generalNames, generalPresets, autoNames, autoPresets, metaNames, metaPresets;
         var diagnosticPreset, safeReturnPreset, oscCalibrationPreset, lowCpuPreset;
         var genNames, genPresets, memoryNames, memoryPresets, surpriseNames, surprisePresets;
-        var setNames, setPresets, setDescriptions, setMenu, setDescriptionView;
+        var setNames, setPresets, setDescriptions, setFollowMixes, setMenu, setDescriptionView;
         var applyConfigurationSet, exportCurrentSet;
         var generalMenu, autoMenu, metaMenu, seedField, countBox, outputView;
         var genMenu, memoryMenu, surpriseMenu;
@@ -112,18 +122,60 @@ HPTransformerStudio : Object {
         };
         button={|p,text,x,y,wid=170,fun| var view;
          view=Button(p,uiRect.(x,y,wid,34)); styleButton.(view,text,nil); view.action_(fun); view };
+        // Format decimal independant du formatage automatique de NumberBox.
+        formatFixed={|value,decimals=6|
+         var factor,scaled,negative,absolute,integerPart,fractionPart,fractionString;
+         factor=10.pow(decimals).asInteger;
+         scaled=(value.asFloat*factor).round.asInteger;
+         negative=scaled<0;absolute=scaled.abs;
+         integerPart=absolute.div(factor);fractionPart=absolute%factor;
+         fractionString=fractionPart.asString;
+         while({fractionString.size<decimals},{fractionString="0"++fractionString});
+         (if(negative,{"-"},{""}))++integerPart.asString++
+          if(decimals>0,{"."++fractionString},{""})
+        };
         
-        addSlider={|p,label,param,spec,x,y,wid=550,decimals=6| var z=EZSlider(p,wid@28,label,spec,{|v|
-         transformer.setParameter(param,v.value,false); addLog.(param.asString++" = "++v.value.asString)},
-         transformer.getParameter(param),false,145,75);
-         z.labelView.stringColor_(Color.white);
-         z.numberView.background_(Color.white).stringColor_(Color.black).decimals_(decimals);
-         z.sliderView.background_(Color.grey(0.28));
-         z.view.bounds_(uiRect.(x,y,wid,28)); widgets[param]=z; z };
+        addSlider={|p,label,param,spec,x,y,wid=550,decimals=6|
+         var container,labelView,sliderView,valueField,totalW,totalH,labelW,numberW,gap,sliderW,currentValue,setExactValue,widget;
+         totalW=wid*uiScale;totalH=36*uiScale;labelW=145*uiScale;
+         numberW=132*uiScale;gap=6*uiScale;
+         sliderW=(totalW-labelW-numberW-(gap*2)).max(40);
+         currentValue=transformer.getParameter(param).asFloat;
+         container=CompositeView(p,uiRect.(x,y,wid,36)).background_(Color.clear);
+         labelView=StaticText(container,Rect(0,0,labelW,totalH))
+          .string_(label).stringColor_(Color.white).font_(Font.default.size_(11));
+         sliderView=Slider(container,Rect(labelW+gap,3*uiScale,sliderW,totalH-(6*uiScale)))
+          .background_(Color.grey(0.28));
+         valueField=TextField(container,Rect(totalW-numberW,0,numberW,totalH))
+          .background_(Color.white).stringColor_(Color.black)
+          .font_(Font("Monaco",11)).align_(\right)
+          .string_(formatFixed.(currentValue,decimals));
+         setExactValue={|requested,sendToTransformer=true|
+          var exact;exact=requested.asFloat.clip(spec.clipLo,spec.clipHi);
+          if(sendToTransformer,{transformer.setParameter(param,exact,false)});
+          sliderView.value_(spec.unmap(exact).clip(0,1));
+          valueField.string_(formatFixed.(exact,decimals));exact
+         };
+         sliderView.action_({|slider|var exact;
+          exact=spec.map(slider.value).asFloat;
+          transformer.setParameter(param,exact,false);
+          valueField.string_(formatFixed.(exact,decimals));
+          addLog.(param.asString++" = "++formatFixed.(exact,decimals))
+         });
+         valueField.action_({|field|var exact;
+          exact=setExactValue.(field.string.asFloat,true);
+          addLog.(param.asString++" = "++formatFixed.(exact,decimals))
+         });
+         setExactValue.(currentValue,false);
+         widget=(view:container,labelView:labelView,sliderView:sliderView,
+          numberView:valueField,setValue:setExactValue,spec:spec,decimals:decimals);
+         widgets[param]=widget;widget
+        };
         trim={|list| while({list.size>900},{list.removeAt(0)}) };
         loadSettings={|settings,label| settings.keysValuesDo({|k,v| if(transformer.isRuntimeParameter(k),{
-         transformer.setParameter(k,v,false)})}); widgets.keysValuesDo({|k,v| if(v.isKindOf(EZSlider),{
-         v.value_(transformer.getParameter(k))})}); addLog.("Preset applique: "++label) };
+         transformer.setParameter(k,v,false)})}); widgets.keysValuesDo({|k,v|
+         if(v[\setValue].notNil,{v[\setValue].value(transformer.getParameter(k),false)})
+        }); addLog.("Preset applique: "++label) };
         formatTorusMask={|mask|if(mask.isNil,{""},{mask.collect({|item|if(item==true,{"1"},{"0"})}).join(",")})};
         applyTorusMask={|text|var expectedSize,parts,mask;
          expectedSize=(transformer.config[\outputSize]?1).asInteger.max(1);
@@ -141,16 +193,16 @@ HPTransformerStudio : Object {
         };
         
         // Presets operationnels
-        diagnosticPreset=(learningRate:0.00010,protectionStrength:0.40,replayRate:0.0,memoryRetrievalGain:0.0,memoryRecallSize:1,trajectoryRetrievalGain:0.0,trajectoryRecallSize:1,trajectoryExplorationGain:0.0,attentionTemperature:0.50,routerTemperature:1.10,deltaScale:0.16,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,generationWindowSize:4,autoTuneEnabled:false,metaLearnEnabled:false);
-        safeReturnPreset=(learningRate:0.00016,gradientClip:0.35,surpriseThreshold:0.10,surpriseGain:1.0,protectionStrength:0.38,replayRate:0.08,replayBatchSize:1,memoryRetrievalGain:0.16,memoryWriteThreshold:0.12,memoryRecallSize:2,trajectoryRetrievalGain:0.07,trajectoryRecallSize:1,trajectoryExplorationGain:0.001,attentionTemperature:0.82,routerTemperature:1.10,deltaScale:0.20,diversityNoiseGain:0.00005,diversityRepulsionGain:0.0006,generationWindowSize:6,autoTuneEnabled:false,metaLearnEnabled:false);
-        oscCalibrationPreset=(learningRate:0.00010,protectionStrength:0.40,replayRate:0.0,memoryRetrievalGain:0.04,memoryRecallSize:1,trajectoryRetrievalGain:0.02,trajectoryRecallSize:1,trajectoryExplorationGain:0.0,attentionTemperature:0.55,routerTemperature:1.10,deltaScale:0.12,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,generationWindowSize:2,autoTuneEnabled:false,metaLearnEnabled:false);
-        lowCpuPreset=(learningRate:0.00012,gradientClip:0.35,protectionStrength:0.28,replayRate:0.0,replayBatchSize:1,memoryRetrievalGain:0.06,memoryRecallSize:1,trajectoryRetrievalGain:0.03,trajectoryRecallSize:1,trajectoryExplorationGain:0.0005,attentionTemperature:0.75,routerTemperature:1.10,deltaScale:0.18,diversityNoiseGain:0.0,diversityRepulsionGain:0.0002,generationWindowSize:2,autoTuneEnabled:false,metaLearnEnabled:false);
+        diagnosticPreset=(learningRate:0.00010,protectionStrength:0.40,replayRate:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.0,memoryRetrievalGain:0.0,memoryRecallSize:1,trajectoryRetrievalGain:0.0,trajectoryRecallSize:1,trajectoryExplorationGain:0.0,attentionTemperature:0.50,routerTemperature:1.10,deltaScale:0.16,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,generationWindowSize:4,autoTuneEnabled:false,metaLearnEnabled:false);
+        safeReturnPreset=(learningRate:0.00016,gradientClip:0.35,surpriseThreshold:0.10,surpriseGain:1.0,protectionStrength:0.38,replayRate:0.08,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,replayBatchSize:1,memoryRetrievalGain:0.16,memoryWriteThreshold:0.12,memoryRecallSize:2,trajectoryRetrievalGain:0.07,trajectoryRecallSize:1,trajectoryExplorationGain:0.001,attentionTemperature:0.82,routerTemperature:1.10,deltaScale:0.20,diversityNoiseGain:0.00005,diversityRepulsionGain:0.0006,generationWindowSize:6,autoTuneEnabled:false,metaLearnEnabled:false);
+        oscCalibrationPreset=(learningRate:0.00010,protectionStrength:0.40,replayRate:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.0,memoryRetrievalGain:0.04,memoryRecallSize:1,trajectoryRetrievalGain:0.02,trajectoryRecallSize:1,trajectoryExplorationGain:0.0,attentionTemperature:0.55,routerTemperature:1.10,deltaScale:0.12,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,generationWindowSize:2,autoTuneEnabled:false,metaLearnEnabled:false);
+        lowCpuPreset=(learningRate:0.00012,gradientClip:0.35,protectionStrength:0.28,replayRate:0.02,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.02,adaptiveReplayMax:0.08,adaptiveInterferenceThreshold:0.0030,adaptiveInterferenceSmoothing:0.97,adaptiveReplayBoost:0.03,replayBatchSize:1,memoryRetrievalGain:0.06,memoryRecallSize:1,trajectoryRetrievalGain:0.03,trajectoryRecallSize:1,trajectoryExplorationGain:0.0005,attentionTemperature:0.75,routerTemperature:1.10,deltaScale:0.18,diversityNoiseGain:0.0,diversityRepulsionGain:0.0002,generationWindowSize:2,autoTuneEnabled:false,metaLearnEnabled:false);
         // Presets generaux supplementaires
         generalNames=["Equilibre","Apprentissage rapide","Stable","Exploration","Memoire forte",
          "Conservateur","Creatif","Replay intensif","Faible latence","Torus doux","Convergence fine",
          "Attention focalisee","Experts specialises","Trajectoire precise","RT V30 prudent"];
         generalPresets=[
-         (learningRate:0.00035,attentionTemperature:1.0,routerTemperature:1.10,replayRate:0.08,protectionStrength:0.16,memoryRetrievalGain:0.10,trajectoryExplorationGain:0.0045,diversityNoiseGain:0.00035),
+         (learningRate:0.00035,attentionTemperature:1.0,routerTemperature:1.10,replayRate:0.08,protectionStrength:0.16,memoryRetrievalGain:0.10,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.20,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,trajectoryExplorationGain:0.0045,diversityNoiseGain:0.00035),
          (learningRate:0.0008,surpriseGain:1.6,replayRate:0.12,protectionStrength:0.10,gradientClip:0.75),
          (learningRate:0.00018,replayRate:0.18,protectionStrength:0.35,attentionTemperature:0.85,routerTemperature:1.10,diversityNoiseGain:0.0001),
          (attentionTemperature:1.5,routerTemperature:1.10,trajectoryExplorationGain:0.015,diversityNoiseGain:0.003,diversityRepulsionGain:0.008,diversityAdaptiveGain:1.2),
@@ -164,7 +216,7 @@ HPTransformerStudio : Object {
          (attentionTemperature:0.55,routerTemperature:1.15,trajectoryRetrievalTemperature:0.30,residualScale:0.34,expertScale:0.24,diversityNoiseGain:0.00010),
          (attentionTemperature:0.90,routerTemperature:0.65,trajectoryRetrievalTemperature:0.30,expertScale:0.32,expertBalanceStrength:0.004,headSpecializationStrength:0.004),
          (attentionTemperature:0.90,routerTemperature:1.10,trajectoryRetrievalTemperature:0.16,trajectoryRecallSize:2,trajectoryRetrievalGain:0.14,trajectoryVelocityGain:0.070,trajectoryAccelerationGain:0.012),
-         (learningRate:0.00025,gradientClip:0.60,attentionTemperature:0.85,routerTemperature:1.10,trajectoryRetrievalTemperature:0.25,residualScale:0.30,expertScale:0.22,deltaScale:0.25,replayRate:0.08,protectionStrength:0.18,trajectoryExplorationGain:0.0025,diversityNoiseGain:0.00020,diversityRepulsionGain:0.0012,autoTuneEnabled:false,metaLearnEnabled:false)
+         (learningRate:0.00025,gradientClip:0.60,attentionTemperature:0.85,routerTemperature:1.10,trajectoryRetrievalTemperature:0.25,residualScale:0.30,expertScale:0.22,deltaScale:0.25,replayRate:0.08,protectionStrength:0.18,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,trajectoryExplorationGain:0.0025,diversityNoiseGain:0.00020,diversityRepulsionGain:0.0012,autoTuneEnabled:false,metaLearnEnabled:false)
         ];
         autoNames=["Auto Equilibre","Auto Diversite","Auto Nouveaute","Auto Doux","Auto Reactif","Auto Minimal"];
         autoPresets=[
@@ -201,7 +253,7 @@ HPTransformerStudio : Object {
         ];
         // Presets specialises Memoire
         memoryNames=["Memoire equilibree","Memoire profonde","Memoire selective","Memoire rapide",
-         "Replay fort","Anti-oubli","Trajectoire forte","Memoire legere"];
+         "Replay fort","Anti-oubli adaptatif V30.1.5","Trajectoire forte","Memoire legere","RT modere valide","Memoire maximale V30.1.5"];
         memoryPresets=[
          (memoryWriteThreshold:0.10,memoryRetrievalGain:0.10,memoryRetrievalTemperature:0.30,trajectoryRetrievalTemperature:0.30,memoryDecay:0.996,memoryRecallSize:3,replayRate:0.08),
          (memoryWriteThreshold:0.04,memoryRetrievalGain:0.32,memoryRetrievalTemperature:0.18,trajectoryRetrievalTemperature:0.22,memoryDecay:0.999,memoryRecallSize:6,replayRate:0.18),
@@ -210,7 +262,9 @@ HPTransformerStudio : Object {
          (replayRate:0.32,replayBatchSize:4,replayPriorityMix:0.86,replayUniformMix:0.14,protectionStrength:0.32),
          (memoryDecay:0.9995,memoryUsageDecay:0.9998,memoryConsolidationRate:0.008,protectionStrength:0.48,replayRate:0.22),
          (trajectoryRecallSize:3,trajectoryRetrievalGain:0.24,trajectoryVelocityGain:0.10,trajectoryAccelerationGain:0.02,trajectoryDecay:0.985),
-         (memoryWriteThreshold:0.20,memoryRetrievalGain:0.05,memoryRecallSize:1,replayRate:0.02,protectionStrength:0.08)
+         (memoryWriteThreshold:0.20,memoryRetrievalGain:0.05,memoryRecallSize:1,replayRate:0.02,protectionStrength:0.08,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.02,adaptiveReplayMax:0.08,adaptiveInterferenceThreshold:0.0030,adaptiveInterferenceSmoothing:0.97,adaptiveReplayBoost:0.03),
+         (replayRate:0.12,memoryRetrievalGain:0.10,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06),
+         (replayRate:0.16,memoryRetrievalGain:0.12,protectionStrength:0.22,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.08,adaptiveReplayMax:0.20,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06)
         ];
         // Presets specialises Surprise / plasticite
         surpriseNames=["Surprise equilibree","Tres plastique","Prudent","Evenements rares",
@@ -222,7 +276,7 @@ HPTransformerStudio : Object {
          (surpriseThreshold:0.30,surpriseGain:2.80,adaptationFastRate:2.10,adaptationSlowRate:0.18,memoryWriteThreshold:0.18),
          (surpriseThreshold:0.04,surpriseGain:1.85,adaptationFastRate:2.00,adaptationSlowRate:0.55,gradientClip:1.10),
          (surpriseThreshold:0.10,surpriseGain:1.08,adaptationFastRate:0.75,adaptationSlowRate:0.15,learningRate:0.00012),
-         (surpriseThreshold:0.08,surpriseGain:1.20,adaptationFastRate:1.05,adaptationSlowRate:0.28,protectionStrength:0.55,replayRate:0.24),
+         (surpriseThreshold:0.08,surpriseGain:1.20,adaptationFastRate:1.05,adaptationSlowRate:0.28,protectionStrength:0.32,replayRate:0.12,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06),
          (surpriseThreshold:0.045,surpriseGain:1.70,adaptationFastRate:1.70,trajectoryExplorationGain:0.014,diversityNoiseGain:0.002)
         ];
         
@@ -230,7 +284,9 @@ HPTransformerStudio : Object {
         setNames=[
          "Studio Equilibre","Apprentissage Continu","Performance Stable","Improvisation Creative",
          "Memoire Narrative","Adaptation Rapide","Anti-Oubli Fort","Exploration Torique",
-         "Faible Latence OSC","Installation Autonome","Analyse / Prediction","Generation Pure"
+         "Faible Latence OSC","Installation Autonome","Analyse / Prediction","Generation Pure",
+         "Suivi Musicien Equilibre","Suivi Ultra Reactif","Legato Expressif Temps Reel","Rythmique Percussif Temps Reel","Call and Response Direct",
+         "Accompagnement Fidele","Improvisation Partagee","Geste Continu et Capteurs","Longue Session Prudente","Changements de Scene Adaptatifs"
         ];
         setDescriptions=[
          "Point de depart polyvalent. Apprentissage modere, generation equilibree, AutoTune doux et MetaLearn prudent.",
@@ -244,7 +300,32 @@ HPTransformerStudio : Object {
          "Reduit le travail par evenement pour privilegier le debit OSC et la reactivite de l'interface.",
          "AutoTune et MetaLearn actifs avec des valeurs douces pour un fonctionnement autonome de longue duree.",
          "Apprentissage suspendu, faible exploration et generation deterministe pour evaluer la prediction.",
-         "Generation active sans apprentissage externe. Diversite moderee et memoire utilisee pour la continuite."
+         "Generation active sans apprentissage externe. Diversite moderee et memoire utilisee pour la continuite.",
+         "Suivi generaliste dun musicien en direct. Latence contenue, continuite gestuelle, apprentissage modere et regulation douce.",
+         "Reponse tres rapide aux changements darticulation et de dynamique. Fenetre courte, plasticite forte et memoire recente.",
+         "Pour lignes legato, glissandi, souffle et gestes lies. Trajectoire precise, faible delta et bruit presque nul.",
+         "Pour percussion, rythme et attaques franches. Fenetre courte, acceleration elevee et adaptation rapide.",
+         "Ecoute une phrase puis produit une reponse proche mais transformee. Memoire selective et diversite moderee.",
+         "Accompagnement discret proche du vocabulaire appris. Memoire forte, temperature basse et exploration limitee.",
+         "Dialogue exploratoire entre musicien et systeme. Diversite et nouveaute elevees dans des bornes prudentes.",
+         "Pour controleurs continus, mouvement, position, pression ou capteurs. Vitesse et acceleration privilegiees.",
+         "Pour concerts longs et installations. Apprentissage lent, protection et replay renforces, controles tres lisses.",
+         "Pour ruptures de section. Surprise et adaptation rapides, puis stabilisation par AutoTune et MetaLearn moderes."
+        ];
+        // Valeur de Suivi direct associee a chaque jeu complet.
+        // nil conserve la valeur courante pour les jeux generaux.
+        setFollowMixes=[
+         nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
+         0.35, // Suivi Musicien Equilibre
+         0.55, // Suivi Ultra Reactif
+         0.45, // Legato Expressif Temps Reel
+         0.25, // Rythmique Percussif Temps Reel
+         0.10, // Call and Response Direct
+         0.65, // Accompagnement Fidele
+         0.20, // Improvisation Partagee
+         0.40, // Geste Continu et Capteurs
+         0.35, // Longue Session Prudente
+         0.25  // Changements de Scene Adaptatifs
         ];
         setPresets=[
          (learningRate:0.00035,gradientClip:0.75,surpriseThreshold:0.06,surpriseGain:1.10,protectionStrength:0.16,replayRate:0.08,memoryRetrievalGain:0.10,memoryWriteThreshold:0.10,trajectoryRetrievalGain:0.07,trajectoryExplorationGain:0.0045,attentionTemperature:1.0,routerTemperature:1.10,diversityNoiseGain:0.00035,diversityRepulsionGain:0.0016,autoTuneEnabled:true,autoTuneInterval:12,autoTuneStrength:0.10,metaLearnEnabled:true,metaLearnInterval:24,metaLearnStrength:0.06),
@@ -258,13 +339,32 @@ HPTransformerStudio : Object {
          (learningRate:0.00025,gradientClip:0.55,surpriseThreshold:0.07,surpriseGain:1.10,protectionStrength:0.14,replayRate:0.025,replayBatchSize:1,memoryRecallSize:1,memoryRetrievalGain:0.06,trajectoryRecallSize:1,trajectoryRetrievalGain:0.04,generationWindowSize:4,trajectoryExplorationGain:0.002,attentionTemperature:0.95,routerTemperature:1.10,diversityNoiseGain:0.0001,autoTuneEnabled:false,metaLearnEnabled:false),
          (learningRate:0.00030,gradientClip:0.65,surpriseThreshold:0.065,surpriseGain:1.20,protectionStrength:0.26,replayRate:0.16,memoryRetrievalGain:0.18,memoryWriteThreshold:0.08,trajectoryRetrievalGain:0.10,trajectoryExplorationGain:0.006,attentionTemperature:1.05,routerTemperature:1.10,diversityNoiseGain:0.0006,autoTuneEnabled:true,autoTuneInterval:12,autoTuneStrength:0.12,autoTuneSmoothing:0.96,metaLearnEnabled:true,metaLearnInterval:24,metaLearnStrength:0.08,metaLearnSmoothing:0.98),
          (learningRate:0.00010,gradientClip:0.25,protectionStrength:0.40,replayRate:0.0,memoryRetrievalGain:0.16,trajectoryRetrievalGain:0.08,trajectoryExplorationGain:0.0,attentionTemperature:0.55,routerTemperature:1.10,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,autoTuneEnabled:false,metaLearnEnabled:false),
-         (learningRate:0.00020,protectionStrength:0.24,replayRate:0.0,memoryRetrievalGain:0.22,trajectoryRetrievalGain:0.16,trajectoryVelocityGain:0.08,trajectoryExplorationGain:0.009,attentionTemperature:1.25,routerTemperature:1.10,deltaScale:0.36,diversityNoiseGain:0.0015,diversityRepulsionGain:0.005,localDiversityGain:0.08,autoTuneEnabled:true,autoTuneInterval:8,autoTuneStrength:0.18,metaLearnEnabled:false)
+         (learningRate:0.00020,protectionStrength:0.24,replayRate:0.0,memoryRetrievalGain:0.22,trajectoryRetrievalGain:0.16,trajectoryVelocityGain:0.08,trajectoryExplorationGain:0.009,attentionTemperature:1.25,routerTemperature:1.10,deltaScale:0.36,diversityNoiseGain:0.0015,diversityRepulsionGain:0.005,localDiversityGain:0.08,autoTuneEnabled:true,autoTuneInterval:8,autoTuneStrength:0.18,metaLearnEnabled:false),
+         (learningRate:0.00032,gradientClip:0.60,surpriseThreshold:0.055,surpriseGain:1.25,adaptationFastRate:1.45,adaptationSlowRate:0.38,protectionStrength:0.18,replayRate:0.08,replayBatchSize:1,memoryWriteThreshold:0.08,memoryRetrievalGain:0.14,memoryRetrievalTemperature:0.26,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.11,trajectoryRetrievalTemperature:0.22,trajectoryVelocityGain:0.065,trajectoryAccelerationGain:0.010,trajectoryExplorationGain:0.0035,attentionTemperature:0.88,routerTemperature:0.95,deltaScale:0.27,generationWindowSize:5,diversityNoiseGain:0.00022,diversityRepulsionGain:0.0014,localDiversityGain:0.045,autoTuneEnabled:true,autoTuneInterval:10,autoTuneStrength:0.10,autoTuneSmoothing:0.94,autoTuneTargetNovelty:0.16,autoTuneTargetDiversity:0.11,metaLearnEnabled:true,metaLearnInterval:18,metaLearnStrength:0.07,metaLearnSmoothing:0.97),
+         (learningRate:0.00062,gradientClip:0.85,surpriseThreshold:0.030,surpriseGain:1.90,adaptationFastRate:2.20,adaptationSlowRate:0.55,protectionStrength:0.10,replayRate:0.035,replayBatchSize:1,memoryWriteThreshold:0.06,memoryRetrievalGain:0.07,memoryRetrievalTemperature:0.42,memoryRecallSize:2,trajectoryRecallSize:1,trajectoryRetrievalGain:0.075,trajectoryRetrievalTemperature:0.34,trajectoryVelocityGain:0.075,trajectoryAccelerationGain:0.018,trajectoryExplorationGain:0.0055,attentionTemperature:1.05,routerTemperature:0.82,deltaScale:0.38,generationWindowSize:3,diversityNoiseGain:0.00045,diversityRepulsionGain:0.0020,localDiversityGain:0.060,autoTuneEnabled:true,autoTuneInterval:5,autoTuneStrength:0.17,autoTuneSmoothing:0.86,autoTuneTargetNovelty:0.21,autoTuneTargetDiversity:0.15,metaLearnEnabled:true,metaLearnInterval:8,metaLearnStrength:0.15,metaLearnSmoothing:0.90),
+         (learningRate:0.00024,gradientClip:0.45,surpriseThreshold:0.075,surpriseGain:1.10,protectionStrength:0.22,replayRate:0.09,memoryRetrievalGain:0.18,memoryRetrievalTemperature:0.20,memoryRecallSize:2,trajectoryRecallSize:3,trajectoryRetrievalGain:0.16,trajectoryRetrievalTemperature:0.14,trajectoryVelocityGain:0.090,trajectoryAccelerationGain:0.005,trajectoryExplorationGain:0.0012,attentionTemperature:0.68,routerTemperature:0.90,deltaScale:0.17,generationWindowSize:7,diversityNoiseGain:0.00004,diversityRepulsionGain:0.00055,localDiversityGain:0.025,autoTuneEnabled:true,autoTuneInterval:14,autoTuneStrength:0.07,autoTuneSmoothing:0.97,metaLearnEnabled:false),
+         (learningRate:0.00050,gradientClip:0.75,surpriseThreshold:0.040,surpriseGain:1.65,adaptationFastRate:1.95,adaptationSlowRate:0.48,protectionStrength:0.11,replayRate:0.025,memoryRetrievalGain:0.055,memoryRecallSize:1,trajectoryRecallSize:1,trajectoryRetrievalGain:0.050,trajectoryRetrievalTemperature:0.38,trajectoryVelocityGain:0.050,trajectoryAccelerationGain:0.024,trajectoryExplorationGain:0.0050,attentionTemperature:1.08,routerTemperature:0.78,deltaScale:0.48,generationWindowSize:3,diversityNoiseGain:0.00035,diversityRepulsionGain:0.0018,localDiversityGain:0.055,autoTuneEnabled:false,metaLearnEnabled:true,metaLearnInterval:8,metaLearnStrength:0.13,metaLearnSmoothing:0.90),
+         (learningRate:0.00030,gradientClip:0.55,surpriseThreshold:0.060,surpriseGain:1.30,protectionStrength:0.20,replayRate:0.10,memoryWriteThreshold:0.075,memoryRetrievalGain:0.19,memoryRetrievalTemperature:0.23,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.115,trajectoryRetrievalTemperature:0.24,trajectoryVelocityGain:0.060,trajectoryAccelerationGain:0.009,trajectoryExplorationGain:0.0028,attentionTemperature:0.86,routerTemperature:0.92,deltaScale:0.29,generationWindowSize:6,diversityNoiseGain:0.00018,diversityRepulsionGain:0.0013,localDiversityGain:0.042,autoTuneEnabled:true,autoTuneInterval:10,autoTuneStrength:0.09,autoTuneSmoothing:0.95,metaLearnEnabled:false),
+         (learningRate:0.00020,gradientClip:0.40,surpriseThreshold:0.090,surpriseGain:1.06,protectionStrength:0.34,replayRate:0.14,memoryRetrievalGain:0.24,memoryRetrievalTemperature:0.17,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.12,trajectoryRetrievalTemperature:0.18,trajectoryVelocityGain:0.060,trajectoryAccelerationGain:0.006,trajectoryExplorationGain:0.0010,attentionTemperature:0.64,routerTemperature:0.88,deltaScale:0.20,generationWindowSize:7,diversityNoiseGain:0.00004,diversityRepulsionGain:0.00065,localDiversityGain:0.028,autoTuneEnabled:true,autoTuneInterval:14,autoTuneStrength:0.065,autoTuneSmoothing:0.97,metaLearnEnabled:true,metaLearnInterval:22,metaLearnStrength:0.06,metaLearnSmoothing:0.98,metaLearnTargetRecall:0.62),
+         (learningRate:0.00036,gradientClip:0.65,surpriseThreshold:0.045,surpriseGain:1.45,protectionStrength:0.15,replayRate:0.065,memoryRetrievalGain:0.12,memoryRetrievalTemperature:0.38,memoryRecallSize:4,trajectoryRecallSize:2,trajectoryRetrievalGain:0.095,trajectoryRetrievalTemperature:0.32,trajectoryVelocityGain:0.055,trajectoryAccelerationGain:0.014,trajectoryExplorationGain:0.0080,attentionTemperature:1.20,routerTemperature:0.80,deltaScale:0.36,generationWindowSize:5,diversityNoiseGain:0.00075,diversityRepulsionGain:0.0026,diversityAdaptiveGain:0.90,localDiversityFloor:0.032,localDiversityGain:0.070,autoTuneEnabled:true,autoTuneInterval:6,autoTuneStrength:0.19,autoTuneSmoothing:0.88,autoTuneTargetNovelty:0.24,autoTuneTargetDiversity:0.18,metaLearnEnabled:true,metaLearnInterval:12,metaLearnStrength:0.09,metaLearnSmoothing:0.94),
+         (learningRate:0.00034,gradientClip:0.60,surpriseThreshold:0.055,surpriseGain:1.25,protectionStrength:0.18,replayRate:0.06,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRecallSize:3,trajectoryRetrievalGain:0.18,trajectoryRetrievalTemperature:0.16,trajectoryVelocityGain:0.105,trajectoryAccelerationGain:0.018,trajectoryExplorationGain:0.0025,attentionTemperature:0.78,routerTemperature:0.96,deltaScale:0.25,generationWindowSize:5,diversityNoiseGain:0.00012,diversityRepulsionGain:0.0009,driftEmaDecay:0.990,driftGain:0.38,autoTuneEnabled:false,metaLearnEnabled:true,metaLearnInterval:14,metaLearnStrength:0.08,metaLearnSmoothing:0.96),
+         (learningRate:0.00014,gradientClip:0.32,surpriseThreshold:0.085,surpriseGain:1.05,protectionStrength:0.46,replayRate:0.18,memoryWriteThreshold:0.11,memoryRetrievalGain:0.20,memoryRetrievalTemperature:0.24,memoryDecay:0.9992,memoryUsageDecay:0.9996,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.11,trajectoryRetrievalTemperature:0.22,trajectoryVelocityGain:0.052,trajectoryAccelerationGain:0.006,trajectoryExplorationGain:0.0015,attentionTemperature:0.72,routerTemperature:0.95,deltaScale:0.21,generationWindowSize:7,diversityNoiseGain:0.00008,diversityRepulsionGain:0.00075,localDiversityGain:0.030,autoTuneEnabled:true,autoTuneInterval:20,autoTuneStrength:0.05,autoTuneSmoothing:0.985,autoTuneTargetNovelty:0.12,autoTuneTargetDiversity:0.08,metaLearnEnabled:true,metaLearnInterval:28,metaLearnStrength:0.045,metaLearnSmoothing:0.988,metaLearnTargetRecall:0.58),
+         (learningRate:0.00048,gradientClip:0.75,surpriseThreshold:0.032,surpriseGain:1.85,adaptationFastRate:2.00,adaptationSlowRate:0.50,protectionStrength:0.14,replayRate:0.07,memoryWriteThreshold:0.06,memoryRetrievalGain:0.12,memoryRetrievalTemperature:0.36,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.09,trajectoryRetrievalTemperature:0.30,trajectoryVelocityGain:0.060,trajectoryAccelerationGain:0.016,trajectoryExplorationGain:0.0065,attentionTemperature:1.08,routerTemperature:0.82,deltaScale:0.35,generationWindowSize:4,diversityNoiseGain:0.00055,diversityRepulsionGain:0.0021,localDiversityGain:0.060,autoTuneEnabled:true,autoTuneInterval:6,autoTuneStrength:0.14,autoTuneSmoothing:0.90,autoTuneTargetNovelty:0.21,autoTuneTargetDiversity:0.15,metaLearnEnabled:true,metaLearnInterval:10,metaLearnStrength:0.12,metaLearnSmoothing:0.92)
         ];
         
         applyConfigurationSet={|index|
          var settings,name,size;
          settings=setPresets[index];name=setNames[index];
          loadSettings.(settings,name);
+         if(setFollowMixes[index].notNil,{
+          oscFollowMix=setFollowMixes[index].asFloat.clip(0,1);
+          if(oscFollowMixBox.notNil,{oscFollowMixBox.value_(oscFollowMix)});
+          addLog.("Suivi direct preset: "++oscFollowMix);
+         });
+         if(settings[\autoTuneEnabled]==true,{transformer.enableAutoTune},{if(settings[\autoTuneEnabled]==false,{transformer.disableAutoTune})});
+         if(settings[\metaLearnEnabled]==true,{transformer.enableMetaLearning},{if(settings[\metaLearnEnabled]==false,{transformer.disableMetaLearning})});
+         if(index>=12,{transformer.enableLearning;transformer.enableGeneration});
+         if([13,15,21].includes(index),{rate=0.20},{if(index>=12,{rate=0.30})});
          // Reglages d'etat qui ne sont pas de simples parametres.
          if(index==10,{transformer.disableLearning;transformer.enableGeneration});
          if(index==11,{transformer.disableLearning;transformer.enableGeneration});
@@ -278,6 +378,11 @@ HPTransformerStudio : Object {
          setDescriptionView.string_(
           "Configuration active : "++name++Char.nl++Char.nl++
           setDescriptions[index]++Char.nl++Char.nl++
+          if(setFollowMixes[index].notNil,{
+           "Suivi direct applique : "++oscFollowMix++Char.nl++Char.nl
+          },{
+           "Suivi direct conserve : "++oscFollowMix++Char.nl++Char.nl
+          })++
           "Parametres appliques :"++Char.nl++settings.asCompileString
          );
          addLog.("Jeu complet applique: "++name)
@@ -291,22 +396,22 @@ HPTransformerStudio : Object {
          })})
         };
         
-        w=Window("HPTransformer Studio Pro V8.1.1 - Compact 13 pouces scrollable - graphes, heatmaps et menu morphing final",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
+        w=Window("HPTransformer Studio Pro V8.4.0 - HPtransformerRT V30.1.5 - OSC temps reel - Anti-interference adaptative",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
         scrollView=ScrollView(w,uiRect.(0,0,1320,860)).hasBorder_(false).autohidesScrollers_(true);
         // CompositeView explicite recommande pour fixer une surface de contenu plus grande.
-        uiRoot=CompositeView(scrollView,uiRect.(0,0,1360,980)).background_(Color.grey(0.13));
-        StaticText(uiRoot,uiRect.(5,965,5,5)).string_("");
+        uiRoot=CompositeView(scrollView,uiRect.(0,0,1360,1080)).background_(Color.grey(0.13));
+        StaticText(uiRoot,uiRect.(5,1065,5,5)).string_("");
         pages=IdentityDictionary.new; pageButtons=IdentityDictionary.new;
         [
          [\dashboard,"Dashboard"],[\controls,"Controls"],[\manualParams,"Parametres manuels"],[\morphing,"Morphing"],[\generation,"Generation Live"],[\memoryLive,"Memoire Live"],
-         [\surpriseLive,"Surprise Live"],[\osc,"OSC / Temps reel"],[\sets,"Jeux complets"],[\graphs,"Graphes"],
+         [\surpriseLive,"Surprise Live"],[\osc,"Temps reel / Bus / OSC"],[\sets,"Jeux complets"],[\graphs,"Graphes"],
          [\heatmaps,"Heatmaps"],[\genPresets,"Generation Presets"],[\memoryPresets,"Memoire Presets"],
          [\surprisePresets,"Surprise Presets"],[\auto,"AutoTune Presets"],[\meta,"MetaLearn Presets"],
          [\rcu,"Snapshots RCU"],[\logs,"Logs"]
-        ].do({|pair,i| var b,p; b=Button(uiRoot,uiRect.(10+(i%5*260),8+(i.div(5)*34),250,28));
-         styleButton.(b,pair[1],navIdleColor);
+        ].do({|pair,i| var b,p,col,row;col=i%4;row=i.div(4);
+         b=Button(uiRoot,uiRect.(10+(col*325),8+(row*35),315,29));styleButton.(b,pair[1],navIdleColor);
          b.action_({showPage.(pair[0])}); pageButtons[pair[0]]=b;
-         p=CompositeView(uiRoot,uiRect.(0,150,1320,780)).background_(Color.grey(0.17)).visible_(false); pages[pair[0]]=p });
+         p=CompositeView(uiRoot,uiRect.(0,190,1320,840)).background_(Color.grey(0.17)).visible_(false); pages[pair[0]]=p });
         showPage={|name| activePage=name; pages.keysValuesDo({|k,p|p.visible_(k==name)});
          pageButtons.keysValuesDo({|k,b| var label=b.states[0][0]; styleButton.(b,label,if(k==name,{navActiveColor},{navIdleColor}))});
          if(name==\graphs,{graphView.refresh}); if(name==\heatmaps,{heatView.refresh}) };
@@ -338,6 +443,10 @@ HPTransformerStudio : Object {
         addSlider.(pages[\controls],"Surprise gain",\surpriseGain,ControlSpec(0,5,\lin),20,164,590);
         addSlider.(pages[\controls],"Protection",\protectionStrength,ControlSpec(0,2,\lin),20,202,590);
         addSlider.(pages[\controls],"Replay rate",\replayRate,ControlSpec(0,0.5,\lin),20,240,590);
+        addSlider.(pages[\controls],"Adaptive threshold",\adaptiveInterferenceThreshold,ControlSpec(0.0001,0.02,\exp),20,278,590);
+        addSlider.(pages[\controls],"Adaptive smoothing",\adaptiveInterferenceSmoothing,ControlSpec(0.50,0.999,\lin),20,316,590);
+        addSlider.(pages[\controls],"Adaptive replay boost",\adaptiveReplayBoost,ControlSpec(0,0.25,\lin),20,354,590);
+        addSlider.(pages[\controls],"Adaptive replay max",\adaptiveReplayMax,ControlSpec(0,0.5,\lin),20,392,590);
         addSlider.(pages[\controls],"Memory gain",\memoryRetrievalGain,ControlSpec(0,1,\lin),680,50,600);
         addSlider.(pages[\controls],"Write threshold",\memoryWriteThreshold,ControlSpec(0,1,\lin),680,88,600);
         addSlider.(pages[\controls],"Attention temperature",\attentionTemperature,ControlSpec(0.1,5,\exp),680,126,600);
@@ -348,13 +457,13 @@ HPTransformerStudio : Object {
         addSlider.(pages[\controls],"Diversity noise",\diversityNoiseGain,ControlSpec(0,0.02,\lin),680,316,600);
         addSlider.(pages[\controls],"Diversity repulsion",\diversityRepulsionGain,ControlSpec(0,0.05,\lin),680,354,600);
         // TorusMask par dimension de sortie.
-        title.(pages[\controls],"TORUS MASK",20,410,400);
-        StaticText(pages[\controls],uiRect.(20,450,245,24)).string_("Masque 1/0 separe par virgules :").stringColor_(Color.white);
-        torusMaskField=TextField(pages[\controls],uiRect.(270,447,430,30)).string_(formatTorusMask.(transformer.getParameter(\torusMask))).background_(Color.white).stringColor_(Color.black).action_({|field|applyTorusMask.(field.string)});
-        button.(pages[\controls],"Appliquer TorusMask",720,445,190,{applyTorusMask.(torusMaskField.string)});
-        button.(pages[\controls],"Tout torique",925,445,150,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{true});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
-        button.(pages[\controls],"Tout lineaire",1090,445,170,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{false});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
-        torusMaskStatus=TextView(pages[\controls],uiRect.(20,495,1240,145)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black).font_(Font.default.size_(12));
+        title.(pages[\controls],"TORUS MASK",20,455,400);
+        StaticText(pages[\controls],uiRect.(20,490,245,24)).string_("Masque 1/0 separe par virgules :").stringColor_(Color.white);
+        torusMaskField=TextField(pages[\controls],uiRect.(270,487,430,30)).string_(formatTorusMask.(transformer.getParameter(\torusMask))).background_(Color.white).stringColor_(Color.black).action_({|field|applyTorusMask.(field.string)});
+        button.(pages[\controls],"Appliquer TorusMask",720,485,190,{applyTorusMask.(torusMaskField.string)});
+        button.(pages[\controls],"Tout torique",925,485,150,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{true});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
+        button.(pages[\controls],"Tout lineaire",1090,485,170,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{false});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
+        torusMaskStatus=TextView(pages[\controls],uiRect.(20,535,1240,105)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black).font_(Font.default.size_(12));
         torusMaskStatus.string_("Masque actif : "++transformer.getParameter(\torusMask).asCompileString++Char.nl++"1 = dimension torique (bouclage 0..1) ; 0 = dimension lineaire (limitee 0..1)");
         
         // Parametres manuels
@@ -408,7 +517,7 @@ HPTransformerStudio : Object {
           })
          });
          widgets.keysValuesDo({|key,view|
-          if(view.isKindOf(EZSlider),{view.value_(transformer.getParameter(key))})
+          if(view[\setValue].notNil,{view[\setValue].value(transformer.getParameter(key),false)})
          });
          manualParamsStatus.string_(
           "PARAMETRES APPLIQUES ("++applied.size++")"++Char.nl++
@@ -438,8 +547,18 @@ HPTransformerStudio : Object {
          oscModeMenu.value_(oscMode);
          oscLearning=guiState[\oscLearning] ? true;
          oscSendOutput=guiState[\oscSendOutput] ? true;
+         oscBusOutput=guiState[\oscBusOutput] ? true;
+         oscFollowMix=(guiState[\oscFollowMix] ? 0.35).asFloat.clip(0,1);
+         oscProcessHz=(guiState[\oscProcessHz] ? 50.0).asFloat.clip(5,200);
+         oscLearningDivider=(guiState[\oscLearningDivider] ? 2).asInteger.clip(1,64);
+         oscDetailedEvents=guiState[\oscDetailedEvents] ? false;
+         if(oscFollowMixBox.notNil,{oscFollowMixBox.value_(oscFollowMix)});
+         if(oscProcessHzBox.notNil,{oscProcessHzBox.value_(oscProcessHz)});
+         if(oscLearningDividerBox.notNil,{oscLearningDividerBox.value_(oscLearningDivider)});
+         if(oscDetailedButton.notNil,{oscDetailedButton.value_(if(oscDetailedEvents,{1},{0}))});
          oscLearnButton.value_(if(oscLearning,{1},{0}));
          oscSendButton.value_(if(oscSendOutput,{1},{0}));
+         oscBusButton.value_(if(oscBusOutput,{1},{0}));
          rate=(guiState[\refreshRate] ? 0.35).asFloat.max(0.05);
          learningEnabled=session[\learningEnabled] ? true;
          generationEnabled=session[\generationEnabled] ? true;
@@ -455,7 +574,7 @@ HPTransformerStudio : Object {
          logView.string_(logs.join(Char.nl));
          oscEventsView.string_(oscEventLines.join(Char.nl));
          widgets.keysValuesDo({|key,view|
-          if(view.isKindOf(EZSlider),{view.value_(transformer.getParameter(key))})
+          if(view[\setValue].notNil,{view[\setValue].value(transformer.getParameter(key),false)})
          });
          torusMaskField.string_(formatTorusMask.(transformer.getParameter(\torusMask)));
          torusMaskStatus.string_(
@@ -494,7 +613,12 @@ HPTransformerStudio : Object {
              oscOutputPath:oscOutputPathField.string,
              oscMode:oscModeMenu.value,
              oscLearning:oscLearning,
-             oscSendOutput:oscSendOutput
+             oscSendOutput:oscSendOutput,
+             oscBusOutput:oscBusOutput,
+             oscFollowMix:oscFollowMix,
+             oscProcessHz:oscProcessHz,
+             oscLearningDivider:oscLearningDivider,
+             oscDetailedEvents:oscDetailedEvents
             ),
             graphs:(
              loss:loss.asArray,
@@ -566,7 +690,7 @@ HPTransformerStudio : Object {
          "Saisissez une affectation par ligne: nom = valeur. Valeurs admises: nombres, true, false. "++
          "Les lignes // et # sont ignorees. TorusMask reste disponible dans Controls."
         ).stringColor_(Color.white);
-        manualParamsEditor=TextView(pages[\manualParams],uiRect.(20,95,730,500))
+        manualParamsEditor=TextView(pages[\manualParams],uiRect.(20,95,730,450))
          .editable_(true).background_(Color.white).stringColor_(Color.black)
          .font_(Font("Monaco",12)).string_(
           "// Exemples de parametres non visibles dans les pages principales"++Char.nl++
@@ -574,6 +698,11 @@ HPTransformerStudio : Object {
           "expertScale = 0.27"++Char.nl++
           "gateLearningRate = 0.0008"++Char.nl++
           "replayBatchSize = 1"++Char.nl++
+          "adaptiveInterferenceEnabled = true"++Char.nl++
+          "adaptiveInterferenceThreshold = 0.002"++Char.nl++
+          "adaptiveInterferenceSmoothing = 0.95"++Char.nl++
+          "adaptiveReplayBoost = 0.06"++Char.nl++
+          "adaptiveReplayMax = 0.20"++Char.nl++
           "memoryRecallSize = 3"++Char.nl++
           "generationWindowSize = 8"++Char.nl++
           "driftGain = 0.45"++Char.nl++
@@ -581,22 +710,22 @@ HPTransformerStudio : Object {
           "metaLearnEnabled = false"
          );
         title.(pages[\manualParams],"RESULTAT / VALIDATION",780,95,450);
-        manualParamsStatus=TextView(pages[\manualParams],uiRect.(780,130,480,465))
+        manualParamsStatus=TextView(pages[\manualParams],uiRect.(780,130,480,415))
          .editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black)
          .font_(Font.default.size_(12)).string_("En attente d'application.");
-        button.(pages[\manualParams],"Appliquer le bloc",20,615,210,{
+        button.(pages[\manualParams],"Appliquer le bloc",20,565,210,{
          applyManualParameters.(manualParamsEditor.string)
         });
-        button.(pages[\manualParams],"Charger runtime actuel",250,615,220,{
+        button.(pages[\manualParams],"Charger runtime actuel",250,565,220,{
          loadRuntimeIntoEditor.value
         });
-        button.(pages[\manualParams],"Effacer l'editeur",490,615,190,{
+        button.(pages[\manualParams],"Effacer l'editeur",490,565,190,{
          manualParamsEditor.string_("");manualParamsStatus.string_("Editeur efface.")
         });
-        button.(pages[\manualParams],"Rafraichir statut",780,615,200,{
+        button.(pages[\manualParams],"Rafraichir statut",780,565,200,{
          manualParamsStatus.string_(transformer.runtimeConfig.asCompileString)
         });
-        button.(pages[\manualParams],"Copier exemples",1000,615,200,{
+        button.(pages[\manualParams],"Copier exemples",1000,565,200,{
          manualParamsEditor.string_(
           "learningRate = 0.0002"++Char.nl++
           "gradientClip = 0.35"++Char.nl++
@@ -607,7 +736,7 @@ HPTransformerStudio : Object {
           "trajectoryRetrievalTemperature = 0.25"
          )
         });
-        button.(pages[\manualParams],"Sauver parametres...",20,660,220,{
+        button.(pages[\manualParams],"Sauver parametres...",20,610,220,{
          Dialog.savePanel({|path|
           var fp;
           if(path.notNil,{
@@ -618,7 +747,7 @@ HPTransformerStudio : Object {
           })
          })
         });
-        button.(pages[\manualParams],"Charger parametres...",260,660,230,{
+        button.(pages[\manualParams],"Charger parametres...",260,610,230,{
          Dialog.openPanel({|path|
           var settings;
           if(path.notNil,{
@@ -644,7 +773,7 @@ HPTransformerStudio : Object {
           })
          })
         });
-        button.(pages[\manualParams],"Exporter le bloc...",510,660,220,{
+        button.(pages[\manualParams],"Exporter le bloc...",510,610,220,{
          Dialog.savePanel({|path|
           var fp,file,header;
           if(path.notNil,{
@@ -665,10 +794,10 @@ HPTransformerStudio : Object {
           })
          })
         });
-        button.(pages[\manualParams],"Sauver session...",750,660,220,{
+        button.(pages[\manualParams],"Sauver session...",750,610,220,{
          saveCompleteSession.value
         });
-        button.(pages[\manualParams],"Charger session...",990,660,220,{
+        button.(pages[\manualParams],"Charger session...",990,610,220,{
          loadCompleteSession.value
         });
 
@@ -790,7 +919,8 @@ HPTransformerStudio : Object {
          if(key.notNil,{value={transformer.getParameter(key)}.try;if(value.notNil and:{value.isNumber},{morphTargetBox.value_(value.asFloat)});morphStatus.string_("Parametre selectionne : "++key.asString++Char.nl++"Valeur actuelle : "++value.asCompileString)})
         });
         StaticText(pages[\morphing],uiRect.(475,120,70,24)).string_("Cible :").stringColor_(Color.white);
-        morphTargetBox=NumberBox(pages[\morphing],uiRect.(545,117,110,30)).value_(1.25).decimals_(6);
+        morphTargetBox=NumberBox(pages[\morphing],uiRect.(545,117,125,30))
+         .value_(1.25).minDecimals_(6).maxDecimals_(6).step_(0.000001).scroll_step_(0.000001);
         StaticText(pages[\morphing],uiRect.(680,120,105,24)).string_("Duree (s) :").stringColor_(Color.white);
         morphDurationBox=NumberBox(pages[\morphing],uiRect.(785,117,100,30)).value_(4.0).decimals_(2).clipLo_(0.0);
         StaticText(pages[\morphing],uiRect.(910,120,65,24)).string_("Etapes :").stringColor_(Color.white);
@@ -837,8 +967,13 @@ HPTransformerStudio : Object {
         button.(pages[\memoryLive],"Reset Memory",20,400,190,{transformer.resetMemory;addLog.("Reset Memory")});
         button.(pages[\memoryLive],"Replay Memory",225,400,190,{{transformer.replayMemory}.try;addLog.("Replay manuel")});
         button.(pages[\memoryLive],"Status vers Post",430,400,190,{transformer.status.postln});
-        title.(pages[\memoryLive],"MONITEUR MEMOIRE",660,15,500);
-        memoryLiveText=TextView(pages[\memoryLive],uiRect.(660,55,610,610)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+        title.(pages[\memoryLive],"ANTI-INTERFERENCE ADAPTATIVE V30.1.5",660,15,590);
+        addSlider.(pages[\memoryLive],"Threshold",\adaptiveInterferenceThreshold,ControlSpec(0.0001,0.02,\exp),660,50,610);
+        addSlider.(pages[\memoryLive],"Smoothing",\adaptiveInterferenceSmoothing,ControlSpec(0.50,0.999,\lin),660,90,610);
+        addSlider.(pages[\memoryLive],"Replay boost",\adaptiveReplayBoost,ControlSpec(0,0.25,\lin),660,130,610);
+        addSlider.(pages[\memoryLive],"Replay maximum",\adaptiveReplayMax,ControlSpec(0,0.5,\lin),660,170,610);
+        title.(pages[\memoryLive],"MONITEUR MEMOIRE ET ADAPTATION",660,220,590);
+        memoryLiveText=TextView(pages[\memoryLive],uiRect.(660,255,610,410)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         
         // Surprise Live
         title.(pages[\surpriseLive],"SURPRISE, PLASTICITE ET STABILITE",20,15);
@@ -856,9 +991,9 @@ HPTransformerStudio : Object {
         title.(pages[\surpriseLive],"MONITEUR SURPRISE",660,15,500);
         surpriseLiveText=TextView(pages[\surpriseLive],uiRect.(660,55,610,610)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         
-        // OSC / Temps reel
+        // Temps reel / Bus / OSC
         // Entrees acceptees : /hptransformer/input, /learn, /predict, /generate selon le chemin choisi.
-        title.(pages[\osc],"OSC / TEMPS REEL",20,15);
+        title.(pages[\osc],"TEMPS REEL / BUS LOCAL / OSC",20,15);
         StaticText(pages[\osc],uiRect.(20,55,110,24)).string_("Hote sortie :");
         oscHostField=TextField(pages[\osc],uiRect.(130,53,180,28)).string_("127.0.0.1");
         StaticText(pages[\osc],uiRect.(330,55,90,24)).string_("Port entree :");
@@ -872,6 +1007,11 @@ HPTransformerStudio : Object {
         oscInputPathField=TextField(pages[\osc],uiRect.(130,93,300,28)).string_("/hptransformer/input");
         StaticText(pages[\osc],uiRect.(455,95,110,24)).string_("Chemin sortie :");
         oscOutputPathField=TextField(pages[\osc],uiRect.(565,93,300,28)).string_("/hptransformer/output").action_({|field|oscOutputPath=field.string});
+        StaticText(pages[\osc],uiRect.(890,95,115,24)).string_("Suivi direct :").stringColor_(Color.white);
+        oscFollowMixBox=NumberBox(pages[\osc],uiRect.(1005,93,110,28)).value_(oscFollowMix)
+         .minDecimals_(6).maxDecimals_(6).step_(0.000001).scroll_step_(0.000001)
+         .clipLo_(0.0).clipHi_(1.0).action_({|box|oscFollowMix=box.value.asFloat.clip(0,1)});
+        StaticText(pages[\osc],uiRect.(1125,95,130,24)).string_("0=modele  1=entree").stringColor_(Color.white);
         
         button.(pages[\osc],"Demarrer OSC",20,140,180,{oscStart.value});
         button.(pages[\osc],"Arreter OSC",215,140,180,{oscStop.value});
@@ -879,55 +1019,142 @@ HPTransformerStudio : Object {
          ["Apprentissage externe OFF",Color.white,Color.red(0.52)],["Apprentissage externe ON",Color.white,Color.green(0.42)]]).font_(Font.default.boldVariant.size_(11)).value_(1).action_({|b|
          oscLearning=(b.value==1);addLog.("Apprentissage OSC "++if(oscLearning,{"ON"},{"OFF"}))});
         oscSendButton=Button(pages[\osc],uiRect.(635,140,210,34)).states_([
-         ["Envoi sorties OFF",Color.white,Color.red(0.52)],["Envoi sorties ON",Color.white,Color.green(0.42)]]).font_(Font.default.boldVariant.size_(11)).value_(1).action_({|b|
-         oscSendOutput=(b.value==1);addLog.("Sorties OSC "++if(oscSendOutput,{"ON"},{"OFF"}))});
-        button.(pages[\osc],"Effacer evenements",860,140,190,{oscEventLines.clear;oscEventsView.string_("")});
-        button.(pages[\osc],"Test sortie",1065,140,180,{
-         if(oscTarget.notNil,{oscTarget.sendMsg(oscOutputPath,0.5,0.5,0.5,0.5);oscOutCount=oscOutCount+1;oscRecordEvent.("TEST OUT")})});
+         ["Reseau OSC OFF",Color.white,Color.red(0.52)],["Reseau OSC ON",Color.white,Color.green(0.42)]]).font_(Font.default.boldVariant.size_(11)).value_(1).action_({|b|
+         oscSendOutput=(b.value==1);addLog.("Reseau OSC "++if(oscSendOutput,{"ON"},{"OFF"}));oscRecordEvent.("RESEAU OSC "++if(oscSendOutput,{"ON"},{"OFF"}))});
+        StaticText(pages[\osc],uiRect.(410,184,210,24)).string_("Sortie locale vers le Synth :").stringColor_(Color.white);
+        oscBusButton=Button(pages[\osc],uiRect.(635,180,210,34)).states_([
+         ["Bus direct OFF",Color.white,Color.red(0.52)],["Bus direct ON",Color.white,Color.green(0.42)]]).font_(Font.default.boldVariant.size_(11)).value_(1).action_({|b|
+         oscBusOutput=(b.value==1);addLog.("Bus direct "++if(oscBusOutput,{"ON"},{"OFF"}));oscRecordEvent.("BUS DIRECT "++if(oscBusOutput,{"ON"},{"OFF"}))});
+        StaticText(pages[\osc],uiRect.(860,184,95,24)).string_("Traitement Hz :").stringColor_(Color.white);
+        oscProcessHzBox=NumberBox(pages[\osc],uiRect.(955,180,80,30)).value_(oscProcessHz)
+         .step_(1).clipLo_(5).clipHi_(200).action_({|box|oscProcessHz=box.value.asFloat.clip(5,200)});
+        StaticText(pages[\osc],uiRect.(1045,184,80,24)).string_("Learn / N :").stringColor_(Color.white);
+        oscLearningDividerBox=NumberBox(pages[\osc],uiRect.(1125,180,55,30)).value_(oscLearningDivider)
+         .step_(1).clipLo_(1).clipHi_(64).action_({|box|oscLearningDivider=box.value.asInteger.clip(1,64)});
+        oscDetailedButton=Button(pages[\osc],uiRect.(1188,180,72,30)).states_([
+         ["Details OFF",Color.white,Color.red(0.52)],["Details ON",Color.white,Color.green(0.42)]])
+         .font_(Font.default.boldVariant.size_(9)).value_(0).action_({|b|
+          oscDetailedEvents=(b.value==1);oscRecordEvent.("DETAILS OSC "++if(oscDetailedEvents,{"ON"},{"OFF"}),true)
+         });
+        button.(pages[\osc],"Effacer evenements",860,140,190,{
+         oscEventLines.clear;oscEventsDirty=true;oscFlushEvents.value
+        });
+        button.(pages[\osc],"Test sortie 8D",1065,140,180,{
+         var testVector;testVector=Array.fill((transformer.config[\outputSize]?8).asInteger.max(1),{1.0.rand});if(oscBusOutput and:{controlBus.notNil},{controlBus.setn(testVector)});if(oscTarget.notNil and:{oscSendOutput},{oscTarget.sendMsg(oscOutputPath,*testVector);oscOutCount=oscOutCount+1});oscLastOutput=testVector.copy;oscRecordEvent.("TEST 8D bus="++controlBus.notNil++" "++testVector.asCompileString)});
         
-        title.(pages[\osc],"ETAT ET DEBIT",20,200);
-        oscStatusText=TextView(pages[\osc],uiRect.(20,235,420,420)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        title.(pages[\osc],"EVENEMENTS RECUS / EMIS",470,200,700);
-        oscEventsView=TextView(pages[\osc],uiRect.(470,235,790,420)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+        title.(pages[\osc],"ETAT ET DEBIT",20,230);
+        oscStatusText=TextView(pages[\osc],uiRect.(20,265,420,390)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+        title.(pages[\osc],"EVENEMENTS RECUS / EMIS",470,230,700);
+        oscEventsView=TextView(pages[\osc],uiRect.(470,265,790,390)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         
-        oscRecordEvent={|text| var line;line=Date.localtime.stamp++"  "++text.asString;oscEventLines.add(line);
-         while({oscEventLines.size>250},{oscEventLines.removeAt(0)});
-         {if(oscEventsView.notNil,{oscEventsView.string_(oscEventLines.join(Char.nl))})}.defer};
-        
-        oscStop={
-         if(oscDef.notNil,{oscDef.free;oscDef=nil});
-         oscRunning=false;
-         oscRecordEvent.("OSC arrete");addLog.("Interface OSC arretee");
+        // Ajoute une ligne en memoire sans toucher au TextView. Le TextView
+        // est reconstruit uniquement par oscUpdateStatus, quelques fois par seconde.
+        oscRecordEvent={|text,force=false|var line;
+         if(force or:{oscDetailedEvents},{
+          line=Date.localtime.stamp++"  "++text.asString;oscEventLines.add(line);
+          while({oscEventLines.size>250},{oscEventLines.removeAt(0)});
+          oscEventsDirty=true
+         })
         };
-        
+        oscFlushEvents={
+         if(oscEventsDirty and:{oscEventsView.notNil},{
+          oscEventsView.string_(oscEventLines.join(Char.nl));
+          oscEventsView.refresh;oscEventsDirty=false
+         })
+        };
+        // Traitement lourd hors du callback OSC. Aucun ancien paquet n'est
+        // mis en file : oscPendingInput contient toujours la valeur la plus recente.
+        oscProcessInput={|input|
+         var generated,output,mode,expectedOutput,commonSize,shouldLearn;
+         expectedOutput=(transformer.config[\outputSize]?8).asInteger.max(1);
+         mode=oscMode;oscProcessedCount=oscProcessedCount+1;
+         shouldLearn=oscLearning and:{(oscProcessedCount%oscLearningDivider.max(1))==0};
+         generated={
+          if((mode==0 or:{mode==1}) and:{shouldLearn},{transformer.learnEvent(input.copy)});
+          if(mode==0,{transformer.generateStep(input.copy)},{
+           if(mode==2,{transformer.predict(input.copy)},{
+            if(mode==3,{transformer.generateStep(input.copy)},{nil})
+           })
+          })
+         }.try({|error|
+          oscErrorCount=oscErrorCount+1;
+          oscRecordEvent.("ERREUR MOTEUR "++error.asString,true);nil
+         });
+         if(mode==1,{
+          if(oscDetailedEvents,{oscRecordEvent.("LEARN ONLY traite")})
+         },{
+          output=if(generated.isNil,{input.copy},{generated.asArray.flat.collect({|value|value.asFloat.clip(0,1)})});
+          if(output.size!=expectedOutput,{
+           oscErrorCount=oscErrorCount+1;
+           oscRecordEvent.("SORTIE MOTEUR INVALIDE: "++output.size++" valeurs; repli sur entree",true);
+           output=input.copyRange(0,expectedOutput.min(input.size)-1);
+           if(output.size<expectedOutput,{output=output++Array.fill(expectedOutput-output.size,{0.5})})
+          });
+          if(mode==0 and:{oscFollowMix>0},{
+           commonSize=expectedOutput.min(input.size);
+           commonSize.do({|i|
+            output[i]=((output[i]*(1.0-oscFollowMix))+(input[i]*oscFollowMix)).clip(0,1)
+           })
+          });
+          oscLastOutput=output.copy;
+          if(oscBusOutput and:{controlBus.notNil},{controlBus.setn(output)});
+          if(oscSendOutput and:{oscTarget.notNil},{
+           oscTarget.sendMsg(oscOutputPath,*output);oscOutCount=oscOutCount+1
+          });
+          if(oscDetailedEvents,{
+           oscRecordEvent.("OUT traite | suivi="++formatFixed.(oscFollowMix,6))
+          })
+         })
+        };
+        oscStop={
+         oscRunning=false;
+         if(oscProcessRoutine.notNil,{oscProcessRoutine.stop;oscProcessRoutine=nil});
+         if(oscDef.notNil,{oscDef.free;oscDef=nil});
+         oscPendingInput=nil;oscBusy=false;
+         oscRecordEvent.("OSC arrete",true);oscFlushEvents.value;
+         addLog.("Interface OSC arretee")
+        };
         oscStart={
          var inPort,outPort,host,inputPath;
          oscStop.value;
          inPort=oscInPortBox.value.asInteger.clip(1024,65535);
          outPort=oscOutPortBox.value.asInteger.clip(1024,65535);
-         host=oscHostField.string;
-         inputPath=oscInputPathField.string;
-         oscMode=oscModeMenu.value;
-         oscOutputPath=oscOutputPathField.string;
-         thisProcess.openUDPPort(inPort);
-         oscTarget=NetAddr(host,outPort);
+         host=oscHostField.string;inputPath=oscInputPathField.string;
+         oscMode=oscModeMenu.value;oscOutputPath=oscOutputPathField.string;
+         oscProcessHz=oscProcessHzBox.value.asFloat.clip(5,200);
+         oscLearningDivider=oscLearningDividerBox.value.asInteger.clip(1,64);
+         thisProcess.openUDPPort(inPort);oscTarget=NetAddr(host,outPort);
+         oscPendingInput=nil;oscProcessedCount=0;oscDroppedCount=0;oscBusy=false;
          oscDef=OSCdef(\hpTransformerStudioOSC,{|msg,time,address,recvPort|
-          var input,output,mode;
-          input=msg.copyRange(1,msg.size-1).collect({|value|value.asFloat});
-          oscInCount=oscInCount+1;oscLastInput=input.copy;mode=oscMode;
-          oscRecordEvent.("IN "++address.ip++":"++recvPort++" "++input.asCompileString);
-          output={
-           if((mode==0 or:{mode==1}) and:{oscLearning},{transformer.learnEvent(input)});
-           if(mode==0,{transformer.generateStep(input)},
-            {if(mode==2,{transformer.predict(input)},{if(mode==3,{transformer.generateStep(input)},{nil})})})
-          }.try({|error|oscErrorCount=oscErrorCount+1;oscRecordEvent.("ERREUR "++error.asString);nil});
-          if(output.notNil,{oscLastOutput=output.copy;
-           if(oscSendOutput and:{oscTarget.notNil},{oscTarget.sendMsg(oscOutputPath,*output);oscOutCount=oscOutCount+1;
-            oscRecordEvent.("OUT "++output.asCompileString)})});
+          var input,expectedInput;
+          expectedInput=(transformer.config[\inputSize]?8).asInteger.max(1);
+          input=msg.copyRange(1,msg.size-1).collect({|value|value.asFloat.clip(0,1)});
+          if(input.size!=expectedInput,{
+           oscErrorCount=oscErrorCount+1;
+           oscRecordEvent.("ERREUR INPUT: "++expectedInput++" valeurs attendues, "++input.size++" recues",true)
+          },{
+           oscInCount=oscInCount+1;oscLastInput=input.copy;
+           // Remplacement volontaire d'une valeur obsolete par la plus recente.
+           if(oscPendingInput.notNil,{oscDroppedCount=oscDroppedCount+1});
+           oscPendingInput=input.copy;
+           if(oscDetailedEvents,{oscRecordEvent.("IN "++address.ip++":"++recvPort)})
+          })
          },inputPath,recvPort:inPort);
-         oscRunning=true;oscLastRateTime=Main.elapsedTime;oscLastInCount=oscInCount;oscLastOutCount=oscOutCount;
-         oscRecordEvent.("OSC actif sur "++inPort++" -> "++host++":"++outPort);
-         addLog.("Interface OSC demarree");
+         oscRunning=true;
+         oscProcessRoutine=Routine({
+          var inputToProcess,period;
+          while({oscRunning},{
+           inputToProcess=oscPendingInput;oscPendingInput=nil;
+           if(inputToProcess.notNil,{
+            oscBusy=true;oscProcessInput.(inputToProcess);oscBusy=false
+           });
+           period=1.0/oscProcessHz.clip(5,200);period.wait
+          })
+         }).play(SystemClock);
+         oscLastRateTime=Main.elapsedTime;oscLastInCount=oscInCount;oscLastOutCount=oscOutCount;
+         oscRecordEvent.("OSC actif "++inPort++" -> "++host++":"++outPort++
+          " | worker="++oscProcessHz++"Hz | learn/"++oscLearningDivider,true);
+         oscFlushEvents.value;addLog.("Interface OSC demarree sans file d'attente")
         };
         
         oscUpdateStatus={
@@ -944,11 +1171,14 @@ HPTransformerStudio : Object {
           running:oscRunning,listenPort:oscInPortBox.value.asInteger,
           destination:(oscHostField.string++":"++oscOutPortBox.value.asInteger),
           inputPath:oscInputPathField.string,outputPath:oscOutputPath,
-          learningExternal:oscLearning,sendOutput:oscSendOutput,mode:["Learn + Generate","Learn only","Predict only","Generate only"][oscMode],
-          totalIn:oscInCount,totalOut:oscOutCount,errors:oscErrorCount,
+          learningExternal:oscLearning,networkOscEnabled:oscSendOutput,busEnabled:oscBusOutput,busAttached:controlBus.notNil,followMix:oscFollowMix,mode:["Learn + Generate","Learn only","Predict only","Generate only"][oscMode],
+          totalIn:oscInCount,totalProcessed:oscProcessedCount,totalReplaced:oscDroppedCount,
+          totalOut:oscOutCount,errors:oscErrorCount,workerBusy:oscBusy,pending:oscPendingInput.notNil,
+          processHz:oscProcessHz,learningDivider:oscLearningDivider,detailedEvents:oscDetailedEvents,
           incomingPerSecond:oscInRate.round(0.01),outgoingPerSecond:oscOutRate.round(0.01),
           lastInput:oscLastInput,lastOutput:oscLastOutput
          ).asCompileString);
+         oscFlushEvents.value;
         };
         
         // Jeux complets coordonnes
@@ -962,12 +1192,12 @@ HPTransformerStudio : Object {
         setDescriptionView=TextView(pages[\sets],uiRect.(20,110,1230,475)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black).font_(Font.default.size_(12));
         setDescriptionView.string_(setDescriptions[0]);
         StaticText(pages[\sets],uiRect.(20,605,1230,55)).string_(
-         "Conseil : commencez par Studio Equilibre. Utilisez Performance Stable pour la restitution, Improvisation Creative pour explorer, et Faible Latence OSC pour les flux rapides."
+         "Conseil : pour le direct, commencez par Suivi Musicien Equilibre. Choisissez Legato Expressif, Rythmique Percussif, Call and Response, Improvisation Partagee ou Longue Session Prudente selon la situation."
         ).stringColor_(Color.white).font_(Font.default.boldVariant.size_(12));
         
         // Graphes
         title.(pages[\graphs],"SUIVI TEMPS REEL",20,15);
-        graphView=UserView(pages[\graphs],uiRect.(20,50,1270,590)).background_(Color.white).clearOnRefresh_(true);
+        graphView=UserView(pages[\graphs],uiRect.(20,50,1270,520)).background_(Color.white).clearOnRefresh_(true);
         addGraphSample={|rawList,emaList,value|
          var v,previous;
          if(value.notNil and:{value.isNumber},{
@@ -989,7 +1219,7 @@ HPTransformerStudio : Object {
          var a,s,minVal,maxVal,range,plotRect,xFor,yFor,lastValue,meanValue,rawColor;
          a=data.asArray.collect({|v|v.asFloat});
          s=smoothData.asArray.collect({|v|v.asFloat});
-         plotRect=Rect(rect.left+8,rect.top+44,rect.width-16,rect.height-58);
+         plotRect=Rect(rect.left+8,rect.top+46,rect.width-16,rect.height-68);
          Pen.fillColor=Color.white;Pen.fillRect(rect);
          Pen.strokeColor=Color.grey(0.72);Pen.width=1;Pen.strokeRect(rect);
          Pen.stringAtPoint(label,Point(rect.left+8,rect.top+7),Font.default.boldVariant.size_(12),Color.black);
@@ -1006,7 +1236,7 @@ HPTransformerStudio : Object {
           yFor={|v|plotRect.bottom-(((v-minVal)/range).clip(0,1)*plotRect.height)};
           Pen.stringAtPoint(
            "act "++lastValue.round(0.000001)++"  moy "++meanValue.round(0.000001),
-           Point(rect.right-195,rect.top+7),Font.default.size_(9),Color.black
+           Point(rect.left+8,rect.top+25),Font.default.size_(9),Color.black
           );
           Pen.stringAtPoint(
            "min "++a.minItem.round(0.000001)++"  max "++a.maxItem.round(0.000001)++"  echelle "++maxVal.round(0.000001),
@@ -1034,8 +1264,8 @@ HPTransformerStudio : Object {
            (1..s.size-1).do({|index|Pen.lineTo(Point(xFor.(index,s.size),yFor.(s[index])))});Pen.stroke;
            Pen.fillColor=color;Pen.fillOval(Rect(xFor.(s.size-1,s.size)-4,yFor.(s.last)-4,8,8))
           });
-          Pen.stringAtPoint("brut",Point(rect.right-78,rect.bottom-31),Font.default.size_(8),rawColor);
-          Pen.stringAtPoint("EMA",Point(rect.right-42,rect.bottom-31),Font.default.boldVariant.size_(8),color)
+          Pen.stringAtPoint("brut",Point(rect.right-82,rect.bottom-28),Font.default.size_(8),rawColor);
+          Pen.stringAtPoint("EMA",Point(rect.right-44,rect.bottom-28),Font.default.boldVariant.size_(8),color)
          })
         };
 
@@ -1065,32 +1295,46 @@ HPTransformerStudio : Object {
 
 
 
-        graphView.drawFunc_({
-         var lossMax,metricMax;
-         Pen.fillColor=Color.white;Pen.fillRect(graphView.bounds.moveTo(0,0));
+        graphView.drawFunc_({|view|
+         var lossMax,metricMax,vw,vh,margin,gap,rowGap,topW,bottomW,rowH,topY,bottomY;
+         // Geometrie calculee depuis la taille reelle du UserView. On evite
+         // ainsi la double mise a l'echelle uiScale + graphDrawScale qui
+         // comprimait et coupait la rangee inferieure sur macOS.
+         vw=view.bounds.width;
+         vh=view.bounds.height;
+         margin=10;
+         gap=12;
+         rowGap=16;
+         topY=8;
+         rowH=((vh-(topY*2)-rowGap)/2).floor.max(120);
+         bottomY=topY+rowH+rowGap;
+         topW=((vw-(margin*2)-(gap*2))/3).floor;
+         bottomW=((vw-(margin*2)-gap)/2).floor;
+         Pen.fillColor=Color.white;
+         Pen.fillRect(view.bounds.moveTo(0,0));
          lossMax=[nil,0.10,1.0][lossScaleMode];
          metricMax=[nil,1.0,2.0][metricScaleMode];
-         drawLine.(loss,lossEMA,graphRect.(15,20,390,260),Color(0.85,0.10,0.10),"LOSS",lossMax,0.02);
-         drawLine.(surprise,surpriseEMAPlot,graphRect.(435,20,390,260),Color(0.90,0.48,0.0),"SURPRISE",metricMax,nil);
-         drawLine.(entropy,entropyEMA,graphRect.(855,20,390,260),Color(0.0,0.48,0.72),"ENTROPY",metricMax,nil);
-         drawLine.(memRecall,memRecallEMA,graphRect.(225,330,390,260),Color(0.0,0.58,0.22),"MEMORY RECALL",metricMax,nil);
-         drawLine.(trajRecall,trajRecallEMA,graphRect.(655,330,390,260),Color(0.18,0.28,0.88),"TRAJECTORY RECALL",metricMax,nil)
+         drawLine.(loss,lossEMA,Rect(margin,topY,topW,rowH),Color(0.85,0.10,0.10),"LOSS",lossMax,0.02);
+         drawLine.(surprise,surpriseEMAPlot,Rect(margin+topW+gap,topY,topW,rowH),Color(0.90,0.48,0.0),"SURPRISE",metricMax,nil);
+         drawLine.(entropy,entropyEMA,Rect(margin+((topW+gap)*2),topY,topW,rowH),Color(0.0,0.48,0.72),"ENTROPY",metricMax,nil);
+         drawLine.(memRecall,memRecallEMA,Rect(margin,bottomY,bottomW,rowH),Color(0.0,0.58,0.22),"MEMORY RECALL",metricMax,nil);
+         drawLine.(trajRecall,trajRecallEMA,Rect(margin+bottomW+gap,bottomY,bottomW,rowH),Color(0.18,0.28,0.88),"TRAJECTORY RECALL",metricMax,nil)
         });
-        button.(pages[\graphs],"Exporter CSV",20,650,170,{exportCSV.value});
-        button.(pages[\graphs],"Rafraichir graphes",205,650,190,{clearGraphs.value});
-        StaticText(pages[\graphs],uiRect.(415,656,75,22)).string_("Loss :").stringColor_(Color.white);
-        lossScaleMenu=PopUpMenu(pages[\graphs],uiRect.(475,650,145,28)).items_(["Auto","0..0.10","0..1.00"]).value_(1).action_({|menu|lossScaleMode=menu.value;graphView.refresh});
-        StaticText(pages[\graphs],uiRect.(635,656,95,22)).string_("Autres :").stringColor_(Color.white);
-        metricScaleMenu=PopUpMenu(pages[\graphs],uiRect.(705,650,145,28)).items_(["Auto","0..1.00","0..2.00"]).value_(1).action_({|menu|metricScaleMode=menu.value;graphView.refresh});
-        StaticText(pages[\graphs],uiRect.(870,656,90,22)).string_("EMA alpha :").stringColor_(Color.white);
-        smoothingBox=NumberBox(pages[\graphs],uiRect.(955,650,90,28)).value_(graphSmoothAlpha).decimals_(3).clipLo_(0.001).clipHi_(1.0).action_({|box|
+        button.(pages[\graphs],"Exporter CSV",20,585,170,{exportCSV.value});
+        button.(pages[\graphs],"Rafraichir graphes",205,585,190,{clearGraphs.value});
+        StaticText(pages[\graphs],uiRect.(415,591,75,22)).string_("Loss :").stringColor_(Color.white);
+        lossScaleMenu=PopUpMenu(pages[\graphs],uiRect.(475,585,145,28)).items_(["Auto","0..0.10","0..1.00"]).value_(1).action_({|menu|lossScaleMode=menu.value;graphView.refresh});
+        StaticText(pages[\graphs],uiRect.(635,591,95,22)).string_("Autres :").stringColor_(Color.white);
+        metricScaleMenu=PopUpMenu(pages[\graphs],uiRect.(705,585,145,28)).items_(["Auto","0..1.00","0..2.00"]).value_(1).action_({|menu|metricScaleMode=menu.value;graphView.refresh});
+        StaticText(pages[\graphs],uiRect.(870,591,90,22)).string_("EMA alpha :").stringColor_(Color.white);
+        smoothingBox=NumberBox(pages[\graphs],uiRect.(955,585,90,28)).value_(graphSmoothAlpha).decimals_(3).clipLo_(0.001).clipHi_(1.0).action_({|box|
          graphSmoothAlpha=box.value.asFloat.clip(0.001,1.0);
          [lossEMA,surpriseEMAPlot,entropyEMA,memRecallEMA,trajRecallEMA].do(_.clear);
          [[loss,lossEMA],[surprise,surpriseEMAPlot],[entropy,entropyEMA],[memRecall,memRecallEMA],[trajRecall,trajRecallEMA]].do({|pair|
           pair[0].do({|value|var previous;previous=if(pair[1].isEmpty,{value},{pair[1].last});pair[1].add((previous*(1.0-graphSmoothAlpha))+(value*graphSmoothAlpha))})
          });graphView.refresh
         });
-        StaticText(pages[\graphs],uiRect.(1060,656,230,22)).string_("clair = brut | fonce = tendance EMA").stringColor_(Color.white);
+        StaticText(pages[\graphs],uiRect.(1060,591,230,22)).string_("clair = brut | fonce = tendance EMA").stringColor_(Color.white);
 
 
 
@@ -1105,7 +1349,7 @@ HPTransformerStudio : Object {
 
         // Heatmaps
         title.(pages[\heatmaps],"EXPERTS / HEADS / FEATURE GATES",20,15);
-        heatView=UserView(pages[\heatmaps],uiRect.(20,50,1270,570)).background_(Color.white).clearOnRefresh_(true);
+        heatView=UserView(pages[\heatmaps],uiRect.(20,50,1270,530)).background_(Color.white).clearOnRefresh_(true);
         heatView.drawFunc_({|view|
          var e,h,f,barW,barMax,baseY,cellW,cellH,vv,maxCols;
          Pen.fillColor=Color.white; Pen.fillRect(view.bounds.moveTo(0,0));
@@ -1132,7 +1376,7 @@ HPTransformerStudio : Object {
          })
         });
         exportHeat={Dialog.savePanel({|path|var img,fp;if(path.notNil,{fp=if(path.endsWith(".png"),{path},{path++".png"});img=Image.new((1270*heatDrawScale).asInteger,(610*heatDrawScale).asInteger);img.draw({heatView.drawFunc.value(heatView)});img.write(fp);img.free;addLog.("Heatmap exportee: "++fp)})})};
-        button.(pages[\heatmaps],"Exporter heatmaps PNG",20,635,230,{exportHeat.value});
+        button.(pages[\heatmaps],"Exporter heatmaps PNG",20,590,230,{exportHeat.value});
         // Generation presets
         title.(pages[\genPresets],"PRESETS GENERATION",20,15);
         genMenu=PopUpMenu(pages[\genPresets],uiRect.(20,55,500,30)).items_(genNames);
@@ -1200,9 +1444,9 @@ HPTransformerStudio : Object {
         button.(pages[\rcu],"Sauver archive",760,230,210,{Dialog.savePanel({|p|if(p.notNil,{transformer.saveArchive(p);addLog.("Archive sauvee")})})});
         
         // Logs
-        title.(pages[\logs],"LOGS",20,15);logView=TextView(pages[\logs],uiRect.(20,55,1270,610)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+        title.(pages[\logs],"LOGS",20,15);logView=TextView(pages[\logs],uiRect.(20,55,1270,550)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         exportLogs={Dialog.savePanel({|p|var f,fp;if(p.notNil,{fp=if(p.endsWith(".txt"),{p},{p++".txt"});f=File(fp,"w");f.write(logs.join(Char.nl));f.close;addLog.("Logs exportes")})})};
-        button.(pages[\logs],"Exporter logs",20,685,190,{exportLogs.value});button.(pages[\logs],"Effacer logs",225,685,190,{logs.clear;logView.string_("")});
+        button.(pages[\logs],"Exporter logs",20,620,190,{exportLogs.value});button.(pages[\logs],"Effacer logs",225,620,190,{logs.clear;logView.string_("")});
         
         savePreset={Dialog.savePanel({|p|if(p.notNil,{var fp=if(p.endsWith(".hptpreset"),{p},{p++".hptpreset"});transformer.runtimeConfig.writeArchive(fp);addLog.("Preset sauve: "++fp)})})};
         loadPreset={Dialog.openPanel({|p|if(p.notNil,{var x=Object.readArchive(p);if(x.respondsTo(\keysValuesDo),{loadSettings.(x,p)})})})};
@@ -1239,7 +1483,14 @@ HPTransformerStudio : Object {
           memoryCount:(lastStatus[\memoryCount]?0), replayCount:(lastStatus[\replayCount]?0),
           memoryRecall:(lastStatus[\memoryRecall]?0), memoryNovelty:(lastStatus[\memoryNovelty]?0),
           memoryWriteScore:(lastStatus[\memoryWriteScore]?0), replayLoss:(lastStatus[\replayLoss]?0),
-          protectionScalar:(lastStatus[\protectionScalar]?0), memoryImportance:(lastStatus[\memoryImportance]?[]),
+          protectionScalar:(lastStatus[\protectionScalar]?0),
+          adaptiveEnabled:(lastStatus[\adaptiveInterferenceEnabled]?false),
+          adaptiveInterferenceEMA:(lastStatus[\adaptiveInterferenceEMA]?0),
+          adaptiveReplayRate:(lastStatus[\adaptiveReplayRate]?0),
+          adaptiveThreshold:(lastStatus[\adaptiveInterferenceThreshold]?0),
+          adaptiveReplayBoost:(lastStatus[\adaptiveReplayBoost]?0),
+          adaptiveAdjustments:(lastStatus[\adaptiveInterferenceAdjustments]?0),
+          memoryImportance:(lastStatus[\memoryImportance]?[]),
           memoryAge:(lastStatus[\memoryAge]?[]), memoryUsage:(lastStatus[\memoryUsage]?[])
          ).asCompileString);
          surpriseLiveText.string_((
@@ -1252,7 +1503,7 @@ HPTransformerStudio : Object {
          oscUpdateStatus.value;
          if(activePage==\graphs,{graphView.refresh});if(activePage==\heatmaps,{heatView.refresh})})};
         routine=Routine({while({running},{{refresh.value}.defer;rate.wait})}).play(AppClock);
-        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});showPage.(\dashboard);addLog.("Studio Pro V8.1.1 compact 13 pouces ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
+        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});showPage.(\dashboard);addLog.("Studio Pro V8.4.0 pour HPtransformerRT V30.1.5 ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
     }
 }
 

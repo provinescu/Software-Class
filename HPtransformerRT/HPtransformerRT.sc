@@ -1,11 +1,11 @@
-/* HPtransformerRT V30.0 - SuperCollider 3.14 class source.
+/* HPtransformerRT V30.1.5 RELEASE - SuperCollider 3.14 class source.
 Revisions: separate temperatures; correct softmax temperature gradients;
 Q/K/V feature-gate gradients; signed velocity metric; persistent expert diagnostics;
 non-destructive interference probe. The class name differs to coexist with HPtransformer.
 */
 
 HPtransformerRT {
-    var attentionTemperature, routerTemperature, trajectoryRetrievalTemperature, expertUsageEMA, routerEntropyEMA, torusMask, generationWindowSize, localDiversityMaxCorrection, localDiversityGain, localDiversityFloor, localDiversityWindow, diversityAdaptiveGain, diversityMaxCorrection, diversityNoiseGain, diversityRepulsionGain, diversityRadius, diversityHistorySize, trajectoryExplorationGain, trajectoryVelocityWeight, trajectoryInputWeight, trajectoryNoveltyWeight, trajectoryUsageDecay, trajectoryDecay, trajectoryAccelerationClip, trajectoryVelocityClip, trajectoryAccelerationGain, trajectoryVelocityGain, trajectoryRetrievalGain, trajectoryRecallSize, trajectoryMemorySize, interferenceTestSteps, headSpecializationStrength, headSpecializationThreshold, expertBalanceStrength, replayUniformMix, replayPriorityMix, directionLossWeight, deltaLossWeight, predictionLossWeight, adaptationSlowRate, adaptationFastRate, protectionStrength, memoryRecallSize, replayBatchSize, replayRate, memoryUsageDecay, memoryConsolidationRate, memoryDecay, memoryRetrievalTemperature, memoryRetrievalGain, memoryWriteThreshold, gradientClip, gateLearningRate, surpriseGain, surpriseThreshold, deltaScale, expertScale, residualScale, temperature, epsilon, beta2, beta1, learningRate, numExperts, headSize, numHeads, hiddenSize, longMemorySize, windowSize, outputSize, inputSize, parameterCount, inputProjection, inputBias, outputProjection, outputBias, qWeights, kWeights, vWeights, qBias, kBias, vBias, outputAttentionWeight, outputAttentionBias, featureGateLogits, routerWeights, routerBias, expertW1, expertB1, expertW2, expertB2, positionBias, adamMInput, adamVInput, adamMInputBias, adamVInputBias, adamMOutput, adamVOutput, adamMOutputBias, adamVOutputBias, adamMQ, adamVQ, adamMK, adamVK, adamMV, adamVV, adamMBQ, adamVBQ, adamMBK, adamVBK, adamMBV, adamVBV, adamMAttention, adamVAttention, adamMBAttention, adamVBAttention, adamMGates, adamVGates, adamMRouter, adamVRouter, adamMBRouter, adamVBRouter, adamMExpertW1, adamVExpertW1, adamMExpertB1, adamVExpertB1, adamMExpertW2, adamVExpertW2, adamMExpertB2, adamVExpertB2, adamMPosition, adamVPosition, shortMemory, longMemory, longMemoryImportance, longMemoryAge, longMemoryUsage, longMemorySurprise, trajectoryMemory, trajectoryCount, trajectoryVelocityContext, trajectoryAccelerationContext, trajectoryRecall, trajectoryNovelty, trajectoryWriteScore, trajectoryLoss, trajectoryIndices, trajectoryWeights, lastObservedVelocity, generationHistory, generationDiversity, generationNovelty, generationMinDistance, generationMeanDistance, generationPressure, localDiversity, localContractionPressure, localContractionCorrection, replayInputs, replayTargets, replayImportance, memoryCount, replayCount, memoryContext, memoryWeights, memorySimilarity, protectionScalar, lastInput, lastPrediction, lastDelta, lastTarget, attentionProfile, headActivity, headFeatureUsage, expertUsage, loss, outputLoss, deltaLoss, directionLoss, expertBalanceLoss, surprise, surpriseEMA, errorEMA, memoryRecall, memoryNovelty, memoryWriteScore, replayLoss, interferenceScore, entropy, learningRateCurrent, learnedEvents, adamStep, totalEvents, initialized, preHidden, eventHistory, generationDriftState, autoTuneEnabled, autoTuneInterval, autoTuneCounter, autoTuneStrength, autoTuneSmoothing, autoTuneTargetNovelty, autoTuneTargetDiversity, autoTuneNoveltyEMA, autoTuneDiversityEMA, autoTuneLastError, autoTuneAdjustmentCount, autoTuneExplorationMin, autoTuneExplorationMax, autoTuneNoiseMin, autoTuneNoiseMax, autoTuneTemperatureMin, autoTuneTemperatureMax, metaLearnEnabled, metaLearnInterval, metaLearnCounter, metaLearnStrength, metaLearnSmoothing, metaLearnTargetError, metaLearnTargetSurprise, metaLearnTargetRecall, metaLearnTargetInterference, metaLearnErrorEMA, metaLearnSurpriseEMA, metaLearnRecallEMA, metaLearnInterferenceEMA, metaLearnPlasticityPressure, metaLearnStabilityPressure, metaLearnAdjustmentCount, metaLearnLearningRateMin, metaLearnLearningRateMax, metaLearnReplayRateMin, metaLearnReplayRateMax, metaLearnProtectionMin, metaLearnProtectionMax, metaLearnRetrievalGainMin, metaLearnRetrievalGainMax, unifiedCurrentRuntime, unifiedPendingRuntime, unifiedTrainingVersion, unifiedPublishedVersion, unifiedSnapshotPending, unifiedRuntimeRole, unifiedLearningEnabled, unifiedGenerationEnabled, unifiedParameterMorphs;
+    var attentionTemperature, routerTemperature, trajectoryRetrievalTemperature, expertUsageEMA, routerEntropyEMA, torusMask, generationWindowSize, localDiversityMaxCorrection, localDiversityGain, localDiversityFloor, localDiversityWindow, diversityAdaptiveGain, diversityMaxCorrection, diversityNoiseGain, diversityRepulsionGain, diversityRadius, diversityHistorySize, trajectoryExplorationGain, trajectoryVelocityWeight, trajectoryInputWeight, trajectoryNoveltyWeight, trajectoryUsageDecay, trajectoryDecay, trajectoryAccelerationClip, trajectoryVelocityClip, trajectoryAccelerationGain, trajectoryVelocityGain, trajectoryRetrievalGain, trajectoryRecallSize, trajectoryMemorySize, interferenceTestSteps, headSpecializationStrength, headSpecializationThreshold, expertBalanceStrength, replayUniformMix, replayPriorityMix, directionLossWeight, deltaLossWeight, predictionLossWeight, adaptationSlowRate, adaptationFastRate, protectionStrength, memoryRecallSize, replayBatchSize, replayRate, memoryUsageDecay, memoryConsolidationRate, memoryDecay, memoryRetrievalTemperature, memoryRetrievalGain, memoryWriteThreshold, gradientClip, gateLearningRate, surpriseGain, surpriseThreshold, deltaScale, expertScale, residualScale, temperature, epsilon, beta2, beta1, learningRate, numExperts, headSize, numHeads, hiddenSize, longMemorySize, windowSize, outputSize, inputSize, parameterCount, inputProjection, inputBias, outputProjection, outputBias, qWeights, kWeights, vWeights, qBias, kBias, vBias, outputAttentionWeight, outputAttentionBias, featureGateLogits, routerWeights, routerBias, expertW1, expertB1, expertW2, expertB2, positionBias, adamMInput, adamVInput, adamMInputBias, adamVInputBias, adamMOutput, adamVOutput, adamMOutputBias, adamVOutputBias, adamMQ, adamVQ, adamMK, adamVK, adamMV, adamVV, adamMBQ, adamVBQ, adamMBK, adamVBK, adamMBV, adamVBV, adamMAttention, adamVAttention, adamMBAttention, adamVBAttention, adamMGates, adamVGates, adamMRouter, adamVRouter, adamMBRouter, adamVBRouter, adamMExpertW1, adamVExpertW1, adamMExpertB1, adamVExpertB1, adamMExpertW2, adamVExpertW2, adamMExpertB2, adamVExpertB2, adamMPosition, adamVPosition, shortMemory, longMemory, longMemoryImportance, longMemoryAge, longMemoryUsage, longMemorySurprise, trajectoryMemory, trajectoryCount, trajectoryVelocityContext, trajectoryAccelerationContext, trajectoryRecall, trajectoryNovelty, trajectoryWriteScore, trajectoryLoss, trajectoryIndices, trajectoryWeights, lastObservedVelocity, generationHistory, generationDiversity, generationNovelty, generationMinDistance, generationMeanDistance, generationPressure, localDiversity, localContractionPressure, localContractionCorrection, replayInputs, replayTargets, replayImportance, memoryCount, replayCount, memoryContext, memoryWeights, memorySimilarity, protectionScalar, lastInput, lastPrediction, lastDelta, lastTarget, attentionProfile, headActivity, headFeatureUsage, expertUsage, loss, outputLoss, deltaLoss, directionLoss, expertBalanceLoss, surprise, surpriseEMA, errorEMA, memoryRecall, memoryNovelty, memoryWriteScore, replayLoss, interferenceScore, entropy, learningRateCurrent, learnedEvents, adamStep, totalEvents, initialized, preHidden, eventHistory, generationDriftState, autoTuneEnabled, autoTuneInterval, autoTuneCounter, autoTuneStrength, autoTuneSmoothing, autoTuneTargetNovelty, autoTuneTargetDiversity, autoTuneNoveltyEMA, autoTuneDiversityEMA, autoTuneLastError, autoTuneAdjustmentCount, autoTuneExplorationMin, autoTuneExplorationMax, autoTuneNoiseMin, autoTuneNoiseMax, autoTuneTemperatureMin, autoTuneTemperatureMax, metaLearnEnabled, metaLearnInterval, metaLearnCounter, metaLearnStrength, metaLearnSmoothing, metaLearnTargetError, metaLearnTargetSurprise, metaLearnTargetRecall, metaLearnTargetInterference, metaLearnErrorEMA, metaLearnSurpriseEMA, metaLearnRecallEMA, metaLearnInterferenceEMA, metaLearnPlasticityPressure, metaLearnStabilityPressure, metaLearnAdjustmentCount, metaLearnLearningRateMin, metaLearnLearningRateMax, metaLearnReplayRateMin, metaLearnReplayRateMax, metaLearnProtectionMin, metaLearnProtectionMax, metaLearnRetrievalGainMin, metaLearnRetrievalGainMax, unifiedCurrentRuntime, unifiedPendingRuntime, unifiedTrainingVersion, unifiedPublishedVersion, unifiedSnapshotPending, unifiedRuntimeRole, unifiedLearningEnabled, unifiedGenerationEnabled, unifiedParameterMorphs, adaptiveState;
 
     *new { |
         inputSize=8,
@@ -327,8 +327,8 @@ HPtransformerRT {
     zeroVector { |size| ^Array.fill(size,{0.0}); }
     zeroMatrix { |rows,cols| ^Array.fill(rows,{Array.fill(cols,{0.0})}); }
     clampParameter { |x| ^x.clip(-4.0,4.0); }
-    gradientNormVector { |g| ^(g.collect({|x| x*x}).sum.max(0.0)).sqrt; }
-    gradientNormMatrix { |g| var n; n=0.0; g.do({|row| n=n+row.collect({|x| x*x}).sum}); ^n.max(0.0).sqrt; }
+    gradientNormVector { |gradient| var total; total=0.0; gradient.do({|value| var x; x=this.clean(value); total=total+(x*x)}); ^total.max(0.0).sqrt; }
+    gradientNormMatrix { |gradient| var total; total=0.0; gradient.do({|row| if(row.isArray,{row.do({|value| var x; x=this.clean(value); total=total+(x*x)})},{var x; x=this.clean(row); total=total+(x*x)})}); ^total.max(0.0).sqrt; }
     torusDelta { |a,b| var d; d=(a-b).abs; ^d.min(1.0-d); }
     torusDifference { |a,b| var d; d=b-a; if(d>0.5,{d=d-1.0}); if(d<(-0.5),{d=d+1.0}); ^d; }
     wrap01 { |x| var y; y=x%1.0; if(y<0.0,{y=y+1.0}); ^y; }
@@ -402,12 +402,20 @@ HPtransformerRT {
     }
 
     softmaxWithTemperature { |values, requestedTemperature|
-        var maximum, exps, total, safeTemperature;
-        safeTemperature = requestedTemperature.asFloat.clip(0.01, 20.0);
-        maximum = values.maxItem;
-        exps = values.collect({ |x| ((x - maximum) / safeTemperature).exp; });
+        var cleanValues, maximum, exps, total, safeTemperature;
+        cleanValues = if(values.isArray, {
+            values.collect({ |value| this.clean(value) });
+        }, {
+            [this.clean(values)];
+        });
+        if(cleanValues.size <= 0, { ^[1.0] });
+        safeTemperature = this.clean(requestedTemperature).abs.clip(0.01, 20.0);
+        maximum = cleanValues.maxItem;
+        exps = cleanValues.collect({ |value|
+            ((value - maximum) / safeTemperature).clip(-80.0, 80.0).exp;
+        });
         total = exps.sum.max(0.000000001);
-        ^exps.collect({ |x| x / total });
+        ^exps.collect({ |value| value / total });
     }
     softmax { |values|
         ^this.softmaxWithTemperature(values, temperature);
@@ -461,7 +469,7 @@ HPtransformerRT {
             			var mh;
             			var vh;
             			var denom;
-            			g = gradient[i] * gradientScale;
+            			g = this.clean(gradient[i]) * gradientScale;
             			mh =
             			(
             				beta1
@@ -555,7 +563,7 @@ HPtransformerRT {
             				var mh;
             				var vh;
             				var denom;
-            				g = gradient[r][c] * gradientScale;
+            				g = this.clean(gradient[r][c]) * gradientScale;
             				mh =
             				(
             					beta1
@@ -622,6 +630,27 @@ HPtransformerRT {
             		});
 
         }.value;
+    }
+
+    updateExpertDiagnostics { |usage|
+        var safeUsage;
+        safeUsage = if(usage.isArray and: { usage.size == numExperts }, {
+            usage.collect({ |value| this.clean(value).max(0.0) });
+        }, {
+            Array.fill(numExperts, { 1.0 / numExperts.max(1) });
+        });
+        if(expertUsageEMA.isArray.not or: { expertUsageEMA.size != numExperts }, {
+            expertUsageEMA = Array.fill(numExperts, { 1.0 / numExperts.max(1) });
+        });
+        expertUsage = safeUsage;
+        expertUsageEMA = Array.fill(numExperts, { |index|
+            (0.98 * expertUsageEMA[index]) + (0.02 * safeUsage[index]);
+        });
+        routerEntropyEMA = (0.98 * this.clean(routerEntropyEMA))
+        + (0.02 * safeUsage.collect({ |value|
+            var q; q = value.max(0.000000001); q * q.log.neg;
+        }).sum);
+        ^expertUsage;
     }
 
     getFeatureGate { |h, i|
@@ -3019,8 +3048,7 @@ HPtransformerRT {
             		state[\router].collect({ |v|
             			v;
             		});
-                expertUsageEMA = Array.fill(numExperts, { |e| (0.98 * expertUsageEMA[e]) + (0.02 * expertUsage[e]) });
-                routerEntropyEMA = (0.98 * routerEntropyEMA) + (0.02 * expertUsage.collect({ |r| var q; q = r.max(0.000000001); q * q.log.neg; }).sum);
+                this.updateExpertDiagnostics(expertUsage);
             		// ------------------------------------------------------------
             		// MEMORY UPDATE
             		// ------------------------------------------------------------
@@ -3111,16 +3139,40 @@ HPtransformerRT {
         }.value;
     }
 
-    learnPair { |input, target|
-        if(unifiedRuntimeRole.not and: { unifiedLearningEnabled.not }, { ^0.0 });
-        ^{
-            		this.learnPairCore(
-            			input,
-            			target,
-            			true
-            		);
+    updateAdaptiveInterference { |measuredConflict|
+        var measured, pressure, targetReplay;
+        measured = this.clean(measuredConflict).max(0.0);
+        adaptiveState[\interferenceEMA] =
+        (adaptiveState[\smoothing] * adaptiveState[\interferenceEMA])
+        + ((1.0 - adaptiveState[\smoothing]) * measured);
+        if(adaptiveState[\enabled], {
+            pressure = ((adaptiveState[\interferenceEMA] - adaptiveState[\threshold])
+                / adaptiveState[\threshold].max(0.000001)).clip(0.0, 1.0);
+            targetReplay = (replayRate + (adaptiveState[\replayBoost] * pressure))
+                .clip(adaptiveState[\replayMin], adaptiveState[\replayMax]);
+            adaptiveState[\replayRate] =
+                (0.80 * adaptiveState[\replayRate]) + (0.20 * targetReplay);
+            if(pressure > 0.0, {
+                adaptiveState[\adjustments] = adaptiveState[\adjustments] + 1;
+            });
+        }, {
+            adaptiveState[\replayRate] = replayRate;
+        });
+        interferenceScore = adaptiveState[\interferenceEMA];
+        ^interferenceScore;
+    }
 
-        }.value;
+    learnPair { |input, target|
+        var result, conflictSignal, shouldReplay;
+        if(unifiedRuntimeRole.not and: { unifiedLearningEnabled.not }, { ^0.0 });
+        result = this.learnPairCore(input, target, true);
+        shouldReplay = replayCount > 1 and: { adaptiveState[\replayRate].coin };
+        if(shouldReplay, { this.replayMemory; });
+        conflictSignal = if(replayCount > 1, {
+            (replayLoss - result).max(0.0);
+        }, { 0.0 });
+        this.updateAdaptiveInterference(conflictSignal);
+        ^result;
     }
 
     replayMemory {
@@ -3261,8 +3313,7 @@ HPtransformerRT {
             		state[\router].collect({ |v|
             			v;
             		});
-                expertUsageEMA = Array.fill(numExperts, { |e| (0.98 * expertUsageEMA[e]) + (0.02 * expertUsage[e]) });
-                routerEntropyEMA = (0.98 * routerEntropyEMA) + (0.02 * expertUsage.collect({ |r| var q; q = r.max(0.000000001); q * q.log.neg; }).sum);
+                this.updateExpertDiagnostics(expertUsage);
             		lastPrediction;
 
         }.value;
@@ -3404,16 +3455,6 @@ HPtransformerRT {
             				x.copy;
             				lastPrediction =
             				x.copy;
-            			}
-            		);
-            		if(
-            			totalEvents > 1
-            			&&
-            			{
-            				replayRate.coin
-            			},
-            			{
-            				this.replayMemory;
             			}
             		);
             		result;
@@ -3890,6 +3931,9 @@ HPtransformerRT {
             \memoryRetrievalTemperature, \memoryDecay,
             \memoryConsolidationRate, \memoryUsageDecay,
             \replayRate, \replayBatchSize, \memoryRecallSize,
+            \adaptiveInterferenceEnabled, \adaptiveReplayMin, \adaptiveReplayMax,
+            \adaptiveInterferenceThreshold, \adaptiveInterferenceSmoothing,
+            \adaptiveReplayBoost,
             \protectionStrength,
             \adaptationFastRate, \adaptationSlowRate,
             \predictionLossWeight, \deltaLossWeight,
@@ -3958,6 +4002,12 @@ HPtransformerRT {
             \replayRate, { replayRate },
             \replayBatchSize, { replayBatchSize },
             \memoryRecallSize, { memoryRecallSize },
+            \adaptiveInterferenceEnabled, { adaptiveState[\enabled] },
+            \adaptiveReplayMin, { adaptiveState[\replayMin] },
+            \adaptiveReplayMax, { adaptiveState[\replayMax] },
+            \adaptiveInterferenceThreshold, { adaptiveState[\threshold] },
+            \adaptiveInterferenceSmoothing, { adaptiveState[\smoothing] },
+            \adaptiveReplayBoost, { adaptiveState[\replayBoost] },
             \protectionStrength, { protectionStrength },
             \adaptationFastRate, { adaptationFastRate },
             \adaptationSlowRate, { adaptationSlowRate },
@@ -4070,6 +4120,12 @@ HPtransformerRT {
             \replayRate, { replayRate = value.asFloat.clip(0.0, 1.0) },
             \replayBatchSize, { replayBatchSize = value.asInteger.clip(1, longMemorySize.max(1)) },
             \memoryRecallSize, { memoryRecallSize = value.asInteger.clip(0, longMemorySize) },
+            \adaptiveInterferenceEnabled, { adaptiveState[\enabled] = (value == true) or: { value.isNumber and: { value > 0 } } },
+            \adaptiveReplayMin, { adaptiveState[\replayMin] = value.asFloat.clip(0.0, adaptiveState[\replayMax]) },
+            \adaptiveReplayMax, { adaptiveState[\replayMax] = value.asFloat.clip(adaptiveState[\replayMin], 1.0) },
+            \adaptiveInterferenceThreshold, { adaptiveState[\threshold] = value.asFloat.clip(0.000001, 1.0) },
+            \adaptiveInterferenceSmoothing, { adaptiveState[\smoothing] = value.asFloat.clip(0.0, 0.999999) },
+            \adaptiveReplayBoost, { adaptiveState[\replayBoost] = value.asFloat.clip(0.0, 1.0) },
             \protectionStrength, { protectionStrength = value.asFloat.clip(0.0, 10.0) },
             \adaptationFastRate, { adaptationFastRate = value.asFloat.clip(0.0, 10.0) },
             \adaptationSlowRate, { adaptationSlowRate = value.asFloat.clip(0.0, 10.0) },
@@ -4779,6 +4835,18 @@ HPtransformerRT {
             		errorEMA = 0.0;
             		replayLoss = 0.0;
             		interferenceScore = 0.0;
+                adaptiveState = IdentityDictionary.new;
+                adaptiveState[\enabled] = true;
+                adaptiveState[\replayMin] = 0.06;
+                adaptiveState[\replayMax] = 0.20;
+                adaptiveState[\threshold] = 0.0020;
+                adaptiveState[\smoothing] = 0.95;
+                adaptiveState[\replayBoost] = 0.06;
+                adaptiveState[\interferenceEMA] = 0.0;
+                adaptiveState[\replayRate] = replayRate.clip(0.06, 0.20);
+                adaptiveState[\learningScale] = 1.0;
+                adaptiveState[\protectionScale] = 1.0;
+                adaptiveState[\adjustments] = 0;
             		memoryRecall = 0.0;
             		memoryNovelty = 0.0;
             		memoryWriteScore = 0.0;
@@ -4833,7 +4901,7 @@ HPtransformerRT {
                 metaLearnProtectionMax = 0.60;
                 metaLearnRetrievalGainMin = 0.02;
                 metaLearnRetrievalGainMax = 0.30;
-            		"V30.0 Learning+ Dynamic Trajectory Memory runtime and optimizer reset / weights and memories preserved".postln;
+            		"V30.1.5 Learning+ Dynamic Trajectory Memory runtime and optimizer reset / weights and memories preserved".postln;
             		nil;
 
         }.value;
@@ -4899,7 +4967,7 @@ HPtransformerRT {
             		memorySimilarity =
             		Array.new;
             		protectionScalar = 0.0;
-            		"V30.0 Learning+ Dynamic Trajectory Memory memory reset".postln;
+            		"V30.1.5 Learning+ Dynamic Trajectory Memory memory reset".postln;
             		nil;
 
         }.value;
@@ -5111,7 +5179,7 @@ HPtransformerRT {
             		// LEARNING STATE
             		// ------------------------------------------------------------
             		this.resetLearning;
-            		"V30.0 Learning+ Dynamic Trajectory Memory full reset".postln;
+            		"V30.1.5 Learning+ Dynamic Trajectory Memory full reset".postln;
             		nil;
 
         }.value;
@@ -5148,7 +5216,7 @@ HPtransformerRT {
         });
 
         ^(
-            version: 30.0,
+            version: 30.15,
             parameters: parameterCount,
             inputSize: inputSize,
             outputSize: outputSize,
@@ -5174,6 +5242,17 @@ HPtransformerRT {
             memoryWriteScore: memoryWriteScore,
             replayLoss: replayLoss,
             interferenceScore: interferenceScore,
+            adaptiveInterferenceEnabled: adaptiveState[\enabled],
+            adaptiveReplayMin: adaptiveState[\replayMin],
+            adaptiveReplayMax: adaptiveState[\replayMax],
+            adaptiveInterferenceThreshold: adaptiveState[\threshold],
+            adaptiveInterferenceSmoothing: adaptiveState[\smoothing],
+            adaptiveReplayBoost: adaptiveState[\replayBoost],
+            adaptiveInterferenceEMA: adaptiveState[\interferenceEMA],
+            adaptiveReplayRate: adaptiveState[\replayRate],
+            adaptiveLearningScale: adaptiveState[\learningScale],
+            adaptiveProtectionScale: adaptiveState[\protectionScale],
+            adaptiveInterferenceAdjustments: adaptiveState[\adjustments].asInteger,
             trajectoryCount: trajectoryCount,
             trajectoryRecall: trajectoryRecall,
             trajectoryNovelty: trajectoryNovelty,
@@ -5243,7 +5322,7 @@ HPtransformerRT {
             		entropyValue;
             		"".postln;
             		"============================================================".postln;
-            		"TRANSFORMER VECTOR V30.0 Learning+ Dynamic Trajectory Memory".postln;
+            		"TRANSFORMER VECTOR V30.1.5 Learning+ Dynamic Trajectory Memory".postln;
             		"MEMORY / LEARNING+ / ADAPTATION / ANTI-INTERFERENCE".postln;
             		"============================================================".postln;
             		("parameters: " ++ parameterCount).postln;
@@ -5327,7 +5406,7 @@ HPtransformerRT {
             		lastDelta.postln;
             		"============================================================".postln;
             		(
-            			version: 30.0,
+            			version: 30.15,
             			parameters: parameterCount,
             			inputSize: inputSize,
             			outputSize: outputSize,
@@ -5395,7 +5474,7 @@ HPtransformerRT {
     config {
         ^{
             		(
-            			version: 30.0,
+            			version: 30.15,
             			inputSize: inputSize,
             			outputSize: outputSize,
             			windowSize: windowSize,
@@ -5566,6 +5645,31 @@ HPtransformerRT {
             interferenceScore: interferenceScore, probeSteps: steps, destructive: false,
             prediction: state[\prediction].copy, target: y.copy);
     }
+    lossValue { ^loss; }
+    surpriseValue { ^surprise; }
+    entropyValue { ^entropy; }
+    learnedEventsValue { ^learnedEvents; }
+    interferenceScoreValue { ^interferenceScore; }
+    adaptiveReplayRateValue { ^adaptiveState[\replayRate]; }
+    adaptiveInterferenceValue { ^adaptiveState[\interferenceEMA]; }
+    adaptiveProtectionScaleValue { ^adaptiveState[\protectionScale]; }
+    adaptiveLearningScaleValue { ^adaptiveState[\learningScale]; }
+    adaptiveInterferenceAdjustmentsValue { ^adaptiveState[\adjustments].asInteger; }
+    adaptiveStateStatus {
+        ^(
+            enabled: adaptiveState[\enabled],
+            replayMin: adaptiveState[\replayMin],
+            replayMax: adaptiveState[\replayMax],
+            threshold: adaptiveState[\threshold],
+            smoothing: adaptiveState[\smoothing],
+            replayBoost: adaptiveState[\replayBoost],
+            interferenceEMA: adaptiveState[\interferenceEMA],
+            replayRate: adaptiveState[\replayRate],
+            learningScale: adaptiveState[\learningScale],
+            protectionScale: adaptiveState[\protectionScale],
+            adjustments: adaptiveState[\adjustments].asInteger
+        );
+    }
     parameters { ^parameterCount; }
     generationDiversity { ^generationDiversity; }
     generationNovelty { ^generationNovelty; }
@@ -5576,7 +5680,7 @@ HPtransformerRT {
         var finalPath;
         finalPath = path.asString.standardizePath;
         this.writeArchive(finalPath);
-        ("HPtransformerRT V30.0 saved: " ++ finalPath).postln;
+        ("HPtransformerRT V30.1.5 saved: " ++ finalPath).postln;
         ^finalPath;
     }
     *readArchive { |path|
@@ -5585,7 +5689,7 @@ HPtransformerRT {
         if(File.exists(finalPath).not, { Error("Transformer archive not found: " ++ finalPath).throw; });
         model = Object.readArchive(finalPath);
         if(model.isKindOf(HPtransformerRT).not, { Error("Archive is not an HPtransformerRT: " ++ finalPath).throw; });
-        ("HPtransformerRT V30.0 restored: " ++ finalPath).postln;
+        ("HPtransformerRT V30.1.5 restored: " ++ finalPath).postln;
         ^model;
     }
 
