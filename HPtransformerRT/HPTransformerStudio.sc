@@ -1,7 +1,9 @@
 /*
-HPTransformerStudio V8.4.0 OSC temps reel sans file for HPtransformerRT V30.1.5 - SuperCollider 3.14
+HPTransformerStudio V8.4.1 OSC temps reel et profils d usage for HPtransformerRT V30.1.5 - SuperCollider 3.14
 High-contrast GUI update: white labels on dark panels, black text on white fields.
 New preset families: focused attention, specialized experts, precise trajectory, prudent RT V30.
+Intel 2012 real-time presets: Ultra light, Balanced, Memory reinforced, Generation only.
+Dark palette compatibility: local light root palette and explicit NumberBox colors for initial, normal and typing states.
 */
 
 HPTransformerStudio : Object {
@@ -43,7 +45,7 @@ HPTransformerStudio : Object {
     detachControlBus { controlBus=nil; ^this }
     controlBusConnected { ^controlBus.notNil }
     build {
-        // HPTransformer Studio Pro V8.4.0 OSC temps reel sans file CONFIGURATION SETS - HPtransformerRT V30.1.5 - SuperCollider 3.14
+        // HPTransformer Studio Pro V8.4.1 PROFILS TEMPS REEL / HORS TEMPS REEL - HPtransformerRT V30.1.5 - SuperCollider 3.14
         // Fenetre unique : Dashboard, Controls, Generation, Graphs, Heatmaps,
         // Generation, Memoire, Surprise, AutoTune et MetaLearn Presets, Snapshots RCU, Logs.
         var w, pages, pageButtons, activePage, routine, running=true, rate=0.35;
@@ -74,7 +76,8 @@ HPTransformerStudio : Object {
         var formatFixed;
         var styleButton, buttonColorForText, navIdleColor, navActiveColor;
         var exportCSV, exportLogs, exportHeat, loadSettings, savePreset, loadPreset;
-        var generalNames, generalPresets, autoNames, autoPresets, metaNames, metaPresets;
+        var generalNames, generalPresets, generalProcessHz, generalLearnDivider, generalLearningState, generalGenerationState, applyGeneralPreset;
+        var autoNames, autoPresets, metaNames, metaPresets;
         var diagnosticPreset, safeReturnPreset, oscCalibrationPreset, lowCpuPreset;
         var genNames, genPresets, memoryNames, memoryPresets, surpriseNames, surprisePresets;
         var setNames, setPresets, setDescriptions, setFollowMixes, setMenu, setDescriptionView;
@@ -200,9 +203,13 @@ HPTransformerStudio : Object {
         // Presets generaux supplementaires
         generalNames=["Equilibre","Apprentissage rapide","Stable","Exploration","Memoire forte",
          "Conservateur","Creatif","Replay intensif","Faible latence","Torus doux","Convergence fine",
-         "Attention focalisee","Experts specialises","Trajectoire precise","RT V30 prudent"];
+         "Attention focalisee","Experts specialises","Trajectoire precise","RT V30 prudent",
+         "RT Ultra leger","RT Reactif","RT Equilibre M4","RT Memoire prudente",
+         "Studio / Analyse","Hors temps reel - Apprentissage qualite","Hors temps reel - Generation riche",
+         "Intel 2012 - Ultra leger","Intel 2012 - Temps reel equilibre",
+         "Intel 2012 - Memoire renforcee","Intel 2012 - Generation seule"];
         generalPresets=[
-         (learningRate:0.00035,attentionTemperature:1.0,routerTemperature:1.10,replayRate:0.08,protectionStrength:0.16,memoryRetrievalGain:0.10,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.20,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,trajectoryExplorationGain:0.0045,diversityNoiseGain:0.00035),
+         (learningRate:0.00035,attentionTemperature:1.0,routerTemperature:1.10,replayRate:0.08,protectionStrength:0.16,memoryRetrievalGain:0.10,trajectoryExplorationGain:0.0045,diversityNoiseGain:0.00035),
          (learningRate:0.0008,surpriseGain:1.6,replayRate:0.12,protectionStrength:0.10,gradientClip:0.75),
          (learningRate:0.00018,replayRate:0.18,protectionStrength:0.35,attentionTemperature:0.85,routerTemperature:1.10,diversityNoiseGain:0.0001),
          (attentionTemperature:1.5,routerTemperature:1.10,trajectoryExplorationGain:0.015,diversityNoiseGain:0.003,diversityRepulsionGain:0.008,diversityAdaptiveGain:1.2),
@@ -216,8 +223,50 @@ HPTransformerStudio : Object {
          (attentionTemperature:0.55,routerTemperature:1.15,trajectoryRetrievalTemperature:0.30,residualScale:0.34,expertScale:0.24,diversityNoiseGain:0.00010),
          (attentionTemperature:0.90,routerTemperature:0.65,trajectoryRetrievalTemperature:0.30,expertScale:0.32,expertBalanceStrength:0.004,headSpecializationStrength:0.004),
          (attentionTemperature:0.90,routerTemperature:1.10,trajectoryRetrievalTemperature:0.16,trajectoryRecallSize:2,trajectoryRetrievalGain:0.14,trajectoryVelocityGain:0.070,trajectoryAccelerationGain:0.012),
-         (learningRate:0.00025,gradientClip:0.60,attentionTemperature:0.85,routerTemperature:1.10,trajectoryRetrievalTemperature:0.25,residualScale:0.30,expertScale:0.22,deltaScale:0.25,replayRate:0.08,protectionStrength:0.18,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,trajectoryExplorationGain:0.0025,diversityNoiseGain:0.00020,diversityRepulsionGain:0.0012,autoTuneEnabled:false,metaLearnEnabled:false)
+         (learningRate:0.00025,gradientClip:0.60,attentionTemperature:0.85,routerTemperature:1.10,trajectoryRetrievalTemperature:0.25,residualScale:0.30,expertScale:0.22,deltaScale:0.25,replayRate:0.08,protectionStrength:0.18,trajectoryExplorationGain:0.0025,diversityNoiseGain:0.00020,diversityRepulsionGain:0.0012,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,autoTuneEnabled:false,metaLearnEnabled:false),
+         // RT Ultra leger: charge minimale, apprentissage externe a decimer fortement.
+         (learningRate:0.00012,gradientClip:0.35,replayRate:0.02,replayBatchSize:1,protectionStrength:0.24,memoryRetrievalGain:0.05,memoryRecallSize:1,trajectoryRetrievalGain:0.02,trajectoryRecallSize:1,generationWindowSize:2,trajectoryExplorationGain:0.0005,diversityNoiseGain:0.0,diversityRepulsionGain:0.0002,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.02,adaptiveReplayMax:0.08,adaptiveInterferenceThreshold:0.0030,adaptiveInterferenceSmoothing:0.97,adaptiveReplayBoost:0.03,autoTuneEnabled:false,metaLearnEnabled:false),
+         // RT Reactif: suivi gestuel rapide, memoire et replay limites.
+         (learningRate:0.00025,gradientClip:0.50,replayRate:0.05,replayBatchSize:1,protectionStrength:0.14,memoryRetrievalGain:0.07,memoryRecallSize:1,trajectoryRetrievalGain:0.05,trajectoryRecallSize:1,generationWindowSize:3,attentionTemperature:0.95,deltaScale:0.30,trajectoryExplorationGain:0.0020,diversityNoiseGain:0.00010,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.04,adaptiveReplayMax:0.12,adaptiveInterferenceThreshold:0.0025,adaptiveInterferenceSmoothing:0.96,adaptiveReplayBoost:0.04,autoTuneEnabled:false,metaLearnEnabled:false),
+         // RT Equilibre M4: profil conseille pour Learn + Generate sur Apple Silicon.
+         (learningRate:0.00032,gradientClip:0.60,replayRate:0.08,replayBatchSize:1,protectionStrength:0.18,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.09,trajectoryRecallSize:2,generationWindowSize:5,attentionTemperature:0.88,routerTemperature:0.95,deltaScale:0.27,trajectoryExplorationGain:0.0030,diversityNoiseGain:0.00020,diversityRepulsionGain:0.0012,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,autoTuneEnabled:true,autoTuneInterval:12,autoTuneStrength:0.08,metaLearnEnabled:false),
+         // RT Memoire prudente: anti-oubli renforce avec plafond de replay temps reel.
+         (learningRate:0.00020,gradientClip:0.40,replayRate:0.12,replayBatchSize:1,protectionStrength:0.32,memoryRetrievalGain:0.14,memoryRecallSize:2,memoryWriteThreshold:0.09,trajectoryRetrievalGain:0.10,trajectoryRecallSize:2,generationWindowSize:5,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.08,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,autoTuneEnabled:true,autoTuneInterval:16,autoTuneStrength:0.06,metaLearnEnabled:false),
+         // Studio / Analyse: prediction deterministe, sans replay ni exploration.
+         (learningRate:0.00010,gradientClip:0.30,replayRate:0.0,protectionStrength:0.40,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.05,trajectoryRecallSize:1,generationWindowSize:4,attentionTemperature:0.55,trajectoryExplorationGain:0.0,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Hors temps reel - Apprentissage qualite: memoire, replay et protection renforces.
+         (learningRate:0.00028,gradientClip:0.60,replayRate:0.20,replayBatchSize:4,replayPriorityMix:0.88,replayUniformMix:0.12,protectionStrength:0.42,memoryRetrievalGain:0.22,memoryRecallSize:5,memoryWriteThreshold:0.06,trajectoryRetrievalGain:0.18,trajectoryRecallSize:3,generationWindowSize:8,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.10,adaptiveReplayMax:0.30,adaptiveInterferenceThreshold:0.0015,adaptiveInterferenceSmoothing:0.94,adaptiveReplayBoost:0.10,autoTuneEnabled:false,metaLearnEnabled:true,metaLearnInterval:12,metaLearnStrength:0.10),
+         // Hors temps reel - Generation riche: exploration et diversite privilegiees.
+         (learningRate:0.00016,replayRate:0.12,protectionStrength:0.30,memoryRetrievalGain:0.24,memoryRecallSize:5,trajectoryRetrievalGain:0.20,trajectoryRecallSize:3,generationWindowSize:10,attentionTemperature:1.35,routerTemperature:1.05,deltaScale:0.40,trajectoryExplorationGain:0.015,diversityNoiseGain:0.0025,diversityRepulsionGain:0.008,diversityAdaptiveGain:1.20,localDiversityGain:0.10,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.08,adaptiveReplayMax:0.22,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,autoTuneEnabled:true,autoTuneInterval:6,autoTuneStrength:0.22,metaLearnEnabled:false),
+         // Intel 2012 - Ultra leger: charge minimale pour ancien Core i7.
+         (learningRate:0.00012,gradientClip:0.35,replayRate:0.06,replayBatchSize:1,protectionStrength:0.12,memoryRetrievalGain:0.06,memoryRecallSize:1,trajectoryRetrievalGain:0.04,trajectoryRecallSize:1,generationWindowSize:3,trajectoryExplorationGain:0.0,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Intel 2012 - Temps reel equilibre: point de depart recommande.
+         (learningRate:0.00020,gradientClip:0.40,replayRate:0.10,replayBatchSize:1,protectionStrength:0.18,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.07,trajectoryRecallSize:1,generationWindowSize:4,trajectoryExplorationGain:0.002,diversityNoiseGain:0.0003,diversityRepulsionGain:0.001,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.16,adaptiveInterferenceThreshold:0.0022,adaptiveInterferenceSmoothing:0.96,adaptiveReplayBoost:0.04,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Intel 2012 - Memoire renforcee: valeurs gagnantes du diagnostic i7.
+         (learningRate:0.00016,gradientClip:0.35,replayRate:0.16,replayBatchSize:1,protectionStrength:0.24,memoryRetrievalGain:0.12,memoryRecallSize:2,trajectoryRetrievalGain:0.08,trajectoryRecallSize:1,generationWindowSize:4,trajectoryExplorationGain:0.0,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Intel 2012 - Generation seule: modele entraine, sans cout d'apprentissage.
+         (learningRate:0.00012,gradientClip:0.35,replayRate:0.0,replayBatchSize:1,protectionStrength:0.20,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.06,trajectoryRecallSize:1,generationWindowSize:4,trajectoryExplorationGain:0.003,diversityNoiseGain:0.0005,diversityRepulsionGain:0.0015,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false)
         ];
+        // Reglages operationnels associes aux presets generaux.
+        // Les 15 presets historiques conservent les reglages OSC et les etats courants.
+        generalProcessHz=Array.fill(15,{nil})++[20.0,60.0,50.0,40.0,30.0,10.0,20.0,15.0,20.0,15.0,25.0];
+        generalLearnDivider=Array.fill(15,{nil})++[8,4,3,4,8,1,16,8,8,8,8];
+        generalLearningState=Array.fill(15,{nil})++[true,true,true,true,false,true,false,true,true,true,false];
+        generalGenerationState=Array.fill(15,{nil})++[true,true,true,true,true,false,true,true,true,true,true];
+        applyGeneralPreset={|index|
+         var settings,name;
+         settings=generalPresets[index];name=generalNames[index];
+         loadSettings.(settings,name);
+         if(settings[\autoTuneEnabled]==true,{transformer.enableAutoTune},{if(settings[\autoTuneEnabled]==false,{transformer.disableAutoTune})});
+         if(settings[\metaLearnEnabled]==true,{transformer.enableMetaLearning},{if(settings[\metaLearnEnabled]==false,{transformer.disableMetaLearning})});
+         if(generalProcessHz[index].notNil,{oscProcessHz=generalProcessHz[index];if(oscProcessHzBox.notNil,{oscProcessHzBox.value_(oscProcessHz)})});
+         if(generalLearnDivider[index].notNil,{oscLearningDivider=generalLearnDivider[index];if(oscLearningDividerBox.notNil,{oscLearningDividerBox.value_(oscLearningDivider)})});
+         if(generalLearningState[index].notNil,{if(generalLearningState[index],{transformer.enableLearning},{transformer.disableLearning})});
+         if(generalGenerationState[index].notNil,{if(generalGenerationState[index],{transformer.enableGeneration},{transformer.disableGeneration})});
+         // Les quatre profils Intel 2012 commencent a l'index 22.
+         if(index>=22,{oscDetailedEvents=false;if(oscDetailedButton.notNil,{oscDetailedButton.value_(0)})});
+         addLog.("Profil general applique: "++name++" | processHz="++oscProcessHz++" | Learn/N="++oscLearningDivider++" | Details="++oscDetailedEvents);
+        };
         autoNames=["Auto Equilibre","Auto Diversite","Auto Nouveaute","Auto Doux","Auto Reactif","Auto Minimal"];
         autoPresets=[
          (autoTuneEnabled:true,autoTuneInterval:8,autoTuneStrength:0.20,autoTuneSmoothing:0.90,autoTuneTargetNovelty:0.18,autoTuneTargetDiversity:0.12),
@@ -253,7 +302,7 @@ HPTransformerStudio : Object {
         ];
         // Presets specialises Memoire
         memoryNames=["Memoire equilibree","Memoire profonde","Memoire selective","Memoire rapide",
-         "Replay fort","Anti-oubli adaptatif V30.1.5","Trajectoire forte","Memoire legere","RT modere valide","Memoire maximale V30.1.5"];
+         "Replay fort","Anti-oubli","Trajectoire forte","Memoire legere"];
         memoryPresets=[
          (memoryWriteThreshold:0.10,memoryRetrievalGain:0.10,memoryRetrievalTemperature:0.30,trajectoryRetrievalTemperature:0.30,memoryDecay:0.996,memoryRecallSize:3,replayRate:0.08),
          (memoryWriteThreshold:0.04,memoryRetrievalGain:0.32,memoryRetrievalTemperature:0.18,trajectoryRetrievalTemperature:0.22,memoryDecay:0.999,memoryRecallSize:6,replayRate:0.18),
@@ -262,9 +311,7 @@ HPTransformerStudio : Object {
          (replayRate:0.32,replayBatchSize:4,replayPriorityMix:0.86,replayUniformMix:0.14,protectionStrength:0.32),
          (memoryDecay:0.9995,memoryUsageDecay:0.9998,memoryConsolidationRate:0.008,protectionStrength:0.48,replayRate:0.22),
          (trajectoryRecallSize:3,trajectoryRetrievalGain:0.24,trajectoryVelocityGain:0.10,trajectoryAccelerationGain:0.02,trajectoryDecay:0.985),
-         (memoryWriteThreshold:0.20,memoryRetrievalGain:0.05,memoryRecallSize:1,replayRate:0.02,protectionStrength:0.08,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.02,adaptiveReplayMax:0.08,adaptiveInterferenceThreshold:0.0030,adaptiveInterferenceSmoothing:0.97,adaptiveReplayBoost:0.03),
-         (replayRate:0.12,memoryRetrievalGain:0.10,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06),
-         (replayRate:0.16,memoryRetrievalGain:0.12,protectionStrength:0.22,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.08,adaptiveReplayMax:0.20,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06)
+         (memoryWriteThreshold:0.20,memoryRetrievalGain:0.05,memoryRecallSize:1,replayRate:0.02,protectionStrength:0.08)
         ];
         // Presets specialises Surprise / plasticite
         surpriseNames=["Surprise equilibree","Tres plastique","Prudent","Evenements rares",
@@ -276,7 +323,7 @@ HPTransformerStudio : Object {
          (surpriseThreshold:0.30,surpriseGain:2.80,adaptationFastRate:2.10,adaptationSlowRate:0.18,memoryWriteThreshold:0.18),
          (surpriseThreshold:0.04,surpriseGain:1.85,adaptationFastRate:2.00,adaptationSlowRate:0.55,gradientClip:1.10),
          (surpriseThreshold:0.10,surpriseGain:1.08,adaptationFastRate:0.75,adaptationSlowRate:0.15,learningRate:0.00012),
-         (surpriseThreshold:0.08,surpriseGain:1.20,adaptationFastRate:1.05,adaptationSlowRate:0.28,protectionStrength:0.32,replayRate:0.12,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06),
+         (surpriseThreshold:0.08,surpriseGain:1.20,adaptationFastRate:1.05,adaptationSlowRate:0.28,protectionStrength:0.55,replayRate:0.24),
          (surpriseThreshold:0.045,surpriseGain:1.70,adaptationFastRate:1.70,trajectoryExplorationGain:0.014,diversityNoiseGain:0.002)
         ];
         
@@ -396,7 +443,10 @@ HPTransformerStudio : Object {
          })})
         };
         
-        w=Window("HPTransformer Studio Pro V8.4.0 - HPtransformerRT V30.1.5 - OSC temps reel - Anti-interference adaptative",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
+        w=Window("HPTransformer Studio Pro V8.4.1 - HPtransformerRT V30.1.5 - Profils temps reel et hors temps reel",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
+        // Palette locale: Window ne comprend pas palette_; la palette doit etre appliquee a sa vue racine.
+        // Cette ligne isole le Studio de QtGUI.palette = QPalette.dark.
+        w.view.palette_(QPalette.light);
         scrollView=ScrollView(w,uiRect.(0,0,1320,860)).hasBorder_(false).autohidesScrollers_(true);
         // CompositeView explicite recommande pour fixer une surface de contenu plus grande.
         uiRoot=CompositeView(scrollView,uiRect.(0,0,1360,1080)).background_(Color.grey(0.13));
@@ -420,7 +470,7 @@ HPTransformerStudio : Object {
         title.(pages[\dashboard],"ETAT GENERAL",20,15); statusText=TextView(pages[\dashboard],uiRect.(20,50,760,620))
          .editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         title.(pages[\dashboard],"PRESETS GENERAUX",820,15); generalMenu=PopUpMenu(pages[\dashboard],uiRect.(820,50,450,30)).items_(generalNames);
-        button.(pages[\dashboard],"Appliquer",820,95,210,{loadSettings.(generalPresets[generalMenu.value],generalNames[generalMenu.value])});
+        button.(pages[\dashboard],"Appliquer",820,95,210,{applyGeneralPreset.(generalMenu.value)});
         button.(pages[\dashboard],"Sauver preset...",1060,95,210,{savePreset.value});
         button.(pages[\dashboard],"Charger preset...",820,140,210,{loadPreset.value});
         button.(pages[\dashboard],"Reset Learning",1060,140,210,{transformer.resetLearning;addLog.("Reset Learning")});
@@ -434,6 +484,13 @@ HPTransformerStudio : Object {
         button.(pages[\dashboard],"Retour securise",1060,350,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(safeReturnPreset,"Retour securise");transformer.enableLearning;transformer.enableGeneration;rate=0.35});
         button.(pages[\dashboard],"Calibration OSC",820,395,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(oscCalibrationPreset,"Calibration OSC");transformer.disableLearning;transformer.enableGeneration});
         button.(pages[\dashboard],"Faible charge CPU",1060,395,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(lowCpuPreset,"Faible charge CPU");transformer.disableLearning;transformer.enableGeneration;rate=0.75});
+        StaticText(pages[\dashboard],uiRect.(820,455,450,130)).string_(
+         "Nouveaux profils generaux V8.4.1 :"++Char.nl++
+         "RT Ultra leger / RT Reactif / RT Equilibre M4 / RT Memoire prudente"++Char.nl++
+         "Intel 2012 : Ultra leger / Temps reel equilibre / Memoire renforcee / Generation seule"++Char.nl++
+         "Studio - Analyse / Hors temps reel - Apprentissage qualite / Generation riche"++Char.nl++
+         "Conseil Intel 2012 : commencer a 20 Hz, Learn/N=8, Details OFF, AutoTune OFF, MetaLearn OFF."
+        ).stringColor_(Color.white).font_(Font.default.size_(11));
         
         // Controls
         title.(pages[\controls],"APPRENTISSAGE",20,15); title.(pages[\controls],"MEMOIRE ET GENERATION",680,15);
@@ -443,10 +500,6 @@ HPTransformerStudio : Object {
         addSlider.(pages[\controls],"Surprise gain",\surpriseGain,ControlSpec(0,5,\lin),20,164,590);
         addSlider.(pages[\controls],"Protection",\protectionStrength,ControlSpec(0,2,\lin),20,202,590);
         addSlider.(pages[\controls],"Replay rate",\replayRate,ControlSpec(0,0.5,\lin),20,240,590);
-        addSlider.(pages[\controls],"Adaptive threshold",\adaptiveInterferenceThreshold,ControlSpec(0.0001,0.02,\exp),20,278,590);
-        addSlider.(pages[\controls],"Adaptive smoothing",\adaptiveInterferenceSmoothing,ControlSpec(0.50,0.999,\lin),20,316,590);
-        addSlider.(pages[\controls],"Adaptive replay boost",\adaptiveReplayBoost,ControlSpec(0,0.25,\lin),20,354,590);
-        addSlider.(pages[\controls],"Adaptive replay max",\adaptiveReplayMax,ControlSpec(0,0.5,\lin),20,392,590);
         addSlider.(pages[\controls],"Memory gain",\memoryRetrievalGain,ControlSpec(0,1,\lin),680,50,600);
         addSlider.(pages[\controls],"Write threshold",\memoryWriteThreshold,ControlSpec(0,1,\lin),680,88,600);
         addSlider.(pages[\controls],"Attention temperature",\attentionTemperature,ControlSpec(0.1,5,\exp),680,126,600);
@@ -457,13 +510,13 @@ HPTransformerStudio : Object {
         addSlider.(pages[\controls],"Diversity noise",\diversityNoiseGain,ControlSpec(0,0.02,\lin),680,316,600);
         addSlider.(pages[\controls],"Diversity repulsion",\diversityRepulsionGain,ControlSpec(0,0.05,\lin),680,354,600);
         // TorusMask par dimension de sortie.
-        title.(pages[\controls],"TORUS MASK",20,455,400);
-        StaticText(pages[\controls],uiRect.(20,490,245,24)).string_("Masque 1/0 separe par virgules :").stringColor_(Color.white);
-        torusMaskField=TextField(pages[\controls],uiRect.(270,487,430,30)).string_(formatTorusMask.(transformer.getParameter(\torusMask))).background_(Color.white).stringColor_(Color.black).action_({|field|applyTorusMask.(field.string)});
-        button.(pages[\controls],"Appliquer TorusMask",720,485,190,{applyTorusMask.(torusMaskField.string)});
-        button.(pages[\controls],"Tout torique",925,485,150,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{true});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
-        button.(pages[\controls],"Tout lineaire",1090,485,170,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{false});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
-        torusMaskStatus=TextView(pages[\controls],uiRect.(20,535,1240,105)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black).font_(Font.default.size_(12));
+        title.(pages[\controls],"TORUS MASK",20,410,400);
+        StaticText(pages[\controls],uiRect.(20,450,245,24)).string_("Masque 1/0 separe par virgules :").stringColor_(Color.white);
+        torusMaskField=TextField(pages[\controls],uiRect.(270,447,430,30)).string_(formatTorusMask.(transformer.getParameter(\torusMask))).background_(Color.white).stringColor_(Color.black).action_({|field|applyTorusMask.(field.string)});
+        button.(pages[\controls],"Appliquer TorusMask",720,445,190,{applyTorusMask.(torusMaskField.string)});
+        button.(pages[\controls],"Tout torique",925,445,150,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{true});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
+        button.(pages[\controls],"Tout lineaire",1090,445,170,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{false});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
+        torusMaskStatus=TextView(pages[\controls],uiRect.(20,495,1240,145)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black).font_(Font.default.size_(12));
         torusMaskStatus.string_("Masque actif : "++transformer.getParameter(\torusMask).asCompileString++Char.nl++"1 = dimension torique (bouclage 0..1) ; 0 = dimension lineaire (limitee 0..1)");
         
         // Parametres manuels
@@ -702,7 +755,7 @@ HPTransformerStudio : Object {
           "adaptiveInterferenceThreshold = 0.002"++Char.nl++
           "adaptiveInterferenceSmoothing = 0.95"++Char.nl++
           "adaptiveReplayBoost = 0.06"++Char.nl++
-          "adaptiveReplayMax = 0.20"++Char.nl++
+          "adaptiveReplayMax = 0.18"++Char.nl++
           "memoryRecallSize = 3"++Char.nl++
           "generationWindowSize = 8"++Char.nl++
           "driftGain = 0.45"++Char.nl++
@@ -967,13 +1020,8 @@ HPTransformerStudio : Object {
         button.(pages[\memoryLive],"Reset Memory",20,400,190,{transformer.resetMemory;addLog.("Reset Memory")});
         button.(pages[\memoryLive],"Replay Memory",225,400,190,{{transformer.replayMemory}.try;addLog.("Replay manuel")});
         button.(pages[\memoryLive],"Status vers Post",430,400,190,{transformer.status.postln});
-        title.(pages[\memoryLive],"ANTI-INTERFERENCE ADAPTATIVE V30.1.5",660,15,590);
-        addSlider.(pages[\memoryLive],"Threshold",\adaptiveInterferenceThreshold,ControlSpec(0.0001,0.02,\exp),660,50,610);
-        addSlider.(pages[\memoryLive],"Smoothing",\adaptiveInterferenceSmoothing,ControlSpec(0.50,0.999,\lin),660,90,610);
-        addSlider.(pages[\memoryLive],"Replay boost",\adaptiveReplayBoost,ControlSpec(0,0.25,\lin),660,130,610);
-        addSlider.(pages[\memoryLive],"Replay maximum",\adaptiveReplayMax,ControlSpec(0,0.5,\lin),660,170,610);
-        title.(pages[\memoryLive],"MONITEUR MEMOIRE ET ADAPTATION",660,220,590);
-        memoryLiveText=TextView(pages[\memoryLive],uiRect.(660,255,610,410)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+        title.(pages[\memoryLive],"MONITEUR MEMOIRE",660,15,500);
+        memoryLiveText=TextView(pages[\memoryLive],uiRect.(660,55,610,610)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         
         // Surprise Live
         title.(pages[\surpriseLive],"SURPRISE, PLASTICITE ET STABILITE",20,15);
@@ -1455,7 +1503,13 @@ HPTransformerStudio : Object {
          if(child.isKindOf(TextView),{child.background_(Color(0.96,0.97,0.98));child.stringColor_(Color.black);child.font_(Font.default.size_(12));child.refresh});
          if(child.isKindOf(StaticText),{child.stringColor_(Color.white)});
          if(child.isKindOf(TextField),{child.background_(Color.white);child.stringColor_(Color.black)});
-         if(child.isKindOf(NumberBox),{child.background_(Color.white);child.stringColor_(Color.black)});
+         if(child.isKindOf(NumberBox),{
+          child.background_(Color.white);
+          child.stringColor_(Color.black);
+          child.normalColor_(Color.black);
+          child.typingColor_(Color(0.09,0.42,0.58));
+          child.refresh
+         });
          if(child.isKindOf(PopUpMenu),{child.background_(Color.white);child.stringColor_(Color.black)})
         })});
         
@@ -1483,14 +1537,7 @@ HPTransformerStudio : Object {
           memoryCount:(lastStatus[\memoryCount]?0), replayCount:(lastStatus[\replayCount]?0),
           memoryRecall:(lastStatus[\memoryRecall]?0), memoryNovelty:(lastStatus[\memoryNovelty]?0),
           memoryWriteScore:(lastStatus[\memoryWriteScore]?0), replayLoss:(lastStatus[\replayLoss]?0),
-          protectionScalar:(lastStatus[\protectionScalar]?0),
-          adaptiveEnabled:(lastStatus[\adaptiveInterferenceEnabled]?false),
-          adaptiveInterferenceEMA:(lastStatus[\adaptiveInterferenceEMA]?0),
-          adaptiveReplayRate:(lastStatus[\adaptiveReplayRate]?0),
-          adaptiveThreshold:(lastStatus[\adaptiveInterferenceThreshold]?0),
-          adaptiveReplayBoost:(lastStatus[\adaptiveReplayBoost]?0),
-          adaptiveAdjustments:(lastStatus[\adaptiveInterferenceAdjustments]?0),
-          memoryImportance:(lastStatus[\memoryImportance]?[]),
+          protectionScalar:(lastStatus[\protectionScalar]?0), memoryImportance:(lastStatus[\memoryImportance]?[]),
           memoryAge:(lastStatus[\memoryAge]?[]), memoryUsage:(lastStatus[\memoryUsage]?[])
          ).asCompileString);
          surpriseLiveText.string_((
@@ -1503,7 +1550,7 @@ HPTransformerStudio : Object {
          oscUpdateStatus.value;
          if(activePage==\graphs,{graphView.refresh});if(activePage==\heatmaps,{heatView.refresh})})};
         routine=Routine({while({running},{{refresh.value}.defer;rate.wait})}).play(AppClock);
-        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});showPage.(\dashboard);addLog.("Studio Pro V8.4.0 pour HPtransformerRT V30.1.5 ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
+        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});showPage.(\dashboard);addLog.("Studio Pro V8.4.1 pour HPtransformerRT V30.1.5 ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
     }
 }
 
