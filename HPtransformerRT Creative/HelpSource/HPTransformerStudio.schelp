@@ -1,0 +1,146 @@
+TITLE:: HPTransformerStudio
+SUMMARY:: Studio Creative Realtime V9.0.0 avec Live Concert, gouverneur CPU et Mode Scene
+CATEGORIES:: Libraries>HPTransformer, GUI, Machine Learning
+RELATED:: Classes/HPtransformerRT
+
+DESCRIPTION::
+HPTransformerStudio V9.0.0 pilote HPtransformerRT V31.0.2 Creative Realtime sous SuperCollider 3.14. Le Studio conserve les fonctions du Studio Classic et ajoute le preset Creative RT - Live Concert, un affichage des mesures temporelles et un gouverneur CPU a quatre niveaux.
+
+CLASSMETHODS::
+
+METHOD:: new
+Cree un Studio associe a un moteur.
+
+ARGUMENT:: transformer
+Instance de HPtransformerRT. Si nil, le Studio cree un moteur 8 x 8.
+
+ARGUMENT:: externalTransformerKey
+Cle de synchronisation externe. Defaut : code::\hpTR::.
+
+RETURNS::
+Une instance de HPTransformerStudio.
+
+INSTANCEMETHODS::
+
+METHOD:: front
+Construit et affiche la fenetre.
+
+RETURNS::
+Le Studio.
+
+METHOD:: close
+Ferme la fenetre et les routines associees.
+
+RETURNS::
+Le Studio.
+
+METHOD:: attachControlBus
+Attache un Bus de controle. Utiliser 8 canaux avec le profil par defaut.
+
+ARGUMENT:: bus
+Bus.control de sortie.
+
+RETURNS::
+Le Studio.
+
+METHOD:: detachControlBus
+Detache le bus de controle.
+
+RETURNS::
+Le Studio.
+
+SECTION:: Demarrage
+
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.setCreativeLiveConcert;
+~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+)
+::
+
+SECTION:: Preset Creative RT Live Concert
+
+Dans le Dashboard, choisir Creative RT - Live Concert puis Appliquer.
+
+LIST::
+## Traitement OSC : 20 Hz.
+## Learn/N : 6.
+## Learning : ON.
+## Generation : ON.
+## Details OSC : OFF.
+## RCU : OFF.
+## noveltyThreshold : 0.018.
+## autonomy : 0.35.
+## residualMix : 0.82.
+## maxDelta : 0.42.
+## changeDensity : 0.45.
+::
+
+SECTION:: Gouverneur CPU
+Le bouton CPU AUTO ON se trouve dans la page Temps reel / Bus / OSC. Le gouverneur additionne les moyennes temporelles de learnEvent et generateStep et compare la charge au budget configure.
+
+LIST::
+## Niveau 0 : 20 Hz, Learn/N 6, replay leger et fenetre 4.
+## Niveau 1 : Learn/N 8 et replay OFF.
+## Niveau 2 : 15 Hz, Learn/N 12, rappels OFF et fenetre 2.
+## Niveau 3 : 12 Hz, Learn/N 16 et apprentissage suspendu.
+::
+
+NOTE::
+Lorsque le niveau 3 coupe l'apprentissage, reactiver Learning manuellement apres une longue surcharge si le gouverneur ne l'a pas encore restaure dans votre version de travail.
+::
+
+SECTION:: Mode Scene
+Le Mode Scene suspend les affichages et journaux visuels sans arreter OSC, generateStep, ControlBus ou la sortie reseau.
+
+LIST::
+## La routine periodique de refresh est suspendue.
+## Details OSC est force sur OFF.
+## Les graphes, heatmaps, diagnostics et voyants cessent d'etre actualises.
+## Le worker OSC et le traitement musical continuent.
+::
+
+SECTION:: Suivi direct
+Le suivi direct reste un post-traitement du Studio applique apres generateStep. Pour evaluer la sortie Creative Realtime brute, commencer avec 0.
+
+CODE::
+0.12,0.06,0.03,0.12,0.06,0.03,0.12,0.06
+::
+
+SECTION:: OSC 8D
+
+CODE::
+n = NetAddr("127.0.0.1", 57120);
+n.sendMsg("/hptransformer/input", 0.20,0.40,0.70,0.50,0.30,0.80,0.60,0.10);
+::
+
+SECTION:: ControlBus 8D
+
+CODE::
+~bus = Bus.control(s, 8);
+~studio.attachControlBus(~bus);
+::
+
+SECTION:: Strategie de concert
+
+NUMBEREDLIST::
+## Creer un moteur neuf et appliquer Creative RT - Live Concert.
+## Commencer avec Suivi direct = 0.
+## Verifier 20 Hz, Learn/N = 6, Details OFF et CPU AUTO ON.
+## Activer le Mode Scene apres les reglages.
+## Tester pendant au moins 20 a 30 minutes avant le concert.
+## Si la reponse est trop fidele, augmenter autonomy progressivement.
+## Si la charge reste elevee, utiliser Classic Ultra CPU ou diminuer le traitement OSC.
+::
+
+SECTION:: Diagnostic
+
+CODE::
+~hpTR.creativeRealtimeStatus.postln;
+~hpTR.statusSilent.postln;
+::
+
+NOTE::
+Cette aide correspond au Studio V9.0.0 et au moteur V31.0.2 SC314. Ne pas compiler simultanement une autre definition de HPTransformerStudio ou HPtransformerRT.
+::

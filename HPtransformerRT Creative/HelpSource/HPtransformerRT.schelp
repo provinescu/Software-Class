@@ -1,0 +1,228 @@
+TITLE:: HPtransformerRT
+SUMMARY:: Transformer vectoriel Creative Realtime 8D pour SuperCollider 3.14
+CATEGORIES:: Libraries>HPTransformer, Machine Learning
+RELATED:: Classes/HPTransformerStudio
+
+DESCRIPTION::
+HPtransformerRT V31.0.2 Creative Realtime est un moteur 8D destine a l'apprentissage en ligne et a la generation musicale interactive sous SuperCollider 3.14. Cette version conserve le chemin Classic Musical RT et ajoute trois fonctions : apprentissage conditionne par la nouveaute, sortie residuelle avec macro d'autonomie, et mesures temporelles utilisables par le gouverneur CPU du Studio.
+
+Le profil structurel par defaut utilise 8 entrees, 8 sorties, une fenetre rapide de 8, une memoire longue de 16, une dimension cachee de 32, 4 tetes de taille 8 et 4 experts.
+
+CLASSMETHODS::
+
+METHOD:: new
+Cree un moteur HPtransformerRT.
+
+ARGUMENT:: inputSize
+Nombre de dimensions d'entree. Defaut : 8.
+
+ARGUMENT:: outputSize
+Nombre de dimensions de sortie. Defaut : 8. outputSize doit etre inferieur ou egal a inputSize.
+
+ARGUMENT:: windowSize
+Taille maximale du contexte rapide. Defaut : 8.
+
+ARGUMENT:: longMemorySize
+Capacite de memoire longue et de replay. Defaut : 16.
+
+ARGUMENT:: hiddenSize
+Dimension cachee. Defaut : 32.
+
+ARGUMENT:: numHeads
+Nombre de tetes. Defaut : 4.
+
+ARGUMENT:: headSize
+Taille de chaque tete. Defaut : 8.
+
+ARGUMENT:: numExperts
+Nombre d'experts. Defaut : 4.
+
+RETURNS::
+Une instance de HPtransformerRT.
+
+INSTANCEMETHODS::
+
+METHOD:: learnEvent
+Apprend un evenement lorsque le controle de nouveaute l'autorise. Si l'evenement est trop proche du dernier evenement appris et que l'intervalle maximal n'est pas atteint, la mise a jour est ignoree.
+
+ARGUMENT:: event
+Vecteur courant, normalement 8 valeurs.
+
+RETURNS::
+La perte d'apprentissage ou 0.0 lorsqu'un evenement est ignore.
+
+METHOD:: predict
+Calcule une sortie sans apprentissage.
+
+ARGUMENT:: input
+Vecteur d'entree.
+
+ARGUMENT:: requestedWindowSize
+Fenetre facultative.
+
+ARGUMENT:: requestedVelocity
+Contexte de vitesse facultatif.
+
+RETURNS::
+Un vecteur de sortie.
+
+METHOD:: generateStep
+Genere une etape et applique la sortie Creative Realtime : delta borne, composante residuelle, autonomie et densite de changement.
+
+ARGUMENT:: input
+Vecteur d'entree.
+
+RETURNS::
+Un vecteur de outputSize valeurs.
+
+METHOD:: generate
+Genere une sequence autoregressive.
+
+ARGUMENT:: seed
+Vecteur initial.
+
+ARGUMENT:: count
+Nombre d'etapes.
+
+RETURNS::
+Un tableau de vecteurs.
+
+METHOD:: setCreativeLiveConcert
+Applique le profil Creative RT Live Concert : apprentissage par nouveaute, autonomie 0.35, sortie residuelle, replay faible, un rappel memoire, un rappel de trajectoire et RCU desactive.
+
+RETURNS::
+La configuration runtime.
+
+METHOD:: setCreativeAutonomy
+Regle la macro d'autonomie et coordonne temperature d'attention, deltaScale, exploration et bruit de diversite.
+
+ARGUMENT:: amount
+Valeur entre 0 et 1.
+
+RETURNS::
+La valeur bornee.
+
+METHOD:: creativeNovelty
+Mesure la distance moyenne absolue entre l'entree et le dernier evenement effectivement appris.
+
+ARGUMENT:: input
+Vecteur a comparer.
+
+RETURNS::
+Une valeur entre 0 et 1.
+
+METHOD:: shouldLearnCreative
+Determine si un evenement doit etre appris en fonction du seuil, des intervalles minimal et maximal et du nombre d'evenements ecoules.
+
+ARGUMENT:: input
+Vecteur entrant.
+
+RETURNS::
+true ou false.
+
+METHOD:: applyCreativeOutput
+Construit une sortie residuelle bornee et la melange avec une composante absolue selon l'autonomie et residualMix.
+
+ARGUMENT:: input
+Vecteur d'entree.
+
+ARGUMENT:: generated
+Sortie brute du modele.
+
+RETURNS::
+Sortie Creative Realtime.
+
+METHOD:: creativeRealtimeStatus
+Retourne les compteurs de nouveaute, les parametres creatifs et les mesures de duree de learnEvent et generateStep.
+
+RETURNS::
+Un Event.
+
+METHOD:: setParameter
+Modifie un parametre runtime.
+
+ARGUMENT:: name
+Symbole du parametre.
+
+ARGUMENT:: value
+Nouvelle valeur.
+
+ARGUMENT:: post
+Affichage dans la Post window.
+
+RETURNS::
+La valeur effective.
+
+METHOD:: statusSilent
+Retourne un diagnostic complet sans affichage automatique.
+
+RETURNS::
+Un Event.
+
+SECTION:: Demarrage Creative Live Concert
+
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.setCreativeLiveConcert;
+)
+::
+
+SECTION:: Apprentissage et generation 8D
+
+CODE::
+~input = [0.20,0.40,0.70,0.50,0.30,0.80,0.60,0.10];
+~hpTR.learnEvent(~input);
+~output = ~hpTR.generateStep(~input);
+::
+
+SECTION:: Parametres Creative Realtime
+
+LIST::
+## noveltyLearningEnabled : active ou desactive le filtre de nouveaute.
+## noveltyThreshold : distance minimale pour apprendre.
+## noveltyMinInterval : nombre minimal d'evenements entre deux apprentissages.
+## noveltyMaxInterval : force un apprentissage apres cet intervalle.
+## noveltyAdaptiveStrength : augmente temporairement le learningRate selon la nouveaute.
+## autonomy : degre d'independance musicale, entre 0 et 1.
+## residualMix : importance de la composante residuelle.
+## maxDelta : amplitude maximale du delta par dimension.
+## changeDensity : probabilite d'accepter une transformation importante.
+::
+
+SECTION:: Reglage de l'autonomie
+
+CODE::
+~hpTR.setCreativeAutonomy(0.20); // dialogue fidele
+~hpTR.setCreativeAutonomy(0.35); // concert equilibre
+~hpTR.setCreativeAutonomy(0.55); // improvisation partagee
+~hpTR.setCreativeAutonomy(0.75); // comportement autonome
+::
+
+SECTION:: Diagnostic Creative Realtime
+
+CODE::
+~hpTR.creativeRealtimeStatus.postln;
+::
+
+Le diagnostic contient notamment lastNovelty, learnedByNovelty, skippedByNovelty, learnEMAms, generateEMAms, learnMaxMs et generateMaxMs.
+
+SECTION:: Reglage manuel
+
+CODE::
+~hpTR.setParameters((
+    noveltyLearningEnabled: true,
+    noveltyThreshold: 0.018,
+    noveltyMinInterval: 1,
+    noveltyMaxInterval: 12,
+    noveltyAdaptiveStrength: 0.35,
+    autonomy: 0.35,
+    residualMix: 0.82,
+    maxDelta: 0.42,
+    changeDensity: 0.45
+), false);
+::
+
+NOTE::
+Cette aide correspond a HPtransformerRT V31.0.2 SC314. Les symboles SuperCollider utilisent un seul antislash, par exemple code::\noveltyThreshold:: et code::\autonomy::.
+::
