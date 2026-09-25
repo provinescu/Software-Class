@@ -1,0 +1,235 @@
+TITLE:: HPtransformerRT
+SUMMARY:: Transformer vectoriel adaptatif Classic Musical RT 8D pour apprentissage et generation en temps reel
+CATEGORIES:: Libraries>HPTransformer, Machine Learning
+RELATED:: Classes/HPTransformerStudio
+
+DESCRIPTION::
+HPtransformerRT V30.3.0 Classic Musical RT est une version orientee musique interactive et faible latence. Le chemin principal utilise directement le vecteur nettoye, sans normalisation Advanced RT, sans historique multiresolution et sans snapshots de stabilite.
+
+Le profil structurel par defaut utilise 8 entrees, 8 sorties, une fenetre rapide de 8, une memoire longue de 16, une dimension cachee de 32, 4 tetes de taille 8 et 4 experts.
+
+Les mecanismes classiques restent disponibles : attention multi-tetes, melange d'experts, memoire longue, memoire de trajectoire, replay, surprise, protection, AutoTune, MetaLearn et RCU. Les profils Classic desactivent AutoTune, MetaLearn et RCU afin de reduire la charge et de conserver un comportement musical direct.
+
+CLASSMETHODS::
+
+METHOD:: new
+Cree un moteur HPtransformerRT.
+
+ARGUMENT:: inputSize
+Nombre de dimensions d'entree. Valeur par defaut : 8.
+
+ARGUMENT:: outputSize
+Nombre de dimensions de sortie. Valeur par defaut : 8. outputSize doit etre inferieur ou egal a inputSize.
+
+ARGUMENT:: windowSize
+Taille maximale du contexte d'attention rapide. Valeur par defaut : 8.
+
+ARGUMENT:: longMemorySize
+Capacite de la memoire longue et du replay. Valeur par defaut : 16.
+
+ARGUMENT:: hiddenSize
+Dimension cachee. Valeur par defaut : 32.
+
+ARGUMENT:: numHeads
+Nombre de tetes d'attention. Valeur par defaut : 4.
+
+ARGUMENT:: headSize
+Dimension de chaque tete. Valeur par defaut : 8.
+
+ARGUMENT:: numExperts
+Nombre d'experts. Valeur par defaut : 4.
+
+RETURNS::
+Une instance de HPtransformerRT.
+
+INSTANCEMETHODS::
+
+METHOD:: learnEvent
+Apprend un evenement entrant. Le moteur construit une paire temporelle entre l'evenement precedent et l'evenement courant, puis met a jour le modele et les mecanismes classiques actifs.
+
+ARGUMENT:: event
+Vecteur courant. Avec le profil par defaut, le vecteur doit contenir 8 valeurs.
+
+RETURNS::
+La perte d'apprentissage.
+
+METHOD:: predict
+Calcule une sortie sans apprentissage.
+
+ARGUMENT:: input
+Vecteur d'entree.
+
+ARGUMENT:: requestedWindowSize
+Fenetre rapide facultative.
+
+ARGUMENT:: requestedVelocity
+Contexte de vitesse facultatif.
+
+RETURNS::
+Un vecteur de outputSize valeurs.
+
+METHOD:: generateStep
+Genere une etape a partir d'un vecteur d'entree. La sortie est la sortie brute du moteur. Le suivi direct du Studio n'est pas applique ici.
+
+ARGUMENT:: input
+Vecteur de depart.
+
+RETURNS::
+Un vecteur genere.
+
+METHOD:: generate
+Genere une sequence autoregressive.
+
+ARGUMENT:: seed
+Vecteur initial.
+
+ARGUMENT:: count
+Nombre d'etapes.
+
+RETURNS::
+Un tableau de vecteurs.
+
+METHOD:: setClassicMusicalDirect
+Applique un profil musical leger : apprentissage modere, replay faible, un rappel memoire, un rappel de trajectoire, fenetre de generation 4, temperature legerement ouverte et RCU desactive.
+
+RETURNS::
+La configuration runtime.
+
+METHOD:: setClassicUltraCPUFastLearn
+Applique le profil CPU minimal avec adaptation forte par evenement appris : replay nul, rappels memoire et trajectoire nuls, fenetre de generation 2, apprentissage et generation actifs, RCU desactive.
+
+RETURNS::
+La configuration runtime.
+
+METHOD:: setClassicGenerationOnly
+Applique un profil de generation seule : apprentissage externe desactive, replay nul, generation active et RCU desactive.
+
+RETURNS::
+La configuration runtime.
+
+METHOD:: setParameter
+Modifie un parametre runtime et le propage aux runtimes actifs lorsque cela est pertinent.
+
+ARGUMENT:: name
+Symbole du parametre.
+
+ARGUMENT:: value
+Nouvelle valeur.
+
+ARGUMENT:: post
+Affiche la modification si true.
+
+RETURNS::
+La valeur effective.
+
+METHOD:: setParameters
+Applique un dictionnaire ou un Event de parametres runtime.
+
+ARGUMENT:: settings
+Dictionnaire de reglages.
+
+ARGUMENT:: post
+Affiche les modifications si true.
+
+RETURNS::
+La configuration runtime.
+
+METHOD:: statusSilent
+Retourne un diagnostic complet sans ecrire dans la Post window.
+
+RETURNS::
+Un Event.
+
+METHOD:: enableUnifiedRCU
+Active le double runtime RCU. Les profils Classic le desactivent par defaut pour reduire la charge CPU.
+
+RETURNS::
+Le moteur.
+
+METHOD:: disableUnifiedRCU
+Desactive le double runtime RCU.
+
+RETURNS::
+Le moteur.
+
+SECTION:: Creation par defaut 8 x 8
+
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.config.postln;
+)
+::
+
+SECTION:: Creation explicite equivalente
+
+CODE::
+~hpTR = HPtransformerRT.new(
+    inputSize: 8,
+    outputSize: 8,
+    windowSize: 8,
+    longMemorySize: 16,
+    hiddenSize: 32,
+    numHeads: 4,
+    headSize: 8,
+    numExperts: 4
+);
+::
+
+SECTION:: Profil Classic Musical Direct
+
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.setClassicMusicalDirect;
+)
+::
+
+SECTION:: Profil Classic Ultra CPU
+
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.setClassicUltraCPUFastLearn;
+)
+::
+
+SECTION:: Apprentissage et generation 8D
+
+CODE::
+~input = [0.20,0.40,0.70,0.50,0.30,0.80,0.60,0.10];
+~hpTR.learnEvent(~input);
+~output = ~hpTR.generateStep(~input);
+::
+
+SECTION:: Decimation sans Studio
+La methode setClassicUltraCPUFastLearn configure le moteur, mais la decimation Learn/N appartient au Studio ou au programme hote.
+
+CODE::
+(
+~counter = 0;
+~process = { |input|
+    ~counter = ~counter + 1;
+    if((~counter % 4) == 0, {
+        ~hpTR.learnEvent(input);
+    });
+    ~hpTR.generateStep(input);
+};
+)
+::
+
+SECTION:: Suivi direct avec appels directs
+Le suivi direct n'est pas integre a generateStep. Pour reproduire le suivi du Studio, appliquer le melange apres la generation.
+
+CODE::
+~mix = [0.10,0.05,0.02,0.10,0.05,0.02,0.10,0.05];
+~raw = ~hpTR.generateStep(~input);
+~followed = Array.fill(~raw.size, { |i|
+    var amount = ~mix.wrapAt(i).clip(0.0, 1.0);
+    ((~raw[i] * (1.0 - amount)) + (~input[i] * amount)).clip(0.0, 1.0);
+});
+::
+
+NOTE::
+Les anciens parametres de normalisation, multiresolution et garde de stabilite peuvent encore exister pour la compatibilite des archives, mais le chemin Classic Musical RT les contourne. Ils ne doivent pas etre utilises pour regler cette branche.
+::

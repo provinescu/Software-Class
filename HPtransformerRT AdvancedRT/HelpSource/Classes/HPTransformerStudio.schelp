@@ -1,0 +1,113 @@
+TITLE:: HPTransformerStudio
+SUMMARY:: Studio 8D Intel Ultra CPU, page Advanced RT et Mode Scene
+CATEGORIES:: Libraries>HPTransformer, GUI, Machine Learning
+RELATED:: Classes/HPtransformerRT
+
+DESCRIPTION::
+HPTransformerStudio V8.6.3 pilote HPtransformerRT V30.2.3. Il propose Dashboard, controles runtime, page Advanced RT, parametres manuels, morphing, generation, memoire, surprise, OSC, ControlBus, jeux complets, graphes, heatmaps, presets, RCU, sessions et journaux.
+
+Le Studio demarre avec un worker OSC a 20 Hz, Learn/N = 8 et un rafraichissement visuel de 0.75 seconde. Le Mode Scene suspend les interrogations et affichages periodiques tout en maintenant OSC, apprentissage, generation, ControlBus et sortie reseau.
+
+CLASSMETHODS::
+METHOD:: new
+Cree un Studio associe a un moteur.
+ARGUMENT:: transformer
+Instance de HPtransformerRT. Si nil, cree un moteur 8 x 8 par defaut.
+ARGUMENT:: externalTransformerKey
+Cle externe. Defaut : code::\hpTR::.
+RETURNS::
+Une instance de HPTransformerStudio.
+
+INSTANCEMETHODS::
+METHOD:: front
+Construit et affiche la fenetre.
+RETURNS::
+Le Studio.
+
+METHOD:: close
+Ferme la fenetre et les routines associees.
+RETURNS::
+Le Studio.
+
+METHOD:: attachControlBus
+Attache un bus de controle. Pour le profil par defaut, utiliser 8 canaux.
+ARGUMENT:: bus
+Bus.control.
+RETURNS::
+Le Studio.
+
+METHOD:: detachControlBus
+Detache le bus.
+RETURNS::
+Le Studio.
+
+SECTION:: Demarrage
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+)
+::
+
+SECTION:: Presets Intel
+LIST::
+## Intel Musical Direct : base musicale legere, replay faible, rappels limites, Advanced RT et RCU OFF, 20 Hz, Learn/N = 8.
+## Intel Generation Only : generation active, apprentissage externe OFF, replay nul, 20 Hz, Learn/N = 16.
+## Intel Ultra CPU - Apprentissage rapide : CPU minimal, adaptation forte par evenement appris, replay et rappels nuls, fenetre de generation 2, 20 Hz, Learn/N = 4.
+::
+
+SECTION:: Mode Scene
+Le bouton du Dashboard alterne entre Mode Controle et Mode Scene.
+LIST::
+## Mode Controle : diagnostics, graphes, heatmaps, journaux et voyants sont actualises.
+## Mode Scene : la routine periodique de refresh n'est plus appelee, les journaux visuels et Details OSC sont suspendus.
+## OSC, worker, learnEvent, generateStep, sortie reseau et ControlBus continuent.
+::
+Au retour en Mode Controle, un rafraichissement unique resynchronise l'interface.
+
+SECTION:: Page Advanced RT
+La page contient 3 interrupteurs, 7 sliders, 6 champs entiers et un diagnostic. Pour Intel Ultra CPU, laisser Normalisation, Multiresolution et Stabilite sur OFF.
+LIST::
+## Normalisation : Decay, Clip, Blend, Warmup.
+## Multiresolution : gains moyen et lent, fenetres, diviseurs.
+## Stabilite : limite de perte, backoff et intervalle de snapshot.
+::
+
+SECTION:: Reglage Ultra CPU recommande
+LIST::
+## Traitement OSC : 20 Hz.
+## Learn/N : 4.
+## Details : OFF.
+## Suivi direct : 0 pour evaluer le moteur brut.
+## Advanced RT : tout OFF.
+## Mode Scene : actif apres le reglage.
+::
+
+SECTION:: Suivi par dimension
+Le suivi melange la sortie du moteur et l'entree apres generateStep dans la chaine OSC du Studio.
+CODE::
+output[i] = (output[i] * (1.0 - mix[i])) + (input[i] * mix[i]);
+::
+Exemple 8D leger :
+CODE::
+0.10,0.05,0.02,0.10,0.05,0.02,0.10,0.05
+::
+
+SECTION:: OSC 8D
+CODE::
+n = NetAddr("127.0.0.1", 57120);
+n.sendMsg("/hptransformer/input", 0.20,0.40,0.70,0.50,0.30,0.80,0.60,0.10);
+::
+
+SECTION:: ControlBus 8D
+CODE::
+~bus = Bus.control(s, 8);
+~studio.attachControlBus(~bus);
+::
+
+SECTION:: Sessions
+Les sessions sauvegardent le moteur, les parametres runtime, l'etat RCU, les reglages OSC, le suivi direct, les graphes et journaux. Apres chargement, le moteur et la variable externe sont resynchronises.
+
+NOTE::
+Le Mode Scene reduit la charge de l'interface, mais ne diminue pas le cout interne d'un appel a learnEvent. Pour reduire ce cout, augmenter Learn/N ou diminuer Traitement Hz.
+::

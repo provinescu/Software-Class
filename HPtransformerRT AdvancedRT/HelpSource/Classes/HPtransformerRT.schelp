@@ -1,0 +1,158 @@
+TITLE:: HPtransformerRT
+SUMMARY:: Transformer vectoriel adaptatif 8D, profils Intel Musical RT et Ultra CPU
+CATEGORIES:: Libraries>HPTransformer, Machine Learning
+RELATED:: Classes/HPTransformerStudio
+
+DESCRIPTION::
+HPtransformerRT V30.2.3 est un moteur vectoriel compact pour apprentissage en ligne, prediction et generation dans SuperCollider. Le profil structurel par defaut utilise 8 entrees et 8 sorties, une fenetre rapide de 8, une memoire longue de 16, une dimension cachee de 32, 4 tetes de taille 8 et 4 experts.
+
+La variante Intel Ultra CPU conserve les fonctions Advanced RT mais les laisse desactivees par defaut. Le chemin d'entree evite les statistiques et les historiques lorsque la normalisation et la multiresolution sont desactivees.
+
+CLASSMETHODS::
+METHOD:: new
+Cree un moteur. Sans argument, le profil par defaut est 8 x 8.
+ARGUMENT:: inputSize
+Nombre d'entrees. Defaut : 8.
+ARGUMENT:: outputSize
+Nombre de sorties. Defaut : 8. Doit etre inferieur ou egal a inputSize.
+ARGUMENT:: windowSize
+Fenetre d'attention rapide. Defaut : 8.
+ARGUMENT:: longMemorySize
+Capacite de memoire longue et replay. Defaut : 16.
+ARGUMENT:: hiddenSize
+Dimension cachee. Defaut : 32.
+ARGUMENT:: numHeads
+Nombre de tetes. Defaut : 4.
+ARGUMENT:: headSize
+Taille de chaque tete. Defaut : 8.
+ARGUMENT:: numExperts
+Nombre d'experts. Defaut : 4.
+RETURNS::
+Une instance de HPtransformerRT.
+
+INSTANCEMETHODS::
+METHOD:: learnEvent
+Apprend un evenement. Cette methode actualise les fonctions Advanced RT uniquement lorsqu'elles sont actives.
+ARGUMENT:: event
+Vecteur courant, normalement 8 valeurs.
+RETURNS::
+La perte d'apprentissage.
+
+METHOD:: generateStep
+Genere une etape. Utilise la normalisation et les caches multiresolution seulement lorsqu'ils sont actifs.
+ARGUMENT:: input
+Vecteur d'entree.
+RETURNS::
+Un vecteur de outputSize valeurs.
+
+METHOD:: predict
+Calcule une sortie sans apprentissage.
+ARGUMENT:: input
+Vecteur d'entree.
+ARGUMENT:: requestedWindowSize
+Fenetre facultative.
+ARGUMENT:: requestedVelocity
+Vitesse facultative.
+RETURNS::
+Un vecteur de sortie.
+
+METHOD:: generate
+Genere une sequence autoregressive.
+ARGUMENT:: seed
+Vecteur initial.
+ARGUMENT:: count
+Nombre d'etapes.
+RETURNS::
+Un tableau de vecteurs.
+
+METHOD:: setIntelMusicalDirect
+Applique un profil musical leger : Advanced RT, AutoTune, MetaLearn et RCU desactives, replay faible, rappel limite, generation variee.
+RETURNS::
+La configuration runtime.
+
+METHOD:: setIntelGenerationOnly
+Applique un profil de generation seule sans apprentissage externe ni replay.
+RETURNS::
+La configuration runtime.
+
+METHOD:: setIntelUltraCPUFastLearn
+Applique le profil CPU minimal avec adaptation rapide : replay et rappels desactives, fenetre de generation 2, RCU et Advanced RT desactives. La decimation Learn/N reste geree par le Studio ou le programme hote.
+RETURNS::
+La configuration runtime.
+
+METHOD:: setAdvancedRealtimeOff
+Desactive normalisation, multiresolution et garde de stabilite.
+RETURNS::
+La configuration runtime.
+
+METHOD:: setParameter
+Modifie un parametre runtime.
+ARGUMENT:: name
+Symbole du parametre.
+ARGUMENT:: value
+Valeur.
+ARGUMENT:: post
+Affichage facultatif.
+RETURNS::
+La valeur effective.
+
+METHOD:: advancedRealtimeStatus
+Retourne l'etat de la normalisation, des caches et de la garde de stabilite.
+RETURNS::
+Un Event.
+
+METHOD:: statusSilent
+Retourne un diagnostic complet sans Post window.
+RETURNS::
+Un Event.
+
+SECTION:: Demarrage Intel Musical Direct
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.setIntelMusicalDirect;
+)
+::
+
+SECTION:: Demarrage Ultra CPU
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~hpTR.setIntelUltraCPUFastLearn;
+)
+::
+
+SECTION:: Apprentissage et generation 8D
+CODE::
+~x = [0.20,0.40,0.70,0.50,0.30,0.80,0.60,0.10];
+~hpTR.learnEvent(~x);
+~y = ~hpTR.generateStep(~x);
+::
+
+SECTION:: Decimation sans Studio
+CODE::
+(
+~counter = 0;
+~process = { |x|
+    ~counter = ~counter + 1;
+    if((~counter % 4) == 0, { ~hpTR.learnEvent(x) });
+    ~hpTR.generateStep(x);
+};
+)
+::
+
+SECTION:: Advanced RT
+Les fonctions Advanced RT existent toujours mais sont OFF par defaut dans cette edition.
+CODE::
+~hpTR.setParameters((
+    normalizationEnabled: true,
+    normalizationBlend: 0.03,
+    normalizationWarmup: 64,
+    multiResolutionEnabled: false,
+    stabilityGuardEnabled: false
+), false);
+::
+
+NOTE::
+Le suivi direct global ou par dimension n'est pas applique par learnEvent ou generateStep. Il appartient a la chaine de sortie du Studio. Pour un appel direct, melanger la sortie avec l'entree apres generateStep.
+::

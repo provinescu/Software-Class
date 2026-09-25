@@ -1,5 +1,5 @@
 /*
-HPTransformerStudio V8.4.1 OSC temps reel et profils d usage for HPtransformerRT V30.1.5 - SuperCollider 3.14
+HPTransformerStudio V8.7.3 OSC temps reel et profils d usage for HPtransformerRT V30.3.0 - SuperCollider 3.14
 High-contrast GUI update: white labels on dark panels, black text on white fields.
 New preset families: focused attention, specialized experts, precise trajectory, prudent RT V30.
 Intel 2012 real-time presets: Ultra light, Balanced, Memory reinforced, Generation only.
@@ -7,17 +7,19 @@ Dark palette compatibility: local light root palette and explicit NumberBox colo
 */
 
 HPTransformerStudio : Object {
-    var <transformer, <window, <refreshRoutine, <controlBus;
+    var <transformer, <window, <refreshRoutine, <controlBus, <externalTransformerKey;
 
-    *new { |transformer|
-        ^super.new.init(transformer)
+    *new { |transformer, externalTransformerKey=\hpTR|
+        ^super.new.init(transformer, externalTransformerKey)
     }
 
-    init { |aTransformer|
+    init { |aTransformer, anExternalTransformerKey=\hpTR|
         transformer = aTransformer;
         if(transformer.isNil) {
             transformer = HPtransformerRT.new;
         };
+        externalTransformerKey = anExternalTransformerKey.asSymbol;
+        topEnvironment[externalTransformerKey] = transformer;
         ^this
     }
 
@@ -45,10 +47,10 @@ HPTransformerStudio : Object {
     detachControlBus { controlBus=nil; ^this }
     controlBusConnected { ^controlBus.notNil }
     build {
-        // HPTransformer Studio Pro V8.4.1 PROFILS TEMPS REEL / HORS TEMPS REEL - HPtransformerRT V30.1.5 - SuperCollider 3.14
+        // HPTransformer Studio Pro V8.7.3 PROFILS TEMPS REEL / HORS TEMPS REEL - HPtransformerRT V30.3.0 - SuperCollider 3.14
         // Fenetre unique : Dashboard, Controls, Generation, Graphs, Heatmaps,
         // Generation, Memoire, Surprise, AutoTune et MetaLearn Presets, Snapshots RCU, Logs.
-        var w, pages, pageButtons, activePage, routine, running=true, rate=0.35;
+        var w, pages, pageButtons, activePage, routine, running=true, rate=0.75;
         var uiScale=0.86, uiRect, scrollView, uiRoot;
         var graphDrawScale=0.82, graphRect, heatDrawScale=0.82, heatPoint, heatRect;
         var statusText, graphView, heatView, autoText, metaText, rcuText, logView;
@@ -58,17 +60,19 @@ HPTransformerStudio : Object {
         var oscInputPathField, oscOutputPathField, oscModeMenu, oscLearnButton, oscSendButton, oscBusButton;
         var oscRunning=false, oscLearning=true, oscSendOutput=true, oscBusOutput=true, oscDef=nil, oscTarget=nil;
         var oscMode=0, oscOutputPath="/hptransformer/output", oscFollowMix=0.35, oscFollowMixBox;
+        var oscFollowMixVector=nil, oscFollowMixVectorField, parseFollowMixVector;
         var oscInCount=0, oscOutCount=0, oscErrorCount=0, oscInRate=0.0, oscOutRate=0.0;
         var oscLastInCount=0, oscLastOutCount=0, oscLastRateTime, oscLastInput=nil, oscLastOutput=nil;
         var oscEventLines=List.new, oscStart, oscStop, oscRecordEvent, oscUpdateStatus, oscFlushEvents;
         // File OSC bornee a une valeur : la valeur la plus recente remplace
         // toute valeur non encore traitee. La latence ne peut plus s'accumuler.
         var oscProcessRoutine=nil, oscPendingInput=nil, oscBusy=false;
-        var oscProcessedCount=0, oscDroppedCount=0, oscProcessHz=50.0, oscLearningDivider=2;
+        var oscProcessedCount=0, oscDroppedCount=0, oscProcessHz=20.0, oscLearningDivider=8;
         var oscDetailedEvents=false, oscEventsDirty=false;
         var oscProcessHzBox, oscLearningDividerBox, oscDetailedButton, oscProcessInput;
         var logs=List.new, loss=List.new, surprise=List.new, entropy=List.new;
         var memRecall=List.new, trajRecall=List.new, lastStatus, widgets=IdentityDictionary.new;
+        var stateIndicators=IdentityDictionary.new,makeIndicator,refreshStateIndicators;
         var lossEMA=List.new,surpriseEMAPlot=List.new,entropyEMA=List.new,memRecallEMA=List.new,trajRecallEMA=List.new;
         var graphSmoothAlpha=0.10,lossScaleMode=1,metricScaleMode=1;
         var lossScaleMenu,metricScaleMenu,smoothingBox,addGraphSample,clearGraphs;
@@ -80,7 +84,7 @@ HPTransformerStudio : Object {
         var autoNames, autoPresets, metaNames, metaPresets;
         var diagnosticPreset, safeReturnPreset, oscCalibrationPreset, lowCpuPreset;
         var genNames, genPresets, memoryNames, memoryPresets, surpriseNames, surprisePresets;
-        var setNames, setPresets, setDescriptions, setFollowMixes, setMenu, setDescriptionView;
+        var setNames, setPresets, setDescriptions, setFollowMixes, setFollowMixVectors, setMenu, setDescriptionView;
         var applyConfigurationSet, exportCurrentSet;
         var generalMenu, autoMenu, metaMenu, seedField, countBox, outputView;
         var genMenu, memoryMenu, surpriseMenu;
@@ -89,9 +93,11 @@ HPTransformerStudio : Object {
         var refreshMorphParameterMenu,selectedMorphParameter;
         var startMorph,stopSelectedMorph,refreshMorphStatus;
         var manualParamsEditor, manualParamsStatus;
+        var displaysEnabled=true, logCollectionEnabled=true, displayToggleButton, setDisplayMode;
         var applyManualParameters, loadRuntimeIntoEditor, formatRuntimeConfig;
         var saveCompleteSession, loadCompleteSession, restoreGuiFromSession;
-        
+        var repairLoadedTransformer,refreshAfterSessionLoad,refreshButtonsAndMenus;
+
         oscLastRateTime=Main.elapsedTime;
         // Mode compact pour ecran 13 pouces. Toutes les vues Qt utilisent la meme echelle.
         uiRect={|x,y,width,height| Rect(x*uiScale,y*uiScale,width*uiScale,height*uiScale)};
@@ -99,9 +105,14 @@ HPTransformerStudio : Object {
         graphRect={|x,y,width,height| Rect(x*graphDrawScale,y*graphDrawScale,width*graphDrawScale,height*graphDrawScale)};
         heatPoint={|x,y| Point(x*heatDrawScale,y*heatDrawScale)};
         heatRect={|x,y,width,height| Rect(x*heatDrawScale,y*heatDrawScale,width*heatDrawScale,height*heatDrawScale)};
-        
-        addLog={|msg| var x=Date.localtime.stamp++"  "++msg; logs.add(x);
-         while({logs.size>800},{logs.removeAt(0)}); if(logView.notNil,{logView.string_(logs.join(Char.nl))}) };
+
+        addLog={|msg| var x;
+         if(logCollectionEnabled,{
+          x=Date.localtime.stamp++"  "++msg;logs.add(x);
+          while({logs.size>800},{logs.removeAt(0)});
+          if(displaysEnabled and:{logView.notNil},{logView.string_(logs.join(Char.nl))})
+         })
+        };
         title={|p,text,x,y,wid=500| StaticText(p,uiRect.(x,y,wid,24)).string_(text)
          .font_(Font.default.boldVariant.size_(15)).stringColor_(Color.cyan(0.85)) };
         navIdleColor=Color.grey(0.24);
@@ -137,7 +148,7 @@ HPTransformerStudio : Object {
          (if(negative,{"-"},{""}))++integerPart.asString++
           if(decimals>0,{"."++fractionString},{""})
         };
-        
+
         addSlider={|p,label,param,spec,x,y,wid=550,decimals=6|
          var container,labelView,sliderView,valueField,totalW,totalH,labelW,numberW,gap,sliderW,currentValue,setExactValue,widget;
          totalW=wid*uiScale;totalH=36*uiScale;labelW=145*uiScale;
@@ -172,12 +183,61 @@ HPTransformerStudio : Object {
          setExactValue.(currentValue,false);
          widget=(view:container,labelView:labelView,sliderView:sliderView,
           numberView:valueField,setValue:setExactValue,spec:spec,decimals:decimals);
-         widgets[param]=widget;widget
+         // A parameter may appear on several tabs. Keep every visual instance.
+         if(widgets[param].isNil, {
+          widgets[param]=List.new;
+         });
+         widgets[param].add(widget);
+         widget
+        };
+        makeIndicator={|parent,key,label,x,y,wid=210|
+         var view;
+         view=StaticText(parent,uiRect.(x,y,wid,26))
+          .align_(\center)
+          .font_(Font.default.boldVariant.size_(11))
+          .string_(label++" : --")
+          .background_(Color.grey(0.32))
+          .stringColor_(Color.white);
+         stateIndicators[key]=(view:view,label:label,last:nil);
+         view;
+        };
+        refreshStateIndicators={
+         var rcuState,autoState,metaState,setLamp;
+         rcuState={transformer.unifiedRCUStatus}.try ? ();
+         autoState={transformer.autoTuneStatus}.try ? ();
+         metaState={transformer.metaLearnStatus}.try ? ();
+         setLamp={|key,on,warning=false|
+          var item,color,text;
+          item=stateIndicators[key];
+          if(item.notNil,{
+           color=if(warning,{Color.yellow(0.75)},{if(on,{Color.green(0.48)},{Color.red(0.50)})});
+           text=if(warning,{"ATTENTE"},{if(on,{"ON"},{"OFF"})});
+           if(item[\last] != [on,warning],{
+            item[\view].string_(item[\label]++" : "++text);
+            item[\view].background_(color);
+            item[\view].stringColor_(if(warning,{Color.black},{Color.white}));
+            item[\view].refresh;
+            item[\last]=[on,warning];
+           });
+          });
+         };
+         setLamp.(\learning,rcuState[\learningEnabled] ? true);
+         setLamp.(\generation,rcuState[\generationEnabled] ? true);
+         setLamp.(\autoTune,autoState[\enabled] ? false);
+         setLamp.(\metaLearn,metaState[\enabled] ? false);
+         setLamp.(\rcu,rcuState[\enabled] ? false,rcuState[\pending] ? false);
+         setLamp.(\osc,oscRunning ? false);
+         setLamp.(\worker,oscBusy ? false,oscPendingInput.notNil and:{oscBusy.not});
+         setLamp.(\bus,controlBus.notNil);
         };
         trim={|list| while({list.size>900},{list.removeAt(0)}) };
         loadSettings={|settings,label| settings.keysValuesDo({|k,v| if(transformer.isRuntimeParameter(k),{
-         transformer.setParameter(k,v,false)})}); widgets.keysValuesDo({|k,v|
-         if(v[\setValue].notNil,{v[\setValue].value(transformer.getParameter(k),false)})
+         transformer.setParameter(k,v,false)})}); widgets.keysValuesDo({|k,views|
+         var value;
+         value=transformer.getParameter(k);
+         views.do({|view|
+          if(view[\setValue].notNil,{view[\setValue].value(value,false)});
+         });
         }); addLog.("Preset applique: "++label) };
         formatTorusMask={|mask|if(mask.isNil,{""},{mask.collect({|item|if(item==true,{"1"},{"0"})}).join(",")})};
         applyTorusMask={|text|var expectedSize,parts,mask;
@@ -194,7 +254,7 @@ HPTransformerStudio : Object {
           addLog.("torusMask applique: "++mask.asCompileString)
          })
         };
-        
+
         // Presets operationnels
         diagnosticPreset=(learningRate:0.00010,protectionStrength:0.40,replayRate:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.0,memoryRetrievalGain:0.0,memoryRecallSize:1,trajectoryRetrievalGain:0.0,trajectoryRecallSize:1,trajectoryExplorationGain:0.0,attentionTemperature:0.50,routerTemperature:1.10,deltaScale:0.16,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,generationWindowSize:4,autoTuneEnabled:false,metaLearnEnabled:false);
         safeReturnPreset=(learningRate:0.00016,gradientClip:0.35,surpriseThreshold:0.10,surpriseGain:1.0,protectionStrength:0.38,replayRate:0.08,adaptiveInterferenceEnabled:true,adaptiveReplayMin:0.06,adaptiveReplayMax:0.18,adaptiveInterferenceThreshold:0.0020,adaptiveInterferenceSmoothing:0.95,adaptiveReplayBoost:0.06,replayBatchSize:1,memoryRetrievalGain:0.16,memoryWriteThreshold:0.12,memoryRecallSize:2,trajectoryRetrievalGain:0.07,trajectoryRecallSize:1,trajectoryExplorationGain:0.001,attentionTemperature:0.82,routerTemperature:1.10,deltaScale:0.20,diversityNoiseGain:0.00005,diversityRepulsionGain:0.0006,generationWindowSize:6,autoTuneEnabled:false,metaLearnEnabled:false);
@@ -207,7 +267,11 @@ HPTransformerStudio : Object {
          "RT Ultra leger","RT Reactif","RT Equilibre M4","RT Memoire prudente",
          "Studio / Analyse","Hors temps reel - Apprentissage qualite","Hors temps reel - Generation riche",
          "Intel 2012 - Ultra leger","Intel 2012 - Temps reel equilibre",
-         "Intel 2012 - Memoire renforcee","Intel 2012 - Generation seule"];
+         "Intel 2012 - Memoire renforcee","Intel 2012 - Generation seule",
+         "Classic - Prudent","Classic - Equilibre","Classic - Reactif",
+         "Classic - Continuite legere","Classic - Stabilite maximale",
+         "Classic Musical Direct","Classic Live Concert","Classic Generation Only",
+         "Classic Ultra CPU - Apprentissage rapide"];
         generalPresets=[
          (learningRate:0.00035,attentionTemperature:1.0,routerTemperature:1.10,replayRate:0.08,protectionStrength:0.16,memoryRetrievalGain:0.10,trajectoryExplorationGain:0.0045,diversityNoiseGain:0.00035),
          (learningRate:0.0008,surpriseGain:1.6,replayRate:0.12,protectionStrength:0.10,gradientClip:0.75),
@@ -245,14 +309,32 @@ HPTransformerStudio : Object {
          // Intel 2012 - Memoire renforcee: valeurs gagnantes du diagnostic i7.
          (learningRate:0.00016,gradientClip:0.35,replayRate:0.16,replayBatchSize:1,protectionStrength:0.24,memoryRetrievalGain:0.12,memoryRecallSize:2,trajectoryRetrievalGain:0.08,trajectoryRecallSize:1,generationWindowSize:4,trajectoryExplorationGain:0.0,diversityNoiseGain:0.0,diversityRepulsionGain:0.0,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false),
          // Intel 2012 - Generation seule: modele entraine, sans cout d'apprentissage.
-         (learningRate:0.00012,gradientClip:0.35,replayRate:0.0,replayBatchSize:1,protectionStrength:0.20,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.06,trajectoryRecallSize:1,generationWindowSize:4,trajectoryExplorationGain:0.003,diversityNoiseGain:0.0005,diversityRepulsionGain:0.0015,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false)
+         (learningRate:0.00012,gradientClip:0.35,replayRate:0.0,replayBatchSize:1,protectionStrength:0.20,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.06,trajectoryRecallSize:1,generationWindowSize:4,trajectoryExplorationGain:0.003,diversityNoiseGain:0.0005,diversityRepulsionGain:0.0015,adaptiveInterferenceEnabled:false,adaptiveReplayMin:0.0,adaptiveReplayMax:0.0,adaptiveReplayBoost:0.0,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic prudent: apprentissage lent, protection forte, replay modere.
+         (learningRate:0.00014,gradientClip:0.35,replayRate:0.06,replayBatchSize:1,protectionStrength:0.30,memoryRetrievalGain:0.08,memoryRecallSize:1,trajectoryRetrievalGain:0.04,trajectoryRecallSize:1,generationWindowSize:3,attentionTemperature:0.82,routerTemperature:1.00,deltaScale:0.25,trajectoryExplorationGain:0.001,diversityNoiseGain:0.00005,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic equilibre: compromis direct entre adaptation, memoire et generation.
+         (learningRate:0.00022,gradientClip:0.45,replayRate:0.09,replayBatchSize:1,protectionStrength:0.22,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRetrievalGain:0.07,trajectoryRecallSize:1,generationWindowSize:4,attentionTemperature:0.92,routerTemperature:1.00,deltaScale:0.30,trajectoryExplorationGain:0.003,diversityNoiseGain:0.00018,diversityRepulsionGain:0.0010,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic reactif: adaptation rapide, contexte court et exploration moderee.
+         (learningRate:0.00034,gradientClip:0.60,replayRate:0.05,replayBatchSize:1,protectionStrength:0.14,memoryRetrievalGain:0.06,memoryRecallSize:1,trajectoryRetrievalGain:0.04,trajectoryRecallSize:1,generationWindowSize:3,attentionTemperature:1.08,routerTemperature:0.95,deltaScale:0.38,trajectoryExplorationGain:0.006,diversityNoiseGain:0.00055,diversityRepulsionGain:0.0020,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic continuite legere: memoire et trajectoire moderees sans lissage temporel additionnel.
+         (learningRate:0.00020,gradientClip:0.42,replayRate:0.10,replayBatchSize:1,protectionStrength:0.24,memoryRetrievalGain:0.16,memoryRecallSize:2,trajectoryRetrievalGain:0.12,trajectoryRecallSize:2,generationWindowSize:6,attentionTemperature:0.90,routerTemperature:1.00,deltaScale:0.28,trajectoryExplorationGain:0.002,diversityNoiseGain:0.00012,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic stabilite maximale: apprentissage lent, protection et replay renforces.
+         (learningRate:0.00010,gradientClip:0.28,replayRate:0.14,replayBatchSize:1,protectionStrength:0.48,memoryRetrievalGain:0.14,memoryRecallSize:2,trajectoryRetrievalGain:0.08,trajectoryRecallSize:1,generationWindowSize:4,attentionTemperature:0.75,routerTemperature:1.00,deltaScale:0.22,trajectoryExplorationGain:0.0008,diversityNoiseGain:0.00003,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic Musical Direct.
+         (learningRate:0.00022,gradientClip:0.45,replayRate:0.04,replayBatchSize:1,protectionStrength:0.14,memoryRetrievalGain:0.07,memoryRecallSize:1,trajectoryRetrievalGain:0.05,trajectoryRecallSize:1,generationWindowSize:4,attentionTemperature:1.12,routerTemperature:1.00,deltaScale:0.34,trajectoryExplorationGain:0.0045,diversityNoiseGain:0.00030,diversityRepulsionGain:0.0013,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic Live Concert: equilibre entre reactivite, variete et stabilite sur scene.
+         (learningRate:0.00030,gradientClip:0.45,surpriseThreshold:0.055,surpriseGain:1.35,adaptationFastRate:1.55,adaptationSlowRate:0.38,replayRate:0.03,replayBatchSize:1,protectionStrength:0.18,memoryRetrievalGain:0.08,memoryRecallSize:1,memoryWriteThreshold:0.10,trajectoryRetrievalGain:0.05,trajectoryRecallSize:1,trajectoryVelocityGain:0.055,trajectoryAccelerationGain:0.008,generationWindowSize:4,attentionTemperature:1.10,routerTemperature:1.00,deltaScale:0.34,trajectoryExplorationGain:0.004,diversityNoiseGain:0.00020,diversityRepulsionGain:0.0010,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic Generation Only.
+         (replayRate:0.0,replayBatchSize:1,protectionStrength:0.12,memoryRecallSize:1,trajectoryRecallSize:1,generationWindowSize:3,attentionTemperature:1.20,routerTemperature:1.00,deltaScale:0.36,trajectoryExplorationGain:0.006,diversityNoiseGain:0.00040,diversityRepulsionGain:0.0018,autoTuneEnabled:false,metaLearnEnabled:false),
+         // Classic Ultra CPU - Apprentissage rapide.
+         (learningRate:0.00065,gradientClip:0.70,surpriseThreshold:0.030,surpriseGain:1.80,adaptationFastRate:2.20,adaptationSlowRate:0.55,replayRate:0.0,replayBatchSize:1,protectionStrength:0.08,memoryRetrievalGain:0.0,memoryRecallSize:0,trajectoryRetrievalGain:0.0,trajectoryRecallSize:0,generationWindowSize:2,attentionTemperature:1.15,routerTemperature:1.00,deltaScale:0.38,trajectoryExplorationGain:0.005,diversityNoiseGain:0.00030,diversityRepulsionGain:0.0012,autoTuneEnabled:false,metaLearnEnabled:false)
         ];
         // Reglages operationnels associes aux presets generaux.
         // Les 15 presets historiques conservent les reglages OSC et les etats courants.
-        generalProcessHz=Array.fill(15,{nil})++[20.0,60.0,50.0,40.0,30.0,10.0,20.0,15.0,20.0,15.0,25.0];
-        generalLearnDivider=Array.fill(15,{nil})++[8,4,3,4,8,1,16,8,8,8,8];
-        generalLearningState=Array.fill(15,{nil})++[true,true,true,true,false,true,false,true,true,true,false];
-        generalGenerationState=Array.fill(15,{nil})++[true,true,true,true,true,false,true,true,true,true,true];
+        generalProcessHz=Array.fill(15,{nil})++[20.0,60.0,50.0,40.0,30.0,10.0,20.0,15.0,20.0,15.0,25.0,20.0,30.0,40.0,25.0,15.0,20.0,20.0,20.0,20.0];
+        generalLearnDivider=Array.fill(15,{nil})++[8,4,3,4,8,1,16,8,8,8,8,8,4,3,4,8,8,6,16,4];
+        generalLearningState=Array.fill(15,{nil})++[true,true,true,true,false,true,false,true,true,true,false,true,true,true,true,true,true,true,false,true];
+        generalGenerationState=Array.fill(15,{nil})++[true,true,true,true,true,false,true,true,true,true,true,true,true,true,true,true,true,true,true,true];
         applyGeneralPreset={|index|
          var settings,name;
          settings=generalPresets[index];name=generalNames[index];
@@ -265,6 +347,12 @@ HPTransformerStudio : Object {
          if(generalGenerationState[index].notNil,{if(generalGenerationState[index],{transformer.enableGeneration},{transformer.disableGeneration})});
          // Les quatre profils Intel 2012 commencent a l'index 22.
          if(index>=22,{oscDetailedEvents=false;if(oscDetailedButton.notNil,{oscDetailedButton.value_(0)})});
+         if(index>=26,{
+          transformer.setParameter(\normalizationEnabled,false,false);
+          transformer.setParameter(\multiResolutionEnabled,false,false);
+          transformer.setParameter(\stabilityGuardEnabled,false,false);
+         });
+         if(index>=31,{transformer.disableUnifiedRCU});
          addLog.("Profil general applique: "++name++" | processHz="++oscProcessHz++" | Learn/N="++oscLearningDivider++" | Details="++oscDetailedEvents);
         };
         autoNames=["Auto Equilibre","Auto Diversite","Auto Nouveaute","Auto Doux","Auto Reactif","Auto Minimal"];
@@ -285,8 +373,8 @@ HPTransformerStudio : Object {
          (metaLearnEnabled:true,metaLearnInterval:8,metaLearnStrength:0.22,metaLearnTargetInterference:-0.05,metaLearnReplayRateMax:0.45,metaLearnProtectionMax:1.0),
          (metaLearnEnabled:true,metaLearnInterval:32,metaLearnStrength:0.05,metaLearnSmoothing:0.985)
         ];
-        
-        
+
+
         // Presets specialises Generation
         genNames=["Generation equilibree","Generation creative","Generation stable","Generation expansive",
          "Generation minimaliste","Generation dynamique","Generation memoire","Generation torique"];
@@ -326,14 +414,15 @@ HPTransformerStudio : Object {
          (surpriseThreshold:0.08,surpriseGain:1.20,adaptationFastRate:1.05,adaptationSlowRate:0.28,protectionStrength:0.55,replayRate:0.24),
          (surpriseThreshold:0.045,surpriseGain:1.70,adaptationFastRate:1.70,trajectoryExplorationGain:0.014,diversityNoiseGain:0.002)
         ];
-        
+
         // Jeux complets coordonnes : apprentissage + generation + memoire + surprise + AutoTune + MetaLearn.
         setNames=[
          "Studio Equilibre","Apprentissage Continu","Performance Stable","Improvisation Creative",
          "Memoire Narrative","Adaptation Rapide","Anti-Oubli Fort","Exploration Torique",
          "Faible Latence OSC","Installation Autonome","Analyse / Prediction","Generation Pure",
          "Suivi Musicien Equilibre","Suivi Ultra Reactif","Legato Expressif Temps Reel","Rythmique Percussif Temps Reel","Call and Response Direct",
-         "Accompagnement Fidele","Improvisation Partagee","Geste Continu et Capteurs","Longue Session Prudente","Changements de Scene Adaptatifs"
+         "Accompagnement Fidele","Improvisation Partagee","Geste Continu et Capteurs","Longue Session Prudente","Changements de Scene Adaptatifs",
+         "Classic Prudent","Classic Equilibre","Classic Expressif","Classic Installation"
         ];
         setDescriptions=[
          "Point de depart polyvalent. Apprentissage modere, generation equilibree, AutoTune doux et MetaLearn prudent.",
@@ -357,7 +446,11 @@ HPTransformerStudio : Object {
          "Dialogue exploratoire entre musicien et systeme. Diversite et nouveaute elevees dans des bornes prudentes.",
          "Pour controleurs continus, mouvement, position, pression ou capteurs. Vitesse et acceleration privilegiees.",
          "Pour concerts longs et installations. Apprentissage lent, protection et replay renforces, controles tres lisses.",
-         "Pour ruptures de section. Surprise et adaptation rapides, puis stabilisation par AutoTune et MetaLearn moderes."
+         "Pour ruptures de section. Surprise et adaptation rapides, puis stabilisation par AutoTune et MetaLearn moderes.",
+         "Profil Classic prudent. Apprentissage lent, protection renforcee, replay modere et suivi par dimension proche du geste.",
+         "Profil Classic recommande. Equilibre entre adaptation, memoire legere, generation et suivi differencie par sortie.",
+         "Profil Classic plus vivant. Adaptation rapide, temperature plus ouverte et davantage de liberte sur les dimensions expressives.",
+         "Pour longue duree. Apprentissage lent, forte protection, replay prudent et generation contenue, sans traitement avance additionnel."
         ];
         // Valeur de Suivi direct associee a chaque jeu complet.
         // nil conserve la valeur courante pour les jeux generaux.
@@ -372,7 +465,18 @@ HPTransformerStudio : Object {
          0.20, // Improvisation Partagee
          0.40, // Geste Continu et Capteurs
          0.35, // Longue Session Prudente
-         0.25  // Changements de Scene Adaptatifs
+         0.25, // Changements de Scene Adaptatifs
+         0.40, // Classic Prudent, repli global
+         0.35, // Classic Equilibre, repli global
+         0.25, // Classic Expressif, repli global
+         0.45  // Classic Installation, repli global
+        ];
+        // Vecteurs de suivi direct 8D pour les jeux Classic.
+        setFollowMixVectors=Array.fill(22,{nil})++[
+         [0.20,0.10,0.05,0.20,0.10,0.05,0.20,0.10],
+         [0.25,0.12,0.05,0.25,0.12,0.05,0.25,0.12],
+         [0.10,0.05,0.02,0.10,0.05,0.02,0.10,0.05],
+         [0.30,0.15,0.08,0.30,0.15,0.08,0.30,0.15]
         ];
         setPresets=[
          (learningRate:0.00035,gradientClip:0.75,surpriseThreshold:0.06,surpriseGain:1.10,protectionStrength:0.16,replayRate:0.08,memoryRetrievalGain:0.10,memoryWriteThreshold:0.10,trajectoryRetrievalGain:0.07,trajectoryExplorationGain:0.0045,attentionTemperature:1.0,routerTemperature:1.10,diversityNoiseGain:0.00035,diversityRepulsionGain:0.0016,autoTuneEnabled:true,autoTuneInterval:12,autoTuneStrength:0.10,metaLearnEnabled:true,metaLearnInterval:24,metaLearnStrength:0.06),
@@ -396,9 +500,13 @@ HPTransformerStudio : Object {
          (learningRate:0.00036,gradientClip:0.65,surpriseThreshold:0.045,surpriseGain:1.45,protectionStrength:0.15,replayRate:0.065,memoryRetrievalGain:0.12,memoryRetrievalTemperature:0.38,memoryRecallSize:4,trajectoryRecallSize:2,trajectoryRetrievalGain:0.095,trajectoryRetrievalTemperature:0.32,trajectoryVelocityGain:0.055,trajectoryAccelerationGain:0.014,trajectoryExplorationGain:0.0080,attentionTemperature:1.20,routerTemperature:0.80,deltaScale:0.36,generationWindowSize:5,diversityNoiseGain:0.00075,diversityRepulsionGain:0.0026,diversityAdaptiveGain:0.90,localDiversityFloor:0.032,localDiversityGain:0.070,autoTuneEnabled:true,autoTuneInterval:6,autoTuneStrength:0.19,autoTuneSmoothing:0.88,autoTuneTargetNovelty:0.24,autoTuneTargetDiversity:0.18,metaLearnEnabled:true,metaLearnInterval:12,metaLearnStrength:0.09,metaLearnSmoothing:0.94),
          (learningRate:0.00034,gradientClip:0.60,surpriseThreshold:0.055,surpriseGain:1.25,protectionStrength:0.18,replayRate:0.06,memoryRetrievalGain:0.10,memoryRecallSize:2,trajectoryRecallSize:3,trajectoryRetrievalGain:0.18,trajectoryRetrievalTemperature:0.16,trajectoryVelocityGain:0.105,trajectoryAccelerationGain:0.018,trajectoryExplorationGain:0.0025,attentionTemperature:0.78,routerTemperature:0.96,deltaScale:0.25,generationWindowSize:5,diversityNoiseGain:0.00012,diversityRepulsionGain:0.0009,driftEmaDecay:0.990,driftGain:0.38,autoTuneEnabled:false,metaLearnEnabled:true,metaLearnInterval:14,metaLearnStrength:0.08,metaLearnSmoothing:0.96),
          (learningRate:0.00014,gradientClip:0.32,surpriseThreshold:0.085,surpriseGain:1.05,protectionStrength:0.46,replayRate:0.18,memoryWriteThreshold:0.11,memoryRetrievalGain:0.20,memoryRetrievalTemperature:0.24,memoryDecay:0.9992,memoryUsageDecay:0.9996,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.11,trajectoryRetrievalTemperature:0.22,trajectoryVelocityGain:0.052,trajectoryAccelerationGain:0.006,trajectoryExplorationGain:0.0015,attentionTemperature:0.72,routerTemperature:0.95,deltaScale:0.21,generationWindowSize:7,diversityNoiseGain:0.00008,diversityRepulsionGain:0.00075,localDiversityGain:0.030,autoTuneEnabled:true,autoTuneInterval:20,autoTuneStrength:0.05,autoTuneSmoothing:0.985,autoTuneTargetNovelty:0.12,autoTuneTargetDiversity:0.08,metaLearnEnabled:true,metaLearnInterval:28,metaLearnStrength:0.045,metaLearnSmoothing:0.988,metaLearnTargetRecall:0.58),
-         (learningRate:0.00048,gradientClip:0.75,surpriseThreshold:0.032,surpriseGain:1.85,adaptationFastRate:2.00,adaptationSlowRate:0.50,protectionStrength:0.14,replayRate:0.07,memoryWriteThreshold:0.06,memoryRetrievalGain:0.12,memoryRetrievalTemperature:0.36,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.09,trajectoryRetrievalTemperature:0.30,trajectoryVelocityGain:0.060,trajectoryAccelerationGain:0.016,trajectoryExplorationGain:0.0065,attentionTemperature:1.08,routerTemperature:0.82,deltaScale:0.35,generationWindowSize:4,diversityNoiseGain:0.00055,diversityRepulsionGain:0.0021,localDiversityGain:0.060,autoTuneEnabled:true,autoTuneInterval:6,autoTuneStrength:0.14,autoTuneSmoothing:0.90,autoTuneTargetNovelty:0.21,autoTuneTargetDiversity:0.15,metaLearnEnabled:true,metaLearnInterval:10,metaLearnStrength:0.12,metaLearnSmoothing:0.92)
+         (learningRate:0.00048,gradientClip:0.75,surpriseThreshold:0.032,surpriseGain:1.85,adaptationFastRate:2.00,adaptationSlowRate:0.50,protectionStrength:0.14,replayRate:0.07,memoryWriteThreshold:0.06,memoryRetrievalGain:0.12,memoryRetrievalTemperature:0.36,memoryRecallSize:3,trajectoryRecallSize:2,trajectoryRetrievalGain:0.09,trajectoryRetrievalTemperature:0.30,trajectoryVelocityGain:0.060,trajectoryAccelerationGain:0.016,trajectoryExplorationGain:0.0065,attentionTemperature:1.08,routerTemperature:0.82,deltaScale:0.35,generationWindowSize:4,diversityNoiseGain:0.00055,diversityRepulsionGain:0.0021,localDiversityGain:0.060,autoTuneEnabled:true,autoTuneInterval:6,autoTuneStrength:0.14,autoTuneSmoothing:0.90,autoTuneTargetNovelty:0.21,autoTuneTargetDiversity:0.15,metaLearnEnabled:true,metaLearnInterval:10,metaLearnStrength:0.12,metaLearnSmoothing:0.92),
+         (learningRate:0.00014,gradientClip:0.35,replayRate:0.06,replayBatchSize:1,protectionStrength:0.30,attentionTemperature:0.78,trajectoryExplorationGain:0.001,diversityNoiseGain:0.00005,normalizationEnabled:true,normalizationDecay:0.997,normalizationClip:3.0,normalizationBlend:0.08,normalizationWarmup:24,multiResolutionEnabled:true,multiResolutionMidWindow:24,multiResolutionSlowWindow:96,multiResolutionMidDivider:6,multiResolutionSlowDivider:24,multiResolutionMidGain:0.05,multiResolutionSlowGain:0.02,stabilityGuardEnabled:true,stabilitySnapshotInterval:192,stabilityLossLimit:0.80,stabilityLearningRateBackoff:0.55,autoTuneEnabled:false,metaLearnEnabled:false),
+         (learningRate:0.00022,gradientClip:0.45,replayRate:0.09,replayBatchSize:1,protectionStrength:0.22,attentionTemperature:0.88,trajectoryExplorationGain:0.003,diversityNoiseGain:0.00018,normalizationEnabled:true,normalizationDecay:0.995,normalizationClip:3.0,normalizationBlend:0.12,normalizationWarmup:16,multiResolutionEnabled:true,multiResolutionMidWindow:24,multiResolutionSlowWindow:96,multiResolutionMidDivider:4,multiResolutionSlowDivider:16,multiResolutionMidGain:0.08,multiResolutionSlowGain:0.03,stabilityGuardEnabled:true,stabilitySnapshotInterval:128,stabilityLossLimit:1.0,stabilityLearningRateBackoff:0.50,autoTuneEnabled:false,metaLearnEnabled:false),
+         (learningRate:0.00034,gradientClip:0.60,replayRate:0.05,replayBatchSize:1,protectionStrength:0.14,attentionTemperature:1.08,trajectoryExplorationGain:0.007,diversityNoiseGain:0.00065,diversityRepulsionGain:0.0024,normalizationEnabled:true,normalizationDecay:0.990,normalizationClip:2.5,normalizationBlend:0.18,normalizationWarmup:12,multiResolutionEnabled:true,multiResolutionMidWindow:16,multiResolutionSlowWindow:64,multiResolutionMidDivider:3,multiResolutionSlowDivider:12,multiResolutionMidGain:0.12,multiResolutionSlowGain:0.04,stabilityGuardEnabled:true,stabilitySnapshotInterval:96,stabilityLossLimit:1.10,stabilityLearningRateBackoff:0.55,autoTuneEnabled:true,autoTuneInterval:8,autoTuneStrength:0.10,metaLearnEnabled:false),
+         (learningRate:0.00010,gradientClip:0.28,replayRate:0.14,replayBatchSize:1,protectionStrength:0.50,attentionTemperature:0.70,trajectoryExplorationGain:0.0008,diversityNoiseGain:0.00003,normalizationEnabled:true,normalizationDecay:0.998,normalizationClip:2.5,normalizationBlend:0.08,normalizationWarmup:32,multiResolutionEnabled:true,multiResolutionMidWindow:24,multiResolutionSlowWindow:96,multiResolutionMidDivider:8,multiResolutionSlowDivider:32,multiResolutionMidGain:0.05,multiResolutionSlowGain:0.02,stabilityGuardEnabled:true,stabilitySnapshotInterval:64,stabilityLossLimit:0.60,stabilityLearningRateBackoff:0.35,autoTuneEnabled:false,metaLearnEnabled:false)
         ];
-        
+
         applyConfigurationSet={|index|
          var settings,name,size;
          settings=setPresets[index];name=setNames[index];
@@ -408,9 +516,25 @@ HPTransformerStudio : Object {
           if(oscFollowMixBox.notNil,{oscFollowMixBox.value_(oscFollowMix)});
           addLog.("Suivi direct preset: "++oscFollowMix);
          });
+         if(setFollowMixVectors[index].notNil,{
+          var pattern,n;
+          pattern=setFollowMixVectors[index];
+          n=(transformer.config[\outputSize]?1).asInteger.max(1);
+          oscFollowMixVector=Array.fill(n,{|i|pattern.wrapAt(i).asFloat.clip(0,1)});
+          if(oscFollowMixVectorField.notNil,{oscFollowMixVectorField.string_(oscFollowMixVector.join(","))});
+          addLog.("Suivi par dimension preset: "++oscFollowMixVector.asCompileString);
+         },{
+          oscFollowMixVector=nil;
+         });
          if(settings[\autoTuneEnabled]==true,{transformer.enableAutoTune},{if(settings[\autoTuneEnabled]==false,{transformer.disableAutoTune})});
          if(settings[\metaLearnEnabled]==true,{transformer.enableMetaLearning},{if(settings[\metaLearnEnabled]==false,{transformer.disableMetaLearning})});
          if(index>=12,{transformer.enableLearning;transformer.enableGeneration});
+         if(index>=22,{
+          transformer.setParameter(\normalizationEnabled,false,false);
+          transformer.setParameter(\multiResolutionEnabled,false,false);
+          transformer.setParameter(\stabilityGuardEnabled,false,false);
+          transformer.disableUnifiedRCU;
+         });
          if([13,15,21].includes(index),{rate=0.20},{if(index>=12,{rate=0.30})});
          // Reglages d'etat qui ne sont pas de simples parametres.
          if(index==10,{transformer.disableLearning;transformer.enableGeneration});
@@ -425,16 +549,20 @@ HPTransformerStudio : Object {
          setDescriptionView.string_(
           "Configuration active : "++name++Char.nl++Char.nl++
           setDescriptions[index]++Char.nl++Char.nl++
-          if(setFollowMixes[index].notNil,{
-           "Suivi direct applique : "++oscFollowMix++Char.nl++Char.nl
+          if(setFollowMixVectors[index].notNil,{
+           "Suivi par dimension applique : "++oscFollowMixVector.asCompileString++Char.nl++Char.nl
           },{
-           "Suivi direct conserve : "++oscFollowMix++Char.nl++Char.nl
+           if(setFollowMixes[index].notNil,{
+            "Suivi direct applique : "++oscFollowMix++Char.nl++Char.nl
+           },{
+            "Suivi direct conserve : "++oscFollowMix++Char.nl++Char.nl
+           })
           })++
           "Parametres appliques :"++Char.nl++settings.asCompileString
          );
          addLog.("Jeu complet applique: "++name)
         };
-        
+
         exportCurrentSet={
          Dialog.savePanel({|path|var fp,data;if(path.notNil,{
           fp=if(path.endsWith(".hptset"),{path},{path++".hptset"});
@@ -442,8 +570,8 @@ HPTransformerStudio : Object {
           data.writeArchive(fp);addLog.("Jeu complet exporte: "++fp)
          })})
         };
-        
-        w=Window("HPTransformer Studio Pro V8.4.1 - HPtransformerRT V30.1.5 - Profils temps reel et hors temps reel",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
+
+        w=Window("HPTransformer Studio Pro V8.7.3 - HPtransformerRT V30.3.0 - Profils temps reel et hors temps reel",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
         // Palette locale: Window ne comprend pas palette_; la palette doit etre appliquee a sa vue racine.
         // Cette ligne isole le Studio de QtGUI.palette = QPalette.dark.
         w.view.palette_(QPalette.light);
@@ -465,7 +593,7 @@ HPTransformerStudio : Object {
         showPage={|name| activePage=name; pages.keysValuesDo({|k,p|p.visible_(k==name)});
          pageButtons.keysValuesDo({|k,b| var label=b.states[0][0]; styleButton.(b,label,if(k==name,{navActiveColor},{navIdleColor}))});
          if(name==\graphs,{graphView.refresh}); if(name==\heatmaps,{heatView.refresh}) };
-        
+
         // Dashboard
         title.(pages[\dashboard],"ETAT GENERAL",20,15); statusText=TextView(pages[\dashboard],uiRect.(20,50,760,620))
          .editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
@@ -476,22 +604,49 @@ HPTransformerStudio : Object {
         button.(pages[\dashboard],"Reset Learning",1060,140,210,{transformer.resetLearning;addLog.("Reset Learning")});
         button.(pages[\dashboard],"Reset Memory",820,185,210,{transformer.resetMemory;addLog.("Reset Memory")});
         button.(pages[\dashboard],"Reset All",1060,185,210,{transformer.resetAll;addLog.("Reset All")});
-        button.(pages[\dashboard],"Learning ON",820,250,210,{transformer.enableLearning;addLog.("Learning ON")});
-        button.(pages[\dashboard],"Learning OFF",1060,250,210,{transformer.disableLearning;addLog.("Learning OFF")});
-        button.(pages[\dashboard],"Generation ON",820,295,210,{transformer.enableGeneration;addLog.("Generation ON")});
-        button.(pages[\dashboard],"Generation OFF",1060,295,210,{transformer.disableGeneration;addLog.("Generation OFF")});
+        button.(pages[\dashboard],"Learning ON",820,250,210,{transformer.enableLearning;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("Learning ON")});
+        button.(pages[\dashboard],"Learning OFF",1060,250,210,{transformer.disableLearning;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("Learning OFF")});
+        button.(pages[\dashboard],"Generation ON",820,295,210,{transformer.enableGeneration;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("Generation ON")});
+        button.(pages[\dashboard],"Generation OFF",1060,295,210,{transformer.disableGeneration;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("Generation OFF")});
+        title.(pages[\dashboard],"VOYANTS D'ETAT",820,405,450);
+        makeIndicator.(pages[\dashboard],\learning,"Learning",820,440,210);
+        makeIndicator.(pages[\dashboard],\generation,"Generation",1060,440,210);
+        makeIndicator.(pages[\dashboard],\autoTune,"AutoTune",820,474,210);
+        makeIndicator.(pages[\dashboard],\metaLearn,"MetaLearn",1060,474,210);
+        makeIndicator.(pages[\dashboard],\rcu,"RCU",820,508,210);
+        makeIndicator.(pages[\dashboard],\osc,"OSC",1060,508,210);
+        makeIndicator.(pages[\dashboard],\worker,"Worker",820,542,210);
+        makeIndicator.(pages[\dashboard],\bus,"ControlBus",1060,542,210);
         button.(pages[\dashboard],"Diagnostic neutre",820,350,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(diagnosticPreset,"Diagnostic neutre");transformer.disableLearning;transformer.enableGeneration});
         button.(pages[\dashboard],"Retour securise",1060,350,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(safeReturnPreset,"Retour securise");transformer.enableLearning;transformer.enableGeneration;rate=0.35});
         button.(pages[\dashboard],"Calibration OSC",820,395,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(oscCalibrationPreset,"Calibration OSC");transformer.disableLearning;transformer.enableGeneration});
         button.(pages[\dashboard],"Faible charge CPU",1060,395,210,{transformer.stopAllMorphs;transformer.disableAutoTune;transformer.disableMetaLearning;loadSettings.(lowCpuPreset,"Faible charge CPU");transformer.disableLearning;transformer.enableGeneration;rate=0.75});
-        StaticText(pages[\dashboard],uiRect.(820,455,450,130)).string_(
-         "Nouveaux profils generaux V8.4.1 :"++Char.nl++
-         "RT Ultra leger / RT Reactif / RT Equilibre M4 / RT Memoire prudente"++Char.nl++
-         "Intel 2012 : Ultra leger / Temps reel equilibre / Memoire renforcee / Generation seule"++Char.nl++
-         "Studio - Analyse / Hors temps reel - Apprentissage qualite / Generation riche"++Char.nl++
-         "Conseil Intel 2012 : commencer a 20 Hz, Learn/N=8, Details OFF, AutoTune OFF, MetaLearn OFF."
+        // Mode Scene: suspend periodic GUI polling and visual logging.
+        setDisplayMode={|enabled|
+         displaysEnabled=enabled;logCollectionEnabled=enabled;
+         if(enabled,{
+          displayToggleButton.states_([["MODE CONTROLE - affichages actifs",Color.white,Color.blue(0.42)]]);
+          {refresh.value;refreshStateIndicators.value}.defer
+         },{
+          oscDetailedEvents=false;if(oscDetailedButton.notNil,{oscDetailedButton.value_(0)});
+          displayToggleButton.states_([["MODE SCENE - affichages suspendus",Color.white,Color.green(0.42)]])
+         })
+        };
+        displayToggleButton=Button(pages[\dashboard],uiRect.(820,630,450,34))
+         .states_([["MODE CONTROLE - affichages actifs",Color.white,Color.blue(0.42)]])
+         .font_(Font.default.boldVariant.size_(11)).action_({setDisplayMode.(displaysEnabled.not)});
+        // Texte place sous les voyants afin d'eviter tout chevauchement.
+        StaticText(pages[\dashboard],uiRect.(820,675,450,80)).string_(
+         "Profils generaux V8.7.3 :"++Char.nl++
+         "RT leger / reactif / equilibre / memoire prudente"++Char.nl++
+         "Intel 2012 : leger / equilibre / memoire / generation"++Char.nl++
+         "Studio analyse / apprentissage qualite / generation riche"++Char.nl++
+         "Classic : prudent / equilibre / reactif / continuite / stabilite"++Char.nl++
+         "Classic Direct : 20 Hz, Learn/N=8, RCU et details OFF."++Char.nl++
+         "Classic Live Concert : 20 Hz, Learn/N=6, equilibre scene."++Char.nl++
+         "Classic Ultra CPU : 20 Hz, Learn/N=4, replay et rappels OFF."
         ).stringColor_(Color.white).font_(Font.default.size_(11));
-        
+
         // Controls
         title.(pages[\controls],"APPRENTISSAGE",20,15); title.(pages[\controls],"MEMOIRE ET GENERATION",680,15);
         addSlider.(pages[\controls],"Learning rate",\learningRate,ControlSpec(0.00001,0.005,\exp),20,50,590);
@@ -518,7 +673,7 @@ HPTransformerStudio : Object {
         button.(pages[\controls],"Tout lineaire",1090,445,170,{var n,m;n=(transformer.config[\outputSize]?1).asInteger.max(1);m=Array.fill(n,{false});torusMaskField.string_(formatTorusMask.(m));applyTorusMask.(torusMaskField.string)});
         torusMaskStatus=TextView(pages[\controls],uiRect.(20,495,1240,145)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black).font_(Font.default.size_(12));
         torusMaskStatus.string_("Masque actif : "++transformer.getParameter(\torusMask).asCompileString++Char.nl++"1 = dimension torique (bouclage 0..1) ; 0 = dimension lineaire (limitee 0..1)");
-        
+
         // Parametres manuels
         // Syntaxe volontairement restreinte: nom = nombre|true|false.
         // Aucun code arbitraire n'est interprete par cette page.
@@ -569,8 +724,12 @@ HPTransformerStudio : Object {
            })
           })
          });
-         widgets.keysValuesDo({|key,view|
-          if(view[\setValue].notNil,{view[\setValue].value(transformer.getParameter(key),false)})
+         widgets.keysValuesDo({|key,views|
+          var value;
+          value=transformer.getParameter(key);
+          views.do({|view|
+           if(view[\setValue].notNil,{view[\setValue].value(value,false)});
+          });
          });
          manualParamsStatus.string_(
           "PARAMETRES APPLIQUES ("++applied.size++")"++Char.nl++
@@ -585,6 +744,112 @@ HPTransformerStudio : Object {
         // Sauvegarde/restauration complete du moteur et de l'etat operationnel de la GUI.
         // Les objets Qt, OSCdef, NetAddr et Routine ne sont pas archives directement.
         // Leur configuration est capturee puis reconstruite proprement.
+        // Session V2: transient RCU objects and active routines are rebuilt after load.
+        repairLoadedTransformer={|loaded,session|
+         var cfg,rcuWasEnabled;
+         loaded.stopAllMorphs;
+         loaded.discardPendingSnapshot;
+         cfg=session[\runtimeConfig];
+         if(cfg.notNil,{
+          cfg.keysValuesDo({|key,value|
+           if(loaded.isRuntimeParameter(key),{
+            {loaded.setParameterLocal(key,value,false)}.try;
+           });
+          });
+         });
+         rcuWasEnabled=session[\rcuEnabled] ? loaded.unifiedRCUEnabled;
+         // Never reuse archived runtime role/linkage. Recreate a clean RCU pair.
+         if(loaded.unifiedRCUEnabled,{loaded.disableUnifiedRCU});
+         if(rcuWasEnabled,{
+          loaded.enableUnifiedRCU;
+          loaded.publishNow;
+         });
+         loaded;
+        };
+
+        refreshButtonsAndMenus={|guiState|
+         var rcuState,autoState,metaState,learningOn,generationOn,rcuOn,autoOn,metaOn;
+         var recolorButtons;
+         guiState=guiState ? ();
+         rcuState=transformer.unifiedRCUStatus;
+         autoState={transformer.autoTuneStatus}.try ? ();
+         metaState={transformer.metaLearnStatus}.try ? ();
+         learningOn=rcuState[\learningEnabled] ? true;
+         generationOn=rcuState[\generationEnabled] ? true;
+         rcuOn=rcuState[\enabled] ? false;
+         autoOn=autoState[\enabled] ? false;
+         metaOn=metaState[\enabled] ? false;
+         recolorButtons={|page,keyOn,keyOff,state|
+          if(page.notNil,{
+           page.children.do({|child|
+            if(child.isKindOf(Button),{
+             var txt;txt=child.states[0][0].asString;
+             if(txt==keyOn,{styleButton.(child,txt,if(state,{navActiveColor},{navIdleColor}))});
+             if(txt==keyOff,{styleButton.(child,txt,if(state.not,{navActiveColor},{navIdleColor}))});
+            });
+           });
+          });
+         };
+         recolorButtons.(pages[\dashboard],"Learning ON","Learning OFF",learningOn);
+         recolorButtons.(pages[\dashboard],"Generation ON","Generation OFF",generationOn);
+         recolorButtons.(pages[\auto],"Activer","Desactiver",autoOn);
+         recolorButtons.(pages[\meta],"Activer","Desactiver",metaOn);
+         recolorButtons.(pages[\rcu],"Activer RCU","Desactiver RCU",rcuOn);
+         // Restore selection-only menus without firing actions.
+         if(generalMenu.notNil,{generalMenu.value_((guiState[\generalMenu] ? generalMenu.value).asInteger.clip(0,generalMenu.items.size-1))});
+         if(setMenu.notNil,{setMenu.value_((guiState[\setMenu] ? setMenu.value).asInteger.clip(0,setMenu.items.size-1))});
+         if(genMenu.notNil,{genMenu.value_((guiState[\genMenu] ? genMenu.value).asInteger.clip(0,genMenu.items.size-1))});
+         if(memoryMenu.notNil,{memoryMenu.value_((guiState[\memoryMenu] ? memoryMenu.value).asInteger.clip(0,memoryMenu.items.size-1))});
+         if(surpriseMenu.notNil,{surpriseMenu.value_((guiState[\surpriseMenu] ? surpriseMenu.value).asInteger.clip(0,surpriseMenu.items.size-1))});
+         if(autoMenu.notNil,{autoMenu.value_((guiState[\autoMenu] ? autoMenu.value).asInteger.clip(0,autoMenu.items.size-1))});
+         if(metaMenu.notNil,{metaMenu.value_((guiState[\metaMenu] ? metaMenu.value).asInteger.clip(0,metaMenu.items.size-1))});
+         if(morphScopeMenu.notNil,{morphScopeMenu.value_((guiState[\morphScopeMenu] ? morphScopeMenu.value).asInteger.clip(0,morphScopeMenu.items.size-1))});
+         if(lossScaleMenu.notNil,{
+          lossScaleMode=(guiState[\lossScaleMode] ? lossScaleMode).asInteger.clip(0,2);
+          lossScaleMenu.value_(lossScaleMode);
+         });
+         if(metricScaleMenu.notNil,{
+          metricScaleMode=(guiState[\metricScaleMode] ? metricScaleMode).asInteger.clip(0,2);
+          metricScaleMenu.value_(metricScaleMode);
+         });
+         // Morph parameter menu is rebuilt dynamically, so restore by symbol, not index.
+         if(morphParamMenu.notNil and:{morphParamSymbols.notNil and:{morphParamSymbols.notEmpty}},{
+          var savedKey,index;
+          savedKey=(guiState[\morphParameter] ? \temperature).asSymbol;
+          index=morphParamSymbols.indexOf(savedKey) ? 0;
+          morphParamMenu.value_(index);
+         });
+         // OSC toggle buttons and mode.
+         if(oscModeMenu.notNil,{oscModeMenu.value_(oscMode)});
+         if(oscLearnButton.notNil,{oscLearnButton.value_(if(oscLearning,{1},{0}))});
+         if(oscSendButton.notNil,{oscSendButton.value_(if(oscSendOutput,{1},{0}))});
+         if(oscBusButton.notNil,{oscBusButton.value_(if(oscBusOutput,{1},{0}))});
+         if(oscDetailedButton.notNil,{oscDetailedButton.value_(if(oscDetailedEvents,{1},{0}))});
+        };
+
+        refreshAfterSessionLoad={|guiState|
+         widgets.keysValuesDo({|key,views|
+          var value;
+          value={transformer.getParameter(key)}.try;
+          if(value.notNil,{
+           views.do({|view|
+            if(view[\setValue].notNil,{
+             view[\setValue].value(value,false);
+            });
+           });
+          });
+         });
+         torusMaskField.string_(formatTorusMask.(transformer.getParameter(\torusMask)));
+         loadRuntimeIntoEditor.value;
+         refreshMorphParameterMenu.value;
+         refreshButtonsAndMenus.value(guiState);
+         refreshStateIndicators.value;
+         refreshMorphStatus.value;
+         lastStatus={transformer.statusSilent}.try;
+         graphView.refresh;
+         heatView.refresh;
+        };
+
         restoreGuiFromSession={|session|
          var guiState,graphState,logState,learningEnabled,generationEnabled,savedPage;
          guiState=session[\gui] ? ();
@@ -602,17 +867,22 @@ HPTransformerStudio : Object {
          oscSendOutput=guiState[\oscSendOutput] ? true;
          oscBusOutput=guiState[\oscBusOutput] ? true;
          oscFollowMix=(guiState[\oscFollowMix] ? 0.35).asFloat.clip(0,1);
-         oscProcessHz=(guiState[\oscProcessHz] ? 50.0).asFloat.clip(5,200);
-         oscLearningDivider=(guiState[\oscLearningDivider] ? 2).asInteger.clip(1,64);
+         oscFollowMixVector=guiState[\oscFollowMixVector];
+         if(oscFollowMixVector.notNil,{oscFollowMixVector=oscFollowMixVector.collect({|v|v.asFloat.clip(0,1)})});
+         oscProcessHz=(guiState[\oscProcessHz] ? 20.0).asFloat.clip(5,200);
+         oscLearningDivider=(guiState[\oscLearningDivider] ? 8).asInteger.clip(1,64);
          oscDetailedEvents=guiState[\oscDetailedEvents] ? false;
          if(oscFollowMixBox.notNil,{oscFollowMixBox.value_(oscFollowMix)});
+         if(oscFollowMixVectorField.notNil,{
+          oscFollowMixVectorField.string_(if(oscFollowMixVector.notNil,{oscFollowMixVector.join(",")},{Array.fill((transformer.config[\outputSize]?1).asInteger.max(1),{oscFollowMix}).join(",")}));
+         });
          if(oscProcessHzBox.notNil,{oscProcessHzBox.value_(oscProcessHz)});
          if(oscLearningDividerBox.notNil,{oscLearningDividerBox.value_(oscLearningDivider)});
          if(oscDetailedButton.notNil,{oscDetailedButton.value_(if(oscDetailedEvents,{1},{0}))});
          oscLearnButton.value_(if(oscLearning,{1},{0}));
          oscSendButton.value_(if(oscSendOutput,{1},{0}));
          oscBusButton.value_(if(oscBusOutput,{1},{0}));
-         rate=(guiState[\refreshRate] ? 0.35).asFloat.max(0.05);
+         rate=(guiState[\refreshRate] ? 0.75).asFloat.max(0.05);
          learningEnabled=session[\learningEnabled] ? true;
          generationEnabled=session[\generationEnabled] ? true;
          if(learningEnabled,{transformer.enableLearning},{transformer.disableLearning});
@@ -626,21 +896,12 @@ HPTransformerStudio : Object {
          oscEventLines=(logState[\oscEvents] ? []).as(List);
          logView.string_(logs.join(Char.nl));
          oscEventsView.string_(oscEventLines.join(Char.nl));
-         widgets.keysValuesDo({|key,view|
-          if(view[\setValue].notNil,{view[\setValue].value(transformer.getParameter(key),false)})
-         });
-         torusMaskField.string_(formatTorusMask.(transformer.getParameter(\torusMask)));
-         torusMaskStatus.string_(
-          "Masque actif : "++transformer.getParameter(\torusMask).asCompileString++Char.nl++
-          "1 = dimension torique (bouclage 0..1) ; 0 = dimension lineaire (limitee 0..1)"
-         );
-         loadRuntimeIntoEditor.value;
+         refreshAfterSessionLoad.value(guiState);
          savedPage=guiState[\activePage] ? \dashboard;
          if(pages[savedPage].isNil,{savedPage=\dashboard});
          showPage.(savedPage);
-         graphView.refresh;
-         heatView.refresh;
         };
+
         saveCompleteSession={
          Dialog.savePanel({|path|
           var fp,wasOscRunning,session,ok;
@@ -650,92 +911,94 @@ HPTransformerStudio : Object {
            transformer.stopAllMorphs;
            if(wasOscRunning,{oscStop.value});
            session=(
-            sessionVersion:1,
+            sessionVersion:2,
             savedAt:Date.localtime.stamp,
             transformer:transformer,
+            runtimeConfig:transformer.runtimeConfig,
+            rcuEnabled:transformer.unifiedRCUEnabled,
             learningEnabled:transformer.unifiedRCUStatus[\learningEnabled],
             generationEnabled:transformer.unifiedRCUStatus[\generationEnabled],
             gui:(
-             activePage:activePage,
-             refreshRate:rate,
-             oscWasRunning:wasOscRunning,
-             oscHost:oscHostField.string,
-             oscInPort:oscInPortBox.value.asInteger,
-             oscOutPort:oscOutPortBox.value.asInteger,
-             oscInputPath:oscInputPathField.string,
-             oscOutputPath:oscOutputPathField.string,
-             oscMode:oscModeMenu.value,
-             oscLearning:oscLearning,
-             oscSendOutput:oscSendOutput,
-             oscBusOutput:oscBusOutput,
-             oscFollowMix:oscFollowMix,
-             oscProcessHz:oscProcessHz,
-             oscLearningDivider:oscLearningDivider,
-             oscDetailedEvents:oscDetailedEvents
+             activePage:activePage,refreshRate:rate,oscWasRunning:wasOscRunning,
+             oscHost:oscHostField.string,oscInPort:oscInPortBox.value.asInteger,
+             oscOutPort:oscOutPortBox.value.asInteger,oscInputPath:oscInputPathField.string,
+             oscOutputPath:oscOutputPathField.string,oscMode:oscModeMenu.value,
+             oscLearning:oscLearning,oscSendOutput:oscSendOutput,oscBusOutput:oscBusOutput,
+             oscFollowMix:oscFollowMix,oscFollowMixVector:oscFollowMixVector,oscProcessHz:oscProcessHz,
+             oscLearningDivider:oscLearningDivider,oscDetailedEvents:oscDetailedEvents,
+             generalMenu:generalMenu.value,setMenu:setMenu.value,
+             genMenu:genMenu.value,memoryMenu:memoryMenu.value,
+             surpriseMenu:surpriseMenu.value,autoMenu:autoMenu.value,metaMenu:metaMenu.value,
+             morphScopeMenu:morphScopeMenu.value,
+             morphParameter:if(morphParamSymbols.notNil and:{morphParamSymbols.notEmpty},{
+              morphParamSymbols[morphParamMenu.value.clip(0,morphParamSymbols.size-1)]
+             },{\temperature}),
+             lossScaleMode:lossScaleMode,metricScaleMode:metricScaleMode
             ),
-            graphs:(
-             loss:loss.asArray,
-             surprise:surprise.asArray,
-             entropy:entropy.asArray,
-             memoryRecall:memRecall.asArray,
-             trajectoryRecall:trajRecall.asArray
-            ),
+            graphs:(loss:loss.asArray,surprise:surprise.asArray,entropy:entropy.asArray,
+             memoryRecall:memRecall.asArray,trajectoryRecall:trajRecall.asArray),
             logs:(main:logs.asArray,oscEvents:oscEventLines.asArray)
            );
            ok={session.writeArchive(fp);true}.try({|error|
             manualParamsStatus.string_("Erreur sauvegarde session :"++Char.nl++error.asString);
-            addLog.("ERREUR sauvegarde session complete: "++error.asString);
-            false
+            addLog.("ERREUR sauvegarde session complete: "++error.asString);false
            });
            if(wasOscRunning,{oscStart.value});
            if(ok,{
-            manualParamsStatus.string_(
-             "SESSION COMPLETE SAUVEE"++Char.nl++fp++Char.nl++Char.nl++
-             "Moteur, poids, optimiseurs, memoires, runtime, RCU, GUI, OSC, graphes et logs ont ete archives."
-            );
-            addLog.("Session complete sauvee: "++fp)
-           })
-          })
-         })
+            manualParamsStatus.string_("SESSION V2 SAUVEE"++Char.nl++fp);
+            addLog.("Session V2 sauvegardee: "++fp);
+           });
+          });
+         });
         };
+
         loadCompleteSession={
          Dialog.openPanel({|path|
-          var session,loadedTransformer,guiState,restartOsc=false;
+          var session,loadedTransformer,guiState,restartOsc=false,version;
           if(path.notNil,{
            transformer.stopAllMorphs;
            if(oscRunning,{oscStop.value});
            session={Object.readArchive(path)}.try({|error|
             manualParamsStatus.string_("Erreur lecture session :"++Char.nl++error.asString);
-            addLog.("ERREUR lecture session complete: "++error.asString);
-            nil
+            addLog.("ERREUR lecture session complete: "++error.asString);nil
            });
            if(session.notNil,{
-            if(session.respondsTo(\at).not or:{session[\sessionVersion] != 1},{
+            version=session[\sessionVersion] ? 1;
+            if(session.respondsTo(\at).not or:{[1,2].includes(version).not},{
              manualParamsStatus.string_("Session invalide ou version non prise en charge.");
-             addLog.("ERREUR session incompatible: "++path)
+             addLog.("ERREUR session incompatible: "++path);
             },{
              loadedTransformer=session[\transformer];
              if(loadedTransformer.isKindOf(HPtransformerRT).not,{
               manualParamsStatus.string_("Session invalide : objet HPtransformerRT absent.");
-              addLog.("ERREUR moteur absent de la session: "++path)
+              addLog.("ERREUR moteur absent de la session: "++path);
              },{
-              transformer=loadedTransformer;
+              // Important: all callbacks use this lexical variable after assignment.
+              transformer=repairLoadedTransformer.value(loadedTransformer,session);
+
+              // Synchronisation automatique avec la variable choisie
+              // lors de la creation du Studio.
+              if(externalTransformerKey.notNil,{
+               topEnvironment[externalTransformerKey]=transformer;
+              });
+
               guiState=session[\gui] ? ();
               restartOsc=guiState[\oscWasRunning] ? false;
-              restoreGuiFromSession.(session);
-              lastStatus={transformer.statusSilent}.try;
+              restoreGuiFromSession.value(session);
               if(restartOsc,{oscStart.value});
               manualParamsStatus.string_(
-               "SESSION COMPLETE CHARGEE"++Char.nl++path++Char.nl++Char.nl++
-               "Date de sauvegarde : "++(session[\savedAt] ? "inconnue")++Char.nl++
-               "OSC relance : "++restartOsc
+               "SESSION CHARGEE ET RUNTIME RECONSTRUIT"++Char.nl++path++Char.nl++
+               "Version session : "++version++Char.nl++
+               "OSC relance : "++restartOsc++Char.nl++Char.nl++
+               "Variable externe mise a jour : ~"++externalTransformerKey.asString++Char.nl++
+               "Moteur partage avec le logiciel hote : "++(topEnvironment[externalTransformerKey]===transformer)
               );
-              addLog.("Session complete chargee: "++path)
-             })
-            })
-           })
-          })
-         })
+              addLog.("Session chargee, RCU reconstruit et GUI resynchronisee: "++path);
+             });
+            });
+           });
+          });
+         });
         };
 
         title.(pages[\manualParams],"PARAMETRES RUNTIME MANUELS",20,15,700);
@@ -760,7 +1023,14 @@ HPTransformerStudio : Object {
           "generationWindowSize = 8"++Char.nl++
           "driftGain = 0.45"++Char.nl++
           "autoTuneEnabled = false"++Char.nl++
-          "metaLearnEnabled = false"
+          "metaLearnEnabled = false"++Char.nl++
+          "normalizationEnabled = true"++Char.nl++
+          "normalizationBlend = 0.15"++Char.nl++
+          "multiResolutionEnabled = true"++Char.nl++
+          "multiResolutionMidDivider = 4"++Char.nl++
+          "multiResolutionSlowDivider = 16"++Char.nl++
+          "stabilityGuardEnabled = true"++Char.nl++
+          "stabilitySnapshotInterval = 128"
          );
         title.(pages[\manualParams],"RESULTAT / VALIDATION",780,95,450);
         manualParamsStatus=TextView(pages[\manualParams],uiRect.(780,130,480,415))
@@ -1006,7 +1276,7 @@ HPTransformerStudio : Object {
         outputView=TextView(pages[\generation],uiRect.(20,105,800,585)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         title.(pages[\generation],"ETAT GENERATION",850,105,400,24);
         generationLiveText=TextView(pages[\generation],uiRect.(850,140,420,550)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // Memoire Live
         title.(pages[\memoryLive],"MEMOIRE LONGUE ET REPLAY",20,15);
         addSlider.(pages[\memoryLive],"Retrieval gain",\memoryRetrievalGain,ControlSpec(0,1,\lin),20,55,590);
@@ -1022,7 +1292,7 @@ HPTransformerStudio : Object {
         button.(pages[\memoryLive],"Status vers Post",430,400,190,{transformer.status.postln});
         title.(pages[\memoryLive],"MONITEUR MEMOIRE",660,15,500);
         memoryLiveText=TextView(pages[\memoryLive],uiRect.(660,55,610,610)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // Surprise Live
         title.(pages[\surpriseLive],"SURPRISE, PLASTICITE ET STABILITE",20,15);
         addSlider.(pages[\surpriseLive],"Surprise threshold",\surpriseThreshold,ControlSpec(0,1,\lin),20,55,590);
@@ -1038,7 +1308,7 @@ HPTransformerStudio : Object {
         button.(pages[\surpriseLive],"Reset Learning",430,400,190,{transformer.resetLearning;addLog.("Reset Learning")});
         title.(pages[\surpriseLive],"MONITEUR SURPRISE",660,15,500);
         surpriseLiveText=TextView(pages[\surpriseLive],uiRect.(660,55,610,610)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // Temps reel / Bus / OSC
         // Entrees acceptees : /hptransformer/input, /learn, /predict, /generate selon le chemin choisi.
         title.(pages[\osc],"TEMPS REEL / BUS LOCAL / OSC",20,15);
@@ -1050,7 +1320,7 @@ HPTransformerStudio : Object {
         oscOutPortBox=NumberBox(pages[\osc],uiRect.(630,53,90,28)).value_(57130).step_(1);
         StaticText(pages[\osc],uiRect.(740,55,95,24)).string_("Mode :");
         oscModeMenu=PopUpMenu(pages[\osc],uiRect.(835,53,180,28)).items_(["Learn + Generate","Learn only","Predict only","Generate only"]).value_(0).action_({|menu|oscMode=menu.value});
-        
+
         StaticText(pages[\osc],uiRect.(20,95,110,24)).string_("Chemin entree :");
         oscInputPathField=TextField(pages[\osc],uiRect.(130,93,300,28)).string_("/hptransformer/input");
         StaticText(pages[\osc],uiRect.(455,95,110,24)).string_("Chemin sortie :");
@@ -1060,7 +1330,7 @@ HPTransformerStudio : Object {
          .minDecimals_(6).maxDecimals_(6).step_(0.000001).scroll_step_(0.000001)
          .clipLo_(0.0).clipHi_(1.0).action_({|box|oscFollowMix=box.value.asFloat.clip(0,1)});
         StaticText(pages[\osc],uiRect.(1125,95,130,24)).string_("0=modele  1=entree").stringColor_(Color.white);
-        
+
         button.(pages[\osc],"Demarrer OSC",20,140,180,{oscStart.value});
         button.(pages[\osc],"Arreter OSC",215,140,180,{oscStop.value});
         oscLearnButton=Button(pages[\osc],uiRect.(410,140,210,34)).states_([
@@ -1084,21 +1354,30 @@ HPTransformerStudio : Object {
          .font_(Font.default.boldVariant.size_(9)).value_(0).action_({|b|
           oscDetailedEvents=(b.value==1);oscRecordEvent.("DETAILS OSC "++if(oscDetailedEvents,{"ON"},{"OFF"}),true)
          });
+        StaticText(pages[\osc],uiRect.(20,222,180,24)).string_("Suivi par dimension :").stringColor_(Color.white);
+        oscFollowMixVectorField=TextField(pages[\osc],uiRect.(200,218,420,30))
+         .string_(Array.fill((transformer.config[\outputSize]?1).asInteger.max(1),{oscFollowMix}).join(","))
+         .background_(Color.white).stringColor_(Color.black)
+         .action_({|field|parseFollowMixVector.(field.string)});
+        button.(pages[\osc],"Appliquer suivi dimensions",640,216,245,{parseFollowMixVector.(oscFollowMixVectorField.string)});
+        button.(pages[\osc],"Retour suivi global",900,216,210,{
+         oscFollowMixVector=nil;oscRecordEvent.("SUIVI GLOBAL = "++oscFollowMix,true)
+        });
         button.(pages[\osc],"Effacer evenements",860,140,190,{
          oscEventLines.clear;oscEventsDirty=true;oscFlushEvents.value
         });
         button.(pages[\osc],"Test sortie 8D",1065,140,180,{
          var testVector;testVector=Array.fill((transformer.config[\outputSize]?8).asInteger.max(1),{1.0.rand});if(oscBusOutput and:{controlBus.notNil},{controlBus.setn(testVector)});if(oscTarget.notNil and:{oscSendOutput},{oscTarget.sendMsg(oscOutputPath,*testVector);oscOutCount=oscOutCount+1});oscLastOutput=testVector.copy;oscRecordEvent.("TEST 8D bus="++controlBus.notNil++" "++testVector.asCompileString)});
-        
-        title.(pages[\osc],"ETAT ET DEBIT",20,230);
-        oscStatusText=TextView(pages[\osc],uiRect.(20,265,420,390)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        title.(pages[\osc],"EVENEMENTS RECUS / EMIS",470,230,700);
-        oscEventsView=TextView(pages[\osc],uiRect.(470,265,790,390)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
+        title.(pages[\osc],"ETAT ET DEBIT",20,265);
+        oscStatusText=TextView(pages[\osc],uiRect.(20,300,420,355)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+        title.(pages[\osc],"EVENEMENTS RECUS / EMIS",470,265,700);
+        oscEventsView=TextView(pages[\osc],uiRect.(470,300,790,355)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
+
         // Ajoute une ligne en memoire sans toucher au TextView. Le TextView
         // est reconstruit uniquement par oscUpdateStatus, quelques fois par seconde.
         oscRecordEvent={|text,force=false|var line;
-         if(force or:{oscDetailedEvents},{
+         if(logCollectionEnabled and:{force or:{oscDetailedEvents}},{
           line=Date.localtime.stamp++"  "++text.asString;oscEventLines.add(line);
           while({oscEventLines.size>250},{oscEventLines.removeAt(0)});
           oscEventsDirty=true
@@ -1110,6 +1389,20 @@ HPTransformerStudio : Object {
           oscEventsView.refresh;oscEventsDirty=false
          })
         };
+        parseFollowMixVector={|text|
+         var parts,expected,values;
+         expected=(transformer.config[\outputSize]?1).asInteger.max(1);
+         parts=text.asString.split($,).collect({|item|item.stripWhiteSpace});
+         if(parts.size!=expected,{
+          oscRecordEvent.("SUIVI PAR DIMENSION: "++expected++" valeurs attendues",true);
+          nil
+         },{
+          values=parts.collect({|item|item.asFloat.clip(0,1)});
+          oscFollowMixVector=values;
+          oscRecordEvent.("SUIVI PAR DIMENSION = "++values.asCompileString,true);
+          values
+         })
+        };
         // Traitement lourd hors du callback OSC. Aucun ancien paquet n'est
         // mis en file : oscPendingInput contient toujours la valeur la plus recente.
         oscProcessInput={|input|
@@ -1118,6 +1411,7 @@ HPTransformerStudio : Object {
          mode=oscMode;oscProcessedCount=oscProcessedCount+1;
          shouldLearn=oscLearning and:{(oscProcessedCount%oscLearningDivider.max(1))==0};
          generated={
+          // Separate learned/generated velocity contexts prevent cross-contamination.
           if((mode==0 or:{mode==1}) and:{shouldLearn},{transformer.learnEvent(input.copy)});
           if(mode==0,{transformer.generateStep(input.copy)},{
            if(mode==2,{transformer.predict(input.copy)},{
@@ -1138,10 +1432,12 @@ HPTransformerStudio : Object {
            output=input.copyRange(0,expectedOutput.min(input.size)-1);
            if(output.size<expectedOutput,{output=output++Array.fill(expectedOutput-output.size,{0.5})})
           });
-          if(mode==0 and:{oscFollowMix>0},{
+          if(mode==0 and:{oscFollowMix>0 or:{oscFollowMixVector.notNil}},{
            commonSize=expectedOutput.min(input.size);
            commonSize.do({|i|
-            output[i]=((output[i]*(1.0-oscFollowMix))+(input[i]*oscFollowMix)).clip(0,1)
+            var mix;
+            mix=if(oscFollowMixVector.notNil and:{i<oscFollowMixVector.size},{oscFollowMixVector[i]},{oscFollowMix});
+            output[i]=((output[i]*(1.0-mix))+(input[i]*mix)).clip(0,1)
            })
           });
           oscLastOutput=output.copy;
@@ -1204,7 +1500,7 @@ HPTransformerStudio : Object {
           " | worker="++oscProcessHz++"Hz | learn/"++oscLearningDivider,true);
          oscFlushEvents.value;addLog.("Interface OSC demarree sans file d'attente")
         };
-        
+
         oscUpdateStatus={
          var now,elapsed;
          now=Main.elapsedTime;
@@ -1219,7 +1515,7 @@ HPTransformerStudio : Object {
           running:oscRunning,listenPort:oscInPortBox.value.asInteger,
           destination:(oscHostField.string++":"++oscOutPortBox.value.asInteger),
           inputPath:oscInputPathField.string,outputPath:oscOutputPath,
-          learningExternal:oscLearning,networkOscEnabled:oscSendOutput,busEnabled:oscBusOutput,busAttached:controlBus.notNil,followMix:oscFollowMix,mode:["Learn + Generate","Learn only","Predict only","Generate only"][oscMode],
+          learningExternal:oscLearning,networkOscEnabled:oscSendOutput,busEnabled:oscBusOutput,busAttached:controlBus.notNil,followMix:oscFollowMix,followMixVector:oscFollowMixVector,mode:["Learn + Generate","Learn only","Predict only","Generate only"][oscMode],
           totalIn:oscInCount,totalProcessed:oscProcessedCount,totalReplaced:oscDroppedCount,
           totalOut:oscOutCount,errors:oscErrorCount,workerBusy:oscBusy,pending:oscPendingInput.notNil,
           processHz:oscProcessHz,learningDivider:oscLearningDivider,detailedEvents:oscDetailedEvents,
@@ -1228,7 +1524,7 @@ HPTransformerStudio : Object {
          ).asCompileString);
          oscFlushEvents.value;
         };
-        
+
         // Jeux complets coordonnes
         title.(pages[\sets],"JEUX COMPLETS APPRENTISSAGE / GENERATION",20,15,800);
         setMenu=PopUpMenu(pages[\sets],uiRect.(20,55,540,32)).items_(setNames).value_(0).action_({|menu|
@@ -1242,7 +1538,7 @@ HPTransformerStudio : Object {
         StaticText(pages[\sets],uiRect.(20,605,1230,55)).string_(
          "Conseil : pour le direct, commencez par Suivi Musicien Equilibre. Choisissez Legato Expressif, Rythmique Percussif, Call and Response, Improvisation Partagee ou Longue Session Prudente selon la situation."
         ).stringColor_(Color.white).font_(Font.default.boldVariant.size_(12));
-        
+
         // Graphes
         title.(pages[\graphs],"SUIVI TEMPS REEL",20,15);
         graphView=UserView(pages[\graphs],uiRect.(20,50,1270,520)).background_(Color.white).clearOnRefresh_(true);
@@ -1439,7 +1735,7 @@ HPTransformerStudio : Object {
         addSlider.(pages[\genPresets],"Diversity noise",\diversityNoiseGain,ControlSpec(0,0.02,\lin),20,315,600);
         addSlider.(pages[\genPresets],"Diversity repulsion",\diversityRepulsionGain,ControlSpec(0,0.05,\lin),20,355,600);
         genPresetText=TextView(pages[\genPresets],uiRect.(660,115,590,470)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // Memory presets
         title.(pages[\memoryPresets],"PRESETS MEMOIRE",20,15);
         memoryMenu=PopUpMenu(pages[\memoryPresets],uiRect.(20,55,500,30)).items_(memoryNames);
@@ -1452,7 +1748,7 @@ HPTransformerStudio : Object {
         addSlider.(pages[\memoryPresets],"Memory decay",\memoryDecay,ControlSpec(0.90,1,\lin),20,235,600);
         addSlider.(pages[\memoryPresets],"Replay rate",\replayRate,ControlSpec(0,0.5,\lin),20,275,600);
         memoryPresetText=TextView(pages[\memoryPresets],uiRect.(660,115,590,470)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // Surprise presets
         title.(pages[\surprisePresets],"PRESETS SURPRISE ET PLASTICITE",20,15);
         surpriseMenu=PopUpMenu(pages[\surprisePresets],uiRect.(20,55,500,30)).items_(surpriseNames);
@@ -1465,37 +1761,37 @@ HPTransformerStudio : Object {
         addSlider.(pages[\surprisePresets],"Slow adaptation",\adaptationSlowRate,ControlSpec(0,2,\lin),20,235,600);
         addSlider.(pages[\surprisePresets],"Protection",\protectionStrength,ControlSpec(0,2,\lin),20,275,600);
         surprisePresetText=TextView(pages[\surprisePresets],uiRect.(660,115,590,470)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // AutoTune presets
         title.(pages[\auto],"PRESETS AUTOTUNE",20,15);autoMenu=PopUpMenu(pages[\auto],uiRect.(20,55,500,30)).items_(autoNames);
         button.(pages[\auto],"Appliquer AutoTune",540,53,210,{loadSettings.(autoPresets[autoMenu.value],autoNames[autoMenu.value])});
-        button.(pages[\auto],"Activer",770,53,150,{transformer.enableAutoTune;addLog.("AutoTune ON")});button.(pages[\auto],"Desactiver",935,53,150,{transformer.disableAutoTune;addLog.("AutoTune OFF")});
+        button.(pages[\auto],"Activer",770,53,150,{transformer.enableAutoTune;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("AutoTune ON")});button.(pages[\auto],"Desactiver",935,53,150,{transformer.disableAutoTune;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("AutoTune OFF")});
         button.(pages[\auto],"Reset",1100,53,150,{transformer.resetAutoTune;addLog.("AutoTune reset")});
         addSlider.(pages[\auto],"Strength",\autoTuneStrength,ControlSpec(0,1,\lin),20,115,600);addSlider.(pages[\auto],"Smoothing",\autoTuneSmoothing,ControlSpec(0,0.999,\lin),20,155,600);
         addSlider.(pages[\auto],"Target novelty",\autoTuneTargetNovelty,ControlSpec(0,1,\lin),20,195,600);addSlider.(pages[\auto],"Target diversity",\autoTuneTargetDiversity,ControlSpec(0,1,\lin),20,235,600);
         autoText=TextView(pages[\auto],uiRect.(660,115,590,470)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // MetaLearn presets
         title.(pages[\meta],"PRESETS METALEARN",20,15);metaMenu=PopUpMenu(pages[\meta],uiRect.(20,55,500,30)).items_(metaNames);
         button.(pages[\meta],"Appliquer MetaLearn",540,53,210,{loadSettings.(metaPresets[metaMenu.value],metaNames[metaMenu.value])});
-        button.(pages[\meta],"Activer",770,53,150,{transformer.enableMetaLearning;addLog.("MetaLearn ON")});button.(pages[\meta],"Desactiver",935,53,150,{transformer.disableMetaLearning;addLog.("MetaLearn OFF")});
+        button.(pages[\meta],"Activer",770,53,150,{transformer.enableMetaLearning;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("MetaLearn ON")});button.(pages[\meta],"Desactiver",935,53,150,{transformer.disableMetaLearning;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("MetaLearn OFF")});
         button.(pages[\meta],"Reset",1100,53,150,{transformer.resetMetaLearning;addLog.("MetaLearn reset")});
         addSlider.(pages[\meta],"Strength",\metaLearnStrength,ControlSpec(0,1,\lin),20,115,600);addSlider.(pages[\meta],"Smoothing",\metaLearnSmoothing,ControlSpec(0,0.999,\lin),20,155,600);
         addSlider.(pages[\meta],"Target error",\metaLearnTargetError,ControlSpec(0,1,\lin),20,195,600);addSlider.(pages[\meta],"Target recall",\metaLearnTargetRecall,ControlSpec(0,1,\lin),20,235,600);
         metaText=TextView(pages[\meta],uiRect.(660,115,590,470)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        
+
         // RCU
         title.(pages[\rcu],"SNAPSHOTS RCU",20,15);rcuText=TextView(pages[\rcu],uiRect.(20,55,700,550)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
-        button.(pages[\rcu],"Activer RCU",760,55,210,{transformer.enableUnifiedRCU;addLog.("RCU active")});button.(pages[\rcu],"Desactiver RCU",990,55,210,{transformer.disableUnifiedRCU;addLog.("RCU desactive")});
+        button.(pages[\rcu],"Activer RCU",760,55,210,{transformer.enableUnifiedRCU;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("RCU active")});button.(pages[\rcu],"Desactiver RCU",990,55,210,{transformer.disableUnifiedRCU;refreshButtonsAndMenus.value(());refreshStateIndicators.value;addLog.("RCU desactive")});
         button.(pages[\rcu],"Prepare",760,105,210,{addLog.("Prepare v"++transformer.prepareSnapshot)});button.(pages[\rcu],"Commit",990,105,210,{addLog.("Commit v"++transformer.commitSnapshot)});
         button.(pages[\rcu],"Publish",760,155,210,{addLog.("Publish v"++transformer.publishNow)});button.(pages[\rcu],"Discard",990,155,210,{transformer.discardPendingSnapshot;addLog.("Pending discard")});
         button.(pages[\rcu],"Sauver archive",760,230,210,{Dialog.savePanel({|p|if(p.notNil,{transformer.saveArchive(p);addLog.("Archive sauvee")})})});
-        
+
         // Logs
         title.(pages[\logs],"LOGS",20,15);logView=TextView(pages[\logs],uiRect.(20,55,1270,550)).editable_(false).background_(Color(0.96,0.97,0.98)).stringColor_(Color.black);
         exportLogs={Dialog.savePanel({|p|var f,fp;if(p.notNil,{fp=if(p.endsWith(".txt"),{p},{p++".txt"});f=File(fp,"w");f.write(logs.join(Char.nl));f.close;addLog.("Logs exportes")})})};
         button.(pages[\logs],"Exporter logs",20,620,190,{exportLogs.value});button.(pages[\logs],"Effacer logs",225,620,190,{logs.clear;logView.string_("")});
-        
+
         savePreset={Dialog.savePanel({|p|if(p.notNil,{var fp=if(p.endsWith(".hptpreset"),{p},{p++".hptpreset"});transformer.runtimeConfig.writeArchive(fp);addLog.("Preset sauve: "++fp)})})};
         loadPreset={Dialog.openPanel({|p|if(p.notNil,{var x=Object.readArchive(p);if(x.respondsTo(\keysValuesDo),{loadSettings.(x,p)})})})};
         // Style global haute lisibilite macOS / Qt.
@@ -1512,11 +1808,11 @@ HPTransformerStudio : Object {
          });
          if(child.isKindOf(PopUpMenu),{child.background_(Color.white);child.stringColor_(Color.black)})
         })});
-        
+
         [statusText,outputView,generationLiveText,memoryLiveText,surpriseLiveText,oscStatusText,oscEventsView,genPresetText,memoryPresetText,surprisePresetText,autoText,metaText,rcuText,logView,torusMaskStatus,setDescriptionView,manualParamsStatus,morphStatus].do({|view|if(view.notNil,{view.background_(Color(0.96,0.97,0.98));view.stringColor_(Color.black);view.font_(Font.default.size_(12));view.refresh})});
         exportCSV={Dialog.savePanel({|p|var f,n,fp;if(p.notNil,{fp=if(p.endsWith(".csv"),{p},{p++".csv"});f=File(fp,"w");f.write("index,loss,surprise,entropy,memoryRecall,trajectoryRecall\n");
          n=loss.size.min(surprise.size).min(entropy.size).min(memRecall.size).min(trajRecall.size);n.do({|i|f.write([i,loss[i],surprise[i],entropy[i],memRecall[i],trajRecall[i]].join(",")++"\n")});f.close;addLog.("CSV exporte")})})};
-        
+
         refresh={lastStatus={if(transformer.respondsTo(\statusSilent),{transformer.statusSilent},{transformer.status})}.try;if(lastStatus.notNil,{addGraphSample.(loss,lossEMA,lastStatus[\loss]);
          addGraphSample.(surprise,surpriseEMAPlot,lastStatus[\surpriseEMA]);
          addGraphSample.(entropy,entropyEMA,lastStatus[\entropy]);
@@ -1531,7 +1827,8 @@ HPTransformerStudio : Object {
           generationDiversity:(lastStatus[\generationDiversity]?0), generationNovelty:(lastStatus[\generationNovelty]?0),
           generationPressure:(lastStatus[\generationPressure]?0), trajectoryRecall:(lastStatus[\trajectoryRecall]?0),
           trajectoryNovelty:(lastStatus[\trajectoryNovelty]?0), attentionTemperature:transformer.getParameter(\attentionTemperature),routerTemperature:transformer.getParameter(\routerTemperature),trajectoryTemperature:transformer.getParameter(\trajectoryRetrievalTemperature),
-          exploration:transformer.getParameter(\trajectoryExplorationGain), noise:transformer.getParameter(\diversityNoiseGain)
+          exploration:transformer.getParameter(\trajectoryExplorationGain), noise:transformer.getParameter(\diversityNoiseGain),
+          learnedVelocity:(lastStatus[\learnedVelocity]?[]), generatedVelocity:(lastStatus[\generatedVelocity]?[])
          ).asCompileString);
          memoryLiveText.string_((
           memoryCount:(lastStatus[\memoryCount]?0), replayCount:(lastStatus[\replayCount]?0),
@@ -1548,9 +1845,12 @@ HPTransformerStudio : Object {
           interferenceScore:(lastStatus[\interferenceScore]?0)
          ).asCompileString);
          oscUpdateStatus.value;
+         refreshStateIndicators.value;
          if(activePage==\graphs,{graphView.refresh});if(activePage==\heatmaps,{heatView.refresh})})};
-        routine=Routine({while({running},{{refresh.value}.defer;rate.wait})}).play(AppClock);
-        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});showPage.(\dashboard);addLog.("Studio Pro V8.4.1 pour HPtransformerRT V30.1.5 ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
+        routine=Routine({while({running},{if(displaysEnabled,{{refresh.value}.defer});rate.wait})}).play(AppClock);
+        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});refreshStateIndicators.value;showPage.(\dashboard);addLog.("Studio Pro V8.7.3 pour HPtransformerRT V30.3.0 ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
     }
 }
+
+
 
