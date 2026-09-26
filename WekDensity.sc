@@ -2581,8 +2581,7 @@ Preset Wek",
 						freq.size.do({arg i, f, a, d;
 							# f, a, d = neuralFAD.next([freq.wrapAt(i).asArray, amp.wrapAt(i).asArray, duree.wrapAt(i).asArray], [freq.wrapAt(i+1).asArray, amp.wrapAt(i+1).asArray, duree.wrapAt(i+1).asArray], 1, 0.5, 0.5);
 							// Freq
-							freqNeu = freqNeu.add((f.at(0) *  abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments));
-							freqNeu = freqNeu.min(135);
+							freqNeu = freqNeu.add(f.at(0));
 							// Amp
 							ampNeu = ampNeu.add(a.at(0));
 							// Duree
@@ -2630,18 +2629,17 @@ Preset Wek",
 						});
 						// Set Range Duree
 						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						newDuree = newDuree.max(0.01);
 						// Quantization Duree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;
 							if(item <= 0, {item = quantizationDuree.reciprocal});
 							newDuree.put(index, item);
 						});
-						/*// Setup Range Freq
-						freq = freq.collect({arg item, index;
-						item = item * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + 	rangeFreqintruments.at(0) + transFreqintruments;
-						item = item.min(135);
-						item.midicps;
-						});*/
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
 						// Setup Freq with Scaling and Tuning
 						if(flagScaling == 'on', {
 							newFreq = newFreq.collect({arg item, index;

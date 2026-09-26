@@ -127,7 +127,7 @@ Launcher {
 					path = "~/Documents/Agents/";
 				},
 				2,	{
-					nameSoft = "MatrixMusic";// 57566
+					nameSoft = "MatrixMusicTR";// 57566
 					path = "~/Documents/Matrix/";
 				},
 				3,	{

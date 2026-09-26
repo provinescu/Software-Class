@@ -1,6 +1,6 @@
 // NewAlgo
 
-Density {
+DensityTR {
 
 	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi, transFreqintruments, transDureeintruments, scAdr, udpAdr;
 
@@ -146,7 +146,7 @@ Density {
 		recLevel = 1;
 		preLevel = 0;
 		flagChord = 'off';
-		listAlgorithm = ['Default', 'Probability', 'Euclide', 'Genetic','Kohonen', 'Neural'];
+		listAlgorithm = ['Default', 'Probability', 'Euclide', 'Genetic','Kohonen', 'Neural', 'Generate', 'GenStep', 'Predict'];
 		displayAlgo = "";
 		displayIndex = "";
 		displayMIDI = "";
@@ -957,6 +957,54 @@ Density {
 			});
 		}, \score, recvPort: udpAdr);
 
+/*// Utility Transformer
+		~bounds = (
+			freq: [20, 20000],
+			amp: [0.001, 1],
+			dur: [0.01, 4],
+			bpm: [0.125, 8],
+			centroid: [20, 20000],
+			energy: [20, 20000],
+			flux: [0.001, 1.0],
+			flatness: [0.001, 1.0],
+		);
+		~logNorm = { |x, key|
+			var b = ~bounds[key];
+
+			((x.max(b[0])).log2 - b[0].log2)
+			/ (b[1].log2 - b[0].log2);
+		};
+		~logDenorm = { |x, key|
+			var b = ~bounds[key];
+
+			2.pow(
+				x * (b[1].log2 - b[0].log2)
+				+ b[0].log2
+			);
+		};*/
+		~hpTR = HPtransformerRT.new(3, 3, 6, 12, 16, 2, 8, 3);// réglages i7 temps reel
+		//~hpTR.setIntelUltraCPUFastLearn;// Ultra minimal CPU rapide pour utiliser sans le Studio
+		~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+		//~studio = HPTransformerStudio.new(~hpTR).front;//par default
+		//~studio.window.view.palette_(QPalette.light); // plus necessaire
+		// Sending receiving pas necessaire ici
+		/*~hptInputTarget = NetAddr("127.0.0.1", NetAddr.langPort);// in studio
+		// Bus de sortie du Transformer.
+		~hptBus = Bus.control(s, 3);
+		~hptBus.setn(Array.fill(3, 0.5));
+		~studio.attachControlBus(~hptBus);// for Studio not valid here because not external synth
+
+		// OSC Studio Out
+		~hptOutputFunc.free;
+		~hptOutputFunc = OSCFunc(
+		{ |msg, time, addr, recvPort|
+			msg.postcs;
+		},
+		"/hptransformer/output",
+		nil,
+		57130
+		);*/
+
 		// Run Soft
 		s.waitForBoot({
 
@@ -1237,6 +1285,10 @@ Density {
 											freqNew = freqTampon; ampNew = ampTampon;
 											freqBefore = freqTampon; ampBefore = ampTampon;
 											lastTime.put(0, time);
+											// ici normaliser pour Transformer et envoyer
+										~hpTR.learnEvent([freqNew.cpsmidi / 127, ampNew, duree / dureeMaximumAnalyze]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", freqNew.cpsmidi / 127, ampNew, duree / dureeMaximumAnalyze);*/
 											// Set All Data
 											// Freq
 											busOSCfreq.at(0).set(freqNew);
@@ -1500,7 +1552,7 @@ Density {
 
 			/////////////// AlgoCompo + Setup Range and Filter Data Music ////////////////////////
 			computeAlgoFilterDataMusic = {arg freq, amp, duree, data, z1, z2, z3, z4, z5, z6, z7, algorithm;
-				var music, fft, octave, position = 0, ratio, degre, newFreq=[], newAmp=[], newDuree=[], chordFreq=[], chordAmp=[], chordDuree=[], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances=[], dureeChord, maxTraining=0, flux, flatness, centroid, energy, bpm, listF=[], listA=[], listD=[], freqNeu=[], ampNeu=[], durNeu=[];
+				var music, fft, octave, position = 0, ratio, degre, newFreq=[], newAmp=[], newDuree=[], chordFreq=[], chordAmp=[], chordDuree=[], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances=[], dureeChord, maxTraining=0, flux, flatness, centroid, energy, bpm, listF=[], listA=[], listD=[], freqNeu=[], ampNeu=[], durNeu=[], vecteur;
 				// DataMusicTransform [fft, freq, amp, duree]
 				// [[flux, flatness, centroid, energy, bpm], [q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie], ...]
 				// Choix de l'algorythme Probability
@@ -2128,6 +2180,293 @@ Density {
 						// Set Range Duree
 						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						newDuree = newDuree.max(0.01);
+						// Quantization Duree
+						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
+						newDuree.do({arg item, index;
+							if(item <= 0, {item = quantizationDuree.reciprocal});
+							newDuree.put(index, item);
+						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
+					},
+					'Generate', {
+						freqNeu=[];
+						ampNeu=[];
+						durNeu=[];
+						// Generate Transformer
+						vecteur = ~hpTR.generate([freq.wrapAt(0), amp.wrapAt(0), duree.wrapAt(0)], freq.size);
+						vecteur = vecteur.flop;
+						freqNeu = vecteur[0];
+						ampNeu = vecteur[1];
+						durNeu = vecteur[2];
+						freq = freqNeu;
+						amp = ampNeu;
+						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
+						// Duree Transformation
+						if(flagChord == 'on', {
+							// Check Duree for Chords
+							duree.do({arg duree, index, newFHZ;
+								newFHZ = freq.at(index);
+								if(duree <= q1, {
+									chordFreq=chordFreq.add(newFHZ);
+									chordAmp=chordAmp.add(amp.at(index));
+									chordDuree=chordDuree.add(q1);
+								}, {
+									if(chordFreq == [], {
+										newFreq = newFreq.add(newFHZ);
+										newAmp = newAmp.add(amp.at(index));
+										newDuree = newDuree.add(duree);
+									}, {
+										chordFreq=chordFreq.add(newFHZ);
+										chordAmp=chordAmp.add(amp.at(index));
+										newFreq = newFreq.add(chordFreq);
+										newAmp = newAmp.add(chordAmp.mediane);
+										newDuree= newDuree.add(duree);
+										chordFreq = [];
+									});
+								});
+							});
+							if(newFreq.size == 0, {
+								newFreq = chordFreq;
+								newAmp = chordAmp;
+								newDuree= chordDuree;
+							});
+						}, {
+							// No Chord
+							newFreq = freq;
+							newAmp = amp;
+							newDuree = duree;
+						});
+						// Set Range Duree
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						// Quantization Duree
+						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
+						newDuree.do({arg item, index;
+							if(item <= 0, {item = quantizationDuree.reciprocal});
+							newDuree.put(index, item);
+						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
+					},
+					'GenStep', {
+						freqNeu=[];
+						ampNeu=[];
+						durNeu=[];
+						// Generate Transformer
+						freq.size.do({arg i, f, a, d;
+							# f, a, d = ~hpTR.generateStep([freq.wrapAt(i), amp.wrapAt(i), duree.wrapAt(i)]);
+							// Freq
+							freqNeu = freqNeu.add(f);
+							// Amp
+							ampNeu = ampNeu.add(a);
+							// Duree
+							durNeu = durNeu.add(d);
+						});
+						freq = freqNeu;
+						amp = ampNeu;
+						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
+						// Duree Transformation
+						if(flagChord == 'on', {
+							// Check Duree for Chords
+							duree.do({arg duree, index, newFHZ;
+								newFHZ = freq.at(index);
+								if(duree <= q1, {
+									chordFreq=chordFreq.add(newFHZ);
+									chordAmp=chordAmp.add(amp.at(index));
+									chordDuree=chordDuree.add(q1);
+								}, {
+									if(chordFreq == [], {
+										newFreq = newFreq.add(newFHZ);
+										newAmp = newAmp.add(amp.at(index));
+										newDuree = newDuree.add(duree);
+									}, {
+										chordFreq=chordFreq.add(newFHZ);
+										chordAmp=chordAmp.add(amp.at(index));
+										newFreq = newFreq.add(chordFreq);
+										newAmp = newAmp.add(chordAmp.mediane);
+										newDuree= newDuree.add(duree);
+										chordFreq = [];
+									});
+								});
+							});
+							if(newFreq.size == 0, {
+								newFreq = chordFreq;
+								newAmp = chordAmp;
+								newDuree= chordDuree;
+							});
+						}, {
+							// No Chord
+							newFreq = freq;
+							newAmp = amp;
+							newDuree = duree;
+						});
+						// Set Range Duree
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						// Quantization Duree
+						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
+						newDuree.do({arg item, index;
+							if(item <= 0, {item = quantizationDuree.reciprocal});
+							newDuree.put(index, item);
+						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
+					},
+					'Predict', {
+						freqNeu=[];
+						ampNeu=[];
+						durNeu=[];
+						// Generate Transformer
+						freq.size.do({arg i, f, a, d;
+							# f, a, d = ~hpTR.predict([freq.wrapAt(i), amp.wrapAt(i), duree.wrapAt(i)]);
+							// Freq
+							freqNeu = freqNeu.add(f);
+							// Amp
+							ampNeu = ampNeu.add(a);
+							// Duree
+							durNeu = durNeu.add(d);
+						});
+						freq = freqNeu;
+						amp = ampNeu;
+						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
+						// Duree Transformation
+						if(flagChord == 'on', {
+							// Check Duree for Chords
+							duree.do({arg duree, index, newFHZ;
+								newFHZ = freq.at(index);
+								if(duree <= q1, {
+									chordFreq=chordFreq.add(newFHZ);
+									chordAmp=chordAmp.add(amp.at(index));
+									chordDuree=chordDuree.add(q1);
+								}, {
+									if(chordFreq == [], {
+										newFreq = newFreq.add(newFHZ);
+										newAmp = newAmp.add(amp.at(index));
+										newDuree = newDuree.add(duree);
+									}, {
+										chordFreq=chordFreq.add(newFHZ);
+										chordAmp=chordAmp.add(amp.at(index));
+										newFreq = newFreq.add(chordFreq);
+										newAmp = newAmp.add(chordAmp.mediane);
+										newDuree= newDuree.add(duree);
+										chordFreq = [];
+									});
+								});
+							});
+							if(newFreq.size == 0, {
+								newFreq = chordFreq;
+								newAmp = chordAmp;
+								newDuree= chordDuree;
+							});
+						}, {
+							// No Chord
+							newFreq = freq;
+							newAmp = amp;
+							newDuree = duree;
+						});
+						// Set Range Duree
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization Duree
 						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
 						newDuree.do({arg item, index;

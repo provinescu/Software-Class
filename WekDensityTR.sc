@@ -1,22 +1,27 @@
-// NewAlgo
+// Wekinator + SuperCollider
 
-Density {
+WekDensityTR {
 
-	classvar <> s, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi, transFreqintruments, transDureeintruments, scAdr, udpAdr;
+	classvar <> s, numPreset, lastNumPreset, lastTimeWekData, timeWekPreset, timeWekData, lastTimeWekPreset, listeWekPreset, flagWTD, flagWTP, kohonenF, kohonenA, kohonenD, geneticF, geneticA, geneticD, neuralFAD, chanelsMidi, transFreqintruments, transDureeintruments, scAdr, udpAdr;
 
-	var midiOut, tempoClock, groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseFFT, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate, keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, plotterDataGUI, windowPlotterFFT, refreshDisplayFFT, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, plotterFFT, plotterFFTGUI, createGUI, oscFFT, displayAnalyzeFFT, displayAnalyzeMusic, serveurAdresse;
-	var lastTime, oscMusic,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataFFT, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpDensity, flagMidiOut, masterAppAddr, slaveAppAddr, oscStateFlag, ardourOSC, indexWindows, pathData, oscMenu, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments;
-	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexInstrumentX, indexInstrumentY, jitterIndexInstrumentX, jitterIndexInstrumentY, displayInstrument, displaySound, indexSoundX, indexSoundY, jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
-	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, busOSCfreq, busOSCamp, busOSCduree, flagMemory, flagFhzBand;
-	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, loopMusic;
+	var tempoClock, busAnalyzeIn, busRecAudioIn, synthAudioIn, synthFileIn, synthAnalyseOnsets, synthAnalysePitch, synthAnalysePitch2, synthAnalyseKeyTrack, synthKeyboard, synthMIDI, synthAnalyzeAudioIn, synthRecAudioIn, windowEar, startSystem, switchSourceIn, switchAnalyze, typeAlgoAnalyze, canalMIDI, windowKeyboard, keyboardTranslate;
+	var wekFreq, wekAmp, wekDur, wekCentroid, wekEnergy, wekFlux, wekFlatness;
+	var keyboardTranslateBefore, keyboardVolume, keyboard, windowPlotterData, refreshDisplayDataMusic, windowLimiter, listeWindows, initSynthDef, numberAudioOut, cmdperiodfunc, bufferFile, fonctionLoadFileForAnalyse, keyVolume, plotterData, createGUI, displayAnalyzeFFT, displayAnalyzeMusic,  groupeAnalyse, groupeRecBuffer, groupeSynth, groupeFX, groupeMasterOut, groupeVerb;
+	var lastTime, oscMusicFFT,  windowGVerb, tuning, degrees, root, scale, flagScaling, typeMasterOut, rangeDBintruments, rangeFreqintruments, quantizationDuree, stretchDuree, rangeDureeintruments, freqFiltreGUI, ampFiltreGUI, durFiltreGUI, dureeMaximumAnalyze, fhzFilter, ampFilter, dureeFilter, flagAlgoAnalyze, plotDataMusic, userBPM, setupKeyboardShortCut, fonctionShortCut, keyboardShortCut, shortCutCommande, fonctionShortCutCommande, listeFileAnalyze, listeMasterOut, listeNameFileAnalyze, formatRecordingMenu, recChannels, midiMenu, helpWekDensity, flagMidiOut, plotterDataGUI;
+	var oscStateFlag, indexWindows, pathData, globalDensity, fonctionLoadPreset, fonctionSavePreset, fonctionCollectFolders, foldersToScanAll, foldersToScanPreset, stringFormat, busSynthInOut, listeBuffer, fonctionLoadSoundOrchestra, playInstruments, windowGlobal, pathSound, soundOrchestra, soundMenu, fxMenu, synthMenu, fxOrchestra, synthOrchestra, listeBusOff, maximumInstruments, plotterMFCCGUI;
+	var listeDataInstruments, buildSynth, midiOutLo, midiOutHi, panSynthHi, panSynthLo, busOSCflux, busOSCflatness, busOSCcentroid, busOSCenergy, busOSCbpm, computeAlgoFilterDataMusic, envelopeSynth, maximumData,  algoMenu, ctrlHP1, ctrlHP2, fadeFX, loopSound, reverseSound, offsetSound, flagSampler, memoryTime, dureeAnalyzeOSCMusic, watchSilence, fonctionRecPause, fonctionRecOff, fonctionRecOn, headerFormat, sampleFormat, flagRecording, indexSynthX, indexSynthY, jitterIndexSynthX, jitterIndexSynthY, displayInstrument, displaySound, indexSoundX, indexSoundY;
+	var jitterIndexSoundX, jitterIndexSoundY, displayFX, indexFXX, indexFXY, jitterIndexFXX, jitterIndexFXY, dureeSample, recLevel, preLevel, loopRec, flagRec, gVerb, freeVerb, allPass, flagRoot, flagBPM, oldTempo, flagChord, menuHelp, menuFile, menuPreset, menuInitAll, menuAudio, menuOSC, menuMIDI;
+	var midiOut, menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, busOSCfreq, busOSCamp, busOSCduree, flagMemory, flagFhzBand;
+	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
+	var dimIn, flagStreamMFCC, loopMusic, responder;
 
-	*new {arg path = "~/Documents/Density/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path = "~/Documents/WekDensity/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448, wekPort=57120, scPort=57110;
 
-		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort);
+		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
 
 	}
 
-	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort;
+	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
 
 		//// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -51,6 +56,7 @@ Density {
 		);// Type Format stereo, ambisonic, etc...
 
 		//Server.default = s = Server(name,NetAddr("localhost", scPort), Server.default.options);
+		thisProcess.openUDPPort(wekPort.asInteger); // Sender Port Wekinator + Enter Port change 6448 to an another for example 6449
 
 		s = Server.default;
 		s.options.memSize = 2**20;
@@ -72,22 +78,98 @@ Density {
 		headerFormat = "aiff";
 		sampleFormat = "float";
 
+		// Open Wekinator
+		sender.free;
+		sender = NetAddr.new("127.0.0.1", wek);// Wekinator
+		Pipe.new("open -a Wekinator", "r").close;
+
+		// Run the Soft
+		this.run;
+
+	}
+
+	// Soft WekDensity
+
+	run {
+
+		// OSCFunc Score
+		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+
+			var array, cmd = 'on', number, file, item = 0;
+
+			msg.removeAt(0);
+			msg.postcs;
+
+			while({cmd != nil},
+				{
+					cmd = msg[item].postln;
+					if(cmd == 'all' or: {cmd == 'wekdensity'},
+						{
+							cmd = msg[item+1].postln;
+							// Preset
+							if(cmd == 'preset',
+								{
+									number = msg[item+2].asInteger.postln;
+									{
+										if(File.exists(pathData ++ "Preset" + number.value.asString ++ ".scd"), {
+											listeDataInstruments.do({arg data, index;
+												data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
+											});
+											windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
+											file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
+											fonctionLoadPreset.value(file.readAllString.interpret);
+											file.close;
+										}, {"cancelled".postln});
+									}.defer;
+							});
+							// Stop
+							if(cmd == 'stop', {
+								{
+									startSystem.valueAction_(0);
+								}.defer;
+							});
+							// Start
+							if(cmd == 'start', {
+								{
+									startSystem.valueAction_(1);
+								}.defer;
+							});
+							// Wekinator Start
+							if(cmd  == 'wekrun', {
+								flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+								{
+									windowPlotterData.view.children.at(2).valueAction = 0;// rec
+									windowPlotterData.view.children.at(4).value = 1;// run
+								}.defer;
+							});
+							//Wekinator Stop
+							if(cmd == 'wekstop', {
+								flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+								{
+									windowPlotterData.view.children.at(4).value = 0;// run
+								}.defer;
+							});
+					});
+					item = item + 3;
+					cmd = msg[item];
+			});
+		}, \score, recvPort: udpAdr);
+
 		// Init
 		typeAlgoAnalyze = 0;
-		plotterData = [[0], [0], [0]];
-		plotterFFT = [[0], [0], [0], [0], [0]];
+		plotterData = [[0], [0], [0], [0], [0], [0],[0], [0]];
 		tuning = Tuning.et12;
 		degrees = tuning.semitones;
 		root = 0;
 		scale = Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning);
 		keyVolume = 12.neg.dbamp;
 		canalMIDI = 0;
-		rangeDBintruments = [-12.dbamp, -3.dbamp];
+		rangeDBintruments = [-12.dbamp, -6.dbamp];
 		rangeFreqintruments = [0, 127];
-		transFreqintruments = 0;
-		transDureeintruments = 1;
 		quantizationDuree = 100;
 		keyboardTranslateBefore = 0;
+		transFreqintruments = 0;
+		transDureeintruments = 1;
 		stretchDuree = 1;
 		rangeDureeintruments = [0, 4];
 		dureeMaximumAnalyze = 4;
@@ -130,10 +212,10 @@ Density {
 		memoryTime = 6;
 		dureeAnalyzeOSCMusic = Main.elapsedTime;
 		flagRecording = 'off';
-		indexInstrumentX = 0.5;
-		indexInstrumentY = 0.5;
-		jitterIndexInstrumentX = 0.5;
-		jitterIndexInstrumentY = 0.5;
+		indexSynthX = 0.5;
+		indexSynthY = 0.5;
+		jitterIndexSynthX = 0.5;
+		jitterIndexSynthY = 0.5;
 		indexSoundX = 0.5;
 		indexSoundY = 0.5;
 		jitterIndexSoundX = 0.5;
@@ -146,7 +228,7 @@ Density {
 		recLevel = 1;
 		preLevel = 0;
 		flagChord = 'off';
-		listAlgorithm = ['Default', 'Probability', 'Euclide', 'Genetic','Kohonen', 'Neural'];
+		listAlgorithm = ['Default', 'Probability', 'Euclide', 'Genetic','Kohonen', 'Neural', 'Generate', 'GenStep', 'Predict'];
 		displayAlgo = "";
 		displayIndex = "";
 		displayMIDI = "";
@@ -206,8 +288,25 @@ Density {
 		12.do({arg i; channelsSynth = channelsSynth.add(0)});// Channels Synth Ouput en fonction des numFhzBand
 		channelsVerb = 0; // Verb ouput channel
 		rangeFFT = [0.0, 1.0];
+		//MFCC
+		dimIn = 13;
+		flagStreamMFCC = 'off';
+		wekFreq = 60;
+		wekAmp = -12;
+		wekDur = 1;
+		wekCentroid = 60;
+		wekEnergy = 60;
+		wekFlux = 0.5;
+		wekFlatness = 0.5;
 		loopMusic = 1;
+		numPreset = 0;
+		lastNumPreset = 0;
+		timeWekPreset = 4;
+		timeWekData = 0.0625;
+		flagWTD = 'on';
+		flagWTP = 'on';
 		chanelsMidi =  [1,1,2,3,4,5,6,7,8,9,10,11,12];// 13 value 12 band et start for no bands
+		40.do({arg i; listeWekPreset = listeWekPreset.add(i+1)});
 		// For Kohonen
 		kohonenF = HPclassKohonen.new(1,127,1);
 		kohonenA = HPclassKohonen.new(1,127,1);
@@ -642,6 +741,10 @@ Density {
 		// Load Preset
 		fonctionLoadPreset = {arg allData, index=0;
 			var bpm, autoRoot, flagPlay=0;
+			// Smooth release
+			groupeSynth.release(4);
+			groupeFX.release(4);
+
 			// Load All Windows
 			listeWindows.do({arg window, data;
 				data = allData.at(index);
@@ -652,7 +755,7 @@ Density {
 					if(item == 67, {autoRoot = data.at(item).at(1)});
 					// Check Sliders don't touch
 					// Setup GUI Value
-					if(index == 0 and: {item == 0 or: {item == 1} or: {item == 2} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7}} or: {item == 8} or: {item == 9} or: {item == 14}, {nil},
+					if(index == 0 and: {item == 0 or: {item == 1} or: {item == 2} or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 6} or: {item == 7} or: {item == 8} or: {item == 9}} or: {item == 14}, {nil},
 						{
 							// View or CompositeView
 							if(data.at(item).at(0) == "a View" or: {data.at(item).at(0) == "a CompositeView"} or: {data.at(item).at(0) == "a QView"} or: {data.at(item).at(0) == "a SCCompositeView"}, {
@@ -661,7 +764,9 @@ Density {
 								if(data.at(item).at(1) == "a Slider" or: {data.at(item).at(1) == "a QSlider"} or: {data.at(item).at(1) == "a SCSlider"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
 								if(data.at(item).at(1) == "a RangeSlider" or: {data.at(item).at(1) == "a QRangeSlider"} or: {data.at(item).at(1) == "a SCRangeSlider"}, {view.children.at(2).activeLo_(0); view.children.at(2).activeHi_(1);
 									view.children.at(2).activeLo_(data.at(item).at(2).at(2).at(0)); view.children.at(2).activeHi_(data.at(item).at(2).at(2).at(1))});
-								if(data.at(item).at(1) == "a Knob" or: {data.at(item).at(1) == "a QKnob"} or: {data.at(item).at(1) == "a SCKnob"}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))});
+								if(data.at(item).at(1) == "a Knob" or: {data.at(item).at(1) == "a QKnob"} or: {data.at(item).at(1) == "a SCKnob"} and: {index != 2}, {view.children.at(2).valueAction_(data.at(item).at(2).at(2))},
+									{if(item == 7, {nil});
+								});
 								if(data.at(item).at(0)  == "a UserView" or: {data.at(item).at(0)  == "an UserView"} or: {data.at(item).at(0) == "a QUserView"} or: {data.at(item).at(0) == "a SCUserView"},
 									{nil});
 							});
@@ -675,9 +780,11 @@ Density {
 							});
 							// QPopUpMenu + QButton + EnvelopeView
 							if(data.at(item).at(0)  == "a PopUpMenu" or: {data.at(item).at(0) == "a EnvelopeView"} or: {data.at(item).at(0) == "an EnvelopeView"} or: 	{data.at(item).at(0) == "a Button"} or: {data.at(item).at(0) == "a QPopUpMenu"} or: {data.at(item).at(0) == "a QEnvelopeView"} or: 	{data.at(item).at(0) == "a QButton"} or: {data.at(item).at(0) == "a SCPopUpMenu"} or: {data.at(item).at(0) == "a SCEnvelopeView"} or: {data.at(item).at(0) == "a SCButton"},
-								{view.valueAction_(data.at(item).at(1))});
+								{
+									if(index == 2 and: {item == 2 or: {item == 3} or: {item == 4} or: {item == 5} or: {item == 7}}, {nil},
+										{view.valueAction_(data.at(item).at(1))})});
 							// NumberBox
-							if(data.at(item).at(0)  == "a NumberBox" or: {data.at(item).at(0) == "a QNumberBox"} or: {data.at(item).at(0) == "a SCNumberBox"},
+							if(index != 2 and: {data.at(item).at(0)  == "a NumberBox" or: {data.at(item).at(0) == "a QNumberBox"} or: {data.at(item).at(0) == "a SCNumberBox"}},
 								{view.valueAction_(data.at(item).at(1))});
 							// QSoundFileView
 							if(data.at(item).at(0)  == "a SoundFileView" or: {data.at(item).at(0) == "a QSoundFileView"} or: {data.at(item).at(0) == "a SCSoundFileView"},
@@ -708,7 +815,7 @@ Density {
 			if(allData.at(index) != soundOrchestra, {
 				"... LOAD SOUNDORCHESTRA... !!!".postln;
 				soundOrchestra = allData.at(index);
-					fonctionLoadSoundOrchestra.value(soundOrchestra);
+				fonctionLoadSoundOrchestra.value(soundOrchestra);
 			},
 			{soundOrchestra = allData.at(index)});
 			index = index + 1;
@@ -815,59 +922,58 @@ Density {
 		fonctionLoadSoundOrchestra = {arg listeSound;
 			// Free Buffer
 			s.bind{
-			listeBuffer.soloArray.do({arg buffer; buffer.free});
-			s.sync;
-			listeBuffer=[];
-			listeSound.do({arg arraySound, file, rawData, collect=[], nom;
-				arraySound.do({arg path, i;
-					path = PathName.new(path);
-					path = path.fileName;//Name of soundFile
-					nom = path;
-					path = "mdfind -name" + path;
-					path = Pipe.new(path, "r");
-					rawData = path.getLine;// get the first line
-					while({rawData.notNil and: {rawData.contains(nom).not}}, {rawData = path.getLine}); // while to find
-					path.close;
-					path = rawData;// New Path
-					if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found
-					file = SoundFile.new;
-					s.sync;
-					file.openRead(path);
-					s.sync;
-					if(file.numChannels == 1,
-						{Post << "Loading mono sound" << " " << path << Char.nl;
-							collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
-							s.sync;
-						},
-						{rawData= FloatArray.newClear(file.numFrames * 2);
-							s.sync;
-							file.readData(rawData);
-							s.sync;
-							rawData = Array.newFrom(rawData);
-							s.sync;
-							Post << "Loading stereo sound" << " " << path << Char.nl;
-							rawData = rawData.unlace(2).sum / 2;
-							s.sync;
-							collect = collect.add(Buffer.loadCollection(s, rawData, 1, action: {arg buf; Post << "Finished" << Char.nl}).path = path);
-							s.sync;
+				listeBuffer.soloArray.do({arg buffer; buffer.free});
+				s.sync;
+				listeBuffer=[];
+				listeSound.do({arg arraySound, file, rawData, collect=[], nom;
+					arraySound.do({arg path, i;
+						path = PathName.new(path);
+						path = path.fileName;//Name of soundFile
+						nom = path;
+						path = "mdfind -name" + path;
+						path = Pipe.new(path, "r");
+						rawData = path.getLine;// get the first line
+						while({rawData.notNil and: {rawData.contains(nom).not}}, {rawData = path.getLine}); // while to find
+						path.close;
+						path = rawData;// New Path
+						if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found
+						file = SoundFile.new;
+						s.sync;
+						file.openRead(path);
+						s.sync;
+						if(file.numChannels == 1,
+							{Post << "Loading mono sound" << " " << path << Char.nl;
+								collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
+								s.sync;
+							},
+							{rawData= FloatArray.newClear(file.numFrames * 2);
+								s.sync;
+								file.readData(rawData);
+								s.sync;
+								rawData = Array.newFrom(rawData);
+								s.sync;
+								Post << "Loading stereo sound" << " " << path << Char.nl;
+								rawData = rawData.unlace(2).sum / 2;
+								s.sync;
+								collect = collect.add(Buffer.loadCollection(s, rawData, 1, action: {arg buf; Post << "Finished" << Char.nl}).path = path);
+								s.sync;
+						});
+						file.close;
+						s.sync;
 					});
-					file.close;
-					s.sync;
+					listeBuffer = listeBuffer.add(collect);
 				});
-				listeBuffer = listeBuffer.add(collect);
-			});
 			};
 		};
 
 		// Fonction pour Recording
 		fonctionRecOn={
-			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPrec', "Rec On")});// Send Synchro Rec On
 			if(flagRecording == 'off', {
 				flagRecording = 'on';
 				s.bind{
 					s.recChannels_(recChannels);
 					s.sync;
-					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "Density_" ++ Date.localtime.stamp ++ ".aiff");
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekDensity_" ++ Date.localtime.stamp ++ ".aiff");
 					s.sync;
 					s.record;
 					s.sync;
@@ -876,13 +982,11 @@ Density {
 		};
 
 		fonctionRecOff={
-			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPrec', "Rec Off")});// Send Synchro Rec On
 			flagRecording = 'off';
 			s.stopRecording;
 		};
 
 		fonctionRecPause={
-			if(oscStateFlag == 'master', {slaveAppAddr.sendMsg('/HPrec', "Rec Pause")});// Send Synchro Rec On
 			if(startSystem.value == 1, {
 				if(flagRecording == 'on', {s.pauseRecording; flagRecording = 'pause'},{s.record; flagRecording = 'on'});
 			});
@@ -898,64 +1002,412 @@ Density {
 			});
 		};
 
-		// Run the Soft
-		this.run;
+		// Help
+		helpWekDensity = "
+Single commandes:
 
-	}
+esc	or SpaceBar			System on/off.
+q / ctrl + q			Switch Algorithm Analyze.
+h						Switch Source IN.
+i						Init Synth.
+ctrl+i					Init System.
+alt+i					Reset System.
+ctrl + f				Load and Add File for Analyze.
+w / ctrl + w			Switch Window.
+z						Load Random Preset.
+k                       New Environment.
+a                       Init Genetic
+shift + a               Init Kohonen
+alt + a                 Init Neural
+alt + r                 Start Recording
+ctrl + alt + r          Stop Recording
+shit + alt + r          Pause Recording on/off
 
-	// Soft Density
+Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
 
-	run {
+l			 			Load Preset.
+s				 		Save Preset.
+f						Switch File for analyze.
 
-		"Please Wait... Loading Density...".postln;
 
-		// OSCFunc Score
-		OSCFunc.newMatching({arg msg, time, addr, recvPort;
+//////////////////////////////////////////////////////////////////////////////////////////
 
-			var array, cmd = 'on', number, file, item = 0;
 
-			msg.removeAt(0);
-			msg.postcs;
+ShortCut for Keyboard Panel:
 
-			while({cmd != nil},
-				{
-					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'density'},
-						{
-							cmd = msg[item+1].postln;
-							// Preset
-							if(cmd == 'preset',
-								{
-									number = msg[item+2].asInteger.postln;
-									{
-										if(File.exists(pathData ++ "Preset" + number.value.asString ++ ".scd"), {
-											listeDataInstruments.do({arg data, index;
-												data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
-											});
-											windowEar.name = "Density" + " | " + "Preset" + number.asString;
-											file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
-											fonctionLoadPreset.value(file.readAllString.interpret);
-											file.close;
-										}, {"cancelled".postln});
-									}.defer;
-							});
-							// Stop
-							if(cmd == 'stop', {
-								{
-									startSystem.valueAction_(0);
-								}.defer;
-							});
-							// Start
-							if(cmd == 'start', {
-								{
-									startSystem.valueAction_(1);
-								}.defer;
-							});
-					});
-					item = item + 3;
-					cmd = msg[item];
+<						Keyboard Transpose down.
+>						Keyboard Transpose up.
+
+ysxdcvgbhnjm,l.e-		Musical Keys.
+
+";
+
+		// ///////////////////////// Menu WekDensity /////////////////////////////////
+
+		menuFile = Menu(
+			MenuAction("Load File for Analyze",
+				{Dialog.openPanel({ arg path;
+					listeFileAnalyze.do({arg buffer; buffer.free});
+					listeFileAnalyze=[];
+					listeNameFileAnalyze=[];
+					bufferFile.free;
+					fonctionLoadFileForAnalyse.value(path);
+					// Setup GUI Value
+					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
+			Menu(
+				MenuAction("On", {synthFileIn.set('loop', 1)}),
+				MenuAction("Off", {synthFileIn.set('loop', 0)});
+			).title_("Loop");
+		);
+		MainMenu.register(menuFile.title_("File for Analyze"), "WekDensityTools");
+
+		menuPreset = Menu(
+			MenuAction("Load Preset", {Dialog.openPanel({ arg path, file;
+				file = File(path,"r");
+				fonctionLoadPreset.value(file.readAllString.interpret);
+				file.close;
+				windowEar.name="WekDensity" + typeMasterOut + " | " + PathName.new(path).fileName;
+			},
+			{"cancelled".postln})}),
+			MenuAction("Save Preset",{Dialog.savePanel({arg path, name, pathonly, fileName, file;
+				path = PathName.new(path);
+				pathonly = path.pathOnly;
+				name = path.fileName;
+				//name = "preset" + name;
+				path = pathonly ++ name;
+				fileName = PathName.new(path).fileName;
+				path = PathName.new(path).fullPath;
+				file = File(path ++ ".scd", "w");
+				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
+				file.close;
+				windowEar.name = "WekDensity" + typeMasterOut + " | " + fileName;
+			}, {"cancelled".postln})});
+		);
+		MainMenu.register(menuPreset.title_("Preset"), "WekDensityTools");
+
+		menuInitAll = Menu(
+			MenuAction("Init All", {arg file;
+				//Init Orchestra Sounds FX
+				s.bind{
+					file = File(pathData ++ "Synth.scd","r");
+					synthOrchestra = file.readAllString.interpret;
+					file.close;
+					s.sync;
+					file = File(pathData ++ "Sounds.scd","r");
+					soundOrchestra = file.readAllString.interpret;
+					file.close;
+					fonctionLoadSoundOrchestra.value(soundOrchestra);
+					s.sync;
+					file = File(pathData ++ "FX.scd","r");
+					fxOrchestra = file.readAllString.interpret;
+					file.close;
+					s.sync;
+				};
+			}),
+			Menu(
+				MenuAction("Load", {Dialog.openPanel({arg path, file;
+					file = File(path,"r");
+					synthOrchestra = file.readAllString.interpret;
+					file.close;
+				},
+				{"cancelled".postln});
+				}),
+				MenuAction("Edit/Save", {arg window, text;
+					window = Document.new("Synth Edit/Save", synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; synthOrchestra = text.interpret};
+				});
+			).title_("Synth"),
+			Menu(
+				MenuAction("Load", {Dialog.openPanel({arg path, file;
+					file = File(path,"r");
+					soundOrchestra = file.readAllString.interpret;
+					file.close;
+					s.bind{
+						fonctionLoadSoundOrchestra.value(soundOrchestra);
+						s.sync;
+					};
+				},
+				{"cancelled".postln});
+				}),
+				MenuAction("Edit/Save", {arg window, text;
+					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret};
+					s.bind{
+						fonctionLoadSoundOrchestra.value(soundOrchestra);
+						s.sync;
+					};
+				});
+			).title_("Sound"),
+			Menu(
+				MenuAction("Load", {Dialog.openPanel({arg path, file;
+					file = File(path,"r");
+					fxOrchestra = file.readAllString.interpret;
+					file.close;
+				},
+				{"cancelled".postln});
+				}),
+				MenuAction("Edit/Save", {arg window, text;
+					window = Document.new("FX Edit/Save", fxOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; fxOrchestra = text.interpret};
+				});
+			).title_("FX")
+		);
+		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "WekDensityTools");
+
+		menuRecording = Menu(
+			MenuAction("Start Recording", {
+				fonctionRecOn.value;
+			}),
+			MenuAction("Stop Recording", {
+				fonctionRecOff.value;
+			}),
+			MenuAction("Switch Pause Recording On/Off", {
+				fonctionRecPause.value;
 			});
-		}, \score, recvPort: udpAdr);
+		);
+		MainMenu.register(menuRecording.title_("Recording"), "WekDensityTools");
+
+		menuAudio = Menu(
+			MenuAction("Channels FhzBand Out", {
+				SCRequestString("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]", "Channels", {arg strg;
+					channelsSynth = strg.value.interpret; channelsSynth = channelsSynth.max(1) - 1;
+				});
+			}),
+			MenuAction("Channels Reverb Out", {
+				SCRequestString("1", "Channels", {arg strg;
+					channelsVerb = strg.value.asInteger; channelsVerb = channelsVerb.max(1) - 1;
+					groupeVerb.set(\out, channelsVerb.value);
+				});
+			}),
+			MenuAction("Stereo", {recChannels = 2; numberAudioOut = 2;
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
+				typeMasterOut = listeMasterOut.at(0);
+				startSystem.valueAction_(0);
+				groupeVerb.freeAll;
+				groupeLimiter.freeAll;
+				groupeVST.freeAll;
+				this.initSynthDef;
+				gVerb = Synth.new("GVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Stereo", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
+				// Setup GUI Value
+				windowGVerb.view.children.at(0).valueAction_(0);
+				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+				// Setup GUI Value
+				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo"; windowVST.name = "VST Stereo";
+			}),
+			MenuAction("Rotate2", {recChannels = 2; numberAudioOut = 2;
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
+				typeMasterOut = listeMasterOut.at(1);
+				startSystem.valueAction_(0);
+				groupeVerb.freeAll;
+				groupeLimiter.freeAll;
+				groupeVST.freeAll;
+				this.initSynthDef;
+				Synth.new("GVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Rotate2", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
+				// Setup GUI Value
+				windowGVerb.view.children.at(0).valueAction_(0);
+				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+				// Setup GUI Value
+				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+				windowGVerb.name = "Reverb Rotate2"; windowEar.name = "Reverb Rotate2"; windowVST.name = "VST Rotate2";
+			}),
+			MenuAction("MultiSpeaker", {
+				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
+					s.recChannels_(recChannels);
+					s.options.numInputBusChannels_(20);
+					//s.options.numOutputBusChannels_(8);
+					typeMasterOut = listeMasterOut.at(2);
+					startSystem.valueAction_(0);
+					groupeVerb.freeAll;
+					groupeLimiter.freeAll;
+					groupeVST.freeAll;
+					this.initSynthDef;
+					Synth.new("GVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("JPverb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST MultiSpeaker", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					fxVST = VSTPluginController(synthVST);
+					// Setup GUI Value
+					windowGVerb.view.children.at(0).valueAction_(0);
+					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+					// Setup GUI Value
+					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+					windowGVerb.name = "Reverb MultiSpeaker"; windowEar.name = "Reverb MultiSpeaker"; windowVST.name = "VST MultiSpeaker";
+				});
+			}),
+			MenuAction("Ambisonic", {
+				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
+					s.recChannels_(recChannels);
+					s.options.numInputBusChannels_(20);
+					//s.options.numOutputBusChannels_(8);
+					typeMasterOut = listeMasterOut.at(3);
+					startSystem.valueAction_(0);
+					groupeVerb.freeAll;
+					groupeLimiter.freeAll;
+					groupeVST.freeAll;
+					this.initSynthDef;
+					Synth.new("GVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					allPass = Synth.newPaused("Allpass Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					jpVerb = Synth.newPaused("JPverb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+					synthVST = Synth.newPaused("VST Ambisonic", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+					fxVST = VSTPluginController(synthVST);
+					// Setup GUI Value
+					windowGVerb.view.children.at(0).valueAction_(0);
+					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+					// Setup GUI Value
+					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+					windowGVerb.name = "Reverb Ambisonic"; windowEar.name = "Reverb Ambisonic"; windowVST.name = "VST Ambisonic";
+				});
+			}),
+			MenuAction("Dolby5.1", {recChannels = 6; numberAudioOut = 6;
+				s.recChannels_(recChannels);
+				s.options.numInputBusChannels_(20);
+				//s.options.numOutputBusChannels_(8);
+				typeMasterOut = listeMasterOut.at(4);
+				startSystem.valueAction_(0);
+				groupeVerb.freeAll;
+				groupeLimiter.freeAll;
+				groupeVST.freeAll;
+				this.initSynthDef;
+				Synth.new("GVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				allPass = Synth.newPaused("Allpass Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				jpVerb = Synth.newPaused("JPverb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
+				synthVST = Synth.newPaused("VST Dolby5.1", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
+				fxVST = VSTPluginController(synthVST);
+				// Setup GUI Value
+				windowGVerb.view.children.at(0).valueAction_(0);
+				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
+				// Setup GUI Value
+				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
+				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
+			});
+		);
+		MainMenu.register(menuAudio.title_("Audio"), "WekDensityTools");
+
+		menuMIDI = Menu(
+			MenuAction("Init", {
+				MIDIClient.init;
+				if(MIDIClient.externalSources != [ ], {
+					// Connect first device by default
+					MIDIIn.connect(0, 0);
+					midiOut = MIDIOut(0);
+					//midiOut.connect(0);
+					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
+				}, {"Warning no MIDI Devices Connected".postln});
+			}),
+			Menu(
+				MenuAction("Connect IN", {
+					SCRequestString("0", "Device", {arg index, port;
+						port = index.asInteger;
+						MIDIIn.connect(port, MIDIClient.sources.at(port));
+					});
+				}),
+				MenuAction("Connect Out", {
+					SCRequestString("0", "Device", {arg index, port;
+						port = index.asInteger;
+						midiOut = MIDIOut(port);
+						//midiOut.connect(port);
+						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
+					});
+				});
+			).title_("Setting");
+		);
+		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTools");
+
+		menuAlgo = Menu(
+			MenuAction("Wek In Port",
+				{
+					SCRequestString("6448", "Wek In Port", {arg index, port;
+						port = index.asInteger;
+						sender.free;
+						sender = NetAddr.new("127.0.0.1", port);// Wekinator
+					});
+			}),
+			MenuAction("Wek Out Port",
+				{
+					SCRequestString("57120", "Wek Out Port", {arg index, port;
+						port = index.asInteger;
+						thisProcess.openUDPPort(port);
+						thisProcess.openPorts.postcs;
+					});
+			}),
+			MenuAction("List
+Preset Wek",
+				{
+					SCRequestString("[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]", "listeWekPreset", {arg index;
+						listeWekPreset = index.interpret;
+					});
+			});
+		);
+		MainMenu.register(menuAlgo.title_("Wekinator"), "WekDensityTools");
+
+		menuHelp = MenuAction("Help ShortCut", {
+			//Document.new("ShortCut for WekDensity", helpWekDensity);
+			TextView().name_("ShortCut for WekDensity").string_(helpWekDensity).front;
+		});
+		MainMenu.register(menuHelp, "WekDensityTools");
+
+		/*// Utility Transformer
+		~bounds = (
+			freq: [20, 20000],
+			amp: [0.001, 1],
+			dur: [0.01, 4],
+			bpm: [0.125, 8],
+			centroid: [20, 20000],
+			energy: [20, 20000],
+			flux: [0.001, 1.0],
+			flatness: [0.001, 1.0],
+		);
+		~logNorm = { |x, key|
+			var b = ~bounds[key];
+
+			((x.max(b[0])).log2 - b[0].log2)
+			/ (b[1].log2 - b[0].log2);
+		};
+		~logDenorm = { |x, key|
+			var b = ~bounds[key];
+
+			2.pow(
+				x * (b[1].log2 - b[0].log2)
+				+ b[0].log2
+			);
+		};*/
+		~hpTR = HPtransformerRT.new(3, 3, 6, 12, 16, 2, 8, 3);// réglages i7 temps reel
+		//~hpTR.setIntelUltraCPUFastLearn;// Ultra minimal CPU rapide pour utiliser sans le Studio
+		~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+		//~studio = HPTransformerStudio.new(~hpTR).front;//par default
+		//~studio.window.view.palette_(QPalette.light); // plus necessaire
+		// Sending receiving pas necessaire ici
+		/*~hptInputTarget = NetAddr("127.0.0.1", NetAddr.langPort);// in studio
+		// Bus de sortie du Transformer.
+		~hptBus = Bus.control(s, 3);
+		~hptBus.setn(Array.fill(3, 0.5));
+		~studio.attachControlBus(~hptBus);// for Studio not valid here because not external synth
+
+		// OSC Studio Out
+		~hptOutputFunc.free;
+		~hptOutputFunc = OSCFunc(
+		{ |msg, time, addr, recvPort|
+			msg.postcs;
+		},
+		"/hptransformer/output",
+		nil,
+		57130
+		);*/
 
 		// Run Soft
 		s.waitForBoot({
@@ -968,7 +1420,7 @@ Density {
 			tempoClock = TempoClock.new;
 			tempoClock.schedAbs(tempoClock.nextBar,{tempoClock.beatsPerBar_(1)});
 
-			"Please Wait... Loading Density... Sending SynthDef on s... Loading Sounds...".postln;
+			"Please Wait... Loading WekDensity... Sending SynthDef on s... Loading Sounds...".postln;
 
 			// Load Sound Orchestra
 			fonctionLoadSoundOrchestra.value(soundOrchestra);
@@ -978,12 +1430,9 @@ Density {
 			s.sync;
 
 			// OSC Setting
-			serveurAdresse = s.addr; // Adresse s -> NetAddr(0.0.0.0, 0)
-			masterAppAddr = NetAddr.localAddr;
-			slaveAppAddr = NetAddr.localAddr;
+			// Wekinator
+			responder.free;
 			oscStateFlag = 'off';
-
-			ardourOSC = NetAddr("127.0.0.1", 3819);// Ardour's port number
 
 			// Group
 			groupeAnalyse = ParGroup.new(s, \addToTail);
@@ -1017,47 +1466,42 @@ Density {
 			s.sync;
 
 			// Synth AudioIn
-			synthAudioIn = Synth.newPaused("Density AudioIn",
+			synthAudioIn = Synth.newPaused("WekDensity AudioIn",
 				[\in, 0, 'busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth play file
-			synthFileIn = Synth.newPaused("Density FileIn",
+			synthFileIn = Synth.newPaused("WekDensity FileIn",
 				[\bufferplay, bufferFile, 'busIn', busAnalyzeIn, \busRec, busRecAudioIn, \volume, 0], groupeAnalyse, \addToTail);
 			s.sync;
 
-			// Synth audio analyze FFT
-			synthAnalyseFFT = Synth.newPaused("OSC Density FFT",
-				['busIn', busAnalyzeIn, \speed, 24], groupeAnalyse, \addToTail); // 24 * each second
-			s.sync;
-
 			// Synth audio analyze Onsets
-			synthAnalyseOnsets = Synth.newPaused("OSC Density Onsets",
+			synthAnalyseOnsets = Synth.newPaused("OSC WekDensity Onsets",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Pitch
-			synthAnalysePitch = Synth.newPaused("OSC Density Pitch",
+			synthAnalysePitch = Synth.newPaused("OSC WekDensity Pitch",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Pitch Version 2
-			synthAnalysePitch2 = Synth.newPaused("OSC Density Pitch2",
+			synthAnalysePitch2 = Synth.newPaused("OSC WekDensity Pitch2",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze KeyTrack
-			synthAnalyseKeyTrack = Synth.newPaused("OSC Density KeyTrack",
+			synthAnalyseKeyTrack = Synth.newPaused("OSC WekDensity KeyTrack",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth Keyboard
-			synthKeyboard = Synth.newPaused("OSC Density Keyboard",
+			synthKeyboard = Synth.newPaused("OSC WekDensity Keyboard",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// MIDI Keyboard
-			synthMIDI = Synth.newPaused("OSC Density MIDI",
+			synthMIDI = Synth.newPaused("OSC WekDensity MIDI",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
@@ -1123,7 +1567,7 @@ Density {
 			windowEar.view.children.at(83).enabled_(false);
 			windowEar.view.children.at(84).enabled_(false);
 
-			windowEar.name = "Density" + typeMasterOut;
+			windowEar.name = "WekDensity" + typeMasterOut;
 			windowGVerb.name = "Reverb" + typeMasterOut;
 			windowVST.name = "VST" + typeMasterOut;
 
@@ -1133,355 +1577,465 @@ Density {
 			// Brightness of signal = centroid ( freq en hertz)
 			// Freq max energie spectral = energy (freq en hertz)
 
-			//  OSC Data FFT
-			oscFFT = OSCFunc.newMatching({arg msg, time, addr, recvPort, centroid=0, flatness=0, energy=0, flux=0, bpm=0;
-				var data;
-				if(msg.at(2) == 5,
-					{
-						flux = msg.at(3);
-						flatness = msg.at(4);
-						centroid = msg.at(5);
-						energy = msg.at(6);
-						bpm = msg.at(7);
-						// Normalize
-						flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
-						flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
-						centroid = (centroid / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
-						energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
-						// Set Bus Flux
-						busOSCflux.at(0).set(flux);
-						if(maximumData > dataFlux.at(0).size,
-							{
-								dataFlux.put(0, dataFlux.at(0).add(flux));
-							},
-							{
-								if(dataFlux.at(0).size <= indexDataFlux.at(0), {indexDataFlux.put(0, 0)});
-								dataFlux.put(0, dataFlux.at(0).wrapPut(indexDataFlux.at(0), flux));
-								indexDataFlux.put(0, indexDataFlux.at(0) + 1);
-						});
-						// Set BusFlatness
-						busOSCflatness.at(0).set(flatness);
-						if(maximumData > dataFlatness.at(0).size,
-							{
-								dataFlatness.put(0, dataFlatness.at(0).add(flatness));
-							},
-							{
-								if(dataFlatness.at(0).size <= indexDataFlatness.at(0), {indexDataFlatness.put(0, 0)});
-								dataFlatness.put(0, dataFlatness.at(0).wrapPut(indexDataFlatness.at(0), flatness));
-								indexDataFlatness.put(0, indexDataFlatness.at(0) + 1);
-						});
-						// Set Bus Centroid
-						busOSCcentroid.at(0).set(energy);
-						if(maximumData > dataCentroid.at(0).size,
-							{
-								dataCentroid.put(0, dataCentroid.at(0).add(centroid));
-							},
-							{
-								if(dataCentroid.at(0).size <= indexDataCentroid.at(0), {indexDataCentroid.put(0, 0)});
-								dataCentroid.put(0, dataCentroid.at(0).wrapPut(indexDataCentroid.at(0), centroid));
-								indexDataCentroid.put(0, indexDataCentroid.at(0) + 1);
-						});
-						// Set Bus Energy
-						busOSCenergy.at(0).set(energy);
-						if(maximumData > dataEnergy.at(0).size,
-							{
-								dataEnergy.put(0, dataEnergy.at(0).add(energy));
-							},
-							{
-								if(dataEnergy.at(0).size <= indexDataEnergy.at(0), {indexDataEnergy.put(0, 0)});
-								dataEnergy.put(0, dataEnergy.at(0).wrapPut(indexDataEnergy.at(0), energy));
-								indexDataEnergy.put(0, indexDataEnergy.at(0) + 1);
-						});
-						// Set Bus BPM
-						busOSCbpm.at(0).set(bpm);
-						if(maximumData > dataBPM.at(0).size,
-							{
-								dataBPM.put(0, dataBPM.at(0).add(bpm));
-							},
-							{
-								if(dataBPM.at(0).size <= indexDataBPM.at(0), {indexDataBPM.put(0, 0)});
-								dataBPM.put(0, dataBPM.at(0).wrapPut(indexDataBPM.at(0), bpm));
-								indexDataBPM.put(0, indexDataBPM.at(0) + 1);
-						});
-						// Plot Data
-						plotDataFFT.value(flux, flatness, centroid, energy, bpm);
-				}, {nil});
-			}, '/Density_FFT_Data', serveurAdresse);
-
+			// Init
 			freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 			(numFhzBand + 1).do({arg i; lastTime = lastTime.add(Main.elapsedTime)});
+			lastTimeWekData = Main.elapsedTime; lastTimeWekPreset = Main.elapsedTime;
+
+			// DATA WIKI OUT
+			responder = OSCFunc.newMatching({arg msg, time, addr, recvPort;
+				var wekOut, instrumentName, soundName, fxName, file;
+				wekOut = msg[1..];
+				{
+					if(flagWTD == 'on' and: {(time - lastTimeWekData) > timeWekData}, {
+						// DATA Ctrl Soft
+						rangeFFT = wekOut[16..17].clip(0, 1);
+						// Data Music
+						rangeFreqintruments = [wekOut[0].clip(0, 127), wekOut[1].clip(0, 127)];
+						transFreqintruments = wekOut[2].clip(-127, 127);
+						rangeDBintruments = [wekOut[3].dbamp.clip(0, 1), wekOut[4].dbamp.clip(0, 1)];
+						rangeDureeintruments = [wekOut[5].clip(0, 60), wekOut[6].clip(0, 60)];
+						transDureeintruments = wekOut[7].clip(-60, 60);
+						stretchDuree = wekOut[8].clip(0.02, 60);
+						quantizationDuree = wekOut[9].clip(1, 100);
+						// Synth/Sound/FX
+						indexSynthX = (wekOut[10] + (0.5 * rrand(jitterIndexSynthX.neg, jitterIndexSynthX))).clip(0, 1);
+						indexSynthY = (wekOut[11] + (0.5 * rrand(jitterIndexSynthY.neg, jitterIndexSynthY))).clip(0, 1);
+						indexSoundX = (wekOut[12] + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
+						indexSoundY = (wekOut[13] + (0.5 * rrand(jitterIndexSoundY.neg, jitterIndexSoundY))).clip(0, 1);
+						indexFXX = (wekOut[14] + (0.5 * rrand(jitterIndexFXX.neg, jitterIndexFXX))).clip(0, 1);
+						indexFXY = (wekOut[15] + (0.5 * rrand(jitterIndexFXY.neg, jitterIndexFXY))).clip(0, 1);
+						windowEar.view.children.at(58).x_(indexSynthX); windowEar.view.children.at(58).y_(indexSynthY);
+						windowEar.view.children.at(60).x_(indexSoundX); windowEar.view.children.at(60).y_(indexSoundY);
+						windowEar.view.children.at(62).x_(indexFXX); windowEar.view.children.at(62).y_(indexFXY);
+						instrumentName = synthOrchestra.at(indexSynthX * (synthOrchestra.size - 1).floor);
+						instrumentName = instrumentName.at(indexSynthY * (instrumentName.size - 1).floor);
+						displayInstrument.string = (indexSynthX.asStringPrec(2) + indexSynthY.asStringPrec(2) + instrumentName);
+						soundName = soundOrchestra.at(indexSoundX * (soundOrchestra.size - 1).floor);
+						soundName = soundName.at(indexSoundY * (soundName.size - 1).floor);
+						displaySound.string = (indexSoundX.asStringPrec(2) +  indexSoundY.asStringPrec(2) + PathName.new(soundName).fileName);
+						fxName = fxOrchestra.at(indexFXX * (fxOrchestra.size - 1).floor);
+						fxName = fxName.at(indexFXY * (fxName.size - 1).floor);
+						displayFX.string = (indexFXX.asStringPrec(2) + indexFXY.asStringPrec(2) + fxName);
+						//Music
+						windowEar.view.children.at(29).children.at(2).lo_(rangeFreqintruments[0]/127);
+						windowEar.view.children.at(29).children.at(2).hi_(rangeFreqintruments[1]/127);
+						windowEar.view.children.at(29).children.at(1).value = rangeFreqintruments[0];
+						windowEar.view.children.at(29).children.at(3).value = rangeFreqintruments[1];
+						windowEar.view.children.at(30).children.at(2).valueAction = transFreqintruments;
+						windowEar.view.children.at(31).children.at(2).lo_(rangeDBintruments[0]);
+						windowEar.view.children.at(31).children.at(2).hi_(rangeDBintruments[1]);
+						windowEar.view.children.at(31).children.at(1).value = rangeDBintruments[0].ampdb;
+						windowEar.view.children.at(31).children.at(3).value = rangeDBintruments[1].ampdb;
+						windowEar.view.children.at(32).children.at(2).lo_(rangeDureeintruments[0]/60);
+						windowEar.view.children.at(32).children.at(2).hi_(rangeDureeintruments[1]/60);
+						windowEar.view.children.at(32).children.at(1).value = rangeDureeintruments[0];
+						windowEar.view.children.at(32).children.at(3).value = rangeDureeintruments[1];
+						windowEar.view.children.at(33).children.at(2).valueAction = transDureeintruments;
+						windowEar.view.children.at(34).children.at(2).valueAction = stretchDuree;
+						windowEar.view.children.at(35).children.at(2).valueAction = quantizationDuree;
+						windowPlotterData.view.children.at(9).children.at(2).lo_(rangeFFT[0]);
+						windowPlotterData.view.children.at(9).children.at(2).hi_(rangeFFT[1]);
+						windowPlotterData.view.children.at(9).children.at(1).value = rangeFFT[0];
+						windowPlotterData.view.children.at(9).children.at(3).value = rangeFFT[1];
+						lastTimeWekData = time;
+					});
+					// Preset
+					numPreset = wekOut[18].asInteger.clip(1, 40);// Number Preset
+					if(flagWTP == 'on' and: {numPreset != lastNumPreset and: {listeWekPreset.includes(numPreset)} and: {(time - lastTimeWekPreset) > timeWekPreset}},
+						// load new preset
+						{
+							if(File.exists(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd"), {
+								lastNumPreset = numPreset;
+								lastTimeWekPreset = time;
+								listeDataInstruments.do({arg data, index;
+									data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
+								});
+								windowEar.name = "WekDensity" + " | " + "Preset" + numPreset.asInteger.asString;
+								file=File(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
+								fonctionLoadPreset.value(file.readAllString.interpret);
+								file.close;
+							});
+					});
+				}.defer(0);
+			},'/wek/outputs');
 
 			// OSC Music Data
-			oscMusic = OSCFunc.newMatching({arg msg, time, addr, recvPort, freq=0, amp=0, timer=1, duree=0;
-				var data, dureeDisplay, indexFhz, indexBand, freqNew, ampNew, freqStream, ampStream, dureeStream;
-				// Music
-				if(msg.at(2) == 3,
-					{
-						indexFhz = 0;
-						indexBand = 0;
-						freq=msg.at(3);
-						amp=msg.at(4);
-						timer = msg.at(5); // Duree de l'algo
-						duree =  time - lastTime.at(0);
-						dureeDisplay = time - lastTime.at(0);
-						// Setup Data
-						if(duree > dureeMaximumAnalyze or: {duree > memoryTime} and: {flagMemory == 'off'}, {
-							freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
-							(numFhzBand + 1).do({arg i; lastTime.put(i, time)});
-						},
+			oscMusicFFT = OSCFunc.newMatching({arg msg, time, addr, recvPort;
+				var freq=0, amp=0, timer=0, duree=0, centroid=0, flatness=0, energy=0, flux=0, bpm=0;
+				var wekIn, buffer, dureeDisplay, indexFhz, indexBand, freqNew, ampNew, freqStream, ampStream, dureeStream, inFFT, inMFCC, dureeTampon;
+				wekIn = msg[3..];
+				// MFCC 13 values
+				inMFCC = wekIn[0..12];
+				// Sender
+				sender.sendMsg("/wek/inputs", *inMFCC[0..]);
+				{
+					plotterMFCCGUI.value = inMFCC.normalize(0, 1);
+				}.defer;
+				// FFT + Music
+				indexFhz = 0;
+				indexBand = 0;
+				freq = wekIn[13];
+				amp = wekIn[14];
+				timer = wekIn.at(15); // Duree de l'algo
+				duree =  time - lastTime.at(0);
+				dureeDisplay = time - lastTime.at(0);
+				bpm = wekIn[16];
+				// Setup Data
+				if(duree > dureeMaximumAnalyze or: {duree > memoryTime} and: {flagMemory == 'off'}, {
+					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
+					(numFhzBand + 1).do({arg i; lastTime.put(i, time)});
+				},
+				{
+					if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTime.at(0)) >= dureeFilter}, //and: {duree >= dureeFilter},
 						{
-							if(abs(freq.cpsmidi - freqBefore.cpsmidi) >= fhzFilter and: {abs(amp.ampdb - ampBefore.ampdb) >= ampFilter} and: {abs(duree - lastTime.at(0)) >= dureeFilter}, //and: {duree >= dureeFilter},
+							if(freqTampon !=nil and: {ampTampon != nil},
 								{
-									if(freqTampon !=nil and: {ampTampon != nil},
+									freqNew = freqTampon; ampNew = ampTampon;
+									freqBefore = freqTampon; ampBefore = ampTampon;
+									lastTime.put(0, time);
+									// ici normaliser pour Transformer et envoyer
+									~hpTR.learnEvent([freqNew.cpsmidi / 127, ampNew, duree / dureeMaximumAnalyze]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", freqNew.cpsmidi / 127, ampNew, duree / dureeMaximumAnalyze);*/
+									// Set All Data
+									// Freq
+									busOSCfreq.at(0).set(freqNew);
+									if(maximumData > dataFreq.at(0).size,
 										{
-											freqNew = freqTampon; ampNew = ampTampon;
-											freqBefore = freqTampon; ampBefore = ampTampon;
-											lastTime.put(0, time);
-											// Set All Data
-											// Freq
-											busOSCfreq.at(0).set(freqNew);
-											if(maximumData > dataFreq.at(0).size,
-												{
-													dataFreq.put(0, dataFreq.at(0).add(freqNew));
-												},
-												{
-													if(dataFreq.at(0).size <= indexDataFreq.at(0), {indexDataFreq.put(0, 0)});
-													dataFreq.put(0, dataFreq.at(0).wrapPut(indexDataFreq.at(0), freqNew));
-													indexDataFreq.put(0, indexDataFreq.at(0) + 1);
-											});
-											// Amp
-											// Set Bus
-											busOSCamp.at(0).set(ampNew);
-											// Add DataAmp
-											if(maximumData > dataAmp.at(0).size,
-												{
-													dataAmp.put(0, dataAmp.at(0).add(ampNew));
-												},
-												{
-													if(dataAmp.at(0).size <= indexDataAmp.at(0), {indexDataAmp.put(0, 0)});
-													dataAmp.put(0, dataAmp.at(0).wrapPut(indexDataAmp.at(0), ampNew));
-													indexDataAmp.put(0, indexDataAmp.at(0) + 1);
-											});
-											// Duree
-											// Set Bus
-											busOSCduree.at(0).set(duree);
-											// Add DataDuree
-											if(maximumData > dataDuree.at(0).size,
-												{
-													dataDuree.put(0, dataDuree.at(0).add(duree));
-												},
-												{
-													if(dataDuree.at(0).size <= indexDataDuree.at(0), {indexDataDuree.put(0, 0)});
-													dataDuree.put(0, dataDuree.at(0).wrapPut(indexDataDuree.at(0), duree));
-													indexDataDuree.put(0, indexDataDuree.at(0) + 1);
-											});
-											//
-											// Dispatch Band FHZ
-											//
-											for(1, numFhzBand, {arg i;
-												if(freqNew > bandFHZ.at(i).at(0) and: {freqNew < bandFHZ.at(i).at(1)}, {
-													duree = time - lastTime.at(i);
-													if(duree <= dureeMaximumAnalyze and: {duree < memoryTime}, {
-														indexFhz = i;
-														indexBand = i;
-														// Set Buses
-														// Freq
-														busOSCfreq.at(i).set(freqNew);
-														// Add Data
-														if(maximumData > dataFreq.at(i).size,
-															{
-																dataFreq.put(i, dataFreq.at(i).add(freqNew));
-															},
-															{
-																if(dataFreq.at(i).size <= indexDataFreq.at(i), {indexDataFreq.put(i, 0)});
-																dataFreq.put(i, dataFreq.at(i).wrapPut(indexDataFreq.at(i), freqNew));
-																indexDataFreq.put(i, indexDataFreq.at(i) + 1);
-														});
-														// Amp
-														// Set Bus
-														busOSCamp.at(i).set(ampNew);
-														// Add DataAmp
-														if(maximumData > dataAmp.at(i).size,
-															{
-																dataAmp.put(i, dataAmp.at(i).add(ampNew));
-															},
-															{
-																if(dataAmp.at(i).size <= indexDataAmp.at(i), {indexDataAmp.put(i, 0)});
-																dataAmp.put(i, dataAmp.at(i).wrapPut(indexDataAmp.at(i), ampNew));
-																indexDataAmp.put(i, indexDataAmp.at(i) + 1);
-														});
-														// Duree
-														// Set Bus
-														duree = time - lastTime.at(i);
-														if(duree > dureeMaximumAnalyze  or: {duree > memoryTime} and: {flagMemory == 'off'},
-															{
-																freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
-																(numFhzBand + 1).do({arg i; lastTime.put(i, time)});
-															},
-															{
-																busOSCduree.at(i).set(duree);
-																// Add DataDuree
-																if(maximumData > dataDuree.at(i).size,
-																	{
-																		dataDuree.put(i, dataDuree.at(i).add(duree));
-																	},
-																	{
-																		if(dataDuree.at(i).size <= indexDataDuree.at(i), {indexDataDuree.put(i, 0)});
-																		dataDuree.put(i, dataDuree.at(i).wrapPut(indexDataDuree.at(i), duree));
-																		indexDataDuree.put(i, indexDataDuree.at(i) + 1);
-																});
-																lastTime.put(i, time);
-														});
-														// Set Bus
-														// FLux
-														busOSCflux.at(i).setSynchronous(busOSCflux.at(0).getSynchronous);
-														// Flatness
-														busOSCflatness.at(i).setSynchronous(busOSCflatness.at(0).getSynchronous);
-														// Centroid
-														busOSCcentroid.at(i).setSynchronous(busOSCcentroid.at(0).getSynchronous);
-														// Energy
-														busOSCenergy.at(i).setSynchronous(busOSCenergy.at(0).getSynchronous);
-														// BPM
-														busOSCbpm.at(i).setSynchronous(busOSCbpm.at(0).getSynchronous);
-														// ADD DATA FFT
-														// Flux
-														if(maximumData > dataFlux.at(i).size,
-															{
-																dataFlux.put(i, dataFlux.at(i).add((busOSCflux.at(0).getSynchronous)));
-															},
-															{
-																if(dataFlux.at(i).size <= indexDataFlux.at(i), {indexDataFlux.put(i, 0)});
-																dataFlux.put(i, dataFlux.at(i).wrapPut(indexDataFlux.at(i), (busOSCflux.at(0).getSynchronous)));
-																indexDataFlux.put(i, indexDataFlux.at(i) + 1);
-														});
-														// Flatness
-														if(maximumData > dataFlatness.at(i).size,
-															{
-																dataFlatness.put(i, dataFlatness.at(i).add((busOSCflatness.at(0).getSynchronous)));
-															},
-															{
-																if(dataFlatness.at(i).size <= indexDataFlatness.at(i), {indexDataFlatness.put(i, 0)});
-																dataFlatness.put(i, dataFlatness.at(i).wrapPut(indexDataFlatness.at(i), (busOSCflatness.at(0).getSynchronous)));
-																indexDataFlatness.put(i, indexDataFlatness.at(i) + 1);
-														});
-														// Centroid
-														if(maximumData > dataCentroid.at(i).size,
-															{
-																dataCentroid.put(i, dataCentroid.at(i).add((busOSCcentroid.at(0).getSynchronous)));
-															},
-															{
-																if(dataCentroid.at(i).size <= indexDataCentroid.at(i), {indexDataCentroid.put(i, 0)});
-																dataCentroid.put(i, dataCentroid.at(i).wrapPut(indexDataCentroid.at(i), (busOSCcentroid.at(0).getSynchronous)));
-																indexDataCentroid.put(i, indexDataCentroid.at(i) + 1);
-														});
-														// Energy
-														if(maximumData > dataEnergy.at(i).size,
-															{
-																dataEnergy.put(i, dataEnergy.at(i).add((busOSCenergy.at(0).getSynchronous)));
-															},
-															{
-																if(dataEnergy.at(i).size <= indexDataEnergy.at(i), {indexDataEnergy.put(i, 0)});
-																dataEnergy.put(i, dataEnergy.at(i).wrapPut(indexDataEnergy.at(i), (busOSCenergy.at(0).getSynchronous)));
-																indexDataEnergy.put(i, indexDataEnergy.at(i) + 1);
-														});
-														// BPM
-														if(maximumData > dataBPM.at(i).size,
-															{
-																dataBPM.put(i, dataBPM.at(i).add(busOSCbpm.at(0).getSynchronous));
-															},
-															{
-																if(dataBPM.at(i).size <= indexDataBPM.at(i), {indexDataBPM.put(i, 0)});
-																dataBPM.put(i, dataBPM.at(i).wrapPut(indexDataBPM.at(i), busOSCbpm.at(0).getSynchronous));
-																indexDataBPM.put(i, indexDataBPM.at(i) + 1);
-														});
+											dataFreq.put(0, dataFreq.at(0).add(freqNew));
+										},
+										{
+											if(dataFreq.at(0).size <= indexDataFreq.at(0), {indexDataFreq.put(0, 0)});
+											dataFreq.put(0, dataFreq.at(0).wrapPut(indexDataFreq.at(0), freqNew));
+											indexDataFreq.put(0, indexDataFreq.at(0) + 1);
+									});
+									// Amp
+									// Set Bus
+									busOSCamp.at(0).set(ampNew);
+									// Add DataAmp
+									if(maximumData > dataAmp.at(0).size,
+										{
+											dataAmp.put(0, dataAmp.at(0).add(ampNew));
+										},
+										{
+											if(dataAmp.at(0).size <= indexDataAmp.at(0), {indexDataAmp.put(0, 0)});
+											dataAmp.put(0, dataAmp.at(0).wrapPut(indexDataAmp.at(0), ampNew));
+											indexDataAmp.put(0, indexDataAmp.at(0) + 1);
+									});
+									// Duree
+									// Set Bus
+									busOSCduree.at(0).set(duree);
+									// Add DataDuree
+									if(maximumData > dataDuree.at(0).size,
+										{
+											dataDuree.put(0, dataDuree.at(0).add(duree));
+										},
+										{
+											if(dataDuree.at(0).size <= indexDataDuree.at(0), {indexDataDuree.put(0, 0)});
+											dataDuree.put(0, dataDuree.at(0).wrapPut(indexDataDuree.at(0), duree));
+											indexDataDuree.put(0, indexDataDuree.at(0) + 1);
+									});
+									//
+									// Dispatch Band FHZ
+									//
+									for(1, numFhzBand, {arg i;
+										if(freqNew > bandFHZ.at(i).at(0) and: {freqNew < bandFHZ.at(i).at(1)}, {
+											duree = time - lastTime.at(i);
+											if(duree <= dureeMaximumAnalyze and: {duree < memoryTime}, {
+												indexFhz = i;
+												indexBand = i;
+												// Set Buses
+												// Freq
+												busOSCfreq.at(i).set(freqNew);
+												// Add Data
+												if(maximumData > dataFreq.at(i).size,
+													{
+														dataFreq.put(i, dataFreq.at(i).add(freqNew));
 													},
 													{
-														// Init Band at(i)
-														// Init Array
-														dataFlux.put(i, []);
-														dataFlatness.put(i, []);
-														dataCentroid.put(i, []);
-														dataEnergy.put(i, []);
-														dataBPM.put(i, []);
-														indexDataFlux.put(i, 0);
-														indexDataFlatness.put(i, 0);
-														indexDataCentroid.put(i, 0);
-														indexDataEnergy.put(i, 0);
-														indexDataBPM.put(i, 0);
-														dataFreq.put(i, []);
-														dataAmp.put(i, []);
-														dataDuree.put(i, []);
-														indexDataFreq.put(i, 0);
-														indexDataAmp.put(i, 0);
-														indexDataDuree.put(i, 0);
-														lastTime.put(i, Main.elapsedTime);// Init Time
-														freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
-													});
-												},
-												{
-													// Init Band at(i)
-													// Init Array
-													if(i <= numFhzBand, {
-														duree = time - lastTime.at(i);
-														if(duree > dureeMaximumAnalyze or: {duree > memoryTime} and: {flagMemory == 'off'}, {
-															dataFlux.put(i, []);
-															dataFlatness.put(i, []);
-															dataCentroid.put(i, []);
-															dataEnergy.put(i, []);
-															dataBPM.put(i, []);
-															indexDataFlux.put(i, 0);
-															indexDataFlatness.put(i, 0);
-															indexDataCentroid.put(i, 0);
-															indexDataEnergy.put(i, 0);
-															indexDataBPM.put(i, 0);
-															dataFreq.put(i, []);
-															dataAmp.put(i, []);
-															dataDuree.put(i, []);
-															indexDataFreq.put(i, 0);
-															indexDataAmp.put(i, 0);
-															indexDataDuree.put(i, 0);
-															lastTime.put(i, Main.elapsedTime);// Init Time
-															freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
-														});
-													});
-													indexFhz = 0;
+														if(dataFreq.at(i).size <= indexDataFreq.at(i), {indexDataFreq.put(i, 0)});
+														dataFreq.put(i, dataFreq.at(i).wrapPut(indexDataFreq.at(i), freqNew));
+														indexDataFreq.put(i, indexDataFreq.at(i) + 1);
 												});
-											});
-											// Plot Data Music
-											plotDataMusic.value(freq, amp, dureeDisplay);
-											// Evaluate for each Instrument
-											//dataInstr = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz]
-											listeDataInstruments.do({arg dataInstr, index;
-												if(dataInstr.at(5).asString.containsi("EventStreamPlayer").not and: {dataInstr.at(5).isPlaying == true},
+												// Amp
+												// Set Bus
+												busOSCamp.at(i).set(ampNew);
+												// Add DataAmp
+												if(maximumData > dataAmp.at(i).size,
 													{
-														if(dataInstr.at(21) == indexBand or: {dataInstr.at(21) == 0},
+														dataAmp.put(i, dataAmp.at(i).add(ampNew));
+													},
+													{
+														if(dataAmp.at(i).size <= indexDataAmp.at(i), {indexDataAmp.put(i, 0)});
+														dataAmp.put(i, dataAmp.at(i).wrapPut(indexDataAmp.at(i), ampNew));
+														indexDataAmp.put(i, indexDataAmp.at(i) + 1);
+												});
+												// Duree
+												// Set Bus
+												duree = time - lastTime.at(i);
+												if(duree > dureeMaximumAnalyze  or: {duree > memoryTime} and: {flagMemory == 'off'},
+													{
+														freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
+														(numFhzBand + 1).do({arg i; lastTime.put(i, time)});
+													},
+													{
+														busOSCduree.at(i).set(duree);
+														// Add DataDuree
+														if(maximumData > dataDuree.at(i).size,
 															{
-																# freqStream, ampStream, dureeStream = computeAlgoFilterDataMusic.value(busOSCfreq.at(dataInstr.at(21)).getSynchronous.asArray.cpsmidi / 127, busOSCamp.at(dataInstr.at(21)).getSynchronous.asArray, busOSCduree.at(dataInstr.at(21)).getSynchronous.asArray / dureeMaximumAnalyze, dataInstr.at(12), dataInstr.at(13), dataInstr.at(14), dataInstr.at(15), dataInstr.at(16), dataInstr.at(17), dataInstr.at(18), dataInstr.at(19), dataInstr.at(20));
-																dataInstr.at(5).set(\freq, freqStream);
-																dataInstr.at(5).set(\amp, ampStream);
-																// Pour New Synth Stream avec EnvGen
-																dataInstr.at(5).set(\dur, dureeStream);
-																// MIDI OUT
-																if(flagMidiOut == 'on', {
-																	// Set MIDI Off
-																	midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
-																	if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
-																	// Reset MIDI OUT
-																	listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
-																	// Send MIDI On
-																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
-																	if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
-																});
+																dataDuree.put(i, dataDuree.at(i).add(duree));
+															},
+															{
+																if(dataDuree.at(i).size <= indexDataDuree.at(i), {indexDataDuree.put(i, 0)});
+																dataDuree.put(i, dataDuree.at(i).wrapPut(indexDataDuree.at(i), duree));
+																indexDataDuree.put(i, indexDataDuree.at(i) + 1);
 														});
+														lastTime.put(i, time);
+												});
+												// Set Bus
+												// FLux
+												busOSCflux.at(i).setSynchronous(busOSCflux.at(0).getSynchronous);
+												// Flatness
+												busOSCflatness.at(i).setSynchronous(busOSCflatness.at(0).getSynchronous);
+												// Centroid
+												busOSCcentroid.at(i).setSynchronous(busOSCcentroid.at(0).getSynchronous);
+												// Energy
+												busOSCenergy.at(i).setSynchronous(busOSCenergy.at(0).getSynchronous);
+												// BPM
+												busOSCbpm.at(i).setSynchronous(busOSCbpm.at(0).getSynchronous);
+												// ADD DATA FFT
+												// Flux
+												if(maximumData > dataFlux.at(i).size,
+													{
+														dataFlux.put(i, dataFlux.at(i).add((busOSCflux.at(0).getSynchronous)));
+													},
+													{
+														if(dataFlux.at(i).size <= indexDataFlux.at(i), {indexDataFlux.put(i, 0)});
+														dataFlux.put(i, dataFlux.at(i).wrapPut(indexDataFlux.at(i), (busOSCflux.at(0).getSynchronous)));
+														indexDataFlux.put(i, indexDataFlux.at(i) + 1);
+												});
+												// Flatness
+												if(maximumData > dataFlatness.at(i).size,
+													{
+														dataFlatness.put(i, dataFlatness.at(i).add((busOSCflatness.at(0).getSynchronous)));
+													},
+													{
+														if(dataFlatness.at(i).size <= indexDataFlatness.at(i), {indexDataFlatness.put(i, 0)});
+														dataFlatness.put(i, dataFlatness.at(i).wrapPut(indexDataFlatness.at(i), (busOSCflatness.at(0).getSynchronous)));
+														indexDataFlatness.put(i, indexDataFlatness.at(i) + 1);
+												});
+												// Centroid
+												if(maximumData > dataCentroid.at(i).size,
+													{
+														dataCentroid.put(i, dataCentroid.at(i).add((busOSCcentroid.at(0).getSynchronous)));
+													},
+													{
+														if(dataCentroid.at(i).size <= indexDataCentroid.at(i), {indexDataCentroid.put(i, 0)});
+														dataCentroid.put(i, dataCentroid.at(i).wrapPut(indexDataCentroid.at(i), (busOSCcentroid.at(0).getSynchronous)));
+														indexDataCentroid.put(i, indexDataCentroid.at(i) + 1);
+												});
+												// Energy
+												if(maximumData > dataEnergy.at(i).size,
+													{
+														dataEnergy.put(i, dataEnergy.at(i).add((busOSCenergy.at(0).getSynchronous)));
+													},
+													{
+														if(dataEnergy.at(i).size <= indexDataEnergy.at(i), {indexDataEnergy.put(i, 0)});
+														dataEnergy.put(i, dataEnergy.at(i).wrapPut(indexDataEnergy.at(i), (busOSCenergy.at(0).getSynchronous)));
+														indexDataEnergy.put(i, indexDataEnergy.at(i) + 1);
+												});
+												// BPM
+												if(maximumData > dataBPM.at(i).size,
+													{
+														dataBPM.put(i, dataBPM.at(i).add(busOSCbpm.at(0).getSynchronous));
+													},
+													{
+														if(dataBPM.at(i).size <= indexDataBPM.at(i), {indexDataBPM.put(i, 0)});
+														dataBPM.put(i, dataBPM.at(i).wrapPut(indexDataBPM.at(i), busOSCbpm.at(0).getSynchronous));
+														indexDataBPM.put(i, indexDataBPM.at(i) + 1);
+												});
+											},
+											{
+												// Init Band at(i)
+												// Init Array
+												dataFlux.put(i, []);
+												dataFlatness.put(i, []);
+												dataCentroid.put(i, []);
+												dataEnergy.put(i, []);
+												dataBPM.put(i, []);
+												indexDataFlux.put(i, 0);
+												indexDataFlatness.put(i, 0);
+												indexDataCentroid.put(i, 0);
+												indexDataEnergy.put(i, 0);
+												indexDataBPM.put(i, 0);
+												dataFreq.put(i, []);
+												dataAmp.put(i, []);
+												dataDuree.put(i, []);
+												indexDataFreq.put(i, 0);
+												indexDataAmp.put(i, 0);
+												indexDataDuree.put(i, 0);
+												lastTime.put(i, Main.elapsedTime);// Init Time
+												freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
+											});
+										},
+										{
+											// Init Band at(i)
+											// Init Array
+											if(i <= numFhzBand, {
+												duree = time - lastTime.at(i);
+												if(duree > dureeMaximumAnalyze or: {duree > memoryTime} and: {flagMemory == 'off'}, {
+													dataFlux.put(i, []);
+													dataFlatness.put(i, []);
+													dataCentroid.put(i, []);
+													dataEnergy.put(i, []);
+													dataBPM.put(i, []);
+													indexDataFlux.put(i, 0);
+													indexDataFlatness.put(i, 0);
+													indexDataCentroid.put(i, 0);
+													indexDataEnergy.put(i, 0);
+													indexDataBPM.put(i, 0);
+													dataFreq.put(i, []);
+													dataAmp.put(i, []);
+													dataDuree.put(i, []);
+													indexDataFreq.put(i, 0);
+													indexDataAmp.put(i, 0);
+													indexDataDuree.put(i, 0);
+													lastTime.put(i, Main.elapsedTime);// Init Time
+													freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 												});
 											});
+											indexFhz = 0;
+										});
 									});
-									freqTampon = freq; ampTampon = amp; lastTime.put(0, time);
-							}, {nil});
-						});
-						dureeAnalyzeOSCMusic = Main.elapsedTime;
+									// Evaluate for each Instrument
+									//dataInstr = [bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, noteOff, dureeBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz]
+									listeDataInstruments.do({arg dataInstr, index;
+										if(dataInstr.at(5).asString.containsi("EventStreamPlayer").not and: {dataInstr.at(5).isPlaying == true},
+											{
+												if(dataInstr.at(21) == indexBand or: {dataInstr.at(21) == 0},
+													{
+														# freqStream, ampStream, dureeStream = computeAlgoFilterDataMusic.value(busOSCfreq.at(dataInstr.at(21)).getSynchronous.asArray.cpsmidi / 127, busOSCamp.at(dataInstr.at(21)).getSynchronous.asArray, busOSCduree.at(dataInstr.at(21)).getSynchronous.asArray / dureeMaximumAnalyze, dataInstr.at(12), dataInstr.at(13), dataInstr.at(14), dataInstr.at(15), dataInstr.at(16), dataInstr.at(17), dataInstr.at(18), dataInstr.at(19), dataInstr.at(20));
+														dataInstr.at(5).set(\freq, freqStream);
+														dataInstr.at(5).set(\amp, ampStream);
+														// Pour New Synth Stream avec EnvGen
+														dataInstr.at(5).set(\dur, dureeStream);
+														// MIDI OUT
+														if(flagMidiOut == 'on', {
+															// Set MIDI Off
+															midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
+															if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
+															// Reset MIDI OUT
+															listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
+															// Send MIDI On
+															midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
+															if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
+														});
+												});
+										});
+									});
+							});
+							freqTampon = freq; ampTampon = amp; lastTime.put(0, time);
+					}, {nil});
+					// DATA FFT
+					centroid = wekIn[17];
+					energy = wekIn[18];
+					flux = wekIn[19];
+					flatness = wekIn[20];
+					// Normalize
+					flux = flux * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+					flatness = flatness * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0);
+					centroid = (centroid / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
+					energy = (energy / 12544 * (rangeFFT.at(1) - rangeFFT.at(0)) + rangeFFT.at(0) * 12544).clip(20, 12544);
+					// Set Bus Flux
+					busOSCflux.at(0).set(flux);
+					if(maximumData > dataFlux.at(0).size,
+						{
+							dataFlux.put(0, dataFlux.at(0).add(flux));
+						},
+						{
+							if(dataFlux.at(0).size <= indexDataFlux.at(0), {indexDataFlux.put(0, 0)});
+							dataFlux.put(0, dataFlux.at(0).wrapPut(indexDataFlux.at(0), flux));
+							indexDataFlux.put(0, indexDataFlux.at(0) + 1);
+					});
+					// Set BusFlatness
+					busOSCflatness.at(0).set(flatness);
+					if(maximumData > dataFlatness.at(0).size,
+						{
+							dataFlatness.put(0, dataFlatness.at(0).add(flatness));
+						},
+						{
+							if(dataFlatness.at(0).size <= indexDataFlatness.at(0), {indexDataFlatness.put(0, 0)});
+							dataFlatness.put(0, dataFlatness.at(0).wrapPut(indexDataFlatness.at(0), flatness));
+							indexDataFlatness.put(0, indexDataFlatness.at(0) + 1);
+					});
+					// Set Bus Centroid
+					busOSCcentroid.at(0).set(energy);
+					if(maximumData > dataCentroid.at(0).size,
+						{
+							dataCentroid.put(0, dataCentroid.at(0).add(centroid));
+						},
+						{
+							if(dataCentroid.at(0).size <= indexDataCentroid.at(0), {indexDataCentroid.put(0, 0)});
+							dataCentroid.put(0, dataCentroid.at(0).wrapPut(indexDataCentroid.at(0), centroid));
+							indexDataCentroid.put(0, indexDataCentroid.at(0) + 1);
+					});
+					// Set Bus Energy
+					busOSCenergy.at(0).set(energy);
+					if(maximumData > dataEnergy.at(0).size,
+						{
+							dataEnergy.put(0, dataEnergy.at(0).add(energy));
+						},
+						{
+							if(dataEnergy.at(0).size <= indexDataEnergy.at(0), {indexDataEnergy.put(0, 0)});
+							dataEnergy.put(0, dataEnergy.at(0).wrapPut(indexDataEnergy.at(0), energy));
+							indexDataEnergy.put(0, indexDataEnergy.at(0) + 1);
+					});
+					// Set Bus BPM
+					busOSCbpm.at(0).set(bpm);
+					if(maximumData > dataBPM.at(0).size,
+						{
+							dataBPM.put(0, dataBPM.at(0).add(bpm));
+						},
+						{
+							if(dataBPM.at(0).size <= indexDataBPM.at(0), {indexDataBPM.put(0, 0)});
+							dataBPM.put(0, dataBPM.at(0).wrapPut(indexDataBPM.at(0), bpm));
+							indexDataBPM.put(0, indexDataBPM.at(0) + 1);
+					});
+					// Plot Data
+					{
+						plotDataMusic.value(freq.cpsmidi, amp.ampdb, dureeDisplay, bpm * 60, centroid.cpsmidi, energy.cpsmidi, flux, flatness);
+					}.defer;
+					if(transDureeintruments < 1, {dureeTampon = transDureeintruments.reciprocal.neg}, {dureeTampon = transDureeintruments});
+					if(flagStreamMFCC != 'wek',
+						{
+							// Data Music
+							inFFT = [rangeFreqintruments[0],//0
+								rangeFreqintruments[1],
+								transFreqintruments,
+								rangeDBintruments[0].ampdb.clip(-120, 0),
+								rangeDBintruments[1].ampdb.clip(-120, 0),
+								rangeDureeintruments[0],
+								rangeDureeintruments[1],
+								dureeTampon,
+								stretchDuree,
+								quantizationDuree,
+								// Data Synth Sound FX
+								indexSynthX,//10
+								indexSynthY,
+								indexSoundX,
+								indexSoundY,
+								indexFXX,
+								indexFXY,
+								rangeFFT[0],//16
+								rangeFFT[1],
+								numPreset.asFloat];//18
+
+							sender.sendMsg("/wekinator/control/outputs", *inFFT[0..]);
+					});
+					dureeAnalyzeOSCMusic = Main.elapsedTime;
 				});
-			}, '/Density_Music_Data', serveurAdresse);
+			}, '/WekDensity_MFCC_FFT');
 
 			// Setup MIDI Responder
 			// NoteOn
@@ -1496,11 +2050,11 @@ Density {
 						s.sync;
 					};
 				});
-			}, (0..127), nil);
+			}, (0..127));
 
 			/////////////// AlgoCompo + Setup Range and Filter Data Music ////////////////////////
 			computeAlgoFilterDataMusic = {arg freq, amp, duree, data, z1, z2, z3, z4, z5, z6, z7, algorithm;
-				var music, fft, octave, position = 0, ratio, degre, newFreq=[], newAmp=[], newDuree=[], chordFreq=[], chordAmp=[], chordDuree=[], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances=[], dureeChord, maxTraining=0, flux, flatness, centroid, energy, bpm, listF=[], listA=[], listD=[], freqNeu=[], ampNeu=[], durNeu=[];
+				var music, fft, octave, position = 0, ratio, degre, newFreq=[], newAmp=[], newDuree=[], chordFreq=[], chordAmp=[], chordDuree=[], q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, distances=[], dureeChord, maxTraining=0, flux, flatness, centroid, energy, bpm, listF=[], listA=[], listD=[], freqNeu=[], ampNeu=[], durNeu=[], vecteur;
 				// DataMusicTransform [fft, freq, amp, duree]
 				// [[flux, flatness, centroid, energy, bpm], [q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie], ...]
 				// Choix de l'algorythme Probability
@@ -1547,7 +2101,7 @@ Density {
 							newAmp = amp;
 							newDuree = duree;
 						});
-						newDuree = newDuree.fold(0,1);
+						newDuree = newDuree.mod(1);
 						//Set Range newDuree
 						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization newDuree
@@ -1557,7 +2111,7 @@ Density {
 							newDuree.put(index, item);
 						});
 						// newFreq Transformation
-						newFreq = newFreq.fold(0,1);
+						newFreq = newFreq.mod(1);
 						// Setup Range newFreq
 						newFreq = newFreq.collect({arg note, index;
 							note.asArray.collect({arg chord, index;
@@ -1652,7 +2206,7 @@ Density {
 								newDuree = ecartSemiQ / newDuree;
 							});
 						});
-						newDuree = newDuree.fold(0,1);
+						newDuree = newDuree.mod(1);
 						//Set Range newDuree
 						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
 						// Quantization newDuree
@@ -1681,7 +2235,7 @@ Density {
 								newFreq = ecartSemiQ / newFreq;
 							});
 						});
-						newFreq = newFreq.fold(0,1);
+						newFreq = newFreq.mod(1);
 						// Setup Range newFreq
 						newFreq = newFreq.collect({arg note, index;
 							note.asArray.collect({arg chord, index;
@@ -1961,7 +2515,7 @@ Density {
 								freq = ecartSemiQ / freq;
 							});
 						});
-						freq = freq.fold(0,1);
+						freq = freq.mod(1);
 						// Amp
 						if(coin(cv.frac), {amp = amp * distances}, {amp = amp / distances});
 						// Transpose
@@ -1974,7 +2528,7 @@ Density {
 						{
 							amp = amp + (ecartSemiQ * dissymetrie.sign)
 						});
-						amp = amp.fold(0,1);
+						amp = amp.mod(1);
 						// Duree
 						if(coin(cv.frac), {duree = duree / distances},{duree = duree * distances});
 						// Transpose
@@ -1987,7 +2541,7 @@ Density {
 						{
 							duree = duree + (ecartSemiQ * dissymetrie.sign)
 						});
-						duree = duree.abs.fold(0,1);
+						duree = duree.abs.mod(1);
 						// Set Duree
 						// Check Duree for Chords
 						if(flagChord == 'on', {
@@ -2168,6 +2722,293 @@ Density {
 						});
 						// Amp Transformation
 						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
+					},
+					'Generate', {
+						freqNeu=[];
+						ampNeu=[];
+						durNeu=[];
+						// Generate Transformer
+						vecteur = ~hpTR.generate([freq.wrapAt(0), amp.wrapAt(0), duree.wrapAt(0)], freq.size);
+						vecteur = vecteur.flop;
+						freqNeu = vecteur[0];
+						ampNeu = vecteur[1];
+						durNeu = vecteur[2];
+						freq = freqNeu;
+						amp = ampNeu;
+						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
+						// Duree Transformation
+						if(flagChord == 'on', {
+							// Check Duree for Chords
+							duree.do({arg duree, index, newFHZ;
+								newFHZ = freq.at(index);
+								if(duree <= q1, {
+									chordFreq=chordFreq.add(newFHZ);
+									chordAmp=chordAmp.add(amp.at(index));
+									chordDuree=chordDuree.add(q1);
+								}, {
+									if(chordFreq == [], {
+										newFreq = newFreq.add(newFHZ);
+										newAmp = newAmp.add(amp.at(index));
+										newDuree = newDuree.add(duree);
+									}, {
+										chordFreq=chordFreq.add(newFHZ);
+										chordAmp=chordAmp.add(amp.at(index));
+										newFreq = newFreq.add(chordFreq);
+										newAmp = newAmp.add(chordAmp.mediane);
+										newDuree= newDuree.add(duree);
+										chordFreq = [];
+									});
+								});
+							});
+							if(newFreq.size == 0, {
+								newFreq = chordFreq;
+								newAmp = chordAmp;
+								newDuree= chordDuree;
+							});
+						}, {
+							// No Chord
+							newFreq = freq;
+							newAmp = amp;
+							newDuree = duree;
+						});
+						// Set Range Duree
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						// Quantization Duree
+						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
+						newDuree.do({arg item, index;
+							if(item <= 0, {item = quantizationDuree.reciprocal});
+							newDuree.put(index, item);
+						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
+					},
+					'GenStep', {
+						freqNeu=[];
+						ampNeu=[];
+						durNeu=[];
+						// Generate Transformer
+						freq.size.do({arg i, f, a, d;
+							# f, a, d = ~hpTR.generateStep([freq.wrapAt(i), amp.wrapAt(i), duree.wrapAt(i)]);
+							// Freq
+							freqNeu = freqNeu.add(f);
+							// Amp
+							ampNeu = ampNeu.add(a);
+							// Duree
+							durNeu = durNeu.add(d);
+						});
+						freq = freqNeu;
+						amp = ampNeu;
+						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
+						// Duree Transformation
+						if(flagChord == 'on', {
+							// Check Duree for Chords
+							duree.do({arg duree, index, newFHZ;
+								newFHZ = freq.at(index);
+								if(duree <= q1, {
+									chordFreq=chordFreq.add(newFHZ);
+									chordAmp=chordAmp.add(amp.at(index));
+									chordDuree=chordDuree.add(q1);
+								}, {
+									if(chordFreq == [], {
+										newFreq = newFreq.add(newFHZ);
+										newAmp = newAmp.add(amp.at(index));
+										newDuree = newDuree.add(duree);
+									}, {
+										chordFreq=chordFreq.add(newFHZ);
+										chordAmp=chordAmp.add(amp.at(index));
+										newFreq = newFreq.add(chordFreq);
+										newAmp = newAmp.add(chordAmp.mediane);
+										newDuree= newDuree.add(duree);
+										chordFreq = [];
+									});
+								});
+							});
+							if(newFreq.size == 0, {
+								newFreq = chordFreq;
+								newAmp = chordAmp;
+								newDuree= chordDuree;
+							});
+						}, {
+							// No Chord
+							newFreq = freq;
+							newAmp = amp;
+							newDuree = duree;
+						});
+						// Set Range Duree
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						// Quantization Duree
+						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
+						newDuree.do({arg item, index;
+							if(item <= 0, {item = quantizationDuree.reciprocal});
+							newDuree.put(index, item);
+						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
+					},
+					'Predict', {
+						freqNeu=[];
+						ampNeu=[];
+						durNeu=[];
+						// Generate Transformer
+						freq.size.do({arg i, f, a, d;
+							# f, a, d = ~hpTR.predict([freq.wrapAt(i), amp.wrapAt(i), duree.wrapAt(i)]);
+							// Freq
+							freqNeu = freqNeu.add(f);
+							// Amp
+							ampNeu = ampNeu.add(a);
+							// Duree
+							durNeu = durNeu.add(d);
+						});
+						freq = freqNeu;
+						amp = ampNeu;
+						duree = durNeu;
+						// Duree Transformation
+						# q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie = data.at(3);
+						// Duree Transformation
+						if(flagChord == 'on', {
+							// Check Duree for Chords
+							duree.do({arg duree, index, newFHZ;
+								newFHZ = freq.at(index);
+								if(duree <= q1, {
+									chordFreq=chordFreq.add(newFHZ);
+									chordAmp=chordAmp.add(amp.at(index));
+									chordDuree=chordDuree.add(q1);
+								}, {
+									if(chordFreq == [], {
+										newFreq = newFreq.add(newFHZ);
+										newAmp = newAmp.add(amp.at(index));
+										newDuree = newDuree.add(duree);
+									}, {
+										chordFreq=chordFreq.add(newFHZ);
+										chordAmp=chordAmp.add(amp.at(index));
+										newFreq = newFreq.add(chordFreq);
+										newAmp = newAmp.add(chordAmp.mediane);
+										newDuree= newDuree.add(duree);
+										chordFreq = [];
+									});
+								});
+							});
+							if(newFreq.size == 0, {
+								newFreq = chordFreq;
+								newAmp = chordAmp;
+								newDuree= chordDuree;
+							});
+						}, {
+							// No Chord
+							newFreq = freq;
+							newAmp = amp;
+							newDuree = duree;
+						});
+						// Set Range Duree
+						newDuree = newDuree * (rangeDureeintruments.at(1) - rangeDureeintruments.at(0)) + rangeDureeintruments.at(0) * transDureeintruments;
+						// Quantization Duree
+						newDuree = newDuree.floor + ((newDuree.frac*quantizationDuree + 0.5).floor / quantizationDuree);
+						newDuree.do({arg item, index;
+							if(item <= 0, {item = quantizationDuree.reciprocal});
+							newDuree.put(index, item);
+						});
+						// Setup Range Freq
+						newFreq = newFreq * abs(rangeFreqintruments.at(1) - rangeFreqintruments.at(0)) + rangeFreqintruments.at(0) + transFreqintruments;
+						newFreq = newFreq.min(135);
+						newFreq = newFreq.midicps;
+						// Setup Freq with Scaling and Tuning
+						if(flagScaling == 'on', {
+							newFreq = newFreq.collect({arg item, index;
+								item.asArray.collect({arg note, index;
+									octave = (note.cpsmidi / 12);
+									ratio = (octave.frac * 12).round(0.1);
+									octave = octave.floor;
+									position = scale.degrees.indexOfEqual(ratio);
+									if(position == nil,
+										{
+											position = scale.degrees.indexOfGreaterThan(ratio);
+											if(position == nil,
+												{
+													position = scale.degrees.last;
+												},
+												{
+													position = scale.degrees.at(position);
+												}
+											);
+										},
+										{
+											position = scale.degrees.at(position);
+										}
+									);
+									note = (octave * 12 + position).midicps;
+								});
+							});
+						});
+						// Amp Transformation
+						newAmp = newAmp * abs(rangeDBintruments.at(1) - rangeDBintruments.at(0)) + rangeDBintruments.at(0);
 					}
 				);
 				// Out
@@ -2176,27 +3017,27 @@ Density {
 
 			/////////////////// Build New dataInstruments //////////////////////
 			buildSynth = {arg indexBandFhz;
-				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, z1, z2, z3, z4, z5, z6, z7, algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST, newFreq, newAmp, newDur;
+				var bus, recBuffer, dureeInstrument, synth, masterOut, fx, fxName, synthMidi, freq, amp, duree, time, pattern, patternMidi, dureeStretchBPM, synthName, panx, pany, canalMidi, envelopeLevel, envelopeTime, buffer, busRec, indexX, indexY, soundName, flux, flatness, centroid, energy, bpm, dataMusicTransform, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie, z1, z2, z3, z4, z5, z6, z7, algorithm, offset, rootEnergy, newRevSound, patternVST, synthMidiVST;
 				// Probability
 				// Flux
 				/*flux = (13.287712379549 - fft.at(0).mediane.log2.abs / 13.287712379549).clip(0, 1);
 				// Flatness
 				flatness = (13.287712379549 - fft.at(1).mediane.log2.abs / 13.287712379549).clip(0, 1);*/
-					flux = dataFlux.at(indexBandFhz);
-					flatness = dataFlatness.at(indexBandFhz);
-					centroid = dataCentroid.at(indexBandFhz);
-					energy = rootEnergy = dataEnergy.at(indexBandFhz);
-					bpm = dataBPM.at(indexBandFhz);
-					freq = dataFreq.at(indexBandFhz);
-					amp = dataAmp.at(indexBandFhz);
-					duree = dataDuree.at(indexBandFhz);
+				flux = dataFlux.at(indexBandFhz);
+				flatness = dataFlatness.at(indexBandFhz);
+				centroid = dataCentroid.at(indexBandFhz);
+				energy = rootEnergy = dataEnergy.at(indexBandFhz);
+				bpm = dataBPM.at(indexBandFhz);
+				freq = dataFreq.at(indexBandFhz);
+				amp = dataAmp.at(indexBandFhz);
+				duree = dataDuree.at(indexBandFhz);
 				flux = flux.mediane;
 				flux = flux + rrand(jitterControls.neg, jitterControls);
-				flux = flux.fold(0,1);
+				flux = flux.mod(1);
 				// Flatness
 				flatness = flatness.mediane;
 				flatness = flatness + rrand(jitterControls.neg, jitterControls);
-				flatness = flatness.fold(0,1);
+				flatness = flatness.mod(1);
 				// Centroid
 				centroid = centroid.mediane;
 				centroid = centroid + rrand(jitterControls.neg * 12543, jitterControls * 12543);
@@ -2208,7 +3049,7 @@ Density {
 				// BPM
 				bpm = bpm.mediane;
 				/*bpm = bpm + rrand(jitterControls.neg, jitterControls);
-				bpm = bpm.fold(0,1);*/
+				bpm = bpm.mod(1);*/
 				dataMusicTransform = dataMusicTransform.add([flux, flatness, centroid, energy, bpm]);
 				// Freq
 				freq = freq.cpsmidi / 127;
@@ -2246,11 +3087,11 @@ Density {
 				displayAlgo = algorithm.asString;
 				displayIndex = indexBandFhz.asString;
 				//////////////////////// COMPUTE ALGO /////////////////////////////
-				# newFreq, newAmp, newDur = computeAlgoFilterDataMusic.value(freq, amp, duree, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm);
+				# freq, amp, duree = computeAlgoFilterDataMusic.value(freq, amp, duree, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm);
 				///////////////////////////////////////////////////////////////////
 				// Synth
-				indexX = (indexInstrumentX + (0.5 * rrand(jitterIndexInstrumentX.neg, jitterIndexInstrumentX))).clip(0, 1);
-				indexY = (indexInstrumentY + (0.5 * rrand(jitterIndexInstrumentY.neg, jitterIndexInstrumentY))).clip(0, 1);
+				indexX = (indexSynthX + (0.5 * rrand(jitterIndexSynthX.neg, jitterIndexSynthX))).clip(0, 1);
+				indexY = (indexSynthY + (0.5 * rrand(jitterIndexSynthY.neg, jitterIndexSynthY))).clip(0, 1);
 				synthName = synthOrchestra.at((indexX * (synthOrchestra.size - 1) + 0.5).floor);
 				synthName = synthName.at((indexY * (synthName.size - 1) + 0.5).floor);
 				// Panoramic
@@ -2270,9 +3111,9 @@ Density {
 				});
 				bus = listeBusOff.at(0); listeBusOff.remove(bus);
 				// Duree Instrument
-				dureeInstrument = newDur.sum;
+				dureeInstrument = duree.sum;
 				// DureeStretchBPM
-				dureeStretchBPM =  newDur.sum * globalDensity.reciprocal;
+				dureeStretchBPM =  duree.sum * globalDensity.reciprocal;
 				// Buffer
 				if(flagSampler == "Sampler+Sound", {
 					if(coin(0.5), {
@@ -2286,7 +3127,7 @@ Density {
 						NodeWatcher.register(recBuffer, true);
 						soundName = "-> Audio In";
 						// Normalize
-						//if(synthName.containsi("Buf"), {newAmp = newAmp.max(0.9)});
+						//if(synthName.containsi("Buf"), {amp = amp.max(0.9)});
 					},
 					{
 						indexX = (indexSoundX + (0.5 * rrand(jitterIndexSoundX.neg, jitterIndexSoundX))).clip(0, 1);
@@ -2346,7 +3187,7 @@ Density {
 				);
 				//Offset
 				offset = offsetSound + rrand(jitterControls.neg, jitterControls);
-				offset = offset.fold(0,1);
+				offset = offset.mod(1);
 				// Reverse Proba
 				if(rrand(0.0, 1.0) >= jitterControls, {newRevSound = reverseSound},
 					{newRevSound = 1.neg});
@@ -2405,11 +3246,12 @@ Density {
 								loopSound}, inf),
 							\offset, Pfuncn({if(newRevSound == 1.neg, {offset = (1 - offset)}, {offset}); offset}, inf),
 							\reverse, Pfuncn({newRevSound}, inf),
-							\freq, Pseq(newFreq, loopMusic),
-							\amp, Pseq(newAmp, loopMusic),
-							\dur, Pseq(newDur, loopMusic),
+							\freq, Pseq(freq, loopMusic),
+							\amp, Pseq(amp, loopMusic),
+							\dur, Pseq(duree, loopMusic),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
+							\legato,  0.5,
 							\ctrlHP1, Pfuncn({ctrlHP1}, inf),
 							\ctrlHP2, Pfuncn({ctrlHP2}, inf),
 							\stretch, Pfuncn({stretchDuree}, inf),
@@ -2418,6 +3260,7 @@ Density {
 							\centroid, (busOSCcentroid.at(indexBandFhz)).asMap,
 							\energy, (busOSCenergy.at(indexBandFhz)).asMap,
 							\bpm, (busOSCbpm.at(indexBandFhz)).asMap,
+							\gate, 1,
 							\level1, recLevel,
 							\level2, preLevel,
 							\envLevel1, envelopeLevel.at(0),
@@ -2445,10 +3288,11 @@ Density {
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(newFreq, loopMusic),
-								\amp, Pseq(newAmp, loopMusic),
-								\dur, Pseq(newDur, loopMusic),
+								\freq, Pseq(freq, loopMusic),
+								\amp, Pseq(amp, loopMusic),
+								\dur, Pseq(duree, loopMusic),
 								\stretch, Pfuncn({stretchDuree}, inf),
+								//\s, s,
 								\group, groupeSynth,
 								\addAction, 1);
 							// VST Instrument
@@ -2458,9 +3302,9 @@ Density {
 								\midicmd, \noteOn,
 								\midiout, midiOut,
 								\chan, canalMidi,
-								\freq, Pseq(newFreq, loopMusic),
-								\amp, Pseq(newAmp, loopMusic),
-								\dur, Pseq(newDur, loopMusic),
+								\freq, Pseq(freq, loopMusic),
+								\amp, Pseq(amp, loopMusic),
+								\dur, Pseq(duree, loopMusic),
 								\stretch, Pfuncn({stretchDuree}, inf),
 								\group, groupeSynth,
 								\addAction, 1);
@@ -2481,9 +3325,9 @@ Density {
 							\loop, 1, // Loop sound for streaming
 							\offset, offset,
 							\reverse, newRevSound,
-							\freq, newFreq.at(0),
-							\amp, newAmp.at(0),
-							\dur, newDur.at(0),
+							\freq, freq.at(0),
+							\amp, amp.at(0),
+							\dur, duree.at(0),
 							\durSynth, dureeInstrument,
 							\durSample, dureeSample,
 							\ctrlHP1, ctrlHP1,
@@ -2521,11 +3365,11 @@ Density {
 				// Time Start Synth
 				time = Main.elapsedTime;
 				// Set List Data Instruments
-				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, newFreq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz, synthMidiVST]);
+				listeDataInstruments = listeDataInstruments.add([bus, time, dureeInstrument, buffer, recBuffer, synth, synthMidi, canalMidi, fx, masterOut, freq.flat.at(0).cpsmidi, dureeStretchBPM, dataMusicTransform, z1, z2, z3, z4, z5, z6, z7, algorithm, indexBandFhz, synthMidiVST]);
 				// Display for GUI
 				{
 					// Synth
-					displayInstrument.string = (indexInstrumentX.asStringPrec(2) + indexInstrumentY.asStringPrec(2) + synthName);
+					displayInstrument.string = (indexSynthX.asStringPrec(2) + indexSynthY.asStringPrec(2) + synthName);
 					// Sound
 					displaySound.string = (indexSoundX.asStringPrec(2) + indexSoundY.asStringPrec(2) + PathName.new(soundName).fileName);
 					// FX
@@ -2557,7 +3401,7 @@ Density {
 								});
 							});
 						});
-						if((time - data.at(1)) > data.at(11) /*or: {data.at(5).asString.containsi("EventStreamPlayer") and: {data.at(5).streamHasEnded}}*/, {
+						if((time - data.at(1)) > data.at(11) or: {data.at(5).asString.containsi("EventStreamPlayer") and: {data.at(5).streamHasEnded}}, {
 							// Kill Synth
 							if(data.at(5).asString.containsi("EventStreamPlayer"),
 								{data.at(5).stop; data.at(5).free},
@@ -2592,15 +3436,15 @@ Density {
 							if(numIndexSynthBand >= rangeSynthBand.size, {numIndexSynthBand = 0});
 							indexBandFhz = rangeSynthBand.at(numIndexSynthBand);
 							numIndexSynthBand = numIndexSynthBand + 1;
-								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
-									{
-										buildSynth.value(indexBandFhz)});
+							if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
+								{
+									buildSynth.value(indexBandFhz)});
 						},
 						// Build new Instrument without Band
 						{
 							indexBandFhz = 0;
 							if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
-									{buildSynth.value(indexBandFhz)});
+								{buildSynth.value(indexBandFhz)});
 						});
 						lastTime = time;
 					});
@@ -2668,37 +3512,20 @@ Density {
 			// End Seveur Wait For Boot
 		});
 
-		// Fonction Plotter FFT
-		plotDataFFT = {arg flux, flatness, centroid, energy, bpm;
-			var analyzeData;
-			{
-				// Setup GUI Value
-				if(windowPlotterFFT.view.children.at(0).value == 1, {
-					analyzeData = [(flux * 10000).log2.clip(0, 13), (flatness * 10000).log2.clip(0, 13), centroid, energy, bpm * 60];
-					if(plotterFFT.at(0).size > 1024, {plotterFFTGUI.value = [[(flux * 10000).log2.clip(0, 13)], [(flatness * 10000).log2.clip(0, 13)], [centroid], [energy]]; plotterFFT = [[(flux * 10000).log2.clip(0, 13)], [(flatness * 10000).log2.clip(0, 13)], [centroid], [energy], [bpm * 60]]},
-						{plotterFFT.size.do({arg index; plotterFFT.put(index, plotterFFT.at(index).add(analyzeData.at(index)))});
-							plotterFFTGUI.value = plotterFFT;
-					});
-				});
-				// Display Analyze FFT
-				displayAnalyzeFFT.string = ("Flux:" + flux.asStringPrec(4)  + "    Flatness:" + flatness.asStringPrec(4) + "    Centroid:" + centroid.asStringPrec(4) + "    Energy:" + energy.asStringPrec(4) + "    BPM:" + (bpm * 60).asStringPrec(4));
-			}.defer;
-		};
-
 		// Plotter Data Music
-		plotDataMusic = {arg freq, amp, duree;
+		plotDataMusic = {arg freq, amp, duree, bpm, centroid, energy, flux, flatness;
 			var analyzeData;
 			{
 				// Setup GUI Value
-				if(windowPlotterData.view.children.at(0).value == 1, {
-					analyzeData = [freq.cpsmidi, amp.ampdb, duree];
-					if(plotterData.at(0).size > 1024, {plotterData =[[freq.cpsmidi], [amp.ampdb], [duree]]},
-						{plotterData.size.do({arg index; plotterData.put(index, plotterData.at(index).add(analyzeData.at(index)))});
-							plotterDataGUI.value = plotterData;
-					});
+				analyzeData = [freq, amp, duree, bpm, centroid, energy, (flux * 10000).log2.clip(0, 13), (flatness * 10000).log2.clip(0, 13)];
+				if(plotterData.at(0).size > 1024, {plotterData =[[freq], [amp], [duree], [bpm], [centroid], [energy], [(flux * 10000).log2.clip(0, 13)], [(flatness * 10000).log2.clip(0, 13)]]},
+					{plotterData.size.do({arg index; plotterData.put(index, plotterData.at(index).add(analyzeData.at(index)))});
+						plotterDataGUI.value = plotterData;
 				});
 				// Display Analyze Music
-				displayAnalyzeMusic.string = ("Freq:" + freq.cpsmidi.asStringPrec(4)  +  "  Amp:" + amp.ampdb.asStringPrec(4) + "  Duree:" + duree.asStringPrec(4) + "  Instruments:" + listeDataInstruments.size + "  Data:" +  dataFreq.at(0).size + "  Index:" + indexDataFreq.at(0) + "  Algo: " + displayAlgo + "  FhzBand: " + displayIndex + "  M" ++ displayMIDI);
+				displayAnalyzeMusic.string = ("Freq:" + freq.asStringPrec(4)  +  "  Amp:" + amp.asStringPrec(4) + "  Duree:" + duree.asStringPrec(4) + "  Instruments:" + listeDataInstruments.size + "  Data:" +  dataFreq.at(0).size + "  Index:" + indexDataFreq.at(0) + "  Algo: " + displayAlgo + "  FhzBand: " + displayIndex + "  M" ++ displayMIDI);
+				// Display Analyze FFT
+				displayAnalyzeFFT.string = ("Flux:" + flux.asStringPrec(4)  + "    Flatness:" + flatness.asStringPrec(4) + "    Centroid:" + centroid.asStringPrec(4) + "    Energy:" + energy.asStringPrec(4) + "    BPM:" + (bpm.asFloat).asStringPrec(4));
 			}.defer;
 		};
 
@@ -2706,6 +3533,7 @@ Density {
 			if(flagVST == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
+			sender.free;
 			//s.quit;
 		};
 
@@ -2715,377 +3543,11 @@ Density {
 
 	createGUI {
 
-		// Help
-		helpDensity = "
-Single commandes:
-
-esc	or SpaceBar			System on/off.
-q / ctrl + q			Switch Algorithm Analyze.
-h						Switch Source IN.
-i						Init Synth.
-ctrl+i					Init System.
-alt+i					Reset System.
-ctrl + f				Load and Add File for Analyze
-w / ctrl + w			Switch Window.
-z						Load Random Preset.
-k                       New Environment.
-a                       Init Genetic
-shift + a               Init Kohonen
-alt + a                 Init Neural
-alt + r                 Start Recording
-shift + alt + r			Switch pause recording on/off
-ctrl + alt + a          Stop Recording
-
-Commandes follow by a numerical key (0,..9 ; shift 0,..9 ; alt 0,..9 ; alt + shift 0,..9):
-
-l			 			Load Preset.
-s				 		Save Preset.
-f						Switch File for analyze.
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
-
-ShortCut for Keyboard Panel:
-
-<						Keyboard Transpose down.
->						Keyboard Transpose up.
-
-ysxdcvgbhnjm,l.e-		Musical Keys.
-
-";
-
-		// ///////////////////////// Menu Density /////////////////////////////////
-
-		menuFile = Menu(
-			MenuAction("Load File for Analyze",
-				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
-					// Setup GUI Value
-					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
-			Menu(
-				MenuAction("On", {synthFileIn.set('loop', 1)}),
-				MenuAction("Off", {synthFileIn.set('loop', 0)});
-			).title_("Loop");
-		);
-		MainMenu.register(menuFile.title_("File for Analyze"), "DensityTools");
-
-		menuPreset = Menu(
-			MenuAction("Load Preset", {Dialog.openPanel({ arg path, file;
-				file = File(path,"r");
-				fonctionLoadPreset.value(file.readAllString.interpret);
-				file.close;
-				windowEar.name="Density" + typeMasterOut + " | " + PathName.new(path).fileName;
-			},
-			{"cancelled".postln})}),
-			MenuAction("Save Preset",{Dialog.savePanel({arg path, name, pathonly, fileName, file;
-				path = PathName.new(path);
-				pathonly = path.pathOnly;
-				name = path.fileName;
-				//name = "preset" + name;
-				path = pathonly ++ name;
-				fileName = PathName.new(path).fileName;
-				path = PathName.new(path).fullPath;
-				file = File(path ++ ".scd", "w");
-				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
-				file.close;
-				windowEar.name = "Density" + typeMasterOut + " | " + fileName;
-			}, {"cancelled".postln})});
-		);
-		MainMenu.register(menuPreset.title_("Preset"), "DensityTools");
-
-		menuInitAll = Menu(
-			MenuAction("Init All", {arg file;
-				//Init Orchestra Sounds FX
-				s.bind{
-					file = File(pathData ++ "Synth.scd","r");
-					synthOrchestra = file.readAllString.interpret;
-					file.close;
-					s.sync;
-					file = File(pathData ++ "Sounds.scd","r");
-					soundOrchestra = file.readAllString.interpret;
-					file.close;
-					fonctionLoadSoundOrchestra.value(soundOrchestra);
-					s.sync;
-					file = File(pathData ++ "FX.scd","r");
-					fxOrchestra = file.readAllString.interpret;
-					file.close;
-					s.sync;
-				};
-			}),
-			Menu(
-				MenuAction("Load", {Dialog.openPanel({arg path, file;
-					file = File(path,"r");
-					synthOrchestra = file.readAllString.interpret;
-					file.close;
-				},
-				{"cancelled".postln});
-				}),
-				MenuAction("Edit/Save", {arg window, text, file, comUnix;
-					window = Document.new("Synth Edit/Save", synthOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; synthOrchestra = text.interpret};
-				});
-			).title_("Synth"),
-			Menu(
-				MenuAction("Load", {Dialog.openPanel({arg path, file;
-					file = File(path,"r");
-					soundOrchestra = file.readAllString.interpret;
-					file.close;
-					s.bind{
-						fonctionLoadSoundOrchestra.value(soundOrchestra);
-						s.sync;
-					};
-				},
-				{"cancelled".postln});
-				}),
-				MenuAction("Edit/Save", {arg window, text;
-					window = Document.new("Sounds Edit/Save", soundOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; soundOrchestra = text.interpret};
-					s.bind{
-						fonctionLoadSoundOrchestra.value(soundOrchestra);
-						s.sync;
-					};
-				});
-			).title_("Sound"),
-			Menu(
-				MenuAction("Load", {Dialog.openPanel({arg path, file;
-					file = File(path,"r");
-					fxOrchestra = file.readAllString.interpret;
-					file.close;
-				},
-				{"cancelled".postln});
-				}),
-				MenuAction("Edit/Save", {arg window, text;
-					window = Document.new("FX Edit/Save", fxOrchestra.asCompileString).front.onClose = {text = window.string.asCompileString.interpret; fxOrchestra = text.interpret};
-				});
-			).title_("FX")
-		);
-		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "DensityTools");
-
-		menuRecording = Menu(
-			MenuAction("Start Recording", {
-				fonctionRecOn.value;
-			}),
-			MenuAction("Stop Recording", {
-				fonctionRecOff.value;
-			}),
-			MenuAction("Switch Pause Recording On/Off", {
-				fonctionRecPause.value;
-			});
-		);
-		MainMenu.register(menuRecording.title_("Recording"), "DensityTools");
-
-		menuAudio = Menu(
-			MenuAction("Channels FhzBand Out", {
-				SCRequestString("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]", "Channels", {arg strg;
-					channelsSynth = strg.value.interpret; channelsSynth = channelsSynth.max(1) - 1;
-				});
-			}),
-			MenuAction("Channels Reverb Out", {
-				SCRequestString("1", "Channels", {arg strg;
-					channelsVerb = strg.value.asInteger; channelsVerb = channelsVerb.max(1) - 1;
-					groupeVerb.set(\out, channelsVerb.value);
-				});
-			}),
-			MenuAction("Stereo", {recChannels = 2; numberAudioOut = 2;
-				s.recChannels_(recChannels);
-				s.options.numInputBusChannels_(20);
-				//s.options.numOutputBusChannels_(8);
-				typeMasterOut = listeMasterOut.at(0);
-				startSystem.valueAction_(0);
-				groupeVerb.freeAll;
-				groupeLimiter.freeAll;
-				groupeVST.freeAll;
-				this.initSynthDef;
-				gVerb = Synth.new("GVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Stereo", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Stereo", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-				fxVST = VSTPluginController(synthVST);
-				// Setup GUI Value
-				windowGVerb.view.children.at(0).valueAction_(0);
-				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-				// Setup GUI Value
-				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Stereo"; windowEar.name = "Reverb Stereo"; windowVST.name = "VST Stereo";
-			}),
-			MenuAction("Rotate2", {recChannels = 2; numberAudioOut = 2;
-				s.recChannels_(recChannels);
-				s.options.numInputBusChannels_(20);
-				//s.options.numOutputBusChannels_(8);
-				typeMasterOut = listeMasterOut.at(1);
-				startSystem.valueAction_(0);
-				groupeVerb.freeAll;
-				groupeLimiter.freeAll;
-				groupeVST.freeAll;
-				this.initSynthDef;
-				Synth.new("GVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Rotate2", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Rotate2", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-				fxVST = VSTPluginController(synthVST);
-				// Setup GUI Value
-				windowGVerb.view.children.at(0).valueAction_(0);
-				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-				// Setup GUI Value
-				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Rotate2"; windowEar.name = "Reverb Rotate2"; windowVST.name = "VST Rotate2";
-			}),
-			MenuAction("MultiSpeaker", {
-				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
-					s.recChannels_(recChannels);
-					s.options.numInputBusChannels_(20);
-					//s.options.numOutputBusChannels_(8);
-					typeMasterOut = listeMasterOut.at(2);
-					startSystem.valueAction_(0);
-					groupeVerb.freeAll;
-					groupeLimiter.freeAll;
-					groupeVST.freeAll;
-					this.initSynthDef;
-					Synth.new("GVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					freeVerb = Synth.newPaused("FreeVerb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					allPass = Synth.newPaused("Allpass MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					jpVerb = Synth.newPaused("JPverb MultiSpeaker", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					synthVST = Synth.newPaused("VST MultiSpeaker", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-					fxVST = VSTPluginController(synthVST);
-					// Setup GUI Value
-					windowGVerb.view.children.at(0).valueAction_(0);
-					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-					// Setup GUI Value
-					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-					windowGVerb.name = "Reverb MultiSpeaker"; windowEar.name = "Reverb MultiSpeaker"; windowVST.name = "VST MultiSpeaker";
-				});
-			}),
-			MenuAction("Ambisonic", {
-				SCRequestString("2", "Channels", {arg strg; recChannels = strg.asInteger; numberAudioOut = strg.asInteger;
-					s.recChannels_(recChannels);
-					s.options.numInputBusChannels_(20);
-					//s.options.numOutputBusChannels_(8);
-					typeMasterOut = listeMasterOut.at(3);
-					startSystem.valueAction_(0);
-					groupeVerb.freeAll;
-					groupeLimiter.freeAll;
-					groupeVST.freeAll;
-					this.initSynthDef;
-					Synth.new("GVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					freeVerb = Synth.newPaused("FreeVerb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					allPass = Synth.newPaused("Allpass Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					jpVerb = Synth.newPaused("JPverb Ambisonic", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-					synthVST = Synth.newPaused("VST Ambisonic", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-					fxVST = VSTPluginController(synthVST);
-					// Setup GUI Value
-					windowGVerb.view.children.at(0).valueAction_(0);
-					Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-					// Setup GUI Value
-					windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-					windowGVerb.name = "Reverb Ambisonic"; windowEar.name = "Reverb Ambisonic"; windowVST.name = "VST Ambisonic";
-				});
-			}),
-			MenuAction("Dolby5.1", {recChannels = 6; numberAudioOut = 6;
-				s.recChannels_(recChannels);
-				s.options.numInputBusChannels_(20);
-				//s.options.numOutputBusChannels_(8);
-				typeMasterOut = listeMasterOut.at(4);
-				startSystem.valueAction_(0);
-				groupeVerb.freeAll;
-				groupeLimiter.freeAll;
-				groupeVST.freeAll;
-				this.initSynthDef;
-				Synth.new("GVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				freeVerb = Synth.newPaused("FreeVerb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				allPass = Synth.newPaused("Allpass Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				jpVerb = Synth.newPaused("JPverb Dolby5.1", [\out, channelsVerb, \xFade, 0], groupeVerb, \addToHead).map(\bpm, busOSCbpm.at(0));
-				synthVST = Synth.newPaused("VST Dolby5.1", [\out, channelsVerb, \xFade, 0.5, \gainIn, 0.5], groupeVST, \addToTail).map(\bpm, busOSCbpm.at(0));
-				fxVST = VSTPluginController(synthVST);
-				// Setup GUI Value
-				windowGVerb.view.children.at(0).valueAction_(0);
-				Synth.new("SynthLimiter", [\limit, 0.8], groupeLimiter, \addToTail);
-				// Setup GUI Value
-				windowEar.view.children.at(5).children.at(2).valueAction_(0.8);
-				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
-			});
-		);
-		MainMenu.register(menuAudio.title_("Audio"), "DensityTools");
-
-		menuMIDI = Menu(
-			MenuAction("Init", {
-				MIDIClient.init;
-				if(MIDIClient.externalSources != [ ], {
-					// Connect first device by default
-					MIDIIn.connect(0, 0);
-					midiOut = MIDIOut(0);
-					//midiOut.connect(0);
-					16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
-				}, {"Warning no MIDI Devices Connected".postln});
-			}),
-			Menu(
-				MenuAction("Connect IN", {
-					SCRequestString("0", "Device", {arg index, port;
-						port = index.asInteger;
-						MIDIIn.connect(port, MIDIClient.sources.at(port));
-					});
-				}),
-				MenuAction("Connect Out", {
-					SCRequestString("0", "Device", {arg index, port;
-						port = index.asInteger;
-						midiOut = MIDIOut(port);
-						//midiOut.connect(port);
-						16.do({arg canal; midiOut.allNotesOff(canal); if(flagVST == 'on', {fxVST.midi.allNotesOff(canal)})});
-					});
-				});
-			).title_("Setting");
-		);
-		MainMenu.register(menuMIDI.title_("Midi"), "DensityTools");
-
-		menuOSC = Menu(
-			MenuAction("Setting", {var addrM, addrS;
-				// Set OSC Addresse et Port Master
-				addrM=NetAddr.localAddr;
-				addrS=NetAddr.localAddr;
-				slaveAppAddr.disconnect;
-				SCRequestString(addrM.ip, "Enter the NetAddr of Master App", {arg strg; addrM=strg;
-					SCRequestString(scAdr.asString, "Enter the Port of Master App", {arg strg; addrM=NetAddr(addrM, strg.asInteger); masterAppAddr = addrM;
-						// Set OSC Addresse et Port Slave
-						SCRequestString(addrS.ip, "Enter the NetAddr of Slave App", {arg strg; addrS=strg;
-							SCRequestString(scAdr.asString, "Enter the Port of Slave App", {arg strg; addrS=NetAddr(addrS, strg.asInteger); slaveAppAddr = addrS;
-								//initOSCresponder.value;
-							});
-						});
-					});
-				});
-			}),
-			MenuAction("OSC Master", {oscStateFlag='master';
-				"Density is OSC now !".postln;
-			}),
-			MenuAction("OSC Slave", {oscStateFlag='slave';
-				"Density is OSC SLAVE now !".postln;
-			}),
-			MenuAction("OSC Off", {oscStateFlag='off';
-				"OSC is OFF now !".postln;
-			});
-		);
-		MainMenu.register(menuOSC.title_("OSC"), "DensityTools");
-
-		menuAlgo = Menu(
-			MenuAction("Not Activate", {nil}),
-		);
-		MainMenu.register(menuAlgo.title_("Algorithm"), "DensityTools");
-
-		menuHelp = MenuAction("Help ShortCut", {
-			//Document.new("ShortCut for Density", helpDensity);
-			TextView().name_("ShortCut for Density").string_(helpDensity).front;
-		});
-		MainMenu.register(menuHelp, "DensityTools");
-
 		// Fonction ShortCut
 		fonctionShortCut = {arg window;
 			window.view.keyDownAction = {arg view,char,modifiers,unicode, keycode, number, file;
 				number = nil;
-				//[char,modifiers,unicode,keycode].postln;
+				// [char,modifiers,unicode,keycode].postln;
 				// Touches pave numerique
 				if(modifiers==2097152 and: {unicode==49} and: {keycode==83},{number = 1});
 				if(modifiers==2097152 and: {unicode==50} and: {keycode==84},{number = 2});
@@ -3243,7 +3705,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 					numIndexSynthBand = 0;
 					if(File.exists(pathData ++ "Init Preset.scd"), {
-						windowEar.name = "Density" + " | " + "Init Preset";
+						windowEar.name = "WekDensity" + " | " + "Init Preset";
 						file=File(pathData ++ "Init Preset.scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
 						file.close;
@@ -3325,15 +3787,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				// Key z -> load Preset aleatoire
 				if(char == $z, {number = rrand(0, foldersToScanPreset.size - 1);
 					if(File.exists(pathData ++ foldersToScanPreset.at(number)),
-						{file=File(pathData ++ foldersToScanPreset.at(number),"r");
-							windowEar.name = "Density" + typeMasterOut + " | " + foldersToScanPreset.at(number);
+						{
+							numPreset = number.value; lastNumPreset = number.value;
+							file=File(pathData ++ foldersToScanPreset.at(number),"r");
+							windowEar.name = "WekDensity" + typeMasterOut + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret);
 							file.close}, {"cancelled".postln});});
 				//key k
 				if(char == $k, {
 					FileDialog.new({arg path;
 						pathData = path.at(0).asString ++"/";
-						windowEar.name="Density" + " | " + pathData.asString;
+						windowEar.name="WekDensity" + " | " + pathData.asString;
 						fonctionCollectFolders.value;
 					}, fileMode: 2);
 				});
@@ -3374,17 +3838,18 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Fonction Commandes
 		fonctionShortCutCommande = {arg number, file;
 			if(shortCutCommande == 'Save Preset', {
-				windowEar.name = "Density" + " | " + "Preset" + number.asString;
+				windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
 				file = File(pathData ++ "Preset" + number.asString ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
 				file.close;
 			});
 			if(shortCutCommande == 'Load Preset', {
 				if(File.exists(pathData ++ "Preset" + number.value.asString ++ ".scd"), {
+					numPreset = number.value; lastNumPreset = number.value;
 					listeDataInstruments.do({arg data, index;
 						data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 					});
-					windowEar.name = "Density" + " | " + "Preset" + number.asString;
+					windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
 					file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
 					fonctionLoadPreset.value(file.readAllString.interpret);
 					file.close;
@@ -3630,7 +4095,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		//////////////////////////////// GUI //////////////////////////////////
 
 		////////////////////////// Window VST ///////////////////////////////
-		windowVST = Window.new("VST Stereo", Rect(710, 650, 320, 80), scroll: true);
+		windowVST = Window.new("VST Stereo", Rect(710, 300, 320, 80), scroll: true);
 		windowVST.view.decorator = FlowLayout(windowVST.view.bounds);
 		Button(windowVST, Rect(0, 0, 50, 20)).
 		states_([["Run On", Color.green], ["Run Off", Color.red]]).
@@ -3737,19 +4202,17 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowKeyboard.onClose_({nil});
 
 		////// Window Plotter Data /////
-		windowPlotterData = Window("Analyze [Freq | Amp | Duree]", Rect(710, 800, 515, 220), scroll: true);
+		windowPlotterData = Window("Freq | Amp | Duree | BPM | Centroid | Energy | Flux | Flatness | MFCC", Rect(710, 800, 510, 535), scroll: true);
 		windowPlotterData.alpha=1.0;
 		windowPlotterData.front;
 		windowPlotterData.view.decorator = FlowLayout(windowPlotterData.view.bounds);
-		// Display ON / OFF
-		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
 		// Refresh Display
 		refreshDisplayDataMusic = Button(windowPlotterData,Rect(0, 0, 100, 20));
 		refreshDisplayDataMusic.states = [["Refresh Plotter"]];
-		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0]]; plotterData = [[0], [0], [0]];
+		refreshDisplayDataMusic.action = {|view| plotterDataGUI.value = [[0], [0], [0], [0], [0], [0],[0],[0]]; plotterData = [[0], [0], [0],[0],[0],[0],[0],[0]];
 		};
 		// Pbind Data Loop
-		Button(windowPlotterData, Rect(0, 0, 150, 15)).
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).
 		states_([["Pbind Data Loop On", Color.green], ["Pbind Data Loop Off", Color.red]]).
 		action = {arg val;
 			switch (val.value,
@@ -3757,39 +4220,51 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				1, {loopMusic = inf}
 			);
 		};
-		// Plotter
-		plotterDataGUI = Plotter("Analyze Music", Rect(0, 0, 500, 180), windowPlotterData).plotMode_(\steps);
-		plotterDataGUI.value = [[0], [0], [0]];
-		windowPlotterData.onClose_({
+		windowPlotterData.view.decorator.nextLine;
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["WekRec On", Color.magenta], ["WekRec Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {sender.sendMsg("/wekinator/control/stopRecording")},
+				1, {sender.sendMsg("/wekinator/control/startRecording");
+					windowPlotterData.view.children.at(4).valueAction = 0;// run
+				}
+			);
 		});
-		refreshDisplayDataMusic.focus;
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["WekTrain On", Color.magenta]]).action_({|view|
+			sender.sendMsg("/wekinator/control/train");
+			windowPlotterData.view.children.at(2).valueAction = 0;// rec
+			windowPlotterData.view.children.at(4).valueAction = 0;// run
+		});
+		Button(windowPlotterData, Rect(0, 0, 100, 20)).states_([["WekRun On", Color.magenta], ["WekRun Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagStreamMFCC = 'off'; sender.sendMsg("/wekinator/control/stopRunning");
+				},
+				1, {flagStreamMFCC = 'wek'; sender.sendMsg("/wekinator/control/startRunning");
+					windowPlotterData.view.children.at(2).valueAction = 0;// rec
+				}
+			);
+		});
+		Button(windowPlotterData, Rect(0, 0, 45, 20)).states_([["WTD On", Color.magenta], ["WTD Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTD = 'off'},
+				1, {flagWTD = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowPlotterData, 25 @ 15).value_(0.0625).action_({|ez| timeWekData = ez.value});
 
-		////// Window Plotter FFT /////
-		windowPlotterFFT = Window("Analyze [Flux | Flatness | Centroid | Energy | BPM]", Rect(710, 275, 515, 345), scroll: true);
-		windowPlotterFFT.alpha=1.0;
-		windowPlotterFFT.front;
-		windowPlotterFFT.view.decorator = FlowLayout(windowPlotterFFT.view.bounds);
-		// Display ON / OFF
-		Button(windowPlotterFFT, Rect(0, 0, 100, 15)).states_([["Display On", Color.green], ["Display Off", Color.red]]).action_({|view| });
-		// Refresh Display
-		refreshDisplayFFT = Button(windowPlotterFFT,Rect(0, 0, 100, 15));
-		refreshDisplayFFT.states = [["Refresh Plotter"]];
-		refreshDisplayFFT.action = {|view| plotterFFTGUI.value = [[0], [0], [0], [0], [0]]; plotterFFT = [[0], [0], [0], [0], [0]];
-		};
-		EZKnob(windowPlotterFFT, 120 @ 15, "Speed", ControlSpec(-100, 100, \lin, 0.01),
-			{|ez| if(ez.value < 0,
-				{groupeAnalyse.set(\speed, ez.value.abs.reciprocal)},
-				{groupeAnalyse.set(\speed, ez.value)});
-		}, 24, layout: \horz);
+		Button(windowPlotterData, Rect(0, 0, 45, 20)).states_([["WTP On", Color.magenta], ["WTP Off", Color.red]]).action_({|view|
+			switch(view.value,
+				0, {flagWTP = 'off'},
+				1, {flagWTP = 'on'});
+		}).valueAction_(1);
+		NumberBox(windowPlotterData, 25 @ 20).value_(4).action_({|ez| timeWekPreset = ez.value});
+
 		// Range FFT
-		EZRanger(windowPlotterFFT , 500 @ 15, "Range FFT", \unipolar,
-			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65);
+		EZRanger(windowPlotterData , 500 @ 20, "Range FFT", \unipolar,
+			{|ez| rangeFFT = ez.value}, [0, 1], labelWidth: 65).setColors(Color.grey(0.3), Color.magenta);
 		// Plotter
-		plotterFFTGUI = Plotter("Analyze FFT", Rect(0, 0, 500, 300), windowPlotterFFT).plotMode_(\steps);
-		plotterFFTGUI.value = [[0], [0], [0], [0], [0]];
-		windowPlotterFFT.onClose_({
-		});
-		refreshDisplayFFT.focus;
+		plotterDataGUI = Plotter("Analyze Data", Rect(0, 0, 500, 390), windowPlotterData).plotMode_(\steps);
+		plotterDataGUI.value = [[0], [0], [0],[0],[0],[0],[0],[0]];
+		plotterMFCCGUI = Plotter("Analyze MFCC", Rect(0, 0, 500, 60), windowPlotterData).plotMode_(\plines);
+		refreshDisplayDataMusic.focus;
 
 		////////////////////////// Window GVerb ///////////////////////////////
 		windowGVerb = Window.new("Reverb Stereo", Rect(620, 110, 600, 160), scroll: true);
@@ -4003,8 +4478,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowGVerb.onClose_({groupeVerb.free});
 		windowGVerb.front;
 
-		/////// Density Ear Panel
-		windowEar = Window("Density" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
+		/////// WekDensity Ear Panel
+		windowEar = Window("WekDensity" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
 		windowEar.alpha=1.0;
 		windowEar.front;
 		windowEar.view.decorator = FlowLayout(windowEar.view.bounds);
@@ -4023,7 +4498,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					groupeSynth.freeAll;
 					groupeFX.freeAll;
 					groupeMasterOut.freeAll;
-					synthAnalyseFFT.run(false);
 					synthAnalyseOnsets.run(false);
 					synthAnalysePitch.run(false);
 					synthAnalysePitch2.run(false);
@@ -4075,17 +4549,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 					numIndexSynthBand = 0;
-					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_stop')});// transport play
 				},
 				1, {
 					switchSourceIn.valueAction_(switchSourceIn.value);
 					switchAnalyze.valueAction_(typeAlgoAnalyze);
-					synthAnalyseFFT.run(true);
 					// Setup GUI Value
 					//windowEar.view.children.at(2).enabled_(true);
 					playInstruments.play;
 					watchSilence.play;
-					if(oscStateFlag == 'master', {ardourOSC.sendMsg('/ardour/transport_play')});// transport play
 				}
 			);
 		};
@@ -4114,7 +4585,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		PopUpMenu(windowEar, Rect(0, 0, 150, 20)).items_(['Analyze Bus 1', 'Analyze Bus 2', 'Analyze Bus 3', 'Analyze Bus 4', 'Analyze Bus 5', 'Analyze Bus 6', 'Analyze Bus 7', 'Analyze Bus 8', 'Analyze Bus 9', 'Analyze Bus 10', 'Analyze Bus 11', 'Analyze Bus 12', 'Analyze Bus 13', 'Analyze Bus 14', 'Analyze Bus 15', 'Analyze Bus 16', 'Analyze Bus 17', 'Analyze Bus 18', 'Analyze Bus 19', 'Analyze Bus 20', 'Analyze Bus 21', 'Analyze Bus 22', 'Analyze Bus 23', 'Analyze Bus 24', 'Analyze Bus 25', 'Analyze Bus 26', 'Analyze Bus 27', 'Analyze Bus 28', 'Analyze Bus 29', 'Analyze Bus 30', 'Analyze Bus 31', 'Analyze Bus 32']).action = {arg item;
 			synthAnalyzeAudioIn.set(\in, item.value, \busIn, busAnalyzeIn.index);
 			synthAudioIn.set(\in, item.value, \busIn, busAnalyzeIn.index);
-			synthAnalyseFFT.set(\busIn, busAnalyzeIn.index);
 		};
 		// Setup Bus synthRecAudioIn
 		PopUpMenu(windowEar, Rect(0, 0, 150, 20)).items_((['Recording Bus 1', 'Recording Bus 2', 'Recording Bus 3', 'Recording Bus 4', 'Recording Bus 5', 'Recording Bus 6', 'Recording Bus 7', 'Recording Bus 8', 'Recording Bus 9', 'Recording Bus 10', 'Recording Bus 11', 'Recording Bus 12', 'Recording Bus 13', 'Recording Bus 14', 'Recording Bus 15', 'Recording Bus 16', 'Recording Bus 17', 'Recording Bus 18', 'Recording Bus 19', 'Recording Bus 20', 'Recording Bus 21', 'Recording Bus 22', 'Recording Bus 23', 'Recording Bus 24', 'Recording Bus 25', 'Recording Bus 26', 'Recording Bus 27', 'Recording Bus 28', 'Recording Bus 29', 'Recording Bus 30', 'Recording Bus 31', 'Recording Bus 32'])).action = {arg item;
@@ -4441,37 +4911,37 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowEar.view.decorator.nextLine;
 		// Range Freq
 		EZRanger(windowEar , 550 @ 20, "Range FHZ", ControlSpec(0, 127, \lin, 0.1),
-			{|ez| rangeFreqintruments = ez.value}, [0, 127], labelWidth: 100, numberWidth: 50);
+			{|ez| rangeFreqintruments = ez.value}, [0, 127], labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		EZSlider(windowEar , 550 @ 15, "Trans FHZ", ControlSpec(-127, 127, \lin, 0.1),
-			{|ez| transFreqintruments = ez.value}, 0, labelWidth: 100, numberWidth: 50);
+			{|ez| transFreqintruments = ez.value}, 0, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Range Amplitude
 		EZRanger(windowEar , 550 @ 20, "Range Amp", \db,
-			{|ez| rangeDBintruments = ez.value.dbamp}, [-12, -3], labelWidth: 100,numberWidth: 50);
+			{|ez| rangeDBintruments = ez.value.dbamp}, [-12, -6], labelWidth: 100,numberWidth: 50).setColors( Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Range Duree
 		EZRanger(windowEar , 550 @ 20, "Range Duree", ControlSpec(0, 60, \lin, 0),
-			{|ez| rangeDureeintruments = ez.value}, [0, dureeMaximumAnalyze], labelWidth: 100,numberWidth: 50);
+			{|ez| rangeDureeintruments = ez.value}, [0, dureeMaximumAnalyze], labelWidth: 100,numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
-		EZSlider(windowEar , 550 @ 15, "Trans Duree", ControlSpec(-60, 60, \lin, 0.01),
+		EZSliderTempo(windowEar , 550 @ 15, "Trans Duree", ControlSpec(-60, 60, \lin, 0.01),
 			{|ez| if(ez.value >= -1 and: {ez.value < 1},
 				{transDureeintruments = 1.0},
 				{
 					if(ez.value < -1, {transDureeintruments = ez.value.reciprocal.abs},
 						{transDureeintruments = ez.value});
 			});
-		}, 0, labelWidth: 100, numberWidth: 50);
+		}, 0, labelWidth: 100, numberWidth: 50).setColors(Color.grey(0.3), Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Stretch Duree
 		EZKnob(windowEar, 80 @ 80, "Stretch", ControlSpec(0.0167, 60, \exp, 0),
-			{|ez| stretchDuree = ez.value}, 1, layout: \vert2);
+			{|ez| stretchDuree = ez.value}, 1, layout: \vert2).setColors(Color.grey(0.3), Color.magenta);
 		// Quantization
 		EZKnob(windowEar, 80 @ 80, "Quantization", ControlSpec(1, 100, \lin, 1),
-			{|ez| quantizationDuree = ez.value}, 100, layout: \vert2);
+			{|ez| quantizationDuree = ez.value}, 100, layout: \vert2).setColors(Color.grey(0.3), Color.magenta);
 		// BPM
 		EZKnob(windowEar, 80 @ 80, "BPM System", ControlSpec(7.5, 480, \exp, 1),
-			{|ez| userBPM = ez.value / 60; TempoClock.default.tempo = userBPM; userBPM = userBPM.reciprocal}, 60, layout: \vert2);
+			{|ez| userBPM = ez.value / 60; TempoClock.default.tempo = userBPM}, 60, layout: \vert2);
 		// FX
 		EZKnob(windowEar, 80 @ 80, "FX",\unipolar,
 			{|ez| fadeFX = ez.value; groupeFX.set(\xFade, ez.value)}, 0.5, layout: \vert2);
@@ -4482,7 +4952,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 				});
 		}, maximumInstruments, layout: \vert2);
-		// Global Density
+		// Global WekDensity
 		EZKnob(windowEar, 80 @ 80, "Density", ControlSpec(0, 100, \lin, 0.01),
 			{|ez| globalDensity = ez.value / 100;
 				dataFlux = [];
@@ -4609,28 +5079,28 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		action_({arg loop; if(loop.value == 0, {flagRecSound = 'off'}, {flagRecSound = 'on'})});
 		windowEar.view.decorator.nextLine;
 		// Display Instrument
-		displayInstrument = StaticText(windowEar, Rect(0, 0, 250, 40));
+		displayInstrument = StaticText(windowEar, Rect(0, 0, 250, 40)).stringColor_(Color.magenta);
 		// Display Sounds
-		displaySound = StaticText(windowEar, Rect(0, 0, 240, 40));
-		displayFX = StaticText(windowEar, Rect(0, 0, 200, 40));
+		displaySound = StaticText(windowEar, Rect(0, 0, 240, 40)).stringColor_(Color.magenta);
+		displayFX = StaticText(windowEar, Rect(0, 0, 200, 40)).stringColor_(Color.magenta);
 		windowEar.view.decorator.nextLine;
 		// Jitter Y Instrument
 		EZSlider(windowEar, Rect(0, 0, 25, 100), "JitY", ControlSpec(0, 100, \lin, 0),
-			{|ez| jitterIndexInstrumentY = ez.value / 100}, jitterIndexInstrumentY * 100, false, 40, 35, layout:\vert);
+			{|ez| jitterIndexSynthY = ez.value / 100}, jitterIndexSynthY * 100, false, 40, 35, layout:\vert);
 		// Choice Instrument
 		Slider2D(windowEar, Rect(0, 0, 200, 100)).
 		x_(0.5).
 		y_(0.5).
 		action_({arg slider, indexX, indexY, instrumentName;
-			indexInstrumentX=slider.x;
-			indexInstrumentY=slider.y;
+			indexSynthX=slider.x;
+			indexSynthY=slider.y;
 			// Display Instrument
-			indexX = (indexInstrumentX + rrand(jitterIndexInstrumentX.neg, jitterIndexInstrumentX)).clip(0, 1);
-			indexY = (indexInstrumentY + rrand(jitterIndexInstrumentY.neg, jitterIndexInstrumentY)).clip(0, 1);
+			indexX = (indexSynthX + rrand(jitterIndexSynthX.neg, jitterIndexSynthX)).clip(0, 1);
+			indexY = (indexSynthY + rrand(jitterIndexSynthY.neg, jitterIndexSynthY)).clip(0, 1);
 			instrumentName = synthOrchestra.at((indexX * (synthOrchestra.size - 1) + 0.5).floor);
 			instrumentName = instrumentName.at((indexY * (instrumentName.size - 1) + 0.5).floor);
-			displayInstrument.string = (indexInstrumentX.asStringPrec(2) + indexInstrumentY.asStringPrec(2) + instrumentName);
-		});
+			displayInstrument.string = (indexSynthX.asStringPrec(2) + indexSynthY.asStringPrec(2) + instrumentName);
+		}).knobColor = Color.magenta;
 		// Jitter Y Sound
 		EZSlider(windowEar, Rect(0, 0, 25, 100), "JitY", ControlSpec(0, 100, \lin, 0),
 			{|ez| jitterIndexSoundY = ez.value / 100}, jitterIndexSoundY * 100, false, 40, 35, layout:\vert);
@@ -4648,7 +5118,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			soundName = soundOrchestra.at((indexX * (soundOrchestra.size - 1) + 0.5).floor);
 			soundName = soundName.at((indexY * (soundName.size - 1) + 0.5).floor);
 			displaySound.string = (indexSoundX.asStringPrec(2) +  indexSoundY.asStringPrec(2) + PathName.new(soundName).fileName);
-		});
+		}).knobColor = Color.magenta;
 		// Jitter Y FX
 		EZSlider(windowEar, Rect(0, 0, 25, 100), "JitY", ControlSpec(0, 100, \lin, 0),
 			{|ez| jitterIndexFXY = ez.value / 100}, jitterIndexFXY * 100, false, 40, 35, layout:\vert);
@@ -4664,11 +5134,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			fxName = fxOrchestra.at((indexX * (fxOrchestra.size - 1) + 0.5).floor);
 			fxName = fxName.at((indexY * (fxName.size - 1) + 0.5).floor);
 			displayFX.string = (indexFXX.asStringPrec(2) + indexFXY.asStringPrec(2) + fxName);
-		});
+		}).knobColor = Color.magenta;
 		windowEar.view.decorator.nextLine;
 		// Jitter X Instrument
 		EZSlider(windowEar, Rect(0, 0, 230, 20), "JitX", ControlSpec(0, 100, \lin, 0),
-			{|ez| jitterIndexInstrumentX = ez.value / 100}, jitterIndexInstrumentX * 100, false, 35, 35);
+			{|ez| jitterIndexSynthX = ez.value / 100}, jitterIndexSynthX * 100, false, 35, 35);
 		// Jitter X Sound
 		EZSlider(windowEar, Rect(0, 0, 230, 20), "JitX", ControlSpec(0, 100, \lin, 0),
 			{|ez| jitterIndexSoundX = ez.value / 100}, jitterIndexSoundX * 100, false, 35, 35);
@@ -4690,7 +5160,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowEar.view.children.at(87).children.at(1).valueAction_(0);*/
 			};
 			);
-		});
+		}).enabled_(true);
 		// Automation BPM
 		Button(windowEar, Rect(0, 0, 90, 20)).states_([["AutoBPM On", Color.green], ["AutoBPM Off", Color.red]]).action_({|view|
 			if(view.value == 1, {
@@ -4703,7 +5173,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowEar.view.children.at(36).enabled_(true);
 				windowEar.view.children.at(36).children.at(2).valueAction_(60);
 			});
-		});
+		}).enabled_(true);
 		// Chord On / Off
 		Button(windowEar, Rect(0, 0, 80, 20)).states_([["Chord On", Color.green], ["Chord Off", Color.red]]).action_({|view|
 			if(view.value == 1, {flagChord = 'on'}, {flagChord = 'off'});
@@ -4717,7 +5187,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		StaticText(windowEar, 60 @ 20).string = "FhzBand"; // 67
 		// Band 0 to 12
 		Button.new(windowEar, 40 @ 20).
-		states_([["All", Color.green], ["All", Color.red]]).
+		states_([["0", Color.green], ["All", Color.red]]).
 		action_({arg band; flagBand.put(0, band.value); fonctionBand.value(0)}); // 68 all data
 		Button.new(windowEar, 40 @ 20).
 		states_([["1", Color.green], ["1", Color.red]]).
@@ -4873,7 +5343,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		};
 		// Root
 		EZKnob(windowEar, 80 @ 20, "Root", ControlSpec(0, 21, \lin, 1),
-			{|ez| root = ez.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, layout: \horz, labelWidth: 30);
+			{|ez| root = ez.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)}, 0, layout: \horz, labelWidth: 30);//.setColors(Color.grey(0.3), Color.magenta);
 		// Degrees
 		EZText(windowEar, Rect(0, 0, 475, 20), "Degrees",
 			{arg string; degrees = string.value; scale=Scale.new(((degrees + root)%tuning.size).sort, tuning.size, tuning)},
@@ -4897,7 +5367,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		listeWindows=listeWindows.add(windowEar);
 		listeWindows=listeWindows.add(windowGVerb);
 		listeWindows=listeWindows.add(windowPlotterData);
-		listeWindows=listeWindows.add(windowPlotterFFT);
 		listeWindows=listeWindows.add(windowKeyboard);
 		//listeWindows=listeWindows.add(windowVST);
 		listeWindows.do({arg window; fonctionShortCut.value(window);
@@ -4918,100 +5387,143 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 	initSynthDef {
 
-		// Density Audio Analyze FFT
-		SynthDef("OSC Density FFT",
-			{arg busIn, speed=24;
-				var fft, input, centroid=440, flatness=0.5, energy=440, flux=0.5,
-				trackB, trackH, trackQ, bpm=60, lock=0;
+		// WekDensity Audio Analyze Onsets
+		SynthDef("OSC WekDensity Onsets",
+			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
+				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter;
+				var fft, centroid=440, flatness=0.5, energy=440, flux=0.5,
+				trackB, trackH, trackQ, bpm=1, lock=0, array, array2;
 				input = In.ar(busIn);
 				fft = FFT(LocalBuf(1024, 1), input);
+				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 				centroid = SpecCentroid.kr(fft);
 				flatness =  SpecFlatness.kr(fft);
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(Impulse.kr(speed), '/Density_FFT_Data', values: [flux.clip(0.0001, 1), flatness.clip(0.0001, 1), centroid.clip(20, 12544), energy.clip(20, 12544), bpm], replyID: [1, 2, 3, 4, 5]);
-		}).add;
-
-		// Density Audio Analyze Onsets
-		SynthDef("OSC Density Onsets",
-			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
-				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0,
-				inputFilter;
-				input = In.ar(busIn);
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \power);
 				# freqIn, hasfreqIn = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
+				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// Density Audio Analyze Pitch
-		SynthDef("OSC Density Pitch",
+		// WekDensity Audio Analyze Pitch
+		SynthDef("OSC WekDensity Pitch",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
-				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0,
-				inputFilter;
+				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter;
+				var fft, centroid=440, flatness=0.5, energy=440, flux=0.5,
+				trackB, trackH, trackQ, bpm=1, lock=0, array, array2;
 				input = In.ar(busIn);
+				fft = FFT(LocalBuf(1024, 1), input);
+				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
+				centroid = SpecCentroid.kr(fft);
+				flatness =  SpecFlatness.kr(fft);
+				energy =  SpecPcile.kr(fft);
+				flux =  FFTFlux.kr(fft);
+				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), inputFilter), seuil, \rcomplex);
 				# freqIn, hasfreqIn = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
+				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
 		// Pitch v2
-		SynthDef("OSC Density Pitch2",
+		SynthDef("OSC WekDensity Pitch2",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter, fft, harmonic, percussive;
+				var fft2, centroid=440, flatness=0.5, energy=440, flux=0.5,
+				trackB, trackH, trackQ, bpm=1, lock=0, array, array2;
 				input = In.ar(busIn);
+				fft = FFT(LocalBuf(1024, 1), input);
+				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
+				centroid = SpecCentroid.kr(fft);
+				flatness =  SpecFlatness.kr(fft);
+				energy =  SpecPcile.kr(fft);
+				flux =  FFTFlux.kr(fft);
+				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				ampInput = if(ampLoPass < 1, 1, if(ampHiPass < 0, 1, 0));
 				inputFilter = LPF.ar(input, hzPass, ampLoPass, HPF.ar(input, hzPass, ampHiPass, input * ampInput));
-				fft = FFT(LocalBuf(1024, 1), inputFilter);
+				fft2 = FFT(LocalBuf(1024, 1), inputFilter);
 				harmonic = FFT(LocalBuf(1024, 1), inputFilter);
 				percussive = FFT(LocalBuf(1024, 1), inputFilter);
-				#harmonic, percussive = MedianSeparation(fft, harmonic, percussive, 1024, 5, 1, 2, 1);
+				#harmonic, percussive = MedianSeparation(fft2, harmonic, percussive, 1024, 5, 1, 2, 1);
 				detect = Onsets.kr(FFT(LocalBuf(512, 1), IFFT(percussive)), seuil, \power);
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
+				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// Density Audio Analyze KeyTrack
-		SynthDef("OSC Density KeyTrack",
+		// WekDensity Audio Analyze KeyTrack
+		SynthDef("OSC WekDensity KeyTrack",
 			{arg busIn, seuil=0.5, filtre=0.5;
 				var input, detect, freqIn, ampIn, timeIn=0, key;
+				var fft, centroid=440, flatness=0.5, energy=440, flux=0.5,
+				trackB, trackH, trackQ, bpm=1, lock=0, array, array2;
 				input = In.ar(busIn);
+				fft = FFT(LocalBuf(1024, 1), input);
+				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
+				centroid = SpecCentroid.kr(fft);
+				flatness =  SpecFlatness.kr(fft);
+				energy =  SpecPcile.kr(fft);
+				flux =  FFTFlux.kr(fft);
+				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				detect= Onsets.kr(FFT(LocalBuf(512, 1), input), seuil);
 				key = KeyTrack.kr(FFT(LocalBuf(4096, 1), input), (filtre * 4).clip(0, 4));
 				if(key < 12, freqIn = (key + 60).midicps, freqIn = (key - 12 + 60).midicps);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
+				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// Density Keyboard
-		SynthDef("OSC Density Keyboard",
+		// WekDensity Keyboard
+		SynthDef("OSC WekDensity Keyboard",
 			{arg busIn, note=60, amp=0.5, trigger=0;
 				var input, timeIn=0;
+				var fft, detect, centroid=440, flatness=0.5, energy=440, flux=0.5,
+				trackB, trackH, trackQ, bpm=1, lock=0, array, array2;
 				input = In.ar(busIn);
+				fft = FFT(LocalBuf(1024, 1), input);
+				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
+				centroid = SpecCentroid.kr(fft);
+				flatness =  SpecFlatness.kr(fft);
+				energy =  SpecPcile.kr(fft);
+				flux =  FFTFlux.kr(fft);
+				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
-				SendReply.kr(trigger, '/Density_Music_Data', values: [note, amp, timeIn], replyID: [1, 2, 3]);
+				array = array ++ [note.midicps, amp, timeIn, bpm, centroid, energy, flux, flatness];
+				SendReply.kr(trigger, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// Density MIDI
-		SynthDef("OSC Density MIDI",
+		// WekDensity MIDI
+		SynthDef("OSC WekDensity MIDI",
 			{arg busIn, note=60, amp=0.5, trigger=0;
 				var input, timeIn=0;
+				var fft, detect, centroid=440, flatness=0.5, energy=440, flux=0.5,
+				trackB, trackH, trackQ, bpm=1, lock=0, array, array2;
 				input = In.ar(busIn);
+				fft = FFT(LocalBuf(1024, 1), input);
+				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
+				centroid = SpecCentroid.kr(fft);
+				flatness =  SpecFlatness.kr(fft);
+				energy =  SpecPcile.kr(fft);
+				flux =  FFTFlux.kr(fft);
+				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
-				SendReply.kr(trigger, '/Density_Music_Data', values: [note, amp, timeIn], replyID: [1, 2, 3]);
+				array = array ++ [note.midicps, amp, timeIn, bpm, centroid, energy, flux, flatness];
+				SendReply.kr(trigger, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
-		SynthDef("Density AudioIn",
+		SynthDef("WekDensity AudioIn",
 			{arg in=0, busIn=0;
 				var input;
 				input=Mix(SoundIn.ar(in));
@@ -5019,7 +5531,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		}).add;
 
 		// Synth lecture file pour analyse AudioIn
-		SynthDef("Density FileIn",
+		SynthDef("WekDensity FileIn",
 			{arg out=0, bufferplay, busIn=0, busRec=0, trigger=0, offset=0, loop=1, volume=0;
 				var input;
 				input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay) * offset , loop);
