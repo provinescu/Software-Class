@@ -790,6 +790,54 @@ G                       Init Genome Agent (solo).
 			);
 		};
 
+		/*// Utility Transformer
+		~bounds = (
+			freq: [20, 20000],
+			amp: [0.001, 1],
+			dur: [0.01, 4],
+			bpm: [0.125, 8],
+			centroid: [20, 20000],
+			energy: [20, 20000],
+			flux: [0.001, 1.0],
+			flatness: [0.001, 1.0],
+		);
+		~logNorm = { |x, key|
+			var b = ~bounds[key];
+
+			((x.max(b[0])).log2 - b[0].log2)
+			/ (b[1].log2 - b[0].log2);
+		};
+		~logDenorm = { |x, key|
+			var b = ~bounds[key];
+
+			2.pow(
+				x * (b[1].log2 - b[0].log2)
+				+ b[0].log2
+			);
+		};*/
+		~hpTR = HPtransformerRT.new(3, 3, 6, 12, 16, 2, 8, 3);// réglages i7 temps reel
+		//~hpTR.setIntelUltraCPUFastLearn;// Ultra minimal CPU rapide pour utiliser sans le Studio
+		~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+		//~studio = HPTransformerStudio.new(~hpTR).front;//par default
+		//~studio.window.view.palette_(QPalette.light); // plus necessaire
+		// Sending receiving pas necessaire ici
+		/*~hptInputTarget = NetAddr("127.0.0.1", NetAddr.langPort);// in studio
+		// Bus de sortie du Transformer.
+		~hptBus = Bus.control(s, 3);
+		~hptBus.setn(Array.fill(3, 0.5));
+		~studio.attachControlBus(~hptBus);// for Studio not valid here because not external synth
+
+		// OSC Studio Out
+		~hptOutputFunc.free;
+		~hptOutputFunc = OSCFunc(
+		{ |msg, time, addr, recvPort|
+			msg.postcs;
+		},
+		"/hptransformer/output",
+		nil,
+		57130
+		);*/
+
 		s.waitForBoot({
 
 			// Init Synth
@@ -1037,7 +1085,7 @@ G                       Init Genome Agent (solo).
 			~kohonenD = [];
 			~algoMusic = "Default";
 			~flagGeneAlgorithm='off';
-			~listeAlgorithm = ["Default", "Probability", "Euclide", "Genetic", "Kohonen", "Neural"];
+			~listeAlgorithm = ["Default", "Probability", "Euclide", "Genetic", "Kohonen", "Neural", "Generate", "GenStep", "Predict"];
 			~geneticF = [];
 			~geneticA = [];
 			~geneticD = [];
@@ -1920,6 +1968,7 @@ G                       Init Genome Agent (solo).
 					{~tempoSlider.valueAction = ~tempoMusic}.defer;
 				});
 		})}, '/Agents_Analyse_Tempo', ~serverAdresse);
+
 		// Fonction OSC
 		~initOSCresponder = {
 			~oscHPtempo = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -1982,6 +2031,10 @@ G                       Init Genome Agent (solo).
 							{if(~freqTampon !=nil and: {~ampTampon != nil},
 								{if(~listefreq.size <= ~listedatasizein,
 									{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
+										// ici normaliser pour Transformer et envoyer
+										~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 										~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 									},
 									{
@@ -1994,6 +2047,10 @@ G                       Init Genome Agent (solo).
 										~listeamp.wrapPut(~compteurAnalyse,~ampTampon);
 										~listeduree.wrapPut(~compteurAnalyse,duree);
 										~listeID.wrapPut(~compteurAnalyse, 1.0.rand);
+										// ici normaliser pour Transformer et envoyer
+										~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 										~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 										//});
 										~compteurAnalyse=~compteurAnalyse+1});
@@ -2004,6 +2061,10 @@ G                       Init Genome Agent (solo).
 						if(~freqTampon !=nil and: {~ampTampon != nil},
 							{if(~listefreq.size <= ~listedatasizein,
 								{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
+									// ici normaliser pour Transformer et envoyer
+									~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 									~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 								},
 								{
@@ -2016,6 +2077,10 @@ G                       Init Genome Agent (solo).
 									~listeamp.wrapPut(~compteurAnalyse,~ampTampon);
 									~listeduree.wrapPut(~compteurAnalyse,duree);
 									~listeID.wrapPut(~compteurAnalyse, 1.0.rand);
+									// ici normaliser pour Transformer et envoyer
+									~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 									~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 									//});
 									~compteurAnalyse=~compteurAnalyse+1});
@@ -2049,6 +2114,10 @@ G                       Init Genome Agent (solo).
 				if(~freqTampon !=nil and: {~ampTampon != nil},
 					{if(~listefreq.size <= ~listedatasizein,
 						{~listefreq=~listefreq.add(~freqTampon);~listeamp=~listeamp.add		(~ampTampon);~listeduree=~listeduree.add(duree);~listeID=~listeID.add(1.0.rand);
+							// ici normaliser pour Transformer et envoyer
+							~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 							~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 						},
 						{
@@ -2059,6 +2128,10 @@ G                       Init Genome Agent (solo).
 							~listeamp.wrapPut(~compteurAnalyse,~ampTampon);
 							~listeduree.wrapPut(~compteurAnalyse,duree);
 							~listeID.wrapPut(~compteurAnalyse, 1.0.rand);
+							// ici normaliser pour Transformer et envoyer
+							~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 							~freqBefore=~freqTampon;~ampBefore=~ampTampon;~dureeBefore=duree;
 							~compteurAnalyse=~compteurAnalyse+1});
 				});
@@ -2835,7 +2908,7 @@ G                       Init Genome Agent (solo).
 
 		// Playing musique agents
 		~agentsmusique={arg agent;
-			var freq=[], freqRate=[], amp=[], ampReal, duree=0, compteuraccord=0, reverse=[], bufferSon, bufferSon2, freqLow, freqRange, freqTrans, ampRange, ampLow, dureeRange, dureeLow, dureeTempo, envLevel=[], envDuree=[], timeEnv=[], pan, offset, synth, indexSynth=0, loopSample, reverseSample, audioOut, indexOut, controlF, controlA, controlD, testLoop, sourceInAgent, octave, ratio, degre, difL, difH, pos=~scale.degrees.size - 1, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie,  transOctave, transTranspose, transCompExpAdd, transCompExpMul, newDuree=[], newFreq=[], newAmp=[], distances, maxTraining, numAlgo, sourceAlgorithm, level1, level2;
+			var freq=[], freqRate=[], amp=[], ampReal, duree=0, compteuraccord=0, reverse=[], bufferSon, bufferSon2, freqLow, freqRange, freqTrans, ampRange, ampLow, dureeRange, dureeLow, dureeTempo, envLevel=[], envDuree=[], timeEnv=[], pan, offset, synth, indexSynth=0, loopSample, reverseSample, audioOut, indexOut, controlF, controlA, controlD, testLoop, sourceInAgent, octave, ratio, degre, difL, difH, pos=~scale.degrees.size - 1, q1, mediane, q3, ecartQ, ecartSemiQ, ecartType, cv, dissymetrie,  transOctave, transTranspose, transCompExpAdd, transCompExpMul, newDuree=[], newFreq=[], newAmp=[], distances, maxTraining, numAlgo, sourceAlgorithm, level1, level2, vecteur;
 			if(~flagGeneLoopMusic == 'on', {if(~genomes.wrapAt(agent).wrapAt(41) <= 0.5, {testLoop='off'},{testLoop='on'})},{if(~flagloop == 'on', {testLoop='on'},{testLoop='off'})});
 			if(~flagplayagent.wrapAt(agent) == 'new' and: {testLoop != 'on'}, {~flagplayagent.wrapPut(agent, 'on')});
 			if(~flagCompteurPlayingAgents.wrapAt(agent) >= ~listeagentfreq.wrapAt(agent).size, {
@@ -3036,6 +3109,45 @@ G                       Init Genome Agent (solo).
 							~listeagentamp.wrapPut(agent, newAmp);
 							~listeagentduree.wrapPut(agent, newDuree);
 						},
+						"Generate", {
+							// Calculation algo new musical pattern
+							// Generate Transformer
+							vecteur = ~hpTR.generate([~listeagentfreq.wrapAt(agent).wrapAt(0), ~listeagentamp.wrapAt(agent).wrapAt(0), ~listeagentduree.wrapAt(agent).wrapAt(0) / ~dureeanalysemax], ~listeagentfreq.wrapAt(agent).size);
+							vecteur = vecteur.flop;
+							newFreq = vecteur[0];
+							newAmp = vecteur[1];
+							newDuree = vecteur[2];
+							newFreq = newFreq;
+							newAmp = newAmp;
+							newDuree = newDuree * ~dureeanalysemax;
+							~listeagentfreq.wrapPut(agent, newFreq);
+							~listeagentamp.wrapPut(agent, newAmp);
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+						"GenStep", {
+							// Calculation algo new musical pattern
+							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
+								# f, a, d = ~hpTR.generateStep([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax]);
+								newFreq = newFreq.add(f);
+								newAmp = newAmp.add(a);
+								newDuree = newDuree.add(d * ~dureeanalysemax);
+							});
+							~listeagentfreq.wrapPut(agent, newFreq);
+							~listeagentamp.wrapPut(agent, newAmp);
+							~listeagentduree.wrapPut(agent, newDuree);
+						},
+						"Predict", {
+							// Calculation algo new musical pattern
+							~listeagentfreq.wrapAt(agent).size.do({arg i, f, a, d;
+								# f, a, d = ~hpTR.predict([~listeagentfreq.wrapAt(agent).wrapAt(i), ~listeagentamp.wrapAt(agent).wrapAt(i), ~listeagentduree.wrapAt(agent).wrapAt(i) / ~dureeanalysemax]);
+								newFreq = newFreq.add(f);
+								newAmp = newAmp.add(a);
+								newDuree = newDuree.add(d * ~dureeanalysemax);
+							});
+							~listeagentfreq.wrapPut(agent, newFreq);
+							~listeagentamp.wrapPut(agent, newAmp);
+							~listeagentduree.wrapPut(agent, newDuree);
+						}
 					);
 					//playing agent
 					~couleurs.wrapPut(agent,[1, 1, 1]);// blanc

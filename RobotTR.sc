@@ -395,6 +395,54 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		~switchMenuAudioOut.value;
 
+		/*// Utility Transformer
+		~bounds = (
+			freq: [20, 20000],
+			amp: [0.001, 1],
+			dur: [0.01, 4],
+			bpm: [0.125, 8],
+			centroid: [20, 20000],
+			energy: [20, 20000],
+			flux: [0.001, 1.0],
+			flatness: [0.001, 1.0],
+		);
+		~logNorm = { |x, key|
+			var b = ~bounds[key];
+
+			((x.max(b[0])).log2 - b[0].log2)
+			/ (b[1].log2 - b[0].log2);
+		};
+		~logDenorm = { |x, key|
+			var b = ~bounds[key];
+
+			2.pow(
+				x * (b[1].log2 - b[0].log2)
+				+ b[0].log2
+			);
+		};*/
+		~hpTR = HPtransformerRT.new(3, 3, 6, 12, 16, 2, 8, 3);// réglages i7 temps reel
+		//~hpTR.setIntelUltraCPUFastLearn;// Ultra minimal CPU rapide pour utiliser sans le Studio
+		~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+		//~studio = HPTransformerStudio.new(~hpTR).front;//par default
+		//~studio.window.view.palette_(QPalette.light); // plus necessaire
+		// Sending receiving pas necessaire ici
+		/*~hptInputTarget = NetAddr("127.0.0.1", NetAddr.langPort);// in studio
+		// Bus de sortie du Transformer.
+		~hptBus = Bus.control(s, 3);
+		~hptBus.setn(Array.fill(3, 0.5));
+		~studio.attachControlBus(~hptBus);// for Studio not valid here because not external synth
+
+		// OSC Studio Out
+		~hptOutputFunc.free;
+		~hptOutputFunc = OSCFunc(
+		{ |msg, time, addr, recvPort|
+			msg.postcs;
+		},
+		"/hptransformer/output",
+		nil,
+		57130
+		);*/
+
 		s.waitForBoot({
 
 			// Init Synth
@@ -1700,6 +1748,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					freq=msg.wrapAt(3);
 					freq=freq.clip(0,1);
 					amp=msg.wrapAt(4).clip(0.001, 1.0);
+					// ici normaliser pour Transformer et envoyer
+										~hpTR.learnEvent([freq, amp, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 					~nombreinstrument.do({arg instr;
 						flagBand = 0;
 						if(~dureeanalysesil.wrapAt(instr) <= duree  or: {duree >= ~dureeanalysemax.wrapAt(instr)}, // ici duree silence
@@ -1827,6 +1879,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					duree = time - ~lastTimeMidi.wrapAt(canal);
 					freq=freq/127;
 					amp=amp/127;
+					// ici normaliser pour Transformer et envoyer
+										~hpTR.learnEvent([freq, amp, duree / ~dureeanalysemax]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 					~nombreinstrument.do({arg instr;
 						flagBand = 0;
 						if(~canalmidiin.wrapAt(instr) == canal,
