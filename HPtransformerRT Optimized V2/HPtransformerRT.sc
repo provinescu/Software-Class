@@ -1942,12 +1942,12 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
         ^this.autoTuneStatus;
     }
 
-    zeroVectorInPlace { |vector| 
+    zeroVectorInPlace { |vector|
         vector.size.do({ |i| vector[i] = 0.0; });
         ^vector;
     }
 
-    zeroMatrixInPlace { |matrix| 
+    zeroMatrixInPlace { |matrix|
         matrix.size.do({ |r|
             matrix[r].size.do({ |c| matrix[r][c] = 0.0; });
         });
@@ -2409,7 +2409,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
     saveArchive { |path|
         var finalPath = path.asString.standardizePath;
         this.writeArchive(finalPath);
-        ("HPtransformerRT V30.3.3.1 saved: " ++ finalPath).postln;
+        ("HPtransformerRT saved: " ++ finalPath).postln;
         ^finalPath;
     }
 
@@ -2419,7 +2419,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
         if(File.exists(finalPath).not, { Error("Transformer archive not found: " ++ finalPath).throw; });
         model = Object.readArchive(finalPath);
         if(model.isKindOf(HPtransformerRT).not, { Error("Archive is not an HPtransformerRT: " ++ finalPath).throw; });
-        ("HPtransformerRT V30.3.3.1 restored: " ++ finalPath).postln;
+        ("HPtransformerRT restored: " ++ finalPath).postln;
         ^model;
     }
 

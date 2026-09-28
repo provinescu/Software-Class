@@ -3534,6 +3534,7 @@ Preset Wek",
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
 			sender.free;
+			~studio.close;
 			//s.quit;
 		};
 

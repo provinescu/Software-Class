@@ -708,7 +708,7 @@ Density {
 			if(allData.at(index) != soundOrchestra, {
 				"... LOAD SOUNDORCHESTRA... !!!".postln;
 				soundOrchestra = allData.at(index);
-					fonctionLoadSoundOrchestra.value(soundOrchestra);
+				fonctionLoadSoundOrchestra.value(soundOrchestra);
 			},
 			{soundOrchestra = allData.at(index)});
 			index = index + 1;
@@ -815,47 +815,47 @@ Density {
 		fonctionLoadSoundOrchestra = {arg listeSound;
 			// Free Buffer
 			s.bind{
-			listeBuffer.soloArray.do({arg buffer; buffer.free});
-			s.sync;
-			listeBuffer=[];
-			listeSound.do({arg arraySound, file, rawData, collect=[], nom;
-				arraySound.do({arg path, i;
-					path = PathName.new(path);
-					path = path.fileName;//Name of soundFile
-					nom = path;
-					path = "mdfind -name" + path;
-					path = Pipe.new(path, "r");
-					rawData = path.getLine;// get the first line
-					while({rawData.notNil and: {rawData.contains(nom).not}}, {rawData = path.getLine}); // while to find
-					path.close;
-					path = rawData;// New Path
-					if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found
-					file = SoundFile.new;
-					s.sync;
-					file.openRead(path);
-					s.sync;
-					if(file.numChannels == 1,
-						{Post << "Loading mono sound" << " " << path << Char.nl;
-							collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
-							s.sync;
-						},
-						{rawData= FloatArray.newClear(file.numFrames * 2);
-							s.sync;
-							file.readData(rawData);
-							s.sync;
-							rawData = Array.newFrom(rawData);
-							s.sync;
-							Post << "Loading stereo sound" << " " << path << Char.nl;
-							rawData = rawData.unlace(2).sum / 2;
-							s.sync;
-							collect = collect.add(Buffer.loadCollection(s, rawData, 1, action: {arg buf; Post << "Finished" << Char.nl}).path = path);
-							s.sync;
+				listeBuffer.soloArray.do({arg buffer; buffer.free});
+				s.sync;
+				listeBuffer=[];
+				listeSound.do({arg arraySound, file, rawData, collect=[], nom;
+					arraySound.do({arg path, i;
+						path = PathName.new(path);
+						path = path.fileName;//Name of soundFile
+						nom = path;
+						path = "mdfind -name" + path;
+						path = Pipe.new(path, "r");
+						rawData = path.getLine;// get the first line
+						while({rawData.notNil and: {rawData.contains(nom).not}}, {rawData = path.getLine}); // while to find
+						path.close;
+						path = rawData;// New Path
+						if(path == nil , {path = arraySound.at(i); ["Warning File Init or not exist:" + arraySound.at(i)].postcs});// File not found
+						file = SoundFile.new;
+						s.sync;
+						file.openRead(path);
+						s.sync;
+						if(file.numChannels == 1,
+							{Post << "Loading mono sound" << " " << path << Char.nl;
+								collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
+								s.sync;
+							},
+							{rawData= FloatArray.newClear(file.numFrames * 2);
+								s.sync;
+								file.readData(rawData);
+								s.sync;
+								rawData = Array.newFrom(rawData);
+								s.sync;
+								Post << "Loading stereo sound" << " " << path << Char.nl;
+								rawData = rawData.unlace(2).sum / 2;
+								s.sync;
+								collect = collect.add(Buffer.loadCollection(s, rawData, 1, action: {arg buf; Post << "Finished" << Char.nl}).path = path);
+								s.sync;
+						});
+						file.close;
+						s.sync;
 					});
-					file.close;
-					s.sync;
+					listeBuffer = listeBuffer.add(collect);
 				});
-				listeBuffer = listeBuffer.add(collect);
-			});
 			};
 		};
 
@@ -2182,14 +2182,14 @@ Density {
 				/*flux = (13.287712379549 - fft.at(0).mediane.log2.abs / 13.287712379549).clip(0, 1);
 				// Flatness
 				flatness = (13.287712379549 - fft.at(1).mediane.log2.abs / 13.287712379549).clip(0, 1);*/
-					flux = dataFlux.at(indexBandFhz);
-					flatness = dataFlatness.at(indexBandFhz);
-					centroid = dataCentroid.at(indexBandFhz);
-					energy = rootEnergy = dataEnergy.at(indexBandFhz);
-					bpm = dataBPM.at(indexBandFhz);
-					freq = dataFreq.at(indexBandFhz);
-					amp = dataAmp.at(indexBandFhz);
-					duree = dataDuree.at(indexBandFhz);
+				flux = dataFlux.at(indexBandFhz);
+				flatness = dataFlatness.at(indexBandFhz);
+				centroid = dataCentroid.at(indexBandFhz);
+				energy = rootEnergy = dataEnergy.at(indexBandFhz);
+				bpm = dataBPM.at(indexBandFhz);
+				freq = dataFreq.at(indexBandFhz);
+				amp = dataAmp.at(indexBandFhz);
+				duree = dataDuree.at(indexBandFhz);
 				flux = flux.mediane;
 				flux = flux + rrand(jitterControls.neg, jitterControls);
 				flux = flux.fold(0,1);
@@ -2592,15 +2592,15 @@ Density {
 							if(numIndexSynthBand >= rangeSynthBand.size, {numIndexSynthBand = 0});
 							indexBandFhz = rangeSynthBand.at(numIndexSynthBand);
 							numIndexSynthBand = numIndexSynthBand + 1;
-								if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
-									{
-										buildSynth.value(indexBandFhz)});
+							if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
+								{
+									buildSynth.value(indexBandFhz)});
 						},
 						// Build new Instrument without Band
 						{
 							indexBandFhz = 0;
 							if(dataFreq.at(indexBandFhz) != [] and: {rrand(0.0, 1.0) < globalDensity},
-									{buildSynth.value(indexBandFhz)});
+								{buildSynth.value(indexBandFhz)});
 						});
 						lastTime = time;
 					});
@@ -6456,14 +6456,298 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
 				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - 64).wrap(0, frames);
+				readPosB = (writePos - phaseB - 64).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
 				sigB = HPbufRd.ar(1, buffer, readPosB, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winB;
 				Out.ar(out, LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544)) * envelope);
 		}).add;
+
+		/*SynthDef("BufRdPostBuf", {
+			arg in=0, out=0, buffer=0, gate=1, loop=1, offset=0, reverse=1,
+			freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
+			flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
+			ctrlHP1=0.5, ctrlHP2=0.5,
+			level1=1, level2=0,
+
+			envLevel1=0.0,
+			envLevel2=1.0,
+			envLevel3=1.0,
+			envLevel4=0.75,
+			envLevel5=0.75,
+			envLevel6=0.5,
+			envLevel7=0.5,
+			envLevel8=0.0,
+
+			envTime1=0.015625,
+			envTime2=0.109375,
+			envTime3=0.25,
+			envTime4=0.25,
+			envTime5=0.125,
+			envTime6=0.125,
+			envTime7=0.125,
+
+			loopRec=1,
+
+			// Réglages anti-clics
+			pitchLag=0.03,
+			controlLag=0.02,
+			ampLag=0.01,
+			gateAttack=0.005,
+			gateRelease=0.03,
+			readSafety=0.004,
+			limiterLevel=0.98;
+
+			var localBuffer;
+			var frames;
+			var input;
+			var writePos;
+
+			var phaseA;
+			var phaseB;
+			var readPosA;
+			var readPosB;
+
+			var winA;
+			var winB;
+			var sigA;
+			var sigB;
+
+			var pitchRatio;
+			var pitchTarget;
+
+			var smoothHP1;
+			var smoothHP2;
+			var smoothRecLevel;
+			var smoothPreLevel;
+			var smoothAmp;
+
+			var mainEnvelope;
+			var safetyEnvelope;
+
+			var safetySamples;
+			var signal;
+
+			/*
+   Le buffer fourni comme argument n'est pas utilisé dans la version
+   d'origine, puisqu'il est remplacé par un LocalBuf.
+   */
+			localBuffer = LocalBuf(
+				(SampleRate.ir * durSample.max(0.005)).ceil,
+				1
+			).clear;
+
+			frames = BufFrames.kr(localBuffer);
+
+			/*
+   Nettoyage DC avant l'enregistrement.
+   Cela évite d'enregistrer un décalage continu susceptible de produire
+   un clic lors des bouclages ou des changements de position.
+   */
+			input = LeakDC.ar(In.ar(in, 1));
+
+			/*
+   Lissage des paramètres modifiables en temps réel.
+   */
+			smoothHP1 = Lag.kr(ctrlHP1, controlLag.max(0.001));
+			smoothHP2 = Lag.kr(ctrlHP2, controlLag.max(0.001));
+
+			smoothRecLevel = Lag.kr(level1, controlLag.max(0.001));
+			smoothPreLevel = Lag.kr(level2, controlLag.max(0.001));
+
+			smoothAmp = Lag.kr(
+				amp.clip(0, 4),
+				ampLag.max(0.001)
+			);
+
+			/*
+   Calcul original du pitchRatio conservé.
+
+   Le lissage est augmenté de 15 à 30 ms par défaut afin d'éviter
+   les changements brusques de vitesse de lecture.
+   */
+			pitchTarget = (
+				2 ** ((freq.max(0.001).cpsmidi - 48).midicps).cpsoct
+			) * Lag.kr(reverse, pitchLag.max(0.001));
+
+			pitchRatio = Lag.kr(
+				pitchTarget,
+				pitchLag.max(0.001)
+			);
+
+			/*
+   Enveloppe musicale originale.
+
+   L'amplitude est appliquée séparément avec Lag.kr afin que les
+   changements de amp ne créent pas de saut brutal.
+   */
+			mainEnvelope = EnvGen.kr(
+				Env.new(
+					[
+						envLevel1,
+						envLevel2,
+						envLevel3,
+						envLevel4,
+						envLevel5,
+						envLevel6,
+						envLevel7,
+						envLevel8
+					],
+					[
+						envTime1.max(0.001),
+						envTime2.max(0.001),
+						envTime3.max(0.001),
+						envTime4.max(0.001),
+						envTime5.max(0.001),
+						envTime6.max(0.001),
+						envTime7.max(0.001)
+					],
+					\sine
+				),
+				gate: 1,
+				levelScale: 1,
+				levelBias: 0,
+				timeScale: dur.max(0.001),
+				doneAction: 2
+			);
+
+			/*
+   Enveloppe de sécurité indépendante.
+
+   Elle assure une attaque courte et surtout un relâchement progressif
+   lorsque gate passe de 1 à 0.
+   */
+			safetyEnvelope = EnvGen.kr(
+				Env.asr(
+					attackTime: gateAttack.max(0.001),
+					sustainLevel: 1,
+					releaseTime: gateRelease.max(0.005),
+					curve: \sine
+				),
+				gate: gate,
+				doneAction: 0
+			);
+
+			/*
+   Écriture circulaire.
+   */
+			writePos = Phasor.ar(
+				trig: 0,
+				rate: 1,
+				start: 0,
+				end: frames,
+				resetPos: 0
+			);
+
+			RecordBuf.ar(
+				inputArray: input,
+				bufnum: localBuffer,
+				offset: writePos,
+				recLevel: smoothRecLevel,
+				preLevel: smoothPreLevel,
+				run: 1,
+				loop: loopRec,
+				trigger: 1,
+				doneAction: 0
+			);
+
+			/*
+   Deux têtes de lecture déphasées d'une demi-fenêtre.
+   */
+			phaseA = Phasor.ar(
+				trig: 0,
+				rate: 1 - pitchRatio,
+				start: 0,
+				end: frames,
+				resetPos: 0
+			);
+
+			phaseB = (
+				phaseA + (frames * 0.5)
+			).wrap(0, frames);
+
+			/*
+   Distance de sécurité exprimée en secondes.
+
+   La valeur est limitée à un quart du buffer pour éviter une distance
+   excessive lorsque durSample est très court.
+   */
+			safetySamples = (
+				SampleRate.ir * readSafety.max(0.001)
+			).min(frames * 0.25);
+
+			readPosA = (
+				writePos - phaseA - safetySamples
+			).wrap(0, frames);
+
+			readPosB = (
+				writePos - phaseB - safetySamples
+			).wrap(0, frames);
+
+			/*
+   Fenêtres de Hann complémentaires.
+
+   Elles diminuent progressivement une tête pendant que l'autre
+   devient audible.
+   */
+			winA = 0.5 - (
+				0.5 * cos(2pi * phaseA / frames)
+			);
+
+			winB = 0.5 - (
+				0.5 * cos(2pi * phaseB / frames)
+			);
+
+			sigA = HPbufRd.ar(
+				1,
+				localBuffer,
+				readPosA,
+				seuil: smoothHP1,
+				sensibilite: smoothHP2,
+				interp: 4
+			) * winA;
+
+			sigB = HPbufRd.ar(
+				1,
+				localBuffer,
+				readPosB,
+				seuil: smoothHP1,
+				sensibilite: smoothHP2,
+				interp: 4
+			) * winB;
+
+			/*
+   Traitement final.
+
+   LeakDC est placé avant et après les filtres pour éliminer les
+   composantes continues éventuelles.
+   */
+			signal = LeakDC.ar(sigA + sigB);
+			signal = HPF.ar(signal, 10);
+			signal = LPF.ar(signal, 12544);
+			signal = LeakDC.ar(signal);
+
+			/*
+   Protection des transitoires très courts.
+
+   Limiter ajoute une petite latence correspondant à sa durée de
+   regard en avant, ici 5 ms.
+   */
+			signal = Limiter.ar(
+				signal,
+				limiterLevel.clip(0.1, 1),
+				0.005
+			);
+
+			signal = signal
+			* mainEnvelope
+			* safetyEnvelope
+			* smoothAmp;
+
+			Out.ar(out, signal);
+		}).add;*/
 
 		SynthDef("BufRdRFPostBuf",
 			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
@@ -6728,8 +7012,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
 				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - 64).wrap(0, frames);
+				readPosB = (writePos - phaseB - 64).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;

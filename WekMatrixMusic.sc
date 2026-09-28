@@ -4789,7 +4789,7 @@ Preset Wek",
 			changeSynth.valueAction = (changeChoiceSynth.indexOf(name.asSymbol));// Reset Mode Synth
 			};
 			//Instr MIDI OUT
-			instrCanalMidiOut = PopUpMenu(windowSynth,Rect(0, 0, 75, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=["MIDI out Off","MIDI out 1", "MIDI out 2", "MIDI out 3", "MIDI out 4", "MIDI out 5", "MIDI out 6", "MIDI out 7", "MIDI out 8", "MIDI out 9", "MIDI out 10", "MIDI out 11", "MIDI out 12", "MIDI out 13", "MIDI out 14", "MIDI out 15", "MIDI out 16"];
+			instrCanalMidiOut = PopUpMenu(windowSynth,Rect(0, 0, 75, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.black).items=["MIDI out Off","MIDI out 1", "MIDI out 2", "MIDI out 3", "MIDI out 4", "MIDI out 5", "MIDI out 6", "MIDI out 7", "MIDI out 8", "MIDI out 9", "MIDI out 10", "MIDI out 11", "MIDI out 12", "MIDI out 13", "MIDI out 14", "MIDI out 15", "MIDI out 16"];
 			instrCanalMidiOut.action = {|view|
 				if(view.value == 0, {flagMidiOut = 'off'}, {flagMidiOut = 'on'});
 				// MIDI OFF
@@ -4800,7 +4800,7 @@ Preset Wek",
 			};
 			instrCanalMidiOut.valueAction_(0);
 			//Menu Algorithm
-			menuAlgorithm = PopUpMenu(windowSynth,Rect(0, 0, 70, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.yellow).items=listeAlgorithm;
+			menuAlgorithm = PopUpMenu(windowSynth,Rect(0, 0, 70, 15)).background_(Color.grey(0.5, 0.8)).stringColor_(Color.black).items=listeAlgorithm;
 			menuAlgorithm.action = {|algo| stringAlgorithm = listeAlgorithm.at(algo.value)};
 			menuAlgorithm.valueAction_(0);
 
@@ -5156,7 +5156,7 @@ Preset Wek",
 										// Setup ctrlBuffer Buffer
 										if(window.view.children.at(64).value == 1, {
 											// Rec 1 on / off
-											window.view.children.at(26).valueAction_((0.5 + ecarttypeEnergy * 	dissymetrieEnergy.sign).clip(0.0, 1.0));
+											window.view.children.at(26).valueAction_((0.5 + ecarttypeEnergy * 	dissymetrieEnergy.sign * rrand(-1, 1)).clip(-1.0, 1.0) + 1);
 											// Offset Buffer 1
 											window.view.children.at(23).children.do({arg subView, subItem;
 												if(subItem == 0, {nil},
@@ -5164,7 +5164,7 @@ Preset Wek",
 											// Reverse 1 on / off
 											window.view.children.at(21).valueAction_((0.5 + ecarttypeEnergy * 	dissymetrieEnergy.sign).clip(0.0, 1.0));
 											// Rec 2 on / off
-											window.view.children.at(36).valueAction_((0.5 + ecarttypeEnergy * 	dissymetrieEnergy.sign * rrand(-1, 1)).clip(0.0, 1.0));
+											window.view.children.at(36).valueAction_((0.5 + ecarttypeEnergy * 	dissymetrieEnergy.sign * rrand(-1, 1)).clip(-1.0, 1.0) + 1);
 											// Offset Buffer 2
 											window.view.children.at(33).children.do({arg subView, subItem;
 												if(subItem == 0, {nil},

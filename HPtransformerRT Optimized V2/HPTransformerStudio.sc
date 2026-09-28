@@ -571,7 +571,7 @@ HPTransformerStudio : Object {
          })})
         };
 
-        w=Window("HPTransformer Studio Pro V8.7.3 - HPtransformerRT V30.3.0 - Profils temps reel et hors temps reel",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
+        w=Window("HPTransformer Studio Pro - Profils temps reel et hors temps reel",uiRect.(35,35,1320,860)).background_(Color.grey(0.13));
         // Palette locale: Window ne comprend pas palette_; la palette doit etre appliquee a sa vue racine.
         // Cette ligne isole le Studio de QtGUI.palette = QPalette.dark.
         w.view.palette_(QPalette.light);
@@ -1848,7 +1848,7 @@ HPTransformerStudio : Object {
          refreshStateIndicators.value;
          if(activePage==\graphs,{graphView.refresh});if(activePage==\heatmaps,{heatView.refresh})})};
         routine=Routine({while({running},{if(displaysEnabled,{{refresh.value}.defer});rate.wait})}).play(AppClock);
-        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});refreshStateIndicators.value;showPage.(\dashboard);addLog.("Studio Pro V8.7.3 pour HPtransformerRT V30.3.0 ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
+        w.onClose_({running=false;oscStop.value;if(routine.notNil,{routine.stop});window=nil;refreshRoutine=nil});refreshStateIndicators.value;showPage.(\dashboard);addLog.("Studio Pro pour HPtransformerRT ouvert - echelle "++uiScale);window=w;refreshRoutine=routine;scrollView.visibleOrigin_(Point(0,0));w.front;
     }
 }
 

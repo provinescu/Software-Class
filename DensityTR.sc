@@ -3045,6 +3045,7 @@ DensityTR {
 			if(flagVST == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
+			~studio.close;
 			//s.quit;
 		};
 

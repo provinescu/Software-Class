@@ -4125,6 +4125,7 @@ Preset Wek",
 			~menuAgents.remove;// remove custom menu
 			windowVST.close;
 			ProxySpace.clearAll;
+			~studio.close;
 			//s.quit;
 		};
 
