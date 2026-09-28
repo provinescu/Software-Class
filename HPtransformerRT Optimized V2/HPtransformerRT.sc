@@ -1,4 +1,4 @@
-/* HPtransformerRT V30.3.3 LEAN FORWARD SC314 - SuperCollider 3.14 class source.
+/* HPtransformerRT V30.3.3.1 LEAN FORWARD RCU FIX SC314 - SuperCollider 3.14 class source.
 Optimizations: Strict FloatArray usage for all numeric vectors/matrices,
 reduced object overhead, preserved dynamic trajectory memory logic.
 */
@@ -2100,7 +2100,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
             metaLearnReplayRateMin = 0.02; metaLearnReplayRateMax = 0.30;
             metaLearnProtectionMin = 0.05; metaLearnProtectionMax = 0.60;
             metaLearnRetrievalGainMin = 0.02; metaLearnRetrievalGainMax = 0.30;
-            "V30.3.3 Learning+ Dynamic Trajectory Memory runtime and optimizer reset / weights and memories preserved".postln;
+            "V30.3.3.1 Learning+ Dynamic Trajectory Memory runtime and optimizer reset / weights and memories preserved".postln;
             nil;
         }.value;
     }
@@ -2125,7 +2125,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
             memoryContext = this.zeroVector(inputSize);
             memoryWeights = Array.new; memorySimilarity = Array.new;
             protectionScalar = 0.0;
-            "V30.3.3 Learning+ Dynamic Trajectory Memory memory reset".postln;
+            "V30.3.3.1 Learning+ Dynamic Trajectory Memory memory reset".postln;
             nil;
         }.value;
     }
@@ -2154,7 +2154,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
             positionBias = Array.fill(numHeads, { FloatArray.fill(windowSize, 0.0) });
             this.resetMemory;
             this.resetLearning;
-            "V30.3.3 Learning+ Dynamic Trajectory Memory full reset".postln;
+            "V30.3.3.1 Learning+ Dynamic Trajectory Memory full reset".postln;
             nil;
         }.value;
     }
@@ -2177,7 +2177,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
         safeAge = if(memoryCount > 0, { longMemoryAge.copyRange(0, memoryCount - 1) }, { Array.new });
         safeUsage = if(memoryCount > 0, { longMemoryUsage.copyRange(0, memoryCount - 1) }, { Array.new });
         ^(
-            version: 30.33, parameters: parameterCount, inputSize: inputSize, outputSize: outputSize,
+            version: 30.331, parameters: parameterCount, inputSize: inputSize, outputSize: outputSize,
             hiddenSize: hiddenSize, numHeads: numHeads, headSize: headSize, numExperts: numExperts,
             windowSize: windowSize, longMemorySize: longMemorySize, learningRate: learningRateCurrent,
             loss: loss, outputLoss: outputLoss, deltaLoss: deltaLoss, directionLoss: directionLoss,
@@ -2231,7 +2231,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
         }.value;
             entropy = entropyValue;
             "".postln; "============================================================".postln;
-            "TRANSFORMER VECTOR V30.3.3 Learning+ Dynamic Trajectory Memory".postln;
+            "TRANSFORMER VECTOR V30.3.3.1 Learning+ Dynamic Trajectory Memory".postln;
             "MEMORY / LEARNING+ / ADAPTATION / ANTI-INTERFERENCE".postln;
             "============================================================".postln;
             ("parameters: " ++ parameterCount).postln; ("inputSize: " ++ inputSize).postln;
@@ -2271,7 +2271,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
             "generatedVelocity:".postln; lastGeneratedVelocity.postln;
             "============================================================".postln;
             (
-                version: 30.33, parameters: parameterCount, inputSize: inputSize, outputSize: outputSize,
+                version: 30.331, parameters: parameterCount, inputSize: inputSize, outputSize: outputSize,
                 hiddenSize: hiddenSize, numHeads: numHeads, headSize: headSize, numExperts: numExperts,
                 windowSize: windowSize, longMemorySize: longMemorySize, learningRate: learningRateCurrent,
                 loss: loss, outputLoss: outputLoss, deltaLoss: deltaLoss, directionLoss: directionLoss,
@@ -2294,7 +2294,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
     config {
         ^{
             (
-                version: 30.33, inputSize: inputSize, outputSize: outputSize, windowSize: windowSize,
+                version: 30.331, inputSize: inputSize, outputSize: outputSize, windowSize: windowSize,
                 longMemorySize: longMemorySize, hiddenSize: hiddenSize, numHeads: numHeads, headSize: headSize,
                 numExperts: numExperts, learningRate: learningRate, beta1: beta1, beta2: beta2, epsilon: epsilon,
                 temperature: temperature, residualScale: residualScale, expertScale: expertScale, deltaScale: deltaScale,
@@ -2388,7 +2388,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
     parameters { ^parameterCount; }
     optimizationInfo {
         ^(
-            version: 30.33,
+            version: 30.331,
             superCollider: "3.14",
             behaviorPreserving: true,
             floatArrayHotPath: true,
@@ -2409,7 +2409,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
     saveArchive { |path|
         var finalPath = path.asString.standardizePath;
         this.writeArchive(finalPath);
-        ("HPtransformerRT V30.3.3 saved: " ++ finalPath).postln;
+        ("HPtransformerRT V30.3.3.1 saved: " ++ finalPath).postln;
         ^finalPath;
     }
 
@@ -2419,7 +2419,7 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
         if(File.exists(finalPath).not, { Error("Transformer archive not found: " ++ finalPath).throw; });
         model = Object.readArchive(finalPath);
         if(model.isKindOf(HPtransformerRT).not, { Error("Archive is not an HPtransformerRT: " ++ finalPath).throw; });
-        ("HPtransformerRT V30.3.3 restored: " ++ finalPath).postln;
+        ("HPtransformerRT V30.3.3.1 restored: " ++ finalPath).postln;
         ^model;
     }
 
@@ -2551,6 +2551,16 @@ buildForward { |input, requestedWindowSize, requestedVelocity|
     }
 
 unifiedRCUEnabled { ^unifiedCurrentRuntime.notNil; }
+    disableUnifiedRCU {
+        if(unifiedRuntimeRole, { ^this; });
+        this.stopAllMorphs;
+        unifiedCurrentRuntime = nil;
+        unifiedPendingRuntime = nil;
+        unifiedSnapshotPending = false;
+        unifiedTrainingVersion = 0;
+        unifiedPublishedVersion = 0;
+        ^this;
+    }
 
     prepareSnapshot {
         this.enableUnifiedRCU;
