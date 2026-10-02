@@ -7703,7 +7703,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					arg out=0,  buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], in=0, level1=1, level2=0;
 					// liste des variables (identique pour chaque sample !!!!!)
 					var main, envelope, dureesample, ambisonic;
-					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, pitchRatio=1.0, buf;
+					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, pitchRatio=1.0, buf, writeOld, writeSignal, safety;
 					input = In.ar(in, 1);
 					buf = LocalBuf(s.sampleRate * BufDur.kr(buffer), 1);
 					frames = BufFrames.kr(buf);
@@ -7714,14 +7714,20 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Envelope
 					envelope = EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					writePos = Phasor.ar(0, 1, 0, frames);
-					//BufWr.ar(input, buffer, writePos);
-					RecordBuf.ar(input, buf, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: 1);
-					phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
-					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-					readPosA = (writePos - phaseA - 128).wrap(0, frames);
-					readPosB = (writePos - phaseB - 128).wrap(0, frames);
-					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
-					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+					// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
+				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
+				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: 1, sensibilite: 1, interp:4) * winA;
 					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: 1, sensibilite: 1, interp:4) * winB;
 					main = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));

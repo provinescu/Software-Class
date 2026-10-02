@@ -6479,45 +6479,105 @@ y ... -						Musical keys.
 				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
 		}).add;
 
-		SynthDef('HPbufRdLive',
-			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,
-				freq=0, amp=0, duree=0.01, tempo=1, freqCentroid=0, flatness=0, energy=0, flux=0,
-				levelBusOut=0, levelBusFX=0, levelLocalIn=0,
-				switchBuffer1=0, switchBuffer2=0,
-				panLo=0.1.neg, panHi=0.1, freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1, durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
-				ctrlHP1=0.33, ctrlHP2=0.5,
-				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
-				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, level1=1, level2=0, loop=1;
-				var chain, buffer, frames, ambisonic, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope,  pitchRatio=1.0;
-				// Set FHZ
-				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse1, 0.015);
-				// Set AMP
-				amp = amp * (ampHi - ampLo) + ampLo;
-				// Set Buffer
-				buffer = LocalBuf(s.sampleRate * BufDur.kr(recBuffer1), 1).clear;
-				frames = BufFrames.kr(buffer);
-				// Set input
-				input =  In.ar(busIn, 1);
-				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loop);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
-				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
-				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
-				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
-				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
-				sigB = HPbufRd.ar(1, buffer, readPosB, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winB;
-				envelope = Select.kr(mode, [
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), gate, amp, 0, duree, 2),
-					EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7].normalizeSum,'sine'), Impulse.kr(duree.reciprocal), amp, 0, duree, 0),
-					amp],  1);
-				chain = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
-				// Switch Audio Out
-				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
-		}).add;
+		SynthDef('HPbufRdLive', {
+    arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo,
+        loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2,
+        reverse1, reverse2, freq=0, amp=0, duree=0.01, tempo=1,
+        freqCentroid=0, flatness=0, energy=0, flux=0,
+        levelBusOut=0, levelBusFX=0, levelLocalIn=0,
+        switchBuffer1=0, switchBuffer2=0, panLo=0.1.neg, panHi=0.1,
+        freqLo=0, freqHi=127, freqT=0, ampLo=0, ampHi=1,
+        durLo=0, durHi=1, durM=1, quanta=100, flagAmpOnOff=1,
+        ctrlHP1=0.33, ctrlHP2=0.5,
+        ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25,
+        ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25,
+        ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
+        envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75,
+        envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
+        envTime1=0.015625, envTime2=0.109375, envTime3=0.25,
+        envTime4=0.25, envTime5=0.125, envTime6=0.125,
+        envTime7=0.125, mode=0, gate=1, level1=1, level2=0, loop=1;
+
+    var chain, buffer, frames, ambisonic, input, writePos;
+    var phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB;
+    var envelope, pitchRatio, smoothAmp, hp1, hp2, recLevel, preLevel;
+    var safety, startup;
+    var writeOld, writeSignal, writeActive;
+
+    pitchRatio = Lag.kr(
+        (2 ** ((freq.max(0.001).cpsmidi - 48).midicps).cpsoct) * reverse1,
+        0.03
+    );
+    smoothAmp = Lag.kr(amp * (ampHi - ampLo) + ampLo, 0.015);
+    hp1 = Lag.kr(ctrlHP1, 0.02);
+    hp2 = Lag.kr(ctrlHP2, 0.02);
+    recLevel = Lag.kr(level1, 0.02);
+    preLevel = Lag.kr(level2, 0.02);
+
+    buffer = LocalBuf((SampleRate.ir * BufDur.kr(recBuffer1).max(0.02)).ceil, 1).clear;
+    frames = BufFrames.kr(buffer).max(64);
+    input = LeakDC.ar(In.ar(busIn, 1));
+
+    writePos = Phasor.ar(0, 1, 0, frames);
+    // BufWr explicite avec conservation du comportement loop.
+    writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 1);
+    writeActive = Select.kr(loop, [
+        EnvGen.kr(Env([1, 1, 0], [BufDur.kr(buffer), 0], \step)),
+        1
+    ]);
+    writeSignal = Select.ar(
+        writeActive,
+        [writeOld, (input * recLevel) + (writeOld * preLevel)]
+    );
+    BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+
+    // V2 : marge dynamique selon la vitesse de lecture.
+    safety = (
+        128 + (pitchRatio.abs * BlockSize.ir)
+    ).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+    phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
+    phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+    readPosA = (writePos - phaseA - safety).wrap(0, frames);
+    readPosB = (writePos - phaseB - safety).wrap(0, frames);
+    winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+    winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+
+    sigA = HPbufRd.ar(1, buffer, readPosA, seuil: hp1, sensibilite: hp2, interp: 4) * winA;
+    sigB = HPbufRd.ar(1, buffer, readPosB, seuil: hp1, sensibilite: hp2, interp: 4) * winB;
+
+    envelope = Select.ar(mode, [
+        EnvGen.ar(
+            Env.new(
+                [envLevel1, envLevel2, envLevel3, envLevel4, envLevel5, envLevel6, envLevel7, envLevel8],
+                [envTime1.max(0.001), envTime2.max(0.001), envTime3.max(0.001),
+                 envTime4.max(0.001), envTime5.max(0.001), envTime6.max(0.001), envTime7.max(0.001)].normalizeSum,
+                \sine
+            ),
+            gate, smoothAmp, 0, duree.max(0.001), 2
+        ),
+        EnvGen.ar(
+            Env.new(
+                [envLevel1, envLevel2, envLevel3, envLevel4, envLevel5, envLevel6, envLevel7, envLevel8],
+                [envTime1.max(0.001), envTime2.max(0.001), envTime3.max(0.001),
+                 envTime4.max(0.001), envTime5.max(0.001), envTime6.max(0.001), envTime7.max(0.001)].normalizeSum,
+                \sine
+            ),
+            Impulse.kr(duree.max(0.001).reciprocal), smoothAmp, 0, duree.max(0.001), 0
+        ),
+        smoothAmp
+    ]);
+
+    startup = Line.kr(
+        0, 1,
+        BufDur.kr(buffer).min(0.05).max(safety / SampleRate.ir).max(0.005)
+    );
+    chain = LeakDC.ar(LPF.ar(HPF.ar(LeakDC.ar(sigA + sigB), 10), 12544)) * startup;
+    chain = Limiter.ar(chain, 0.99, 0.003);
+
+    foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo,
+        durM, tempo, envelope, ambisonic, busOut, levelBusOut,
+        busFXout, levelBusFX, flagAmpOnOff);
+}).add;
 
 		SynthDef('DelayHarmonic',
 			{arg out=0, busIn, busOut, busFXout, busFXin, bufferOne, bufferTwo, loopOne=0, loopTwo=0, recBuffer1, recBuffer2, offset1, offset2, reverse1, reverse2,

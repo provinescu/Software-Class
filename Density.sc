@@ -6411,53 +6411,31 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		/////////////////////// SAMPLER POSTBUFFER //////////////////////////
 
-		/*SynthDef("BufRdPostBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, envelope, recHead=0, playHead=0;
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Set play and rec head pour recording
-				recHead = Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
-				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  recHead, BufFrames.kr(buffer) * offset),
-					// rate > 1
-					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), recHead)
-				);
-				// RecBuffer
-				BufWr.ar(inputSig, buffer, recHead);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2,  interp: 4) * envelope * amp;
-				chain = LeakDC.ar(chain.softclip);
-				// Out
-				Out.ar(out, chain);
-		}).add;*/
-
 		SynthDef("BufRdPostBuf",
 			{ arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, writeOld, writeSignal, safety;
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
+				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 64).wrap(0, frames);
-				readPosB = (writePos - phaseB - 64).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6465,296 +6443,12 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				Out.ar(out, LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544)) * envelope);
 		}).add;
 
-		/*SynthDef("BufRdPostBuf", {
-			arg in=0, out=0, buffer=0, gate=1, loop=1, offset=0, reverse=1,
-			freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
-			flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1,
-			ctrlHP1=0.5, ctrlHP2=0.5,
-			level1=1, level2=0,
-
-			envLevel1=0.0,
-			envLevel2=1.0,
-			envLevel3=1.0,
-			envLevel4=0.75,
-			envLevel5=0.75,
-			envLevel6=0.5,
-			envLevel7=0.5,
-			envLevel8=0.0,
-
-			envTime1=0.015625,
-			envTime2=0.109375,
-			envTime3=0.25,
-			envTime4=0.25,
-			envTime5=0.125,
-			envTime6=0.125,
-			envTime7=0.125,
-
-			loopRec=1,
-
-			// Réglages anti-clics
-			pitchLag=0.03,
-			controlLag=0.02,
-			ampLag=0.01,
-			gateAttack=0.005,
-			gateRelease=0.03,
-			readSafety=0.004,
-			limiterLevel=0.98;
-
-			var localBuffer;
-			var frames;
-			var input;
-			var writePos;
-
-			var phaseA;
-			var phaseB;
-			var readPosA;
-			var readPosB;
-
-			var winA;
-			var winB;
-			var sigA;
-			var sigB;
-
-			var pitchRatio;
-			var pitchTarget;
-
-			var smoothHP1;
-			var smoothHP2;
-			var smoothRecLevel;
-			var smoothPreLevel;
-			var smoothAmp;
-
-			var mainEnvelope;
-			var safetyEnvelope;
-
-			var safetySamples;
-			var signal;
-
-			/*
-   Le buffer fourni comme argument n'est pas utilisé dans la version
-   d'origine, puisqu'il est remplacé par un LocalBuf.
-   */
-			localBuffer = LocalBuf(
-				(SampleRate.ir * durSample.max(0.005)).ceil,
-				1
-			).clear;
-
-			frames = BufFrames.kr(localBuffer);
-
-			/*
-   Nettoyage DC avant l'enregistrement.
-   Cela évite d'enregistrer un décalage continu susceptible de produire
-   un clic lors des bouclages ou des changements de position.
-   */
-			input = LeakDC.ar(In.ar(in, 1));
-
-			/*
-   Lissage des paramètres modifiables en temps réel.
-   */
-			smoothHP1 = Lag.kr(ctrlHP1, controlLag.max(0.001));
-			smoothHP2 = Lag.kr(ctrlHP2, controlLag.max(0.001));
-
-			smoothRecLevel = Lag.kr(level1, controlLag.max(0.001));
-			smoothPreLevel = Lag.kr(level2, controlLag.max(0.001));
-
-			smoothAmp = Lag.kr(
-				amp.clip(0, 4),
-				ampLag.max(0.001)
-			);
-
-			/*
-   Calcul original du pitchRatio conservé.
-
-   Le lissage est augmenté de 15 à 30 ms par défaut afin d'éviter
-   les changements brusques de vitesse de lecture.
-   */
-			pitchTarget = (
-				2 ** ((freq.max(0.001).cpsmidi - 48).midicps).cpsoct
-			) * Lag.kr(reverse, pitchLag.max(0.001));
-
-			pitchRatio = Lag.kr(
-				pitchTarget,
-				pitchLag.max(0.001)
-			);
-
-			/*
-   Enveloppe musicale originale.
-
-   L'amplitude est appliquée séparément avec Lag.kr afin que les
-   changements de amp ne créent pas de saut brutal.
-   */
-			mainEnvelope = EnvGen.kr(
-				Env.new(
-					[
-						envLevel1,
-						envLevel2,
-						envLevel3,
-						envLevel4,
-						envLevel5,
-						envLevel6,
-						envLevel7,
-						envLevel8
-					],
-					[
-						envTime1.max(0.001),
-						envTime2.max(0.001),
-						envTime3.max(0.001),
-						envTime4.max(0.001),
-						envTime5.max(0.001),
-						envTime6.max(0.001),
-						envTime7.max(0.001)
-					],
-					\sine
-				),
-				gate: 1,
-				levelScale: 1,
-				levelBias: 0,
-				timeScale: dur.max(0.001),
-				doneAction: 2
-			);
-
-			/*
-   Enveloppe de sécurité indépendante.
-
-   Elle assure une attaque courte et surtout un relâchement progressif
-   lorsque gate passe de 1 à 0.
-   */
-			safetyEnvelope = EnvGen.kr(
-				Env.asr(
-					attackTime: gateAttack.max(0.001),
-					sustainLevel: 1,
-					releaseTime: gateRelease.max(0.005),
-					curve: \sine
-				),
-				gate: gate,
-				doneAction: 0
-			);
-
-			/*
-   Écriture circulaire.
-   */
-			writePos = Phasor.ar(
-				trig: 0,
-				rate: 1,
-				start: 0,
-				end: frames,
-				resetPos: 0
-			);
-
-			RecordBuf.ar(
-				inputArray: input,
-				bufnum: localBuffer,
-				offset: writePos,
-				recLevel: smoothRecLevel,
-				preLevel: smoothPreLevel,
-				run: 1,
-				loop: loopRec,
-				trigger: 1,
-				doneAction: 0
-			);
-
-			/*
-   Deux têtes de lecture déphasées d'une demi-fenêtre.
-   */
-			phaseA = Phasor.ar(
-				trig: 0,
-				rate: 1 - pitchRatio,
-				start: 0,
-				end: frames,
-				resetPos: 0
-			);
-
-			phaseB = (
-				phaseA + (frames * 0.5)
-			).wrap(0, frames);
-
-			/*
-   Distance de sécurité exprimée en secondes.
-
-   La valeur est limitée à un quart du buffer pour éviter une distance
-   excessive lorsque durSample est très court.
-   */
-			safetySamples = (
-				SampleRate.ir * readSafety.max(0.001)
-			).min(frames * 0.25);
-
-			readPosA = (
-				writePos - phaseA - safetySamples
-			).wrap(0, frames);
-
-			readPosB = (
-				writePos - phaseB - safetySamples
-			).wrap(0, frames);
-
-			/*
-   Fenêtres de Hann complémentaires.
-
-   Elles diminuent progressivement une tête pendant que l'autre
-   devient audible.
-   */
-			winA = 0.5 - (
-				0.5 * cos(2pi * phaseA / frames)
-			);
-
-			winB = 0.5 - (
-				0.5 * cos(2pi * phaseB / frames)
-			);
-
-			sigA = HPbufRd.ar(
-				1,
-				localBuffer,
-				readPosA,
-				seuil: smoothHP1,
-				sensibilite: smoothHP2,
-				interp: 4
-			) * winA;
-
-			sigB = HPbufRd.ar(
-				1,
-				localBuffer,
-				readPosB,
-				seuil: smoothHP1,
-				sensibilite: smoothHP2,
-				interp: 4
-			) * winB;
-
-			/*
-   Traitement final.
-
-   LeakDC est placé avant et après les filtres pour éliminer les
-   composantes continues éventuelles.
-   */
-			signal = LeakDC.ar(sigA + sigB);
-			signal = HPF.ar(signal, 10);
-			signal = LPF.ar(signal, 12544);
-			signal = LeakDC.ar(signal);
-
-			/*
-   Protection des transitoires très courts.
-
-   Limiter ajoute une petite latence correspondant à sa durée de
-   regard en avant, ici 5 ms.
-   */
-			signal = Limiter.ar(
-				signal,
-				limiterLevel.clip(0.1, 1),
-				0.005
-			);
-
-			signal = signal
-			* mainEnvelope
-			* safetyEnvelope
-			* smoothAmp;
-
-			Out.ar(out, signal);
-		}).add;*/
-
 		SynthDef("BufRdRFPostBuf",
 			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line, writeOld, writeSignal,safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -6763,16 +6457,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6790,23 +6490,29 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal,  line, safety;
 				// Normalize
 				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6824,7 +6530,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal, line, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -6833,16 +6539,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6859,7 +6571,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, writeOld, writeSignal, safety;
 				var formantfreqs, formantamps, formantbandwidths; //data for formants
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
@@ -6872,16 +6584,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6899,7 +6617,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal, line, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -6908,16 +6626,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6935,7 +6659,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, writeOld, writeSignal, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -6944,16 +6668,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - 1), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -6967,53 +6697,31 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 
 		/////////////////////// SAMPLER STREAM POSTBUFFER//////////////////////////
 
-		/*SynthDef("BufRdStreamPostBuf",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Set play and rec head pour recording
-				recHead = Phasor.ar(0, 1, 0, BufFrames.kr(buffer));
-				playHead = if(rate <= 1, Phasor.ar(0, rate, BufFrames.kr(buffer) * offset,  recHead, BufFrames.kr(buffer) * offset),
-					// rate > 1
-					Phasor.ar(0, rate, recHead, BufFrames.kr(buffer), recHead)
-				);
-				// RecBuffer
-				BufWr.ar(inputSig, buffer, recHead);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, playHead, seuil: ctrlHP1, sensibilite: ctrlHP2, interp: 4) * envelope * amp;
-				chain = LeakDC.ar(chain.softclip);
-				// Out
-				Out.ar(out, chain);
-		}).add;*/
-
 		SynthDef("BufRdStreamPostBuf",
 			{ arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, writeOld, writeSignal,safety;
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in,1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 64).wrap(0, frames);
-				readPosB = (writePos - phaseB - 64).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7026,7 +6734,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal, line, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -7035,16 +6743,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7061,7 +6775,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, writeOld, writeSignal, safety;
 				var formantfreqs, formantamps, formantbandwidths; //data for formants
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
@@ -7074,16 +6788,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7101,7 +6821,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal, line, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -7110,16 +6830,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7138,7 +6864,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, writeOld, writeSignal, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -7147,87 +6873,63 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - 1), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
 				sigB = HPbufRd.ar(1, buffer, readPosB, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winB;
-				chain = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
 				// Play Buffer
 				chain = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * pitchRatio, flatness, -1, energy.log2.abs, flux, interp: 4) * envelope * amp;
+				chain = LeakDC.ar(LPF.ar(HPF.ar(chain, 10), 12544));
 				// Out
 				Out.ar(out, chain);
 		}).add;
 
 		/////////////////////// SAMPLER STREAM POSTBUFFER WITH EnvGen//////////////////////////
 
-		/*SynthDef("BufRdStreamPostBufEnv",
-			{arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
-				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
-				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125;
-				var chain, inputSig, rate, recHead=0, playHead=0, envelope;
-				// Normalize
-				flux = flux.clip(0.01, 1.0);
-				flatness = flatness.clip(0.1, 0.1.0);
-				energy = (energy / 8372 * 4186).clip(50, 4186).lag(durSynth);
-				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
-				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
-				// Buffer
-				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
-				// Set FHZ
-				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
-				// Set play and rec head pour recording
-				playHead = if(rate <= 1, Phasor.ar(gate, rate, BufFrames.kr(buffer) * offset,  BufFrames.kr(buffer), BufFrames.kr(buffer) * offset),
-					// rate > 1
-					Phasor.ar(gate, rate, recHead, BufFrames.kr(buffer), BufFrames.kr(buffer) * offset)
-				);
-				recHead = if(rate <= 1, Phasor.ar(0, 1, 0, BufFrames.kr(buffer)),
-					// rate > 1
-					Phasor.ar(0, 1, 0, playHead);
-				);
-				// RecBuffer
-				BufWr.ar(inputSig, buffer, recHead);
-				// Envelope
-				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
-				// Play Buffer
-				chain = HPbufRd.ar(1, buffer, playHead, 1, seuil: ctrlHP1, sensibilite: ctrlHP2, interp: 4) * envelope * amp;
-				// Out
-				Out.ar(out, chain);
-		}).add;*/
-
 		SynthDef("BufRdStreamPostBufEnv",
 			{ arg in=0, out=0, buffer, gate=1, loop=1, offset=0, reverse=1,
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, writeOld, writeSignal,safety;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7240,7 +6942,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal, line, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -7250,16 +6952,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7276,7 +6984,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, writeOld, writeSignal, safety;
 				var formantfreqs, formantamps, formantbandwidths; //data for formants
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
@@ -7290,16 +6998,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7317,7 +7031,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, line;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain,  writeOld,  writeSignal,  line, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -7327,16 +7041,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7354,7 +7074,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, chain, writeOld, writeSignal, safety;
 				// Normalize
 				flux = flux.clip(0.001, 1.0).lag(durSynth);
 				flatness = flatness.clip(0.001, 1.0).lag(durSynth);
@@ -7364,16 +7084,22 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				buffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - 1), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7392,21 +7118,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7428,21 +7160,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7464,21 +7202,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7500,21 +7244,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7536,21 +7286,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=1,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, amp, 0, dur, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7574,21 +7330,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7610,21 +7372,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7646,21 +7414,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7682,21 +7456,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7718,21 +7498,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(postBuffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7756,24 +7542,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7795,24 +7587,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7834,24 +7632,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7873,24 +7677,30 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				freq=440, amp=0, dur=1, durSynth=1.0, durSample=0.02,
 				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, ctrlHP1=0.5, ctrlHP2=0.5, level1=1, level2=0,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,  envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loopRec=1;
-				var chain, postBuffer, rate, in1, in2, fft1, fft2;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0;
+				var chain,  writeOld,  writeSignal,  postBuffer, rate, in1, in2, fft1, fft2;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, safety;
 				// Normalize
 				flux = flux.clip(0.01, 1.0);
 				gate = Trig1.kr(Impulse.kr(flux * 100), dur);
 				rate = pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse, 0.015);
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
 				frames = BufFrames.kr(buffer);
-				input = In.ar(in,1);
+				input = LeakDC.ar(In.ar(in, 1));
 				// Envelope
 				envelope = EnvGen.kr(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7], 'sine'), gate, 1, 0, durSynth.max(1), 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, postBuffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loopRec);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, postBuffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;
@@ -7920,7 +7730,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				centroid = (centroid / 12544 * 8372).clip(50, 8372).lag(durSynth);
 				// Buffer
 				postBuffer = LocalBuf(s.sampleRate * durSample, 1).clear;
-				inputSig = In.ar(in);
+				inputSig = LeakDC.ar(In.ar(in, 1));
 				// Set FHZ
 				rate = 2**((freq.cpsmidi - 48).midicps).cpsoct * reverse;
 				// Set play and rec head pour recording
@@ -10081,42 +9891,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				trig = Impulse.kr(bpm);
 				RecordBuf.ar(in, buffer, Saw.kr(energy).abs, trigger: trig);
 				chain = Convolution2.ar(in, buffer, trig, 1024) * envelope;
-				// Out
-				XOut.ar(out, xFade, chain);
-		}).add;
-
-		// PV_MagStretch
-		SynthDef('PV_MagStretch',
-			{arg in=0, out=0, gate=0.5, xFade=0.5,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
-				var chain, envelope;
-				in = In.ar(in);
-				// Envelope
-				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				// Normalize
-				flux = flux.clip(0.01, 1.0).lag(durSynth);
-				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(1024, 1), in);
-				chain = PV_MagShift(chain, flatness.log.abs.clip(0.25, 4));
-				chain= IFFT(chain) * envelope;
-				// Out
-				XOut.ar(out, xFade, chain);
-		}).add;
-
-		// PV_MagStretch
-		SynthDef('PV_MagShift+Stretch',
-			{arg in=0, out=0, gate=0.5, xFade=0.5,
-				flux=0.5, flatness=0.5, centroid=440, energy=440, bpm=1, durSynth;
-				var chain, envelope;
-				in = In.ar(in);
-				// Envelope
-				envelope = EnvGen.kr(Env.cutoff(1), gate, doneAction: Done.freeSelf);
-				// Normalize
-				flux = flux.clip(0.01, 1.0).lag(durSynth);
-				flatness = flatness.clip(0.01, 1.0).lag(durSynth);
-				chain = FFT(LocalBuf(1024, 1), in);
-				chain = PV_MagShift(chain, flatness.log.abs.clip(0.25, 4), flux - 0.5 * 128);
-				chain= IFFT(chain) * envelope;
 				// Out
 				XOut.ar(out, xFade, chain);
 		}).add;

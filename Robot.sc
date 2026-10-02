@@ -7642,35 +7642,80 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, buseffetsPre, buseffetsPost, ampPre, ampPost, byPass, amp, out);
 			}).send(s);
 
-			SynthDef("HPbufRdLive",
-				{
-					arg out=0,  buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0, ampPre=0, ampPost=0, byPass = 1,  panLo=0, panHi=0, pos=0,  trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0, wavetable, wavetable2=0,  buffer, buffer2,  gate=1, controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0, controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33, controlenvlevel7=0.1, controlenvlevel8=0, controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25, controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75, controlenvtime7=1.0, controls = #[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], in=0, level1=1, level2=0;
-					// liste des variables (identique pour chaque sample !!!!!)
-					var main, envelope, dureesample, ambisonic;
-					var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, pitchRatio=1.0, buf;
-					input = In.ar(in, 1);
-					buf = LocalBuf(s.sampleRate * BufDur.kr(buffer), 1);
-					frames = BufFrames.kr(buf);
-					// Set Rate Freq
-					pitchRatio=2**freqRate.cpsoct;
-					dureesample=BufDur.kr(buffer)/pitchRatio;dureesample=dureesample+(loop*(duree-dureesample));dureesample=clip2(duree,dureesample);
-					pitchRatio=pitchRatio * reverse;
-					// Envelope
-					envelope = EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
-					writePos = Phasor.ar(0, 1, 0, frames);
-					//BufWr.ar(input, buffer, writePos);
-					RecordBuf.ar(input, buf, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: 1);
-					phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
-					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-					readPosA = (writePos - phaseA - 128).wrap(0, frames);
-					readPosB = (writePos - phaseB - 128).wrap(0, frames);
-					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
-					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
-					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: 1, sensibilite: 1, interp:4) * winA;
-					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: 1, sensibilite: 1, interp:4) * winB;
-					main = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
-					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, buseffetsPre, buseffetsPost, ampPre, ampPost, byPass, amp, out);
-			}).send(s);
+			SynthDef("HPbufRdLive", {
+    arg out=0, buseffetsPre, buseffetsPost, freq=0, freqRate=0, amp=0,
+        ampPre=0, ampPost=0, byPass=1, panLo=0, panHi=0, pos=0,
+        trigger=1, duree=1.0, loop=0, reverse=0, loop2=0, reverse2=0,
+        wavetable, wavetable2=0, buffer, buffer2, gate=1,
+        controlenvlevel1=0, controlenvlevel2=0.3, controlenvlevel3=1.0,
+        controlenvlevel4=0.75, controlenvlevel5=0.5, controlenvlevel6=0.33,
+        controlenvlevel7=0.1, controlenvlevel8=0,
+        controlenvtime1=0.001, controlenvtime2=0.01, controlenvtime3=0.25,
+        controlenvtime4=0.33, controlenvtime5=0.5, controlenvtime6=0.75,
+        controlenvtime7=1.0, controls=#[0,0,0,0,0,0,0,0,0,0],
+        in=0, level1=1, level2=0;
+
+    var main, envelope, dureesample, ambisonic;
+    var frames, input, writePos, phaseA, phaseB, readPosA, readPosB;
+    var winA, winB, sigA, sigB, pitchRatio, pitchBase, buf;
+    var recLevel, preLevel, safety, startup;
+    var writeOld, writeSignal;
+
+    input = LeakDC.ar(In.ar(in, 1));
+    buf = LocalBuf((SampleRate.ir * BufDur.kr(buffer).max(0.02)).ceil, 1).clear;
+    frames = BufFrames.kr(buf).max(64);
+
+    pitchBase = (2 ** freqRate.cpsoct).max(0.0001);
+    dureesample = BufDur.kr(buffer) / pitchBase;
+    dureesample = dureesample + (loop * (duree - dureesample));
+    dureesample = clip2(duree, dureesample).max(0.001);
+    pitchRatio = Lag.kr(pitchBase * reverse, 0.03);
+
+    recLevel = Lag.kr(level1, 0.02);
+    preLevel = Lag.kr(level2, 0.02);
+
+    envelope = EnvGen.ar(
+        Env.new(
+            [controlenvlevel1, controlenvlevel2, controlenvlevel3, controlenvlevel4,
+             controlenvlevel5, controlenvlevel6, controlenvlevel7, controlenvlevel8],
+            [controlenvtime1, controlenvtime2, controlenvtime3, controlenvtime4,
+             controlenvtime5, controlenvtime6, controlenvtime7].normalizeSum,
+            \sine
+        ),
+        1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2
+    );
+
+    writePos = Phasor.ar(0, 1, 0, frames);
+    // BufWr explicite : overdub equivalent a RecordBuf.
+    writeOld = BufRd.ar(1, buf, writePos, loop: 1, interpolation: 1);
+    writeSignal = (input * recLevel) + (writeOld * preLevel);
+    BufWr.ar(writeSignal, buf, writePos, loop: 1);
+
+    // V2 : marge dynamique selon la vitesse de lecture.
+    safety = (
+        128 + (pitchRatio.abs * BlockSize.ir)
+    ).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+    phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
+    phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+    readPosA = (writePos - phaseA - safety).wrap(0, frames);
+    readPosB = (writePos - phaseB - safety).wrap(0, frames);
+    winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+    winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+
+    // Lecture dans le buffer local qui recoit effectivement l'entree.
+    sigA = HPbufRd.ar(1, buf, readPosA, seuil: 1, sensibilite: 1, interp: 4) * winA;
+    sigB = HPbufRd.ar(1, buf, readPosB, seuil: 1, sensibilite: 1, interp: 4) * winB;
+
+    startup = Line.kr(
+        0, 1,
+        BufDur.kr(buf).min(0.05).max(safety / SampleRate.ir).max(0.005)
+    );
+    main = LeakDC.ar(LPF.ar(HPF.ar(LeakDC.ar(sigA + sigB), 10), 12544)) * startup;
+    main = Limiter.ar(main, 0.99, 0.003);
+
+    foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic,
+        buseffetsPre, buseffetsPost, ampPre, ampPost, byPass, amp, out);
+}).send(s);
 
 			SynthDef("PV_BinScramble",
 				{

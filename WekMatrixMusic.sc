@@ -6767,7 +6767,7 @@ Preset Wek",
 				ctrl1=0.25, ctrl2=0.25, ctrl3=0.25, ctrl4=0.25, ctrl5=0.25, ctrl6=0.25, ctrl7=0.25, ctrl8=0.25, ctrl9=0.25, ctrl10=0.25, ctrl11=0.25, ctrl12=0.25,
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, mode=0, gate=1, level1=1, level2=0, loop=1;
-				var chain, buffer, frames, ambisonic, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope,  pitchRatio=1.0;
+				var chain, buffer, frames, ambisonic, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope,  pitchRatio=1.0, writeOld, writeSignal, safety;
 				// Set FHZ
 				pitchRatio = Lag.kr(2 ** ((freq.cpsmidi - 48).midicps).cpsoct * reverse1, 0.015);
 				// Set AMP
@@ -6778,12 +6778,18 @@ Preset Wek",
 				// Set input
 				input =  In.ar(busIn, 1);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				/*BufWr.ar(input, buffer, writePos);*/
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: loop);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: ctrlHP1, sensibilite: ctrlHP2, interp:4) * winA;

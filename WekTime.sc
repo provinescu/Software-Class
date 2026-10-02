@@ -4958,7 +4958,7 @@ Preset Wek",
 				envLevel1=0.0, envLevel2=1.0, envLevel3=1.0, envLevel4=0.75, envLevel5=0.75, envLevel6=0.5, envLevel7=0.5, envLevel8=0.0,
 				envTime1=0.015625, envTime2=0.109375, envTime3=0.25, envTime4=0.25, envTime5=0.125, envTime6=0.125, envTime7=0.125, loop=0,
 				oscFreq, oscAmp, oscDuree, oscTempo, oscFlux, oscFlatness, oscEnergy, oscCentroid, hp1=0.5, hp2=0.5, level1=1, level2=0, in=0;
-				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, trig=0;
+				var frames, input, writePos, phaseA, phaseB, readPosA, readPosB, winA, winB, sigA, sigB, envelope, pitchRatio=1.0, trig=0, writeOld, writeSignal,safety;
 				pitchRatio = Lag.kr(rate, 0.015);
 				frames = BufFrames.kr(buffer);
 				input = In.ar(in,1);
@@ -4966,12 +4966,18 @@ Preset Wek",
 				// Envelope
 				envelope = EnvGen.ar(Env.new([envLevel1,envLevel2,envLevel3,envLevel4,envLevel5,envLevel6,envLevel7,envLevel8],[envTime1,envTime2,envTime3,envTime4,envTime5,envTime6,envTime7],'sine'), 1.0, amp, 0, duree, 2);
 				writePos = Phasor.ar(0, 1, 0, frames);
-				//BufWr.ar(input, buffer, writePos);
-				RecordBuf.ar(input, buffer, offset: writePos, recLevel: level1, preLevel: level2, run: 1, loop: 1, trigger: trig);
-				phaseA = Phasor.ar(0, (1 - pitchRatio), 0, frames);
+				// BufWr explicite avec conservation du comportement loopRec.
+				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+				writeSignal = (input * level1) + (writeOld * level2);
+				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+				// V2 : marge dynamique selon la vitesse de lecture.
+				safety = (
+					128 + (pitchRatio.abs * BlockSize.ir)
+				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
 				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - 128).wrap(0, frames);
-				readPosB = (writePos - phaseB - 128).wrap(0, frames);
+				readPosA = (writePos - phaseA - safety).wrap(0, frames);
+				readPosB = (writePos - phaseB - safety).wrap(0, frames);
 				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
 				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 				sigA = HPbufRd.ar(1, buffer, readPosA, seuil: hp1, sensibilite: hp2, interp:4) * winA;
