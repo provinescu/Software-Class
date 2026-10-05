@@ -933,7 +933,7 @@ G                       Init Genome Agent (solo).
 			~root = 0;
 			~scale = Scale.new(((~degrees + ~root)%~tuning.size).sort, ~tuning.size, ~tuning);
 			~flagScaling = 'off';
-			~flagAlgoAnalyze == 0;
+			~flagAlgoAnalyze = 0;
 			flagVST = 'off';
 
 			//////////////////////////////////////////////////////////
@@ -2917,7 +2917,7 @@ G                       Init Genome Agent (solo).
 					~listeagentfreq.wrapPut(agent, []);~listeagentamp.wrapPut(agent, []);~listeagentduree.wrapPut(agent, []);~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset;
 					~flagCompteurPlayingAgents.wrapPut(agent, 0);~flagplayagent.wrapPut(agent, 'new')})});
 			// Choose Algo (Default / Probabilite / Kohonen / ...)
-			if(~flagGeneAlgorithm == 'on', {numAlgo = (~genomes.wrapAt(agent).wrapAt(45).value * 4).floor; sourceAlgorithm = ~listeAlgorithm.wrapAt(numAlgo)},{sourceAlgorithm = ~algoMusic.value});
+			if(~flagGeneAlgorithm == 'on', {numAlgo = (~genomes.wrapAt(agent).wrapAt(45).value * (~listeAlgorithm.size - 1)).floor; sourceAlgorithm = ~listeAlgorithm.wrapAt(numAlgo)},{sourceAlgorithm = ~algoMusic.value});
 			if(~listeagentfreq.wrapAt(agent) != [] and: ~listeagentamp.wrapAt(agent) != [] and: ~listeagentduree.wrapAt(agent) != [],
 				{
 					switch(sourceAlgorithm,

@@ -410,7 +410,7 @@ Score Commandes:
 				wScore.front;
 				wScore.view.children.at(num.value).focus;
 				wScore.front;
-			}.defer(2);
+			}.defer(4);
 		};
 
 		wScore.view.children.at(5).valueAction_(1);
