@@ -110,8 +110,8 @@ LauncherTR {
 		NumberBox(w, 200@20).value_(o).action_{arg ez; o = ez.value.asInteger};
 
 		//name = "Robot";
-		nameSoft = "Robot";
-		path = "~/Documents/Robot/";
+		nameSoft = "AgentsTR";
+		path = "~/Documents/Agents/";
 
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
