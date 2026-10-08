@@ -2287,7 +2287,7 @@ Preset Wek",
 					});
 					~duree.wrapAt(i).wait;
 				});
-			});
+			}).quant_(Quant(~quantization.wrapAt(i).reciprocal));
 			);
 		});
 

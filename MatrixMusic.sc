@@ -2514,12 +2514,14 @@ y ... -						Musical keys.
 				// Key d -> Synchro Synthesizer
 				if(char == $d, {
 					if(startSystem.value == 1, {
+						s.bind{
 						listeGroupeSynth.do({arg synth, index;
 							if(listeWindowSynth.at(index).view.children.at(0).value == 1, {
 								listeWindowSynth.at(index).view.children.at(0).valueAction_(0);
 								listeWindowSynth.at(index).view.children.at(0).valueAction_(1);
 							});
 						});
+						};
 					});
 				});
 				// Key P -> Play all Synth
@@ -5524,7 +5526,7 @@ y ... -						Musical keys.
 									});
 									dureeTdef.wait;
 								});
-							});
+							}).quant_(Quant(quanta.reciprocal));
 						},
 						// Mode OnFly1
 						{

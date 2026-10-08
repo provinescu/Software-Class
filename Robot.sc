@@ -2271,7 +2271,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					});
 					~duree.wrapAt(i).wait;
 				});
-			});
+			}).quant_(Quant(~quantization.wrapAt(i).reciprocal));
 			);
 		});
 

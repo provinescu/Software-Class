@@ -5,7 +5,7 @@ WekAgents {
 
 	classvar  < s;
 
-	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP, nom, foncSynthOut, foncFXOut, foncVerbOut, scAdr, udpAdr;
+	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP, nom, foncVerbOut, scAdr, udpAdr;
 
 	*new	{arg path="~/Documents/WekAgents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448, wekPort=57120, scPort=57110;
 
@@ -3641,6 +3641,7 @@ Preset Wek",
 				flagDead='off';
 				// Evaluation des agents et traitement....
 				// Phase 1 update Time-Vie
+				s.bind{
 				~agents.do({arg agent; var elapsedTime;
 					~signaux.wrapPut(agent, []);
 					~voisins.wrapPut(agent, []);
@@ -3710,6 +3711,7 @@ Preset Wek",
 				// Test si silence
 				if((time - ~lastTimeAnalyse) > ~tempsmaxsignal,
 					{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~compteurAnalyse=0});
+				};
 				(~tempoagents.value.reciprocal * ~tempoMusicPlay.tempo).wait;
 			});
 		});
@@ -7850,7 +7852,7 @@ Preset Wek",
 
 		if(flag == true, {
 
-			foncSynthOut = {arg main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb;
+			~foncSynthOut = {arg main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb;
 				// Switch Audio Out
 					main = if(~switchAudioOut == 0,
 						if(~flagMC == 0,
@@ -7876,7 +7878,7 @@ Preset Wek",
 					Out.ar(out, main * amp * ampreal);
 			};
 
-			foncFXOut = {arg effet, pan, ambisonic, busverb, out;
+			~foncFXOut = {arg effet, pan, ambisonic, busverb, out;
 				// Switch Audio Out
 					effet = if(~switchAudioOut == 0,
 						// Pan
@@ -8247,7 +8249,7 @@ Preset Wek",
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop);
-					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PlayBuf2",
@@ -8264,7 +8266,7 @@ Preset Wek",
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=PlayBuf.ar(1, buffer,  BufRateScale.kr(buffer) * rate, Impulse.kr(controlF * 100), BufFrames.kr(buffer)*offset, loop);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("TGrains",
@@ -8281,7 +8283,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=Mix(TGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp, interp: 4));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("BufRd",
@@ -8298,7 +8300,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=BufRd.ar(1,buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), loop, 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("BufRd2",
@@ -8317,7 +8319,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					offset2 = (controlF+controlA).clip(0, 1);
 					main=BufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("GrainBuf",
@@ -8334,7 +8336,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					offset = if(offset <= 0, Logistic.kr(controlD*4, 1, Rand(0, 1)), offset);
 					main=GrainBuf.ar(1, Dust.kr(100*controlF), controlA*0.1, buffer, BufRateScale.kr(buffer) * rate, offset, 4, 0, -1, 512);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("LoopBuf",
@@ -8350,7 +8352,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=LoopBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate,  1, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlF, BufFrames.kr(buffer)*controlA, interpolation: 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBuf",
@@ -8367,7 +8369,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("DelayHarmonic",
@@ -8388,7 +8390,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					envDel = SinOsc.ar(rate, [3pi/2, pi/2]).range(0, 1).sqrt;
 					del = DelayC.ar(inputSig, maxDel, phase) * envDel;
 					main = del.sum;
-					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBufMedianLeakDC",
@@ -8405,7 +8407,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					//offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = LeakDC.ar(Median.ar(controlF * 30 + 1, HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2)), controlA);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBufVibrato",
@@ -8438,7 +8440,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main=Mix(HPtGrains.ar(2, Impulse.kr(controlF*100), buffer, BufRateScale.kr(buffer) * rate, BufDur.kr(buffer)*offset, (duree*controlD)/(controlF*100), 0.0, amp, antiClick1, antiClick2, interp: 4));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPbufRd",
@@ -8455,7 +8457,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					offset = if(controlF.value <= 0.01 , offset, Logistic.kr(controlF*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPbufRd.ar(1, buffer,Phasor.ar(0, BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*controlA, BufFrames.kr(buffer)*controlD), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2, 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPplayBuf2",
@@ -8472,7 +8474,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					// Main Synth
 					main = HPplayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, Impulse.kr(controlF*100), BufFrames.kr(buffer)*offset, loop, antiClick1, antiClick2);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPbufRd2",
@@ -8490,7 +8492,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					offset = if(controlA.value <= 0.01 , offset, Logistic.kr(controlA*4, 1, Rand(0, 1)));
 					offset2 = if(controlD.value <= 0.01 , Rand(0, 1), Logistic.kr(controlD*4, 1, Rand(0, 1)));
 					main = HPbufRd.ar(1,buffer, Phasor.ar(Impulse.kr(controlF*100), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)*offset, BufFrames.kr(buffer)*offset2, BufFrames.kr(buffer)*controlF), BufRateScale.kr(buffer) * rate, loop, antiClick1, antiClick2, 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("HPbufRdLive",
@@ -8528,7 +8530,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: antiClick1, sensibilite: antiClick2, interp:4) * winA;
 					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: antiClick1, sensibilite: antiClick2, interp:4) * winB;
 					main = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));
-					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SampleResonz",
@@ -8545,7 +8547,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(rate.abs >= 1.0 , main=Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), main=Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Synthesizer",
@@ -8564,7 +8566,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					freq = freq.clip(20, 12544);
 					osc = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+27.5, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+27.5, freq, duree*controlD), 0.333));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PlayBufSquiz",
@@ -8580,7 +8582,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Squiz.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 10, controlA * 10);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("WaveLoss",
@@ -8596,7 +8598,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=WaveLoss.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 40, 40, abs(controlA*2-1));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("FreqShift",
@@ -8612,7 +8614,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(FreqShift.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), controlF * 1024 - 512, controlA * 2pi));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PitchShift",
@@ -8628,7 +8630,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(PitchShift.ar(PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset, loop), 0.2, controlF*4, controlA, controlD, 1));
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Warp1",
@@ -8647,7 +8649,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					//main = PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer), 1);
 					//RecordBuf.ar(main, buffer, 0, 1, 0);
 					main = Warp1.ar(1, buffer, offset, BufRateScale.kr(buffer) * rate, controlF + 0.01, -1, controlA * 15 + 1, controlD, interp: 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Warp0",
@@ -8664,7 +8666,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					//main = Warp0.ar(1, buffer, 1, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 7 + 1);
 					main = Warp1.ar(1, buffer, controlD, BufRateScale.kr(buffer) * rate, controlF * duree / 2, -1, controlA * 15 + 1, interp: 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			/////////////////// SynthDef with PV ////////////////////
@@ -8685,7 +8687,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagShift",
@@ -8704,7 +8706,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_LocalMax",
@@ -8723,7 +8725,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagSmear",
@@ -8742,7 +8744,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RandComb",
@@ -8761,7 +8763,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BinShift",
@@ -8780,7 +8782,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BinScramble",
@@ -8799,7 +8801,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BrickWall",
@@ -8818,7 +8820,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_ConformalMap",
@@ -8837,7 +8839,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Diffuser",
@@ -8856,7 +8858,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagAbove",
@@ -8875,7 +8877,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagBelow",
@@ -8894,7 +8896,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
-					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagClip",
@@ -8913,7 +8915,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagNoise",
@@ -8932,7 +8934,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagSquared",
@@ -8951,7 +8953,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.01;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RectComb",
@@ -8970,7 +8972,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagSmooth",
@@ -8989,7 +8991,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Compander",
@@ -9008,7 +9010,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_SpectralEnhance",
@@ -9027,7 +9029,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_SpectralEnhance(main, (controlF*8+0.5).floor, controlA*4+1, controlD);
 					main= IFFT(main) * 0.125;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagStretch",
@@ -9046,7 +9048,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4));
 					main= IFFT(main) * 0.125;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagShift+Stretch",
@@ -9065,7 +9067,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF.clip(0.25, 4), controlA - 0.5 * 128);
 					main= IFFT(main) * 0.125;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Cutoff",
@@ -9084,7 +9086,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Cutoff(main, controlF * 2 - 1);
 					main= IFFT(main) * 0.125;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Max",
@@ -9105,7 +9107,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Min",
@@ -9126,7 +9128,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_MagDiv",
@@ -9147,7 +9149,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Mul",
@@ -9168,7 +9170,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.1;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Div",
@@ -9189,7 +9191,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Div(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Add",
@@ -9210,7 +9212,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RandWipe",
@@ -9231,7 +9233,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_BinWipe",
@@ -9252,7 +9254,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_CopyPhase",
@@ -9273,7 +9275,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_RectComb2",
@@ -9294,7 +9296,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("PV_Morph",
@@ -9315,7 +9317,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Convolution",
@@ -9334,7 +9336,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					in2=PlayBuf.ar(1,buffer2,BufRateScale.kr(buffer2) * rate, 0, BufFrames.kr(buffer2)*0,loop);
 					main=Convolution.ar(in1, in2, 1024) * 0.1;
 					//main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			///////////////// SYNTH ////////////////////
@@ -9348,7 +9350,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main= SinOsc.ar(freq, 0, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("FMsynth",
@@ -9360,7 +9362,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = SinOsc.ar(freq+SinOsc.ar(500*controlF, mul:1000*controlA), 0, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SawSynth",
@@ -9374,7 +9376,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					freq = freq.clip(20,12544);
 					main = Saw.ar(freq, 0.5);
 					main = RHPF.ar(main, Line.kr(controlF*4000, freq, duree*controlD), controlA, 0.5, RLPF.ar(main, Line.kr(controlF*2000, freq, duree*controlD), controlA));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SinOscVibrato",
@@ -9386,7 +9388,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = SinOsc.ar(SinOsc.kr(controlF*16, mul: Line.kr(0, controlA*100, controlD*duree), add: freq), 0, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Formant",
@@ -9398,7 +9400,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					main = Formant.ar(freq, LFNoise0.kr(controlD.reciprocal)*(controlA*127).midicps, LFNoise0.kr(duree.reciprocal)*(controlF*127).midicps, 0.5);
 					// main = Limiter.ar(main, 0.33, 0.01);
-					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Guitare",
@@ -9411,7 +9413,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					// Synth Guitare
 					pluck = BrownNoise.ar(Decay.kr(HPZ1.kr(Impulse.kr(duree*controlF*24)), controlA));
 					main = CombL.ar(pluck, freq.reciprocal, freq.reciprocal, duree);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Klang",
@@ -9423,7 +9425,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Guitare
 					main = Klang.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], freq);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Klank",
@@ -9435,7 +9437,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = DynKlank.ar(`[[controlF, controlA, controlD] * 4186 + 32.703195662575, [amp / 3, amp / 3, amp / 3], nil], Dust2.ar(duree.reciprocal * 100), freq);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Klank2",
@@ -9447,7 +9449,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = DynKlank.ar(`[[Rand(32.7, 4186), Rand(32.7, 4186), Rand(32.7, 4186)] * controlF, [amp / 3, amp / 3, amp / 3], nil], Impulse.ar(duree.reciprocal * controlD * 64), freq);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Blip",
@@ -9459,7 +9461,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Blip.ar(freq, Line.kr(50 * controlF + 1,50 * controlA + 1, duree * controlD), 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Pulse",
@@ -9471,7 +9473,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Pulse.ar(freq, controlF, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("VarSaw",
@@ -9483,7 +9485,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = VarSaw.ar(freq, controlF, controlA, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Gendy3",
@@ -9495,7 +9497,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth
 					main = Gendy3.ar(controlF * 6, 4, controlA * 0.1, controlD * 0.1, freq, controlA * 0.1, controlD * 0.1, mul: 0.25);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Spring",
@@ -9514,7 +9516,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					outforce = outforce * freq + freq;
 					//main = SinOsc.ar(freq, 0, 0.5);
 					main = PMOsc.ar(freq, outforce, Line.kr(0, duree * 2pi), 0, 0.25);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			///////////////// SYNTHDEF PIANO//////
@@ -9528,7 +9530,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Synth Piano
 					main = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Synthesizer",
@@ -9545,7 +9547,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					freq = freq.clip(20,12544);
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					if(freq < 64.5.midicps , main = RLPF.ar(osc, XLine.ar(63.5.midicps*controlF+55, freq, duree*controlD), 0.333), main = RHPF.ar(osc, XLine.ar(127.midicps*controlA+55, freq, duree*controlD), 0.333));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Resonz",
@@ -9561,7 +9563,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					// Main Synth
 					osc = Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8)));
 					main = if(rate.abs >= 1.0 , Resonz.ar(osc, XLine.ar(127.midicps*controlF+24.midicps, 55*controlA + 24.midicps, duree*controlD)), Resonz.ar(osc, XLine.ar(55*controlF+24.midicps, 127.midicps*controlA + 24.midicps, duree*controlD)));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Squiz",
@@ -9576,7 +9578,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Squiz.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF * 10, controlA * 10);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano WaveLoss",
@@ -9591,7 +9593,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=WaveLoss.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF* 40, 40, abs(controlF*2-1));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano FreqShift",
@@ -9606,7 +9608,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(FreqShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), controlF * 1024 - 512, controlA * 2pi));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PitchShift",
@@ -9621,7 +9623,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: duree, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main=Mix(PitchShift.ar(Mix(MdaPiano.ar(freq, gate: 1, vel: 127 * amp, hard: amp.min(0.8))), 0.2, controlF*4, controlA, controlD, 1));
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			/////////////////// SynthDef PIANO with PV ////////////////////
@@ -9644,7 +9646,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_HPshiftDown(main, controlF*32);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagShift",
@@ -9665,7 +9667,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagShift(main, controlF * 4, controlA * 128 - 64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_LocalMax",
@@ -9686,7 +9688,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_LocalMax(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagSmear",
@@ -9707,7 +9709,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmear(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RandComb",
@@ -9728,7 +9730,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RandComb(main, controlF,  LFNoise2.kr(controlA*64));
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BinShift",
@@ -9749,7 +9751,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinShift(main, controlF*4,  controlA*256 - 128);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BinScramble",
@@ -9770,7 +9772,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BinScramble(main, controlF,  controlA, LFNoise2.kr(controlD.reciprocal));
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BrickWall",
@@ -9791,7 +9793,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_BrickWall(main, controlF*2 - 1);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_ConformalMap",
@@ -9812,7 +9814,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_ConformalMap(main, controlF*2 - 1, controlA*2 - 1);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Diffuser",
@@ -9833,7 +9835,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Diffuser(main, Trig1.kr(LFNoise2.kr(controlF*100), (controlA*100).reciprocal));
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagAbove",
@@ -9854,7 +9856,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagAbove(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagBelow",
@@ -9875,7 +9877,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagBelow(main, controlF*64);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagClip",
@@ -9896,7 +9898,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagClip(main, controlF*16);
 					main= IFFT(main);
-					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagNoise",
@@ -9917,7 +9919,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagNoise(main);
 					main= IFFT(main);
-					foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagSquared",
@@ -9938,7 +9940,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSquared(main);
 					main= IFFT(main) * 0.1;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RectComb",
@@ -9959,7 +9961,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_RectComb(main, controlF * 32, controlA, controlD);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagSmooth",
@@ -9980,7 +9982,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_MagSmooth(main, controlF);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Compander",
@@ -10001,7 +10003,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = FFT(LocalBuf(1024, 1), main);
 					main = PV_Compander(main, 80*controlF.clip(0.1, 1), (controlA*5).clip(2, 5), controlD);
 					main= IFFT(main);
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Max",
@@ -10024,7 +10026,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Max(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Min",
@@ -10047,7 +10049,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Min(fft1, fft2);
 					main=IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_MagDiv",
@@ -10070,7 +10072,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_MagDiv(fft1, fft2, controlF+0.0001);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Mul",
@@ -10093,7 +10095,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Mul(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Add",
@@ -10116,7 +10118,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Add(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RandWipe",
@@ -10139,7 +10141,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RandWipe(fft1, fft2, controlF, LFNoise2.kr(controlA.reciprocal));
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_BinWipe",
@@ -10162,7 +10164,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_BinWipe(fft1, fft2, controlF*2 - 1);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_CopyPhase",
@@ -10186,7 +10188,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_CopyPhase(fft1, fft2);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_RectComb2",
@@ -10209,7 +10211,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_RectComb2(fft1, fft2, controlF * 32, controlA, controlD);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano PV_Morph",
@@ -10232,7 +10234,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					fft2=FFT(LocalBuf(1024, 1),in2);
 					main=PV_Morph(fft1, fft2, controlF);
 					main= IFFT(main) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Piano Convolution",
@@ -10252,7 +10254,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					// Main Synth
 					in2=PlayBuf.ar(1,buffer, BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*0, loop) * amp;
 					main=Convolution.ar(in1, in2, 1024) * 0.5;
-foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Granulation1",
@@ -10273,7 +10275,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, duree, ambisonic, amp, ampreal,
 					main = BufRd.ar(1, local, Phasor.ar(0, controlF+1, 0, BufFrames.kr(local)), 1, interpolation: 4);
 					BufWr.ar(DelayC.ar(in1, 1.0, controlD/100), local, Phasor.ar(0, controlA+0.001, 0, BufFrames.kr(local)), 1);
 					// main = Limiter.ar(main+in1, 1.0, 0.01);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Granulation2",
@@ -10293,7 +10295,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					in1=PlayBuf.ar(1,buffer,BufRateScale.kr(buffer) * rate, 0, BufFrames.kr(buffer)*offset,loop);
 					main = BufRd.ar(1, local, Phasor.ar(0, controlA.neg, 0, BufFrames.kr(local)), 1, interpolation: 4);
 					BufWr.ar(in1 + main * 0.5, local, Phasor.ar(0, controlD, 0, BufFrames.kr(local)), 1);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Toupie",
@@ -10314,7 +10316,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					in2 = BufRd.ar(1, local, Phasor.ar(0, controlA+1, 0, BufFrames.kr(local)), 1, interpolation: 4);
 					main = in1 + in2 * 0.5;
 					BufWr.ar(main, local, Phasor.ar(0, controlD+0.001, 0, BufFrames.kr(local)), 1);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("Elastique",
@@ -10331,7 +10333,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = CombC.ar(main, 0.1, Line.kr(controlF.clip(0.01, 0.99)/100, controlA.clip(0.01, 0.99)/100, controlD.clip(0.01, 1.0)*dureesample), 1, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("RandElastique",
@@ -10348,7 +10350,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = CombC.ar(main, 0.1, Line.kr(Rand(controlF.clip(0.01, 0.99), controlA.clip(0.01, 0.99))/100, Rand(controlF.clip(0.01, 0.99), controlA.clip(0.01, 0.99))/100, controlD.clip(0.01, 1.0)*dureesample), 1, 0.5);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("RandKlankSample",
@@ -10365,7 +10367,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					// Main Synth
 					main = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					main = DynKlank.ar(`[[Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186),Rand(55, 4186)], 0.01, [0.16, 0.16, 0.16, 0.16, 0.16, 0.16]], main, controlF, controlD, controlA);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("DjScratch",
@@ -10381,7 +10383,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 	envelope=EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					// Main Synth
 					main = BufRd.ar(1, buffer, Phasor.ar(Dust.kr(dureesample.reciprocal), BufRateScale.kr(buffer) * rate, BufFrames.kr(buffer)* controlF, BufFrames.kr(buffer)* controlA ).lag(controlD)*LFNoise2.kr(controlD).sign, 1, interpolation: 4);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("LiquidFilter",
@@ -10404,7 +10406,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					source = PlayBuf.ar(1, buffer, BufRateScale.kr(buffer) * rate, 1.0, BufFrames.kr(buffer)*offset, loop);
 					effet= Mix(RHPF.ar(source,  formantfreqs*freq*controlF.clip(0.01, 1), formantbandwidths/(formantfreqs*freq*controlF.clip(0.01, 1.0)), 0.5));
 					main = BBandPass.ar(effet, LFNoise2.kr(controlA)+1*4186, controlD.clip(0.1, 1.0), 1);
-foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			SynthDef("SynthOnFly",
@@ -10425,7 +10427,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					local = DelayN.ar(local, 1.0, controlD);
 					LocalOut.ar(local);
 					main = local;
-					foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
+					~foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, ampreal, out, buseffets, busverb);// Out
 			}).send(s);
 
 			///////////////////////////////////////////////////////////////////
@@ -10439,7 +10441,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(CombC.ar(ineffet, 0.2, [control1/100,control2/200,control3/300,control4/400], [control5*4,control6*4,control7*4,control8*4], amp/4 * 0.6));
-					foncFXOut.value(effet, pan, ambisonic, busverb, out);
+					~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("DelayC",
@@ -10449,7 +10451,7 @@ foncSynthOut.value(main, panLo, panHi, envelope, dureesample, ambisonic, amp, am
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(DelayC.ar(ineffet, 4.0, [control1*4.0,control2*4.0,control3*4.0,control4*4.0,control5*4.0,control6*4.0,control7*4.0,control8*4.0], amp/8));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("BPF",
@@ -10459,7 +10461,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(BPF.ar(ineffet, [control1*1000+27.5,control2*1000+500,control3*1000+1000,control4*1000+1500], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("BRF",
@@ -10469,7 +10471,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(BRF.ar(ineffet,[control1*1000+27.5,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5+0.001,control6+0.001,control7+0.001,control8+0.001], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("RHPF",
@@ -10479,7 +10481,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(RHPF.ar(ineffet, [control1*4186+320.24370022528, control2*4186+320.24370022528, control3*4186+320.24370022528, control4*4186+320.24370022528], [control5, control6, control7, control8], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("RLPF",
@@ -10489,7 +10491,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(RLPF.ar(ineffet, [control1*320.24370022528+27.5, control2*320.24370022528+27.5, control3*320.24370022528+27.5, control4*320.24370022528+27.5], [control5, control6, control7, control8], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PitchShiftFX",
@@ -10499,7 +10501,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(PitchShift.ar(ineffet, 0.1,[control1, control2, control3, control4, control5, control6]*4.0, control7, control8, amp/6));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Ringz",
@@ -10509,7 +10511,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Ringz.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5*0.1,control6*0.1,control7*0.1,control8*0.1], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Formlet",
@@ -10519,7 +10521,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Formlet.ar(ineffet, [control1*300,control2*300+300,control3*300+600,control4*300+900,control5*300+1200,control6*300+1500], control7, control8, amp/6));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Resonz",
@@ -10529,7 +10531,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(Resonz.ar(ineffet, [control1*500,control2*1000+1000,control3*1000+2000,control4*1000+3000], [control5,control6, control7, control8], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("TwoPole",
@@ -10539,7 +10541,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(TwoPole.ar(ineffet, [control1*500,control2*500+500,control3*500+1000,control4*500+1500], [control5,control6,control7,control8], amp/4));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("FOS",
@@ -10549,7 +10551,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=Mix(FOS.ar(ineffet, [control1,control2,control3,control4,control5,control6], control7, control8, amp/6));
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Median",
@@ -10560,7 +10562,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					// effet
 					effet=Median.ar(control1 * 30 + 1, ineffet, amp);
 					effet = effet * amp;
-					foncFXOut.value(effet, pan, ambisonic, busverb, out);
+					~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("LeakDC",
@@ -10571,7 +10573,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					// effet
 					effet=LeakDC.ar(ineffet, control1, amp);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("Median+LeakDC",
@@ -10581,7 +10583,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					ineffet=Mix(In.ar(in, 2));
 					// effet
 					effet=LeakDC.ar(Median.ar(control1 * 30 + 1, ineffet, amp), control2);
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("MidEQ",
@@ -10592,7 +10594,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					// effet
 					effet=Mix(MidEQ.ar(ineffet, [control1, control2, control3, control4]*4186+27.5, 0.5, [control5, control6, control7, control8]*48-24, amp/2));
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("DynKlank",
@@ -10603,7 +10605,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					// effet
 					effet=Mix(DynKlank.ar(`[[control1, control2, control3, control4]*4186+37, [amp / 4, amp /4, amp /4, amp / 4] / 4, [control5, control6, control7, control8]], ineffet));
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("LiveWarp",
@@ -10624,7 +10626,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					LocalOut.ar(effet);
 					//LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("LivePlayBuf",
@@ -10642,7 +10644,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = effet * EnvGen.kr(Env.sine(1,1), Impulse.kr(control2*64+0.0625), levelScale: amp);
 					//effet = effet * EnvGen.kr(Env.perc(0.05, 1, 1, -5), Impulse.kr(control2*64+0.0625));
 					effet = Mix(effet);
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("WarpDelay",
@@ -10655,7 +10657,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					// effet
 					effet = Warp1.ar(1, localBuf, control2, control3*4, control4, -1, control5*16, control6, interp: 4);// + ou - local;
 					LocalOut.ar(DelayC.ar(effet, 4, control7, control8));
-					foncFXOut.value(effet, pan, ambisonic, busverb, out);
+					~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("DJ_FX",
@@ -10669,7 +10671,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2.reciprocal) + (control3*4), Dust.kr(control4.reciprocal), Logistic.kr(control5 / 2 + 3.5, 100, Rand(0, 1)) * BufFrames.kr(localBuf), 1, 0.333, 0.5) + local * amp;
 
 					LocalOut.ar(DelayC.ar(effet, 4, control6, control7));
-					foncFXOut.value(effet, pan, ambisonic, busverb, out);
+					~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagFreeze",
@@ -10682,7 +10684,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = FFT(LocalBuf(1024, 1), effet);
 					effet = PV_MagFreeze(effet, SinOsc.kr(control2 * control4.reciprocal));
 					effet= IFFT(effet);
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_PlayBuf",
@@ -10695,7 +10697,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = FFT(LocalBuf(512, 1), effet);
 					effet = PV_PlayBuf(effet, localBuf, control2, control3 * BufFrames.kr(localBuf), 1, 1);
 					effet= IFFT(effet);
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BinPlayBuf",
@@ -10708,7 +10710,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = FFT(LocalBuf(1024, 1), effet);
 					effet = PV_BinPlayBuf(effet, localBuf, control2, control6 * BufFrames.kr(localBuf), control3 * 16, control4 * 8 + 1, control5 * 63 + 1, 1, 1);
 					effet= IFFT(effet);
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_HPshiftDownFX",
@@ -10721,7 +10723,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_HPshiftDown(effet, control1*32);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_HPfiltreFX",
@@ -10734,7 +10736,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_HPfiltre(effet, control1 * 32 + 1, control2 * 32 + 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagNoiseFX",
@@ -10747,7 +10749,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagNoise(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagClipFX",
@@ -10760,7 +10762,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagClip(effet, control1 * 16);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagSmoothFX",
@@ -10773,7 +10775,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagSmooth(effet, control1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagSmearFX",
@@ -10786,7 +10788,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagSmear(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_DiffuserFX",
@@ -10799,7 +10801,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_Diffuser(effet, Trig1.kr(LFNoise2.kr(control1*100), (control2*100).reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BrickWallFX",
@@ -10812,7 +10814,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_BrickWall(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_LocalMaxFX",
@@ -10825,7 +10827,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_LocalMax(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagSquaredFX",
@@ -10838,7 +10840,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagSquared(effet);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagBelowFX",
@@ -10851,7 +10853,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagBelow(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagAboveFX",
@@ -10864,7 +10866,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagAbove(effet, control1*64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_RandCombFX",
@@ -10877,7 +10879,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_RandComb(effet, control1*64, LFNoise2.kr(control2 * 64));
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagShiftFX",
@@ -10890,7 +10892,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagShift(effet, control1 * 4, control2 * 128 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BinScrambleFX",
@@ -10903,7 +10905,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_BinScramble(effet, control1, control2, LFNoise2.kr(control2.reciprocal));
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_BinShiftFX",
@@ -10916,7 +10918,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_BinShift(effet, control1 * 4, control2 * 256 - 64);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_RectCombFX",
@@ -10929,7 +10931,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_RectComb(effet, control1*32, control2, control3);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_ConformalMapFX",
@@ -10942,7 +10944,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_ConformalMap(effet, control1 * 2 - 1, control2 * 2 -1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_CompanderFX",
@@ -10955,7 +10957,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_Compander(effet, control1 * 64, control2 * 10, control3 * 10);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_SpectralEnhanceFX",
@@ -10968,7 +10970,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4));
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagShift+StretchFX",
@@ -10981,7 +10983,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_MagShift(effet, (control1 * 4).clip(0.25, 4), control2 - 0.5 * 128);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_CutoffFX",
@@ -10994,7 +10996,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PV_Cutoff(effet, control1 * 2 - 1);
 					effet = IFFT(effet);
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("PV_MagStretchFX",
@@ -11037,7 +11039,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					// effet
 					effet=Mix(Convolution2L.ar(ineffet, buffer, trig * control3, 1024));
 					effet = effet * amp;
-foncFXOut.value(effet, pan, ambisonic, busverb, out);
+~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			SynthDef("FXonFly",
@@ -11052,7 +11054,7 @@ foncFXOut.value(effet, pan, ambisonic, busverb, out);
 					effet = PlayBuf.ar(1, localBuf, LFNoise2.kr(control2)+(BufRateScale.kr(buffer) * rate), Dust.kr(control3), Logistic.kr(control4/2+3.5, 100, Rand(0, 1))* BufFrames.kr(localBuf), 1, 0.05, 0.1) + local * amp / 2;
 					effet = Mix(effet) * amp;
 					LocalOut.ar(DelayC.ar(effet, 4, control5/1000, control6));
-					foncFXOut.value(effet, pan, ambisonic, busverb, out);
+					~foncFXOut.value(effet, pan, ambisonic, busverb, out);
 			}).send(s);
 
 			/////////////////////////////////////
