@@ -2257,6 +2257,7 @@ Preset Wek",
 						~buspansynthLo.wrapAt(i).set(~synthpancontrol.wrapAt(i).lo);
 						~buspansynthHi.wrapAt(i).set(~synthpancontrol.wrapAt(i).hi);
 						// Play Synth
+						s.bind{
 						~freq.wrapAt(i).size.do({arg ii;var freqRate;
 							// Send MIDI On
 							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
@@ -2284,6 +2285,7 @@ Preset Wek",
 						}
 						);
 						});
+						};
 					});
 					~duree.wrapAt(i).wait;
 				});

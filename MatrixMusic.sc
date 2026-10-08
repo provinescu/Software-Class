@@ -5433,6 +5433,7 @@ y ... -						Musical keys.
 											})});
 											lastFreqMidi=[];
 											// Playing
+											s.bind{
 											listeFreq.size.do({arg index;
 												freq = listeFreq.at(index);
 												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -5483,6 +5484,7 @@ y ... -						Musical keys.
 													\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
 													\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 											});
+											};
 											// Reset variables
 											listeFreq = [];
 											listeAmp = [];
