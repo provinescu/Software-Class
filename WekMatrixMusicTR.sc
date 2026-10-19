@@ -11,13 +11,13 @@ WekMatrixMusicTR {
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
 	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, dimIn, speedMFCC, flagKeyboard, mfccMIDI, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, menuFreeze, foncSynthOut, scAdr, udpAdr;
 
-	*new	{arg path="~/Documents/WekMatrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrix", wek=6448, wekPort=57120, scPort=57110;
+	*new	{arg path="~/Documents/WekMatrixTR/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekMatrixTR", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l);
 
 	}
 
-	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
+	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l;
 
 		//// Setup GUI style
 		//GUI.qt;
@@ -64,11 +64,12 @@ WekMatrixMusicTR {
 		Safety(s);
 		//s.makeGui;
 
-		// MIDI INIT
-		// Connect first device by default
+		// MIDI
 		MIDIClient.init;
 		MIDIIn.connect(0, 0);
-		midiOut = MIDIOut(0).latency = 0.01;
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		midiOut = MIDIOut(0);
+		midiOut.latency = s.latency;
 		midiOut.connect(0);
 
 		// Open Wekinator
@@ -474,11 +475,8 @@ y ... -						Musical keys.
 		menuFile = Menu(
 			MenuAction("Load File for Analyze",
 				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
+					listeFileAnalyze = listeFileAnalyze.add(fonctionLoadFileForAnalyse.value(path));
+					listeNameFileAnalyze = listeNameFileAnalyze.add(PathName.new(path).fileName);
 					// Setup GUI Value
 					windowControl.view.children.at(9).string_("FileIn :" + PathName.new(path).fileName)},{"cancelled".postln})}),
 			Menu(
@@ -486,7 +484,7 @@ y ... -						Musical keys.
 				MenuAction("Off", { synthPlayFile.set('loop', 0)});
 			).title_("Loop");
 		);
-		MainMenu.register(menuFile.title_("File for Analyze"), "WekMatrixTools");
+		MainMenu.register(menuFile.title_("File for Analyze"), "WekMatrixTRTools");
 
 		menuRecording = Menu(
 			MenuAction("Start Recording", {
@@ -499,7 +497,7 @@ y ... -						Musical keys.
 				fonctionRecPause.value;
 			});
 		);
-		MainMenu.register(menuRecording.title_("Recording"), "WekMatrixTools");
+		MainMenu.register(menuRecording.title_("Recording"), "WekMatrixTRTools");
 
 		menuAudio= Menu(
 			MenuAction("Recording Channels", {
@@ -529,7 +527,7 @@ y ... -						Musical keys.
 					switchAudioOut=3; this.initSynthDef})
 			).title_("Format");
 		);
-		MainMenu.register(menuAudio.title_("Audio"), "WekMatrixTools");
+		MainMenu.register(menuAudio.title_("Audio"), "WekMatrixTRTools");
 
 		menuAlgo = Menu(
 			Menu(
@@ -549,7 +547,7 @@ y ... -						Musical keys.
 				});
 			).title_("Algorithm");
 		);
-		MainMenu.register(menuAlgo.title_("Automation"), "WekMatrixTools");
+		MainMenu.register(menuAlgo.title_("Automation"), "WekMatrixTRTools");
 
 		menuMIDI = Menu(
 			MenuAction("Init", {
@@ -583,7 +581,7 @@ y ... -						Musical keys.
 				});
 			).title_("Setting");
 		);
-		MainMenu.register(menuMIDI.title_("Midi"), "WekMatrixTools");
+		MainMenu.register(menuMIDI.title_("Midi"), "WekMatrixTRTools");
 
 
 		menuOSC = Menu(
@@ -616,7 +614,7 @@ y ... -						Musical keys.
 				"OSC is OFF now !".postln;
 			});
 		);
-		MainMenu.register(menuOSC.title_("OSC"), "WekMatrixTools");
+		MainMenu.register(menuOSC.title_("OSC"), "WekMatrixTRTools");
 
 		menuAlgo = Menu(
 			MenuAction("Wek In Port",
@@ -643,7 +641,7 @@ Preset Wek",
 					});
 			});
 		);
-		MainMenu.register(menuAlgo.title_("Wekinator"), "WekMatrixTools");
+		MainMenu.register(menuAlgo.title_("Wekinator"), "WekMatrixTRTools");
 
 		menuFreeze = Menu(
 			MenuAction("Copy Music (Freeze) Data", {
@@ -670,13 +668,13 @@ Preset Wek",
 				MatrixMusicData.new;
 			});
 		);
-		MainMenu.register(menuFreeze.title_("Music Data"), "WekMatrixTools");
+		MainMenu.register(menuFreeze.title_("Music Data"), "WekMatrixTRTools");
 
 		menuHelp = MenuAction("ShortCut", {
-			//Document.new("ShortCut for WekMatrix", helpWekMatrix);
-			TextView().name_("ShortCut for WekMatrix").string_(helpWekMatrix).front;
+			//Document.new("ShortCut for WekMatrixTR", helpWekMatrix);
+			TextView().name_("ShortCut for WekMatrixTR").string_(helpWekMatrix).front;
 		});
-		MainMenu.register(menuHelp, "WekMatrixTools");
+		MainMenu.register(menuHelp, "WekMatrixTRTools");
 
 		fonctionUserOperatingSystem = {arg item, window;
 			var f, data, tampon, dataControlSynth, tampon2, name, pathonly, fileName, listeFreeze=[];
@@ -729,7 +727,7 @@ Preset Wek",
 						data = f.readAllString.interpret;
 						fonctionLoadPreset.value(data);
 						f.close;
-						windowControl.name="WekMatrix Control" + " | "+ PathName.new(paths).fileName;
+						windowControl.name="WekMatrixTR Control" + " | "+ PathName.new(paths).fileName;
 						indexWindows=3;
 					}, {"cancelled".postln});
 				},
@@ -742,14 +740,14 @@ Preset Wek",
 						data = f.readAllString.interpret;
 						fonctionLoadPreset.value(data);
 						f.close;
-						windowControl.name="WekMatrix Control" + " | " + PathName.new(paths).fileName;
+						windowControl.name="WekMatrixTR Control" + " | " + PathName.new(paths).fileName;
 						indexWindows=3;
 					},
 					{"cancelled".postln});
 				},
 				// Save Synthesizer
 				5, {
-					if(window.name.containsStringAt(0, "WekMatrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
+					if(window.name.containsStringAt(0, "WekMatrixTR Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
 							Dialog.savePanel({arg path;
 								path = PathName.new(path);
@@ -785,12 +783,12 @@ Preset Wek",
 						f=File(path ++ ".scd", "w");
 						f.write(fonctionSavePreset.value(listeWindowSynth).asCompileString);
 						f.close;
-						windowControl.name="WekMatrix Control" + " | " + fileName},
+						windowControl.name="WekMatrixTR Control" + " | " + fileName},
 					{"cancelled".postln});
 				},
 				// Copy Synthesizer
 				7, {
-					if(window.name.containsStringAt(0, "WekMatrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
+					if(window.name.containsStringAt(0, "WekMatrixTR Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
 							s.bind{
 								data = fonctionSaveSynthesizer.value(window);
@@ -855,7 +853,7 @@ Preset Wek",
 					s.sync;
 					s.recSampleFormat_(sampleFormat);
 					s.sync;
-					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekMatrix_" ++ Date.localtime.stamp ++ "." ++ headerFormat);
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekMatrixTR_" ++ Date.localtime.stamp ++ "." ++ headerFormat);
 					s.sync;
 					s.record;
 					s.sync;
@@ -900,7 +898,7 @@ Preset Wek",
 					b=Buffer.read(s, p);
 					s.sync;
 				}, {
-					d = FloatArray.newClear(f.numFrames * 2);
+					d = FloatArray.newClear(f.numFrames);
 					s.sync;
 					f.readData(d);
 					s.sync;
@@ -1588,26 +1586,23 @@ Preset Wek",
 			groupeMasterFX=Group.new(s, \addToTail);
 
 			//Fonction Load file for analyze
-			fonctionLoadFileForAnalyse={arg p;
-				var f, d, n;
+			fonctionLoadFileForAnalyse = {arg p;
+				var f, d;
 				s.bind{
 					synthPlayFile.set(\trigger, 0);
 					s.sync;
-					p = PathName.new(p);
-					p = p.fileName;//Name of soundFile
-					n = p;
-					p = "mdfind -name" + p;
-					p = Pipe.new(p, "r");
-					d = p.getLine;// get the first line
-					while({d.notNil and: {d.contains(n).not}}, {d = p.getLine}); // while to find
-					p.close;
-					p = d;// New Path
 					f = SoundFile.new;
-					s.sync;
 					f.openRead(p.standardizePath);
 					s.sync;
+					if(f == nil,
+						{
+							"File not found -> Switch to Empty Buffer".warn;
+							bufferFile=Buffer.alloc(s, s.sampleRate * 1, 2);
+
+						},
+						{
 					if(f.numChannels == 1,
-						{d= FloatArray.newClear(f.numFrames * 2);
+						{d = FloatArray.newClear(f.numFrames);
 							s.sync;
 							f.readData(d);
 							s.sync;
@@ -1620,7 +1615,7 @@ Preset Wek",
 						},
 						{Post << "Loading sound stereo for analyze" << p << Char.nl;
 							s.sync;
-							bufferFile=Buffer.readChannel(s, p, channels: [0, 1]);
+							bufferFile=Buffer.readChannel(s, p, 2);
 							s.sync;
 					});
 					f.close;
@@ -1630,6 +1625,7 @@ Preset Wek",
 					synthPlayFile.set(\trigger, 1);
 					s.sync;
 					textFileAnalyze.string_(p);
+					});
 				};
 				bufferFile.value;
 			};
@@ -1639,12 +1635,12 @@ Preset Wek",
 
 
 				// Synth File In
-				synthFileIn = Synth.newPaused("WekMatrix FileIn",
+				synthFileIn = Synth.newPaused("WekMatrixTR FileIn",
 					[\in, listeBusInOut.at(0).index, 'busAnalyze', busAnalyze.at(0).index], groupeAnalyse, \addToTail);
 				s.sync;
 
 				// Synth play file
-				synthPlayFile = Synth.newPaused("WekMatrix Play File",
+				synthPlayFile = Synth.newPaused("WekMatrixTR Play File",
 					[\bufferplay, bufferFile, 'busIn', listeBusInOut.at(0).index, 'busAnalyze', busAnalyze.at(0).index, \volume, 0.0], groupeAnalyse, \addToHead);
 				s.sync;
 
@@ -1652,38 +1648,38 @@ Preset Wek",
 				numberAudioIn.do({arg i;
 
 					// Synth Audio In
-					synthAnalyzeIn = synthAnalyzeIn.add(Synth.newPaused("WekMatrix AnalyzeIn",
+					synthAnalyzeIn = synthAnalyzeIn.add(Synth.newPaused("WekMatrixTR AnalyzeIn",
 						[\in, i, 'busAnalyze', busAnalyze.at(i).index], groupeAnalyse, \addToHead));
 					s.sync;
 
 					// Synth audio analyze Pitch1
-					synthAnalysePitch = synthAnalysePitch.add(Synth.newPaused("OSC WekMatrix Pitch",
+					synthAnalysePitch = synthAnalysePitch.add(Synth.newPaused("OSC WekMatrixTR Pitch",
 						['busAnalyze', busAnalyze.at(i).index, \id, i], groupeAnalyse, \addToTail));
 					s.sync;
 
 					// Synth audio analyze Pitch2
-					synthAnalysePitch2 = synthAnalysePitch2.add(Synth.newPaused("OSC WekMatrix Pitch2",
+					synthAnalysePitch2 = synthAnalysePitch2.add(Synth.newPaused("OSC WekMatrixTR Pitch2",
 						['busAnalyze', busAnalyze.at(i).index, \id, i], groupeAnalyse, \addToTail));
 					s.sync;
 
 					// Synth audio analyze Onsets
-					synthAnalyseOnsets = synthAnalyseOnsets.add(Synth.newPaused("OSC WekMatrix Onsets",
+					synthAnalyseOnsets = synthAnalyseOnsets.add(Synth.newPaused("OSC WekMatrixTR Onsets",
 						['busAnalyze', busAnalyze.at(i).index, \id, i], groupeAnalyse, \addToTail));
 					s.sync;
 
 					// Synth audio analyze KeyTrack
-					synthAnalyseKeyTrack = synthAnalyseKeyTrack.add(Synth.newPaused("OSC WekMatrix KeyTrack",
+					synthAnalyseKeyTrack = synthAnalyseKeyTrack.add(Synth.newPaused("OSC WekMatrixTR KeyTrack",
 						['busAnalyze', busAnalyze.at(i).index, \id, i], groupeAnalyse, \addToTail));
 					s.sync;
 				});
 
 				// Synth Keyboard
-				synthKeyboard = Synth.newPaused("OSC WekMatrix Keyboard",
+				synthKeyboard = Synth.newPaused("OSC WekMatrixTR Keyboard",
 					['busAnalyze', busAnalyze.at(0).index], groupeAnalyse, \addToTail);
 				s.sync;
 
 				// MIDI Keyboard
-				midiKeyboard = Synth.newPaused("OSC WekMatrix MIDI",
+				midiKeyboard = Synth.newPaused("OSC WekMatrixTR MIDI",
 					['busAnalyze', busAnalyze.at(0).index], groupeAnalyse, \addToTail);
 				s.sync;
 
@@ -1718,7 +1714,7 @@ Preset Wek",
 				while({cmd != nil},
 					{
 						cmd = msg[item].postln;
-						if(cmd == 'all' or: {cmd == 'wekmatrix'},
+						if(cmd == 'all' or: {cmd == 'wekmatrixTR'},
 							{
 								cmd = msg[item+1].postln;
 								// Preset
@@ -1728,7 +1724,7 @@ Preset Wek",
 										{
 											if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
 												{fonctionUserOperatingSystem.value(9);
-													windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
+													windowControl.name="WekMatrixTR Control" + " | " + "Preset" + number.asString;
 													file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 													fonctionLoadPreset.value(file.readAllString.interpret);
 													file.close;
@@ -1840,7 +1836,7 @@ Preset Wek",
 									lastNumPreset = numPreset;
 									lastTimeWekPreset = time;
 									fonctionUserOperatingSystem.value(9);
-									windowControl.name="WekMatrix Control" + " | " + "Preset" + numPreset.asInteger.asString;
+									windowControl.name="WekMatrixTR Control" + " | " + "Preset" + numPreset.asInteger.asString;
 									file=File(pathWekMatrix ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
 									fonctionLoadPreset.value(file.readAllString.interpret);
 									file.close;/*listeWindows.at(3).front;*/indexWindows=3;
@@ -1975,7 +1971,7 @@ Preset Wek",
 						dureeOSCdata.put(indexAudio, Main.elapsedTime);
 					},
 					{nil});
-			}, '/WekMatrix_Musical_Data', serverAdresse);
+			}, '/WekMatrixTR_Musical_Data', serverAdresse);
 
 			freqBefore=0; ampBefore=0; dureeBefore=0; lastTimeMIDI = Main.elapsedTime; tempoMIDI=0; freqCentroidMIDI=0; flatnessMIDI=0; energyMIDI=0; fluxMIDI=0; freqTampon = nil; ampTampon = nil; lastTimeAnalyse = Main.elapsedTime;
 
@@ -2107,7 +2103,7 @@ Preset Wek",
 						});
 					},
 					{nil});
-			}, '/WekMatrix_Keyboard_Data', serverAdresse);
+			}, '/WekMatrixTR_Keyboard_Data', serverAdresse);
 
 			// OSC pour MIDI-IN
 			oscMIDIdata = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -2130,7 +2126,7 @@ Preset Wek",
 						if(flagSystemBPM == 3, {tempoMIDI = oscTempoMaster});
 					},
 					{nil});
-			}, '/WekMatrix_MIDI_Data', serverAdresse);
+			}, '/WekMatrixTR_MIDI_Data', serverAdresse);
 
 			// Setup MIDI Responder
 			// NoteOn
@@ -2335,7 +2331,7 @@ Preset Wek",
 									if(File.exists(pathWekMatrix ++ foldersToScanAll.wrapAt(number)),
 										{listeWindowSynth.do({arg window; window.close});
 											file=File(pathWekMatrix ++ foldersToScanAll.wrapAt(number),"r");
-											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
+											windowControl.name="MatrixTR Control" + " | " + foldersToScanAll.wrapAt(number);
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
@@ -2367,7 +2363,7 @@ Preset Wek",
 									if(File.exists(pathWekMatrix ++ foldersToScanAll.wrapAt(number)),
 										{listeWindowSynth.do({arg window; window.close});
 											file=File(pathWekMatrix ++ foldersToScanAll.wrapAt(number),"r");
-											windowControl.name="Matrix Control" + " | " + foldersToScanAll.wrapAt(number);
+											windowControl.name="MatrixTR Control" + " | " + foldersToScanAll.wrapAt(number);
 											if(foldersToScanAll.wrapAt(number).find("Preset") == 0 or: {foldersToScanAll.wrapAt(number).find("preset") == 0}, {fonctionLoadPreset.value(file.readAllString.interpret)},
 												{
 													tampon = file.readAllString.interpret;
@@ -2509,6 +2505,8 @@ Preset Wek",
 				windowControl.close;
 				windowVST.close;
 				~studio.close;
+				Pdef.removeAll;
+				ProxySpace.clearAll;
 			};
 
 			CmdPeriod.doOnce(cmdperiodfunc);
@@ -2648,7 +2646,7 @@ Preset Wek",
 						pathWekMatrix  = path.at(0).asString ++"/";
 						/*pathWekMatrix= PathName.new(paths);
 						pathWekMatrix = pathWekMatrix.pathOnly;*/
-						windowControl.name="WekMatrix Control" + " | " + pathWekMatrix.asString;
+						windowControl.name="WekMatrixTR Control" + " | " + pathWekMatrix.asString;
 						fonctionCollectFolders.value;
 					}, fileMode: 2);
 				});
@@ -2686,7 +2684,7 @@ Preset Wek",
 					{commande='Save Preset';
 				});
 				// key S -> save Synthesizer
-				if(modifiers==131072 and: {unicode==83} and: {keycode==1} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {commande='Save Synthesizer';
+				if(modifiers==131072 and: {unicode==83} and: {keycode==1} and: {window.name.containsStringAt(0, "WekMatrixTR Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {commande='Save Synthesizer';
 				});
 				// key i -> Close All Synthesizer
 				if(modifiers==0 and: {unicode==105} and: {keycode==34}, {fonctionUserOperatingSystem.value(9);
@@ -2739,7 +2737,7 @@ Preset Wek",
 					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(88).valueAction_(1)});
 				});
 				// Key alt + I -> Init Algo Synth on front
-				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
+				if(modifiers==655360 and: {unicode==73} and: {keycode==34} and: {window.name.containsStringAt(0, "WekMatrixTR Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(88).valueAction_(1);
 				});
 				// Key ctrl + alt + i -> Init Audio Analyze Parametres
@@ -2772,7 +2770,7 @@ Preset Wek",
 					fonctionUserOperatingSystem.value(8);
 				});
 				// key C -> Copy Synthesizer
-				if(modifiers==131072 and: {unicode==67} and: {keycode==8} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
+				if(modifiers==131072 and: {unicode==67} and: {keycode==8} and: {window.name.containsStringAt(0, "WekMatrixTR Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					fonctionUserOperatingSystem.value(7, window);
 				});
 				// Key alt + r -> Start Recording
@@ -2807,11 +2805,11 @@ Preset Wek",
 					listeGroupeSynth.do({arg synth, index; listeWindowSynth.at(index).view.children.at(0).valueAction_(0)});
 				});
 				// Key p -> Play Synth on front
-				if(modifiers==0 and: {unicode==112} and: {keycode==35} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
+				if(modifiers==0 and: {unicode==112} and: {keycode==35} and: {window.name.containsStringAt(0, "WekMatrixTR Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(0).valueAction_(1);
 				});
 				// Key alt + p -> Stop Synth on front
-				if(modifiers==524288 and: {unicode==112} and: {keycode==35} and: {window.name.containsStringAt(0, "WekMatrix Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
+				if(modifiers==524288 and: {unicode==112} and: {keycode==35} and: {window.name.containsStringAt(0, "WekMatrixTR Control").not} and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not}, {
 					window.view.children.at(0).valueAction_(0);
 				});
 				// Key a -> switch freezeDataOSC for synth on front
@@ -2862,7 +2860,7 @@ Preset Wek",
 					if(File.exists(pathWekMatrix ++ foldersToScanPreset.at(number)),
 						{listeWindowSynth.do({arg window; window.close});
 							file=File(pathWekMatrix ++ foldersToScanPreset.at(number),"r");
-							windowControl.name="WekMatrix Control" + " | " + foldersToScanPreset.at(number);
+							windowControl.name="WekMatrixTR Control" + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret);
 							file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 				});
@@ -2872,7 +2870,7 @@ Preset Wek",
 					if(File.exists(pathWekMatrix ++ foldersToScanSynthesizer.at(number)),
 						{listeWindowSynth.do({arg window; window.close});
 							file=File(pathWekMatrix ++ foldersToScanSynthesizer.at(number),"r");
-							windowControl.name="WekMatrix Control" + " | " + foldersToScanSynthesizer.at(number);
+							windowControl.name="WekMatrixTR Control" + " | " + foldersToScanSynthesizer.at(number);
 							tampon = file.readAllString.interpret;
 							listeWindowFreeze = tampon.last;
 							tampon.remove(tampon.last);// remove freezeDataOSC
@@ -2900,7 +2898,7 @@ Preset Wek",
 			var file, data, dataControlSynth, tampon, tampon2, listeFreeze=[], x, y, z, b;
 			// Save Preset
 			if(commandeExecute == 'Save Preset',{
-				windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
+				windowControl.name="WekMatrixTR Control" + " | " + "Preset" + number.asString;
 				file=File(pathWekMatrix ++ "Preset" + number.asString ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(listeWindowSynth).asCompileString);
 				file.close;
@@ -2911,7 +2909,7 @@ Preset Wek",
 					{
 						numPreset = number.value; lastNumPreset = number.value;
 						fonctionUserOperatingSystem.value(9);
-						windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
+						windowControl.name="WekMatrixTR Control" + " | " + "Preset" + number.asString;
 						file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
 						file.close;/*listeWindows.at(3).front;*/indexWindows=3;
@@ -2920,14 +2918,14 @@ Preset Wek",
 			//load Preset without close others windows
 			if(commandeExecute == 'Load + Add Preset',{
 				if(File.exists(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd"),
-					{windowControl.name="WekMatrix Control" + " | " + "Preset" + number.asString;
+					{windowControl.name="WekMatrixTR Control" + " | " + "Preset" + number.asString;
 						file=File(pathWekMatrix ++ "Preset" + number.value.asString ++ ".scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
 						file.close;/*listeWindows.at(3).front;*/indexWindows=3}, {"cancelled".postln});
 			});
 			// Save Synthesizer
 			if(commandeExecute == 'Save Synthesizer', {
-				windowControl.name="WekMatrix Control" + " | " + "Synthesizer" + number.asString;
+				windowControl.name="WekMatrixTR Control" + " | " + "Synthesizer" + number.asString;
 				data = data.add(fonctionSaveSynthesizer.value(window));
 				data = data.add(fonctionSaveControlSynth.value(windowControlSynth));// Save ControlSynth Panel
 				data = data.add(fonctionSaveControl.value(windowControl));// Save Control Panel
@@ -2944,7 +2942,7 @@ Preset Wek",
 			if(commandeExecute == 'Load Synthesizer', {
 				if(File.exists(pathWekMatrix ++ "Synthesizer" + number.value.asString ++ ".scd"),
 					{fonctionUserOperatingSystem.value(9);
-						windowControl.name="WekMatrix Control" + " | " + "Synthesizer" + number.asString;
+						windowControl.name="WekMatrixTR Control" + " | " + "Synthesizer" + number.asString;
 						file=File(pathWekMatrix ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
 						data = file.readAllString.interpret;
 						file.close;
@@ -2985,7 +2983,7 @@ Preset Wek",
 			//load Synthesizer without close others windows
 			if(commandeExecute == 'Load + Add Synthesizer', {
 				if(File.exists(pathWekMatrix ++ "Synthesizer" + number.value.asString ++ ".scd"),
-					{windowControl.name="WekMatrix Control" + " | " + "Synthesizer" + number.asString;
+					{windowControl.name="WekMatrixTR Control" + " | " + "Synthesizer" + number.asString;
 						file=File(pathWekMatrix ++ "Synthesizer" + number.value.asString ++ ".scd", "r");
 						data = file.readAllString.interpret;
 						file.close;
@@ -3706,11 +3704,11 @@ Preset Wek",
 		fonctionShortCut.value(windowControlSynth);
 
 		////////////////////////////// Control Panel //////////////////////
-		windowControl =Window("WekMatrix Control", Rect(300, 0, 410, 563), scroll: true);
+		windowControl =Window("WekMatrixTR Control", Rect(300, 0, 410, 563), scroll: true);
 		windowControl.alpha=1.0;
 		windowControl.front;
 		windowControl.view.decorator = FlowLayout(windowControl.view.bounds);
-		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("WekMatrix a User Interface for Organizing Sounds by Provinescu Software Production").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
+		StaticText(windowControl, Rect(0, 0, 400, 12)).string_("WekMatrixTR a User Interface for Organizing Sounds by Provinescu Software Production").stringColor_(Color.yellow).font_(Font("Georgia", 10)).align_(\center);
 		windowControl.view.decorator.nextLine;
 		// Systeme start stop playing
 		startSystem = Button(windowControl,Rect(0, 0, 125, 15));
@@ -4128,7 +4126,7 @@ Preset Wek",
 		}, signalBuffer, true, 45, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		//hiPass
-		EZText(windowControl, Rect(0, 0, 400, 15), "HiPass",
+		EZText(windowControl, Rect(0, 0, 400, 15), "HiCut",
 			{arg string;
 				var z;
 				hiPass = string.value;
@@ -4146,7 +4144,7 @@ Preset Wek",
 			hiPass, true, 45, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		//loPass
-		EZText(windowControl, Rect(0, 0, 400, 15), "LoPass",
+		EZText(windowControl, Rect(0, 0, 400, 15), "LoCut",
 			{arg string;
 				var z;
 				loPass = string.value;
@@ -4258,7 +4256,7 @@ Preset Wek",
 				timeMemory = string.value;
 				z = timeMemory.size-1;
 				numberAudioIn.do({arg a;
-					if(a <= z, {nil}, {timeMemory = timeMemory.add(4)});
+					if(a <= z, {nil}, {timeMemory = timeMemory.add(timeMemory[a].asFloat)});
 					windowControl.view.children.at(26).children.at(1).value_(timeMemory.asString);
 				});
 			},
@@ -4714,7 +4712,7 @@ Preset Wek",
 				recBuffer2 = Buffer.alloc(s, s.sampleRate * timeBuf2, 1);
 				s.sync;
 				// New RecBuffer Recording
-				synthRec = Synth.new("WekMatrix AudioIn",
+				synthRec = Synth.new("WekMatrixTR AudioIn",
 					[\in, canalIn, 'busIn', listeBusInOut.at(canalIn)], groupe, \addToHead);
 				s.sync;
 				bufferRecording1 = Synth.new("RecBuffer", [\busIn, listeBusInOut.at(canalIn), \buffer, recBuffer1.bufnum, \offset, ctrlBuffer.at(3), \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \run, ctrlBuffer.at(2), \loop, loopRec1, \trigger, 0], groupe, \addToTail);
@@ -5757,37 +5755,66 @@ Preset Wek",
 					if(flagModeSynth == 'Tdef' and: {synthNumber < choiceSynth.indexOf('FX (')},
 						// ModeTdef
 						{
-							tdefSynthesizer = Tdef((name ++ groupe.nodeID.asString).asSymbol, {
-								loop({
+							// Pbind/Pdef: planification par evenements sur TempoClock.
+							// Pdef conserve l'interface play/stop/reset/clear/remove utilisee ailleurs.
+							tdefSynthesizer = Pdef((name ++ groupe.nodeID.asString).asSymbol,
+								Pbind(
+									\type, \rest,
+									\timingOffset, 0,
+									// Calcul au temps logique; commandes serveur groupees par s.bind.
+									\dur, Pfunc({
+										var prochaineDuree, cycleStartSeconds, cyclePeriodSeconds, elapsedSeconds;
+										var bandData, algoData, scaleDegrees, clockTempo;
+										var audioOutBus, busInValue, busOutValue, busFXoutValue, busFXinValue;
+										var bufferOneNum, bufferTwoNum;
+										var cb0, cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9;
+										// Cache des controles utilises par les triggers et les voix de l'accord.
+										cb0 = ctrlBuffer.at(0); cb1 = ctrlBuffer.at(1);
+										cb2 = ctrlBuffer.at(2); cb3 = ctrlBuffer.at(3);
+										cb4 = ctrlBuffer.at(4); cb5 = ctrlBuffer.at(5);
+										cb6 = ctrlBuffer.at(6); cb7 = ctrlBuffer.at(7);
+										cb8 = ctrlBuffer.at(8); cb9 = ctrlBuffer.at(9);
 									//Reset 1 Trigger Recording
 									s.bind(
-										bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
-										s.sync;
-										bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7));
-										s.sync;
+										bufferRecording1.set(\trigger, 1, \preLevel, cb0, \postLevel, cb1, \loop, loopRec1, \run, cb2);
+										bufferRecording2.set(\trigger, 1, \preLevel, cb5, \postLevel, cb6, \loop, loopRec2, \run, cb7);
 									);
 									// Setup Data Music
 									if(flagFreezeDataOSC == 'off',
 										{musicData = listeDataOSC.at(audioInID)},
 										{musicData = freezeDataOSC.at(audioInID)};
 									);
-									if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-										if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
+									// Caches locaux recalcules a chaque evenement.
+									bandData = musicData.at(indexNumFhzBand);
+									algoData = listeDataAlgo.at(0);
+									scaleDegrees = scale.degrees;
+										// Valeurs invariantes pendant cet evenement, lues une seule fois.
+										audioOutBus = out + startChannelAudioOut;
+										busInValue = listeBusInOut.at(busIn);
+										busOutValue = listeBusInOut.at(busOut);
+										busFXoutValue = listeBusFX.at(busFXout);
+										busFXinValue = listeBusFX.at(busFXin);
+										bufferOneNum = bufferOne.bufnum;
+										bufferTwoNum = bufferTwo.bufnum;
+										s.bind{
+									if(bandData.size != 0 and: {onOff == 1}, {
+										if(indexMusicData >= (algoData.size - 1) or: {indexMusicData >= (bandData.size - 1)} ,
 											{
 												// Calcul new music
 												// New Band
 												indexNumFhzBand = rangeNumFhzBand.choose;
 												if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-												if(musicData.at(indexNumFhzBand).size != 0, {
+												bandData = musicData.at(indexNumFhzBand);
+												if(bandData.size != 0, {
 													flagBand = 'on';
-													#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+													#newFreq, newAmp, newDuree = calculNewMusic.value(bandData.flop);
 												},
 												{
 													flagBand = 'off';
 												});
 										});
 										if(flagBand == 'on', {
-											#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = musicData.at(indexNumFhzBand).at(indexMusicData);
+											#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = bandData.at(indexMusicData);
 											listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 											listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 											duree = newDuree.at(indexMusicData);
@@ -5813,6 +5840,7 @@ Preset Wek",
 											})});
 											lastFreqMidi=[];
 											// Playing
+
 											listeFreq.size.do({arg index;
 												freq = listeFreq.at(index);
 												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -5821,21 +5849,21 @@ Preset Wek",
 													pos = nil;
 													octave = (freq / 12).floor;
 													degre = ((freq / 12).frac * 12).round(0.1);
-													pos = scale.degrees.indexOfEqual(degre);
+													pos = scaleDegrees.indexOfEqual(degre);
 													if(pos == nil,
 														{
-															pos = scale.degrees.indexOfGreaterThan(degre);
+															pos = scaleDegrees.indexOfGreaterThan(degre);
 															if(pos == nil,
 																{
-																	pos = scale.degrees.last;
+																	pos = scaleDegrees.last;
 																},
 																{
-																	pos = scale.degrees.at(pos);
+																	pos = scaleDegrees.at(pos);
 																}
 															);
 														},
 														{
-															pos = scale.degrees.at(pos);
+															pos = scaleDegrees.at(pos);
 														}
 													);
 													freq = (octave * 12 + pos).midicps;
@@ -5852,8 +5880,8 @@ Preset Wek",
 												});
 												// Synth
 												Synth.new(name,[
-													\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
-													\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
+													\out, audioOutBus, \busIn, busInValue, \busOut, busOutValue, \busFXout, busFXoutValue, \busFXin, busFXinValue, \bufferOne, bufferOneNum, \bufferTwo, bufferTwoNum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
+													\offset1, cb3, \offset2, cb8, \reverse1, cb4, \reverse2, cb9,
 													// \freq, busOSC, // controls in realtime
 													\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
 													\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
@@ -5861,17 +5889,16 @@ Preset Wek",
 													\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
 													\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
 													\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-													\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
+													\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, cb0,\level2, cb1,\loop, cb2], groupe, \addToTail);
 											});
+
 											// Reset variables
 											listeFreq = [];
 											listeAmp = [];
 											//Reset 0 Trigger Recording
 											s.bind(
 												bufferRecording1.set(\trigger, 0);
-												s.sync;
 												bufferRecording2.set(\trigger, 0);
-												s.sync;
 											);
 										},
 										{
@@ -5881,7 +5908,7 @@ Preset Wek",
 									{
 										// MIDI OFF
 										if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
-											if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, freq.cpsmidi, 0)});
+											if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
 
 										});
 										lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
@@ -5896,17 +5923,28 @@ Preset Wek",
 										// New Band
 										indexNumFhzBand = rangeNumFhzBand.choose;
 										if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-										if(musicData.at(indexNumFhzBand).size != 0, {
+												bandData = musicData.at(indexNumFhzBand);
+										if(bandData.size != 0, {
 											flagBand = 'on';
-											#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+											#newFreq, newAmp, newDuree = calculNewMusic.value(bandData.flop);
 										},
 										{
 											flagBand = 'off';
 										});
 									});
-									dureeTdef.wait;
-								});
-							});
+									};
+										// Duree musicale en beats, protegee contre nil, zero et valeurs negatives.
+										prochaineDuree = dureeTdef;
+										if(prochaineDuree.isNumber.not or: {prochaineDuree <= 0}, {
+											prochaineDuree = if(quanta.isNumber and: {quanta > 0},
+												{quanta.reciprocal}, {0.0001});
+										});
+										prochaineDuree = prochaineDuree.max(0.0001);
+
+										prochaineDuree;
+									})
+								)
+							).quant_(Quant(quanta.reciprocal));
 						},
 						// Mode OnFly1
 						{
@@ -5930,6 +5968,7 @@ Preset Wek",
 												r.next;
 												r.reset;
 											);
+											s.bind{
 											if(onOff == 1, {
 												musicData = listeDataOSC.at(audioInID);
 												#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
@@ -5982,6 +6021,7 @@ Preset Wek",
 														})});
 														lastFreqMidi=[];
 														// Playing
+
 														listeFreq.size.do({arg index;
 															freq = listeFreq.at(index);
 															freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -6034,6 +6074,7 @@ Preset Wek",
 																\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
 																\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 														});
+
 														// Reset variables
 														listeFreq = [];
 														listeAmp = [];
@@ -6068,6 +6109,7 @@ Preset Wek",
 													});
 												});
 											});
+										};
 									});
 								}, '/NewMusic', musicAppAddr);
 							},
@@ -6093,6 +6135,7 @@ Preset Wek",
 													r.next;
 													r.reset;
 												);
+												s.bind{
 												if(onOff == 1, {
 													musicData = listeDataOSC.at(audioInID);
 													#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
@@ -6148,6 +6191,7 @@ Preset Wek",
 																		})});
 																		lastFreqMidi=[];
 																		// Playing
+
 																		listeFreq.size.do({arg index;
 																			freq = listeFreq.at(index);
 																			freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -6200,6 +6244,7 @@ Preset Wek",
 																				\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
 																				\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 																		});
+
 																		// Reset variables
 																		listeFreq = [];
 																		listeAmp = [];
@@ -6249,6 +6294,7 @@ Preset Wek",
 														});
 													});
 												});
+												};
 										});
 									}, '/NewMusic', musicAppAddr);
 								},
@@ -6274,6 +6320,7 @@ Preset Wek",
 														r.next;
 														r.reset;
 													);
+													s.bind{
 													if(onOff == 1, {
 														musicData = listeDataOSC.at(audioInID);
 														#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
@@ -6329,6 +6376,7 @@ Preset Wek",
 																			})});
 																			lastFreqMidi=[];
 																			// Playing
+
 																			listeFreq.size.do({arg index;
 																				freq = listeFreq.at(index);
 																				freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -6371,6 +6419,7 @@ Preset Wek",
 																				// Set Synth new value
 																				groupe.setn(\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux);
 																			});
+
 																			// Reset variables
 																			listeFreq = [];
 																			listeAmp = [];
@@ -6420,6 +6469,7 @@ Preset Wek",
 															});
 														});
 													});
+													};
 											});
 										}, '/NewMusic', musicAppAddr);
 										// Synth
@@ -6560,7 +6610,7 @@ Preset Wek",
 		numberAudioIn.do({arg i;
 
 			// WekMatrix Audio Analyze Onsets
-			SynthDef("OSC WekMatrix Onsets",
+			SynthDef("OSC WekMatrixTR Onsets",
 				{arg busAnalyze, seuil=0.5, filtre=0.5, lock=0, loPass=0, hiPass=20000, id=0;
 					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, array, inputFilter;
 					input = In.ar(busAnalyze);
@@ -6578,11 +6628,11 @@ Preset Wek",
 					# trackB,trackH,trackQ, tempo = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 					array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 					array = array ++ [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1), id];
-					SendReply.kr(detect, '/WekMatrix_Musical_Data', values: array, replyID: 1);
+					SendReply.kr(detect, '/WekMatrixTR_Musical_Data', values: array, replyID: 1);
 			}).add;
 
-			// WekMatrix Audio Analyze Pitch
-			SynthDef("OSC WekMatrix Pitch",
+			// WekMatrixTR Audio Analyze Pitch
+			SynthDef("OSC WekMatrixTR Pitch",
 				{arg busAnalyze, seuil=0.5, filtre=0, lock=0, loPass=0, hiPass=20000, id=0;
 					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, inputFilter, array;
 					input = In.ar(busAnalyze);
@@ -6601,11 +6651,11 @@ Preset Wek",
 					timeIn = Timer.kr(detect);
 					array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 					array = array ++ [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1), id];
-					SendReply.kr(detect, '/WekMatrix_Musical_Data', values: array, replyID: 1);
+					SendReply.kr(detect, '/WekMatrixTR_Musical_Data', values: array, replyID: 1);
 			}).add;
 
-			// WekMatrix Audio Analyze Pitch2
-			SynthDef("OSC WekMatrix Pitch2",
+			// WekMatrixTR Audio Analyze Pitch2
+			SynthDef("OSC WekMatrixTR Pitch2",
 				{arg busAnalyze, seuil=0.5, filtre=0, lock=0, loPass=0, hiPass=20000, id=0;
 					var input, detect, freqIn, hasfreqIn, ampIn, centroid=0, flatness=0.0, fft, fft2, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, inputFilter, harmonic, percussive, array;
 					input = In.ar(busAnalyze);
@@ -6628,11 +6678,11 @@ Preset Wek",
 					timeIn = Timer.kr(detect);
 					array = MFCC.kr(fft2, dimIn);// 13 a 40 Bands
 					array = array ++ [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1), id];
-					SendReply.kr(detect, '/WekMatrix_Musical_Data', values: array, replyID: 1);
+					SendReply.kr(detect, '/WekMatrixTR_Musical_Data', values: array, replyID: 1);
 			}).add;
 
-			// WekMatrix Audio Analyze KeyTrack
-			SynthDef("OSC WekMatrix KeyTrack",
+			// WekMatrixTR Audio Analyze KeyTrack
+			SynthDef("OSC WekMatrixTR KeyTrack",
 				{arg busAnalyze, seuil=0.5, filtre=1, lock=0, id=0;
 					var input, detect, freqIn, ampIn, centroid=0, flatness=0.0, fft, energy=0, timeIn=0, trackB, trackH, trackQ, tempo=60, flux=0, key, array;
 					input = In.ar(busAnalyze);
@@ -6649,11 +6699,11 @@ Preset Wek",
 					timeIn = Timer.kr(detect);
 					array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 					array = array ++ [freqIn, ampIn, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1), id];
-					SendReply.kr(detect, '/WekMatrix_Musical_Data', values: array, replyID: 1);
+					SendReply.kr(detect, '/WekMatrixTR_Musical_Data', values: array, replyID: 1);
 			}).add;
 
 			// Synth pour analyse AudioIn send audio -> busAnalyze
-			SynthDef("WekMatrix AnalyzeIn",
+			SynthDef("WekMatrixTR AnalyzeIn",
 				{arg in=0, busAnalyze;
 					var input;
 					input=Mix(SoundIn.ar(in));
@@ -6662,8 +6712,8 @@ Preset Wek",
 
 		});
 
-		// WekMatrix Keyboard
-		SynthDef("OSC WekMatrix Keyboard",
+		// WekMatrixTR Keyboard
+		SynthDef("OSC WekMatrixTR Keyboard",
 			{arg busAnalyze, seuil=0.5, filtre=0, lock=0, note=0, amp=0, trigger=0, id=999;
 				var input, detect, freqIn, hasfreqIn, ampIn, centroid, flatness, fft, energy, timeIn=0, trackB, trackH, trackQ, tempo, flux, array;
 				input = In.ar(busAnalyze);
@@ -6676,11 +6726,11 @@ Preset Wek",
 				timeIn = Timer.kr(trigger);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 				array = array ++ [note, amp, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)];
-				SendReply.kr(trigger, '/WekMatrix_Keyboard_Data', values: array, replyID: 1);
+				SendReply.kr(trigger, '/WekMatrixTR_Keyboard_Data', values: array, replyID: 1);
 		}).add;
 
-		// WekMatrix MIDI
-		SynthDef("OSC WekMatrix MIDI",
+		// WekMatrixTR MIDI
+		SynthDef("OSC WekMatrixTR MIDI",
 			{arg busAnalyze, seuil=0.5, filtre=0, lock=0, note=0, amp=0, trigger=0, id=999;
 				var input, centroid, flatness, fft, energy, trackB, trackH, trackQ, tempo, flux, array, timeIn=0;
 				input = In.ar(busAnalyze);
@@ -6693,11 +6743,11 @@ Preset Wek",
 				timeIn = Timer.kr(trigger);
 				array = MFCC.kr(fft, dimIn);// 13 a 40 Bands
 				array = array ++ [note, amp, timeIn, tempo, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)];
-				SendReply.kr(trigger, '/WekMatrix_MIDI_Data', values: array, replyID: 1);
+				SendReply.kr(trigger, '/WekMatrixTR_MIDI_Data', values: array, replyID: 1);
 		}).add;
 
 		// Synth pour analyse File send audio -> busAnalyze
-		SynthDef("WekMatrix FileIn",
+		SynthDef("WekMatrixTR FileIn",
 			{arg in=0, busAnalyze;
 				var input;
 				input=In.ar(in);
@@ -6705,13 +6755,13 @@ Preset Wek",
 		}).add;
 
 		// Synth lecture file pour analyse AudioIn
-		SynthDef("WekMatrix Play File",
+		SynthDef("WekMatrixTR Play File",
 			{arg out=0, bufferplay, busIn, busAnalyze, trigger=0, offset=0, loop=1, volume=0;
 				var input;
 				input=Mix(PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay)*offset , loop));
 				Out.ar(busIn, input); // Bus In
 				Out.ar(busAnalyze, input); // Bus Analyze In
-				Out.ar(out, input * volume); // Amp File Out
+				Out.ar(out, input!2 * volume); // Amp File Out
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
@@ -11023,7 +11073,7 @@ Preset Wek",
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, 0, preLevel, postLevel, loop: 1);
 				//FX
-				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, interp: 4, mul: amp);
+				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, interp: 4, mul: amp);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl6, ctrl7));
 				// Switch Audio Out
 				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);

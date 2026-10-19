@@ -10,13 +10,13 @@ DensityTR {
 	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, busOSCfreq, busOSCamp, busOSCduree, flagMemory, flagFhzBand;
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, loopMusic;
 
-	*new {arg path = "~/Documents/Density/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path = "~/Documents/DensityTR/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="DensityTR", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort);
+		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort, l);
 
 	}
 
-	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort;
+	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort, l;
 
 		//// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -26,14 +26,6 @@ DensityTR {
 
 		pathData = PathName.new(path).pathOnly;
 		pathSound = "/Applications/SuperCollider.app/Contents/Resources/";
-
-		// MIDI INIT
-		// Connect first device by default
-		MIDIClient.init;
-		MIDIIn.connect(0, 0);
-		midiOut = MIDIOut(0).latency = 0.01;
-		midiOut.connect(0);
-		16.do({arg canal; midiOut.allNotesOff(canal)});
 
 		// Verify Path
 		if(File.exists(pathData).not) {systemCmd("mkdir" + pathData)};
@@ -68,6 +60,14 @@ DensityTR {
 
 		Safety(s);
 		//s.makeGui;
+
+		// MIDI
+		MIDIClient.init;
+		MIDIIn.connect(0, 0);
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		midiOut = MIDIOut(0);
+		midiOut.latency = s.latency;
+		midiOut.connect(0);
 
 		headerFormat = "aiff";
 		sampleFormat = "float";
@@ -791,7 +791,7 @@ DensityTR {
 				f = SoundFile.new;
 				f.openRead(p);
 				if(f.numChannels == 1,
-					{d= FloatArray.newClear(f.numFrames * 2);
+					{d= FloatArray.newClear(f.numFrames);
 						f.readData(d);
 						Post << "Loading sound mono for analyze" << p << Char.nl;
 						d = Array.newFrom(d).stutter(2) / 2;
@@ -839,7 +839,7 @@ DensityTR {
 							collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
 							s.sync;
 						},
-						{rawData= FloatArray.newClear(file.numFrames * 2);
+						{rawData= FloatArray.newClear(file.numFrames);
 							s.sync;
 							file.readData(rawData);
 							s.sync;
@@ -867,7 +867,7 @@ DensityTR {
 				s.bind{
 					s.recChannels_(recChannels);
 					s.sync;
-					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "Density_" ++ Date.localtime.stamp ++ ".aiff");
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "DensityTR_" ++ Date.localtime.stamp ++ ".aiff");
 					s.sync;
 					s.record;
 					s.sync;
@@ -907,7 +907,7 @@ DensityTR {
 
 	run {
 
-		"Please Wait... Loading Density...".postln;
+		"Please Wait... Loading DensityTR...".postln;
 
 		// OSCFunc Score
 		OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -920,7 +920,7 @@ DensityTR {
 			while({cmd != nil},
 				{
 					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'density'},
+					if(cmd == 'all' or: {cmd == 'densityTR'},
 						{
 							cmd = msg[item+1].postln;
 							// Preset
@@ -932,7 +932,7 @@ DensityTR {
 											listeDataInstruments.do({arg data, index;
 												data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 											});
-											windowEar.name = "Density" + " | " + "Preset" + number.asString;
+											windowEar.name = "DensityTR" + " | " + "Preset" + number.asString;
 											file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
 											fonctionLoadPreset.value(file.readAllString.interpret);
 											file.close;
@@ -1016,7 +1016,7 @@ DensityTR {
 			tempoClock = TempoClock.new;
 			tempoClock.schedAbs(tempoClock.nextBar,{tempoClock.beatsPerBar_(1)});
 
-			"Please Wait... Loading Density... Sending SynthDef on s... Loading Sounds...".postln;
+			"Please Wait... Loading DensityTR... Sending SynthDef on s... Loading Sounds...".postln;
 
 			// Load Sound Orchestra
 			fonctionLoadSoundOrchestra.value(soundOrchestra);
@@ -1065,47 +1065,47 @@ DensityTR {
 			s.sync;
 
 			// Synth AudioIn
-			synthAudioIn = Synth.newPaused("Density AudioIn",
+			synthAudioIn = Synth.newPaused("DensityTR AudioIn",
 				[\in, 0, 'busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth play file
-			synthFileIn = Synth.newPaused("Density FileIn",
+			synthFileIn = Synth.newPaused("DensityTR FileIn",
 				[\bufferplay, bufferFile, 'busIn', busAnalyzeIn, \busRec, busRecAudioIn, \volume, 0], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze FFT
-			synthAnalyseFFT = Synth.newPaused("OSC Density FFT",
+			synthAnalyseFFT = Synth.newPaused("OSC DensityTR FFT",
 				['busIn', busAnalyzeIn, \speed, 24], groupeAnalyse, \addToTail); // 24 * each second
 			s.sync;
 
 			// Synth audio analyze Onsets
-			synthAnalyseOnsets = Synth.newPaused("OSC Density Onsets",
+			synthAnalyseOnsets = Synth.newPaused("OSC DensityTR Onsets",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Pitch
-			synthAnalysePitch = Synth.newPaused("OSC Density Pitch",
+			synthAnalysePitch = Synth.newPaused("OSC DensityTR Pitch",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Pitch Version 2
-			synthAnalysePitch2 = Synth.newPaused("OSC Density Pitch2",
+			synthAnalysePitch2 = Synth.newPaused("OSC DensityTR Pitch2",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze KeyTrack
-			synthAnalyseKeyTrack = Synth.newPaused("OSC Density KeyTrack",
+			synthAnalyseKeyTrack = Synth.newPaused("OSC DensityTR KeyTrack",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth Keyboard
-			synthKeyboard = Synth.newPaused("OSC Density Keyboard",
+			synthKeyboard = Synth.newPaused("OSC DensityTR Keyboard",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// MIDI Keyboard
-			synthMIDI = Synth.newPaused("OSC Density MIDI",
+			synthMIDI = Synth.newPaused("OSC DensityTR MIDI",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
@@ -1171,7 +1171,7 @@ DensityTR {
 			windowEar.view.children.at(83).enabled_(false);
 			windowEar.view.children.at(84).enabled_(false);
 
-			windowEar.name = "Density" + typeMasterOut;
+			windowEar.name = "DensityTR" + typeMasterOut;
 			windowGVerb.name = "Reverb" + typeMasterOut;
 			windowVST.name = "VST" + typeMasterOut;
 
@@ -1254,7 +1254,7 @@ DensityTR {
 						// Plot Data
 						plotDataFFT.value(flux, flatness, centroid, energy, bpm);
 				}, {nil});
-			}, '/Density_FFT_Data', serveurAdresse);
+			}, '/DensityTR_FFT_Data', serveurAdresse);
 
 			freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 			(numFhzBand + 1).do({arg i; lastTime = lastTime.add(Main.elapsedTime)});
@@ -1509,6 +1509,7 @@ DensityTR {
 														if(dataInstr.at(21) == indexBand or: {dataInstr.at(21) == 0},
 															{
 																# freqStream, ampStream, dureeStream = computeAlgoFilterDataMusic.value(busOSCfreq.at(dataInstr.at(21)).getSynchronous.asArray.cpsmidi / 127, busOSCamp.at(dataInstr.at(21)).getSynchronous.asArray, busOSCduree.at(dataInstr.at(21)).getSynchronous.asArray / dureeMaximumAnalyze, dataInstr.at(12), dataInstr.at(13), dataInstr.at(14), dataInstr.at(15), dataInstr.at(16), dataInstr.at(17), dataInstr.at(18), dataInstr.at(19), dataInstr.at(20));
+																s.bind{
 																dataInstr.at(5).set(\freq, freqStream);
 																dataInstr.at(5).set(\amp, ampStream);
 																// Pour New Synth Stream avec EnvGen
@@ -1524,6 +1525,7 @@ DensityTR {
 																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
 																	if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
 																});
+																};
 														});
 												});
 											});
@@ -1533,7 +1535,7 @@ DensityTR {
 						});
 						dureeAnalyzeOSCMusic = Main.elapsedTime;
 				});
-			}, '/Density_Music_Data', serveurAdresse);
+			}, '/DensityTR_Music_Data', serveurAdresse);
 
 			// Setup MIDI Responder
 			// NoteOn
@@ -2806,10 +2808,12 @@ DensityTR {
 							});
 						}, {synthMidi = nil; synthMidiVST = nil});
 						//Play Synth next Beat on BPM
+						s.bind{
 						synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
 						//Play SynthMidi next Beat on BPM
 						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal))});
 						if(patternVST != nil, {synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
+						};
 					},
 					{
 						// SYNTH STREAM
@@ -3046,6 +3050,8 @@ DensityTR {
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
 			~studio.close;
+			Pdef.removeAll;
+			ProxySpace.clearAll;
 			//s.quit;
 		};
 
@@ -3100,26 +3106,23 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		menuFile = Menu(
 			MenuAction("Load File for Analyze",
 				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
-					// Setup GUI Value
-					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
+					listeFileAnalyze = listeFileAnalyze.add(fonctionLoadFileForAnalyse.value(path));
+						// Setup GUI Value
+						windowEar.view.children.at(6).string = "File In :" + PathName.new(path).fileName;
+						listeNameFileAnalyze = listeNameFileAnalyze.add(PathName.new(path).fileName)},{"cancelled".postln})}),
 			Menu(
 				MenuAction("On", {synthFileIn.set('loop', 1)}),
 				MenuAction("Off", {synthFileIn.set('loop', 0)});
 			).title_("Loop");
 		);
-		MainMenu.register(menuFile.title_("File for Analyze"), "DensityTools");
+		MainMenu.register(menuFile.title_("File for Analyze"), "DensityTRTools");
 
 		menuPreset = Menu(
 			MenuAction("Load Preset", {Dialog.openPanel({ arg path, file;
 				file = File(path,"r");
 				fonctionLoadPreset.value(file.readAllString.interpret);
 				file.close;
-				windowEar.name="Density" + typeMasterOut + " | " + PathName.new(path).fileName;
+				windowEar.name="DensityTR" + typeMasterOut + " | " + PathName.new(path).fileName;
 			},
 			{"cancelled".postln})}),
 			MenuAction("Save Preset",{Dialog.savePanel({arg path, name, pathonly, fileName, file;
@@ -3133,10 +3136,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				file = File(path ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
 				file.close;
-				windowEar.name = "Density" + typeMasterOut + " | " + fileName;
+				windowEar.name = "DensityTR" + typeMasterOut + " | " + fileName;
 			}, {"cancelled".postln})});
 		);
-		MainMenu.register(menuPreset.title_("Preset"), "DensityTools");
+		MainMenu.register(menuPreset.title_("Preset"), "DensityTRTools");
 
 		menuInitAll = Menu(
 			MenuAction("Init All", {arg file;
@@ -3202,7 +3205,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			).title_("FX")
 		);
-		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "DensityTools");
+		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "DensityTRTools");
 
 		menuRecording = Menu(
 			MenuAction("Start Recording", {
@@ -3215,7 +3218,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				fonctionRecPause.value;
 			});
 		);
-		MainMenu.register(menuRecording.title_("Recording"), "DensityTools");
+		MainMenu.register(menuRecording.title_("Recording"), "DensityTRTools");
 
 		menuAudio = Menu(
 			MenuAction("Channels FhzBand Out", {
@@ -3349,7 +3352,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
 			});
 		);
-		MainMenu.register(menuAudio.title_("Audio"), "DensityTools");
+		MainMenu.register(menuAudio.title_("Audio"), "DensityTRTools");
 
 		menuMIDI = Menu(
 			MenuAction("Init", {
@@ -3379,7 +3382,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			).title_("Setting");
 		);
-		MainMenu.register(menuMIDI.title_("Midi"), "DensityTools");
+		MainMenu.register(menuMIDI.title_("Midi"), "DensityTRTools");
 
 		menuOSC = Menu(
 			MenuAction("Setting", {var addrM, addrS;
@@ -3399,27 +3402,27 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			}),
 			MenuAction("OSC Master", {oscStateFlag='master';
-				"Density is OSC now !".postln;
+				"DensityTR is OSC now !".postln;
 			}),
 			MenuAction("OSC Slave", {oscStateFlag='slave';
-				"Density is OSC SLAVE now !".postln;
+				"DensityTR is OSC SLAVE now !".postln;
 			}),
 			MenuAction("OSC Off", {oscStateFlag='off';
 				"OSC is OFF now !".postln;
 			});
 		);
-		MainMenu.register(menuOSC.title_("OSC"), "DensityTools");
+		MainMenu.register(menuOSC.title_("OSC"), "DensityTRTools");
 
 		menuAlgo = Menu(
 			MenuAction("Not Activate", {nil}),
 		);
-		MainMenu.register(menuAlgo.title_("Algorithm"), "DensityTools");
+		MainMenu.register(menuAlgo.title_("Algorithm"), "DensityTRTools");
 
 		menuHelp = MenuAction("Help ShortCut", {
-			//Document.new("ShortCut for Density", helpDensity);
-			TextView().name_("ShortCut for Density").string_(helpDensity).front;
+			//Document.new("ShortCut for DensityTR", helpDensity);
+			TextView().name_("ShortCut for DensityTR").string_(helpDensity).front;
 		});
-		MainMenu.register(menuHelp, "DensityTools");
+		MainMenu.register(menuHelp, "DensityTRTools");
 
 		// Fonction ShortCut
 		fonctionShortCut = {arg window;
@@ -3583,7 +3586,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 					numIndexSynthBand = 0;
 					if(File.exists(pathData ++ "Init Preset.scd"), {
-						windowEar.name = "Density" + " | " + "Init Preset";
+						windowEar.name = "DensityTR" + " | " + "Init Preset";
 						file=File(pathData ++ "Init Preset.scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
 						file.close;
@@ -3666,14 +3669,14 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(char == $z, {number = rrand(0, foldersToScanPreset.size - 1);
 					if(File.exists(pathData ++ foldersToScanPreset.at(number)),
 						{file=File(pathData ++ foldersToScanPreset.at(number),"r");
-							windowEar.name = "Density" + typeMasterOut + " | " + foldersToScanPreset.at(number);
+							windowEar.name = "DensityTR" + typeMasterOut + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret);
 							file.close}, {"cancelled".postln});});
 				//key k
 				if(char == $k, {
 					FileDialog.new({arg path;
 						pathData = path.at(0).asString ++"/";
-						windowEar.name="Density" + " | " + pathData.asString;
+						windowEar.name="DensityTR" + " | " + pathData.asString;
 						fonctionCollectFolders.value;
 					}, fileMode: 2);
 				});
@@ -3714,7 +3717,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		// Fonction Commandes
 		fonctionShortCutCommande = {arg number, file;
 			if(shortCutCommande == 'Save Preset', {
-				windowEar.name = "Density" + " | " + "Preset" + number.asString;
+				windowEar.name = "DensityTR" + " | " + "Preset" + number.asString;
 				file = File(pathData ++ "Preset" + number.asString ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
 				file.close;
@@ -3724,7 +3727,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 					listeDataInstruments.do({arg data, index;
 						data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 					});
-					windowEar.name = "Density" + " | " + "Preset" + number.asString;
+					windowEar.name = "DensityTR" + " | " + "Preset" + number.asString;
 					file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
 					fonctionLoadPreset.value(file.readAllString.interpret);
 					file.close;
@@ -4344,7 +4347,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		windowGVerb.front;
 
 		/////// Density Ear Panel
-		windowEar = Window("Density" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
+		windowEar = Window("DensityTR" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
 		windowEar.alpha=1.0;
 		windowEar.front;
 		windowEar.view.decorator = FlowLayout(windowEar.view.bounds);
@@ -5259,7 +5262,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 	initSynthDef {
 
 		// Density Audio Analyze FFT
-		SynthDef("OSC Density FFT",
+		SynthDef("OSC DensityTR FFT",
 			{arg busIn, speed=24;
 				var fft, input, centroid=440, flatness=0.5, energy=440, flux=0.5,
 				trackB, trackH, trackQ, bpm=60, lock=0;
@@ -5270,11 +5273,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				energy =  SpecPcile.kr(fft);
 				flux =  FFTFlux.kr(fft);
 				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
-				SendReply.kr(Impulse.kr(speed), '/Density_FFT_Data', values: [flux.clip(0.0001, 1), flatness.clip(0.0001, 1), centroid.clip(20, 12544), energy.clip(20, 12544), bpm], replyID: [1, 2, 3, 4, 5]);
+				SendReply.kr(Impulse.kr(speed), '/DensityTR_FFT_Data', values: [flux.clip(0.0001, 1), flatness.clip(0.0001, 1), centroid.clip(20, 12544), energy.clip(20, 12544), bpm], replyID: [1, 2, 3, 4, 5]);
 		}).add;
 
-		// Density Audio Analyze Onsets
-		SynthDef("OSC Density Onsets",
+		// DensityTR Audio Analyze Onsets
+		SynthDef("OSC DensityTR Onsets",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0,
 				inputFilter;
@@ -5284,11 +5287,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				# freqIn, hasfreqIn = Tartini.kr(inputFilter, filtre, 1024, 512, 512, 0.5);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				SendReply.kr(detect, '/DensityTR_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
 
-		// Density Audio Analyze Pitch
-		SynthDef("OSC Density Pitch",
+		// DensityTR Audio Analyze Pitch
+		SynthDef("OSC DensityTR Pitch",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0,
 				inputFilter;
@@ -5298,11 +5301,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				# freqIn, hasfreqIn = Pitch.kr(inputFilter, minFreq: 32, maxFreq: 4186, median: 1, peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				SendReply.kr(detect, '/DensityTR_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
 
 		// Pitch v2
-		SynthDef("OSC Density Pitch2",
+		SynthDef("OSC DensityTR Pitch2",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter, fft, harmonic, percussive;
 				input = In.ar(busIn);
@@ -5316,11 +5319,11 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				# freqIn, hasfreqIn = Pitch.kr(IFFT(harmonic), peakThreshold: filtre);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				SendReply.kr(detect, '/DensityTR_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
 
-		// Density Audio Analyze KeyTrack
-		SynthDef("OSC Density KeyTrack",
+		// DensityTR Audio Analyze KeyTrack
+		SynthDef("OSC DensityTR KeyTrack",
 			{arg busIn, seuil=0.5, filtre=0.5;
 				var input, detect, freqIn, ampIn, timeIn=0, key;
 				input = In.ar(busIn);
@@ -5329,29 +5332,29 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				if(key < 12, freqIn = (key + 60).midicps, freqIn = (key - 12 + 60).midicps);
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
-				SendReply.kr(detect, '/Density_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
+				SendReply.kr(detect, '/DensityTR_Music_Data', values: [freqIn, ampIn, timeIn], replyID: [1, 2, 3]);
 		}).add;
 
-		// Density Keyboard
-		SynthDef("OSC Density Keyboard",
+		// DensityTR Keyboard
+		SynthDef("OSC DensityTR Keyboard",
 			{arg busIn, note=60, amp=0.5, trigger=0;
 				var input, timeIn=0;
 				input = In.ar(busIn);
 				timeIn = Timer.kr(trigger);
-				SendReply.kr(trigger, '/Density_Music_Data', values: [note, amp, timeIn], replyID: [1, 2, 3]);
+				SendReply.kr(trigger, '/DensityTR_Music_Data', values: [note, amp, timeIn], replyID: [1, 2, 3]);
 		}).add;
 
-		// Density MIDI
-		SynthDef("OSC Density MIDI",
+		// DensityTR MIDI
+		SynthDef("OSC DensityTR MIDI",
 			{arg busIn, note=60, amp=0.5, trigger=0;
 				var input, timeIn=0;
 				input = In.ar(busIn);
 				timeIn = Timer.kr(trigger);
-				SendReply.kr(trigger, '/Density_Music_Data', values: [note, amp, timeIn], replyID: [1, 2, 3]);
+				SendReply.kr(trigger, '/DensityTR_Music_Data', values: [note, amp, timeIn], replyID: [1, 2, 3]);
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
-		SynthDef("Density AudioIn",
+		SynthDef("DensityTR AudioIn",
 			{arg in=0, busIn=0;
 				var input;
 				input=Mix(SoundIn.ar(in));
@@ -5359,13 +5362,13 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		}).add;
 
 		// Synth lecture file pour analyse AudioIn
-		SynthDef("Density FileIn",
+		SynthDef("DensityTR FileIn",
 			{arg out=0, bufferplay, busIn=0, busRec=0, trigger=0, offset=0, loop=1, volume=0;
 				var input;
 				input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay) * offset , loop);
 				Out.ar(busIn, Mix(input)); // Bus File In
 				Out.ar(busRec, Mix(input)); // Bus Rec
-				Out.ar(out, input * volume); // Amp File Out
+				Out.ar(out, input!2 * volume); // Amp File Out
 		}).add;
 
 		///////////////// SYNTH AUDIO IN / RECORDS /////////////////////

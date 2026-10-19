@@ -23,14 +23,23 @@ Scores {
 		// Robot = 57130, Agents = 57131, Matrix = 57132, Time = 57133, Density = 57134
 		// WekRobot = 57135, WekAgents = 57136, WekMatrix = 57137, WekTime = 57138, WekDensity = 57139
 		// Provinescu All Soft = 57140
+		// RobotTR = 57150, AgentsTR = 57151, MatrixTR = 57152, DensityTR = 57154
+		// WekRobotTR = 57155, WekAgentsTR = 57156, WekMatrixTR = 57157,  WekDensityTR = 57159
 		// SuperCollider
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", NetAddr.langPort));
+
 		// Standalone
 		10.do({arg i;
 			netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57130+i));
 		});
+
 		// Provinescu
 		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57140));
+
+		// StandaloneTR
+		10.do({arg i;
+			netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57150+i));
+		});
 
 		this.edit;
 

@@ -6,13 +6,13 @@ WekRobotTR {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, flagMC=0, widthMC=2.0, orientationMC=0.5, numberAudioIn, nom, foncSynthOut, foncFXPre, foncFXPost, scAdr, udpAdr;
 
-	*new {arg path="~/Documents/WekRobot/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekRobot", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path="~/Documents/WekRobotTR/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekRobotTR", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l);
 
 	}
 
-	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
+	init {arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -68,10 +68,11 @@ WekRobotTR {
 
 		// MIDI
 		MIDIClient.init;
-		// Connect first device by default
 		MIDIIn.connect(0, 0);
-		~midiOut = MIDIOut(0).latency = 0.01;
-		~midiOut.allNotesOff(0);
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		~midiOut = MIDIOut(0);
+		~midiOut.latency = s.latency;
+		~midiOut.connect(0);
 
 		~helpWekRobot="
 Single Commandes:
@@ -150,10 +151,6 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				{Dialog.openPanel({ arg paths;
 					~samplePourAnalyse=paths;
 					s.bind{
-						~listeSamplePourAnalyse.do({arg buffer; buffer.free});
-						~listeSamplePourAnalyse = [];
-						~listeNameSamplePourAnalyse = [];
-						~bufferanalysefile.free;
 						~synthPlayFile.set(\trig, 0);
 						s.sync;
 						~synthPlayFile.run(false);
@@ -163,7 +160,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~file.openRead(~samplePourAnalyse);
 						s.sync;
 						if(~file.numChannels == 1,
-							{~rawData= FloatArray.newClear(~file.numFrames * 2);
+							{~rawData= FloatArray.newClear(~file.numFrames);
 								s.sync;
 								~file.readData(~rawData);
 								s.sync;
@@ -182,6 +179,8 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 						~bufferanalysefile = ~bufferanalysefile.normalize(1.0);
 						~file.close;
 						s.sync;
+						~listeSamplePourAnalyse = ~listeSamplePourAnalyse.add(~bufferanalysefile);
+						~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(paths.asString);
 						~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 						s.sync;
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File IN'}, {~synthPlayFile.run(true);
@@ -198,7 +197,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				s.sync;
 			}});
 		);
-		MainMenu.register(~menuFile.title_("File for Analyze"), "WekRobotTools");
+		MainMenu.register(~menuFile.title_("File for Analyze"), "WekRobotTRTools");
 
 
 		~menuSynchro = MenuAction("Synchro on Grid Tempo", {
@@ -219,7 +218,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				})});
 			});
 		});
-		MainMenu.register(~menuSynchro, "WekRobotTools");
+		MainMenu.register(~menuSynchro, "WekRobotTRTools");
 
 		~menuRec = Menu(
 
@@ -236,10 +235,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				~fonctionRecPause.value;
 			});
 		);
-		MainMenu.register(~menuRec.title_("Recording"), "WekRobotTools");
+		MainMenu.register(~menuRec.title_("Recording"), "WekRobotTRTools");
 
 		~menuBuf = MenuAction("Save Buffer Sound (Active Window Instrument)", {~listebuffer.wrapAt(~soncontrol.wrapAt(~instrumentactuel).value).write(~nompathdata++"son"+(~soncontrol.wrapAt(~instrumentactuel).value+1).asString++".aiff")});
-		MainMenu.register(~menuBuf, "WekRobotTools");
+		MainMenu.register(~menuBuf, "WekRobotTRTools");
 
 		~menuAudio = Menu(
 			MenuAction.new("Stereo", {~switchAudioOut=0; this.initSynthDef}),
@@ -247,7 +246,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			MenuAction.new("Rotate2", {~switchAudioOut=1; this.initSynthDef}),
 			MenuAction.new("Ambisonic", {~switchAudioOut=3; this.initSynthDef});
 		);
-		MainMenu.register(~menuAudio.title_("Audio"), "WekRobotTools");
+		MainMenu.register(~menuAudio.title_("Audio"), "WekRobotTRTools");
 
 		~menuFX  =MenuAction("Reset FX (After Audio Change)",{
 			~saveloaddatasinstr.valueAction=12;
@@ -259,7 +258,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 			};
 			s.queryAllNodes;
 		});
-		MainMenu.register(~menuFX, "WekRobotTools");
+		MainMenu.register(~menuFX, "WekRobotTRTools");
 
 
 
@@ -295,7 +294,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				MenuAction("Off", {~flagMidiOut = 'off'});
 			).title_("MIDI Out");
 		);
-		MainMenu.register(~menuMidi.title_("MIDI"), "WekRobotTools");
+		MainMenu.register(~menuMidi.title_("MIDI"), "WekRobotTRTools");
 
 		menuWek = Menu(
 			MenuAction("Wek In Port",
@@ -322,13 +321,13 @@ Preset Wek",
 					});
 			});
 		);
-		MainMenu.register(menuWek.title_("Wekinator"), "WekRobotTools");
+		MainMenu.register(menuWek.title_("Wekinator"), "WekRobotTRTools");
 
 		~menuShortCut = MenuAction("ShortCuts", {
-			//Document.new("ShortCuts for WekRobot", ~helpWekRobot);
-			TextView().name_("ShortCuts for WekRobot").string_(~helpWekRobot).front;
+			//Document.new("ShortCuts for WekRobotTR", ~helpWekRobot);
+			TextView().name_("ShortCuts for WekRobotTR").string_(~helpWekRobot).front;
 		});
-		MainMenu.register(~menuShortCut, "WekRobotTools");
+		MainMenu.register(~menuShortCut, "WekRobotTRTools");
 
 
 		~fonctionResetFX={
@@ -405,7 +404,7 @@ Preset Wek",
 					s.sync;
 					s.recSampleFormat_(~sampleFormat);
 					s.sync;
-					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekRobot_" ++ Date.localtime.stamp ++ "." ++ ~headerFormat);
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekRobotTR_" ++ Date.localtime.stamp ++ "." ++ ~headerFormat);
 					s.sync;
 					s.record;
 					s.sync;
@@ -485,12 +484,12 @@ Preset Wek",
 
 			// DATAS GENERALES
 			~midicanalin=["Midi In 1","Midi In 2","Midi In 3","Midi In 4","Midi In 5","Midi In 6","Midi In 7","Midi In 8","Midi In 9","Midi In 10","Midi In 11","Midi In 12","Midi In 13","Midi In 14","Midi In 15","Midi In 16"];
-			~choixdatasinfreq=["Fhz In Off","Fhz In Audio","Fhz In Midi","Fhz In Chaos","Fhz In Neural","Fhz In Genetic","Fhz In CreatePhrase1","Fhz In CreatePhrase2"];
-			~choixdatasinamp=["Amp In Off","Amp In Audio","Amp In Midi","Amp In Chaos","Amp In Neural","Amp In Genetic","Amp In CreatePhrase1","Amp In CreatePhrase2"];
-			~choixdatasinduree=["Dur In Off","Dur In Audio","Dur In Midi","Dur In Chaos","Dur In Neural","Dur In Genetic","Dur In CreatePhrase1","Dur In CreatePhrase2"];
-			~algorithmesmusicauxfreq=["Fhz Out","Fhz Out Neurone","Fhz Out  Neurone2","Fhz Out Genetic","Fhz Out Probability","Fhz Out CreatePhrase1","Fhz Out CreatePhrase2"];
-			~algorithmesmusicauxamp=["Amp Out","Amp Out Neurone","Amp Out  Neurone2","Amp Out Genetic","Amp Out Probability","Amp Out CreatePhrase1","Amp Out CreatePhrase2"];
-			~algorithmesmusicauxduree=["Dur Out","Dur Out Neurone","Dur Out  Neurone2","Dur Out Genetic","Dur Out Probability","Dur Out CreatePhrase1","Dur Out CreatePhrase2"];
+			~choixdatasinfreq=["Fhz In Off","Fhz In Audio","Fhz In Midi","Fhz In Chaos","Fhz In Neural","Fhz In Genetic","Fhz In CreatePhrase1","Fhz In CreatePhrase2", "Generate", "GenStep", "Predict"];
+			~choixdatasinamp=["Amp In Off","Amp In Audio","Amp In Midi","Amp In Chaos","Amp In Neural","Amp In Genetic","Amp In CreatePhrase1","Amp In CreatePhrase2", "Generate", "GenStep", "Predict"];
+			~choixdatasinduree=["Dur In Off","Dur In Audio","Dur In Midi","Dur In Chaos","Dur In Neural","Dur In Genetic","Dur In CreatePhrase1","Dur In CreatePhrase2", "Generate", "GenStep", "Predict"];
+			~algorithmesmusicauxfreq=["Fhz Out","Fhz Out Neurone","Fhz Out  Neurone2","Fhz Out Genetic","Fhz Out Probability","Fhz Out CreatePhrase1","Fhz Out CreatePhrase2", "Generate", "GenStep", "Predict"];
+			~algorithmesmusicauxamp=["Amp Out","Amp Out Neurone","Amp Out  Neurone2","Amp Out Genetic","Amp Out Probability","Amp Out CreatePhrase1","Amp Out CreatePhrase2", "Generate", "GenStep", "Predict"];
+			~algorithmesmusicauxduree=["Dur Out","Dur Out Neurone","Dur Out  Neurone2","Dur Out Genetic","Dur Out Probability","Dur Out CreatePhrase1","Dur Out CreatePhrase2", "Generate", "GenStep", "Predict"];
 			~canalout=[];
 			32.do({arg i;var x;
 				i=i+1;x="Audio Out"+i.asString;~canalout=~canalout.add(x.asSymbol);
@@ -600,6 +599,15 @@ Preset Wek",
 			~listealgo2freq=[];
 			~listealgo2amp=[];
 			~listealgo2duree=[];
+			~listeGenerateFreq=[];
+			~listeGenerateAmp=[];
+			~listeGenerateDuree=[];
+			~listeGenStepFreq=[];
+			~listeGenStepAmp=[];
+			~listeGenStepDuree=[];
+			~listePredictFreq=[];
+			~listePredictAmp=[];
+			~listePredictDuree=[];
 			~listeinfreq=[];
 			~listeinamp=[];
 			~listeinduree=[];
@@ -881,7 +889,7 @@ Preset Wek",
 			while({cmd != nil},
 				{
 					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'wekrobot'},
+					if(cmd == 'all' or: {cmd == 'wekrobotTR'},
 						{
 							cmd = msg[item+1].postln;
 							// Preset
@@ -1277,7 +1285,7 @@ Preset Wek",
 						{	~listebuffer=~listebuffer.add(Buffer.read(s, path.standardizePath, action: {Post << i <<  " " << path << " Finished" << Char.nl}));
 							s.sync;
 						},
-						{~rawData= FloatArray.newClear(~file.numFrames * 2);
+						{~rawData= FloatArray.newClear(~file.numFrames);
 							s.sync;
 							~file.readData(~rawData);
 							s.sync;
@@ -1355,7 +1363,7 @@ Preset Wek",
 			~file.openRead(~path);
 			s.sync;
 			if(~file.numChannels == 1,
-				{~rawData= FloatArray.newClear(~file.numFrames * 2);
+				{~rawData= FloatArray.newClear(~file.numFrames);
 					s.sync;
 					~file.readData(~rawData);
 					s.sync;
@@ -1375,27 +1383,27 @@ Preset Wek",
 			~file.close;
 			s.sync;
 
-			"Please Wait... Loading WekRobot... Sending SynthDef on Server... Loading Sounds...".postln;
+			"Please Wait... Loading WekRobotTR... Sending SynthDef on Server... Loading Sounds...".postln;
 
 			// OSC Synth Analyse
 			~canalAudioIn = 0;
 			//Creation Synth play File
-			~synthPlayFile=Synth.newPaused("WekRobot Play File",
+			~synthPlayFile=Synth.newPaused("WekRobotTR Play File",
 				[\bufferplay, ~bufferanalysefile.bufnum, 'busFileIn', ~busFileIn.index, \volume, 0.0], ~groupeAnalyse, \addToHead);
 			s.sync;
 			// Creation du SynthDef "AudioBeatFollow" pour suivre beat
-			~audioIn=Synth.newPaused("OSC WekRobot Onsets",
+			~audioIn=Synth.newPaused("OSC WekRobotTR Onsets",
 				['in', ~canalAudioIn, \seuil, 0.5 ], ~groupeAnalyse, \addToTail);
 			s.sync;
 			// Creation du SynthDef "AudioFileFollow" pour analyse file
-			~audioFile=Synth.newPaused("OSC WekRobot File Onsets",
+			~audioFile=Synth.newPaused("OSC WekRobotTR File Onsets",
 				[\bufferplay, ~bufferanalysefile.bufnum, 'busFileIn', ~busFileIn.index], ~groupeAnalyse, \addToTail);
 			s.sync;
 			// Creation Synth Tempo
-			~tempoFile=Synth.newPaused("OSC WekRobot Tempo FileIn",
+			~tempoFile=Synth.newPaused("OSC WekRobotTR Tempo FileIn",
 				['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 			s.sync;
-			~tempoIn=Synth.newPaused("OSC WekRobot Tempo AudioIn",
+			~tempoIn=Synth.newPaused("OSC WekRobotTR Tempo AudioIn",
 				['in', ~canalAudioIn, \lock, 0], ~groupeAnalyse, \addToTail);
 			s.sync;
 			// VST
@@ -1481,6 +1489,15 @@ Preset Wek",
 				~listealgo2freq=~listealgo2freq.add([]);
 				~listealgo2amp=~listealgo2amp.add([]);
 				~listealgo2duree=~listealgo2duree.add([]);
+				~listeGenerateFreq=~listeGenerateFreq.add([]);
+				~listeGenerateAmp=~listeGenerateAmp.add([]);
+				~listeGenerateDuree=~listeGenerateDuree.add([]);
+				~listeGenStepFreq=~listeGenStepFreq.add([]);
+				~listeGenStepAmp=~listeGenStepAmp.add([]);
+				~listeGenStepDuree=~listeGenStepDuree.add([]);
+				~listePredictFreq=~listePredictFreq.add([]);
+				~listePredictAmp=~listePredictAmp.add([]);
+				~listePredictDuree=~listePredictDuree.add([]);
 				~listeinfreq=~listeinfreq.add([]);
 				~listeinamp=~listeinamp.add([]);
 				~listeinduree=~listeinduree.add([]);
@@ -1741,7 +1758,7 @@ Preset Wek",
 			if(~flagTempoAnalyze == 'on' and: {~oscStateFlag != 'slave'} and: {~flagEntreeMidi == 'off'}, {
 				{~tempoprocessinstrument.valueAction = msg.wrapAt(3) * 60 }.defer;
 			});
-		}, '/WekRobot_Analyse_Tempo', ~serverAdresse);
+		}, '/WekRobotTR_Analyse_Tempo', ~serverAdresse);
 		// Fonction OSC
 		~initOSCresponder = {
 			~oscHPtempo = OSCFunc.newMatching({arg msg, time, addr, recvPort;
@@ -1810,10 +1827,6 @@ Preset Wek",
 					freq=msg.wrapAt(3);
 					freq=freq.clip(0,1);
 					amp=msg.wrapAt(4).clip(0.001, 1.0);
-					// ici normaliser pour Transformer et envoyer
-										~hpTR.learnEvent([~freqTampon, ~ampTampon, duree / ~dureeanalysemax]);
-										/*// Send Studio si necessaire ici pas vraiment
-										~hptInputTarget.sendMsg("/hptransformer/input", ~freqTampon, ~ampTampon, duree / ~dureeanalysemax);*/
 					~nombreinstrument.do({arg instr;
 						flagBand = 0;
 						if(~dureeanalysesil.wrapAt(instr) <= duree  or: {duree >= ~dureeanalysemax.wrapAt(instr)}, // ici duree silence
@@ -1846,6 +1859,11 @@ Preset Wek",
 																			{~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 																				~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 																				~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+																				// ici normaliser pour Transformer et envoyer
+																				~hpTR.learnEvent([freq, amp, duree / ~dureeanalysemax.at(instr)]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freq, ~amp, duree / ~dureeanalysemax.at(instr));*/
+
 																				~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
 																				synth = ~lastTimeBand.at(instr); synth.put(b, time);
 																				~lastTimeBand.put(instr, synth);
@@ -1870,6 +1888,11 @@ Preset Wek",
 													~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 													~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 													~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+													// ici normaliser pour Transformer et envoyer
+													~hpTR.learnEvent([freq, amp, duree / ~dureeanalysemax.at(instr)]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freq, ~amp, duree / ~dureeanalysemax.at(instr));*/
+
 													~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
 												});
 										});
@@ -1890,6 +1913,11 @@ Preset Wek",
 																	{~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 																		~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 																		~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+																		// ici normaliser pour Transformer et envoyer
+																		~hpTR.learnEvent([freq, amp, duree / ~dureeanalysemax.at(instr)]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freq, ~amp, duree / ~dureeanalysemax.at(instr));*/
+
 																		~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
 																		synth = ~lastTimeBand.at(instr); synth.put(b, time);
 																		~lastTimeBand.put(instr, synth);
@@ -1914,6 +1942,11 @@ Preset Wek",
 											~listeaudiofreq.wrapPut(instr,~listeaudiofreq.wrapAt(instr).add(~freqtampon.wrapAt(instr)));
 											~listeaudioamp.wrapPut(instr,~listeaudioamp.wrapAt(instr).add(~amptampon.wrapAt(instr)));
 											~listeaudioduree.wrapPut(instr,~listeaudioduree.wrapAt(instr).add(duree));
+											// ici normaliser pour Transformer et envoyer
+											~hpTR.learnEvent([freq, amp, duree / ~dureeanalysemax.at(instr)]);
+										/*// Send Studio si necessaire ici pas vraiment
+										~hptInputTarget.sendMsg("/hptransformer/input", ~freq, ~amp, duree / ~dureeanalysemax.at(instr));*/
+
 											~freqbefore.wrapPut(instr, ~freqtampon.wrapAt(instr));~ampbefore.wrapPut(instr, ~amptampon.wrapAt(instr));~dureebefore.wrapPut(instr, ~duree.wrapAt(instr));
 										});
 								});
@@ -1935,7 +1968,7 @@ Preset Wek",
 						~audioDisplay.string_(msg.wrapAt(4).value.round(0.01)).stringColor_(Color.red(msg.wrapAt(3).value, 1));
 					}.defer;
 			});
-		}, '/WekRobot_Analyse_Audio', ~serverAdresse);
+		}, '/WekRobotTR_Analyse_Audio', ~serverAdresse);
 
 		// Midi In on
 		~flagEntreeMidi='off';
@@ -2048,8 +2081,8 @@ Preset Wek",
 		// Analyse model1 des datas audio
 		~routinealgorithmes=Tdef(\analyseAlgorithmes, {
 			loop({
-				~nombreinstrument.do({arg instr;var freq=0, amp=0, duree=0, lastfreq, lastamp, lastduree;
-					// Algo 1
+				~nombreinstrument.do({arg instr;
+					var freq=0, amp=0, duree=0, lastfreq, lastamp, lastduree, vecteur;
 					if(~listeinfreq.wrapAt(instr).size >=2 and: {~listeinamp.wrapAt(instr).size >=2} and: {~listeinduree.wrapAt(instr).size >=2}, {
 						// Prend evenement suivant
 						if(~flagFreqAlgo.wrapAt(instr) >= ~listeinfreq.wrapAt(instr).size, {~flagFreqAlgo.wrapPut(instr, 0)});
@@ -2061,6 +2094,7 @@ Preset Wek",
 						if(~flagDureeAlgo.wrapAt(instr) >= ~listeinduree.wrapAt(instr).size, {~flagDureeAlgo.wrapPut(instr, 0)});
 						lastduree=~listeinduree.wrapAt(instr).wrapAt(~flagDureeAlgo.wrapAt(instr));
 						~flagDureeAlgo.wrapPut(instr, ~flagDureeAlgo.wrapAt(instr)+1);
+						// Algo 1
 						# freq, amp, duree = ~instanceAlgo1.wrapAt(instr).next(lastfreq, lastamp, lastduree);
 						if(~listealgo1freq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listealgo1freq.wrapPut(instr,[])});
 						~listealgo1freq.wrapPut(instr,~listealgo1freq.wrapAt(instr).add(freq));
@@ -2076,9 +2110,42 @@ Preset Wek",
 						~listealgo2amp.wrapPut(instr,~listealgo2amp.wrapAt(instr).add(amp));
 						if(~listealgo2duree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listealgo2duree.wrapPut(instr,[])});
 						~listealgo2duree.wrapPut(instr,~listealgo2duree.wrapAt(instr).add(duree));
+						// Generate
+						vecteur = ~hpTR.generate([lastfreq, lastamp, lastduree], 1);
+						//vecteur = vecteur.flop;
+						vecteur = vecteur[0];
+						freq = vecteur[0];
+						amp = vecteur[1];
+						duree = vecteur[2];
+						if(~listeGenerateFreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listeGenerateFreq.wrapPut(instr,[])});
+						~listeGenerateFreq.wrapPut(instr,~listeGenerateFreq.wrapAt(instr).add(freq));
+						if(~listeGenerateAmp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listeGenerateAmp.wrapPut(instr,[])});
+						~listeGenerateAmp.wrapPut(instr,~listeGenerateAmp.wrapAt(instr).add(amp));
+						if(~listeGenerateDuree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listeGenerateDuree.wrapPut(instr,[])});
+						~listeGenerateDuree.wrapPut(instr,~listeGenerateDuree.wrapAt(instr).add(duree));
+						// GenStep
+						# freq, amp, duree = ~hpTR.generateStep([lastfreq, lastamp, lastduree]);
+						if(~listeGenStepFreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listeGenStepFreq.wrapPut(instr,[])});
+						~listeGenStepFreq.wrapPut(instr,~listeGenStepFreq.wrapAt(instr).add(freq));
+						if(~listeGenStepAmp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listeGenStepAmp.wrapPut(instr,[])});
+						~listeGenStepAmp.wrapPut(instr,~listeGenStepAmp.wrapAt(instr).add(amp));
+						if(~listeGenStepDuree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listeGenStepDuree.wrapPut(instr,[])});
+						~listeGenStepDuree.wrapPut(instr,~listeGenStepDuree.wrapAt(instr).add(duree));
+						// Predict
+						# freq, amp, duree = ~hpTR.predict([lastfreq, lastamp, lastduree]);
+						if(~listePredictFreq.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listePredictFreq.wrapPut(instr,[])});
+						~listePredictFreq.wrapPut(instr,~listePredictFreq.wrapAt(instr).add(freq));
+						if(~listePredictAmp.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listePredictAmp.wrapPut(instr,[])});
+						~listePredictAmp.wrapPut(instr,~listePredictAmp.wrapAt(instr).add(amp));
+						if(~listePredictDuree.wrapAt(instr).size >= ~listedatassize.wrapAt(instr), {~listePredictDuree.wrapPut(instr,[])});
+						~listePredictDuree.wrapPut(instr,~listePredictDuree.wrapAt(instr).add(duree));
 					},
 					{~listealgo1freq.wrapPut(instr,[]);~listealgo1amp.wrapPut(instr,[]);~listealgo1duree.wrapPut(instr,[]);
-						~listealgo2freq.wrapPut(instr,[]);~listealgo2amp.wrapPut(instr,[]);~listealgo2duree.wrapPut(instr,[])});
+						~listealgo2freq.wrapPut(instr,[]);~listealgo2amp.wrapPut(instr,[]);~listealgo2duree.wrapPut(instr,[]);
+						~listeGenerateFreq.wrapPut(instr,[]);~listeGenerateAmp.wrapPut(instr,[]);~listeGenerateDuree.wrapPut(instr,[]);
+						~listeGenStepFreq.wrapPut(instr,[]);~listeGenStepAmp.wrapPut(instr,[]);~listeGenStepDuree.wrapPut(instr,[]);
+						~listePredictFreq.wrapPut(instr,[]);~listePredictAmp.wrapPut(instr,[]);~listePredictDuree.wrapPut(instr,[]);
+					});
 				});
 				(~tempoalgorithmes.reciprocal * ~tempoSystem.tempo).wait;
 			});
@@ -2163,183 +2230,215 @@ Preset Wek",
 
 		// Definition des schedulers des instruments
 		~nombreinstrument.do({arg i;
-			~routineinstrument=~routineinstrument.add(Tdef(("instrument"++(i+1).asString).asSymbol, {
-				var freq, amp=0, ampPre=0, ampPost=0, duree, listeoutfreq, listeoutamp, listeoutduree, time, flagInstrPlay, octave, ratio, degre, difL, difH, pos=~scale.at(i).degrees.size - 1, audioSynthIn, level1=1, level2=0;
-				loop({
-					// Choix des datas in freq
-					switch(~indatasfreqinstrument.wrapAt(i).value,
-						~choixdatasinfreq.wrapAt(0), {~listeinfreq.wrapPut(i,~listeofffreq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(1), {~listeinfreq.wrapPut(i,~listeaudiofreq.wrapAt(i));~listeofffreq.wrapPut(i,~listeaudiofreq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(2), {~listeinfreq.wrapPut(i,~listemidifreq.wrapAt(i));~listeofffreq.wrapPut(i,~listemidifreq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(3), {~listeinfreq.wrapPut(i,~listechaosfreq.wrapAt(i));~listeofffreq.wrapPut(i,~listechaosfreq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(4), {~listeinfreq.wrapPut(i,~listeneuronefreq.wrapAt(i));~listeofffreq.wrapPut(i,~listeneuronefreq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(5), {~listeinfreq.wrapPut(i,~listegenetiquefreq.wrapAt(i));~listeofffreq.wrapPut(i,~listegenetiquefreq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(6), {~listeinfreq.wrapPut(i,~listealgo1freq.wrapAt(i));~listeofffreq.wrapPut(i,~listealgo1freq.wrapAt(i))},
-						~choixdatasinfreq.wrapAt(7), {~listeinfreq.wrapPut(i,~listealgo2freq.wrapAt(i));~listeofffreq.wrapPut(i,~listealgo2freq.wrapAt(i))});
-					// Choix des datas in amp
-					switch(~indatasampinstrument.wrapAt(i).value,
-						~choixdatasinamp.wrapAt(0), {~listeinamp.wrapPut(i,~listeoffamp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(1), {~listeinamp.wrapPut(i,~listeaudioamp.wrapAt(i));~listeoffamp.wrapPut(i,~listeaudioamp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(2), {~listeinamp.wrapPut(i,~listemidiamp.wrapAt(i));~listeoffamp.wrapPut(i,~listemidiamp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(3), {~listeinamp.wrapPut(i,~listechaosamp.wrapAt(i));~listeoffamp.wrapPut(i,~listechaosamp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(4), {~listeinamp.wrapPut(i,~listeneuroneamp.wrapAt(i));~listeoffamp.wrapPut(i,~listeneuroneamp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(5), {~listeinamp.wrapPut(i,~listegenetiqueamp.wrapAt(i));~listeoffamp.wrapPut(i,~listegenetiqueamp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(6), {~listeinamp.wrapPut(i,~listealgo1amp.wrapAt(i));~listeoffamp.wrapPut(i,~listealgo1amp.wrapAt(i))},
-						~choixdatasinamp.wrapAt(7), {~listeinamp.wrapPut(i,~listealgo2amp.wrapAt(i));~listeoffamp.wrapPut(i,~listealgo2amp.wrapAt(i))});
-					// Choix des datas in duree
-					switch(~indatasdureeinstrument.wrapAt(i).value,
-						~choixdatasinduree.wrapAt(0), {~listeinduree.wrapPut(i,~listeoffduree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(1), {~listeinduree.wrapPut(i,~listeaudioduree.wrapAt(i));~listeoffduree.wrapPut(i,~listeaudioduree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(2), {~listeinduree.wrapPut(i,~listemididuree.wrapAt(i));~listeoffduree.wrapPut(i,~listemididuree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(3), {~listeinduree.wrapPut(i,~listechaosduree.wrapAt(i));~listeoffduree.wrapPut(i,~listechaosduree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(4), {~listeinduree.wrapPut(i,~listeneuroneduree.wrapAt(i));~listeoffduree.wrapPut(i,~listeneuroneduree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(5), {~listeinduree.wrapPut(i,~listegenetiqueduree.wrapAt(i));~listeoffduree.wrapPut(i,~listegenetiqueduree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(6), {~listeinduree.wrapPut(i,~listealgo1duree.wrapAt(i));~listeoffduree.wrapPut(i,~listealgo1duree.wrapAt(i))},
-						~choixdatasinduree.wrapAt(7), {~listeinduree.wrapPut(i,~listealgo2duree.wrapAt(i));~listeoffduree.wrapPut(i,~listealgo2duree.wrapAt(i))});
-					// Choix algo freq
-					switch(~algoinstrumentfreq.wrapAt(i).value,
-						~algorithmesmusicauxfreq.wrapAt(0), {listeoutfreq=~listeinfreq.wrapAt(i)},
-						~algorithmesmusicauxfreq.wrapAt(1), {listeoutfreq=~listeneuronefreq.wrapAt(i)},
-						~algorithmesmusicauxfreq.wrapAt(2), {listeoutfreq=~listeneuronefreq.wrapAt(i)},
-						~algorithmesmusicauxfreq.wrapAt(3), {listeoutfreq=~listegenetiquefreq.wrapAt(i)},
-						~algorithmesmusicauxfreq.wrapAt(4), {listeoutfreq=~listeinfreq.wrapAt(i).copy},
-						~algorithmesmusicauxfreq.wrapAt(5), {listeoutfreq=~listealgo1freq.wrapAt(i)},
-						~algorithmesmusicauxfreq.wrapAt(6), {listeoutfreq=~listealgo2freq.wrapAt(i)}
-					);
-					// Choix algo amp
-					switch(~algoinstrumentamp.wrapAt(i).value,
-						~algorithmesmusicauxamp.wrapAt(0), {listeoutamp=~listeinamp.wrapAt(i)},
-						~algorithmesmusicauxamp.wrapAt(1), {listeoutamp=~listeneuroneamp.wrapAt(i)},
-						~algorithmesmusicauxamp.wrapAt(2), {listeoutamp=~listeneuroneamp.wrapAt(i)},
-						~algorithmesmusicauxamp.wrapAt(3), {listeoutamp=~listegenetiqueamp.wrapAt(i)},
-						~algorithmesmusicauxamp.wrapAt(4), {listeoutamp=~listeinamp.wrapAt(i).copy},
-						~algorithmesmusicauxamp.wrapAt(5), {listeoutamp=~listealgo1amp.wrapAt(i)},
-						~algorithmesmusicauxamp.wrapAt(6), {listeoutamp=~listealgo2amp.wrapAt(i)}
-					);
-					// Choix algo duree
-					switch(~algoinstrumentduree.wrapAt(i).value,
-						~algorithmesmusicauxduree.wrapAt(0), {listeoutduree=~listeinduree.wrapAt(i)},
-						~algorithmesmusicauxduree.wrapAt(1), {listeoutduree=~listeneuroneduree.wrapAt(i)},
-						~algorithmesmusicauxduree.wrapAt(2), {listeoutduree=~listeneuroneduree.wrapAt(i)},
-						~algorithmesmusicauxduree.wrapAt(3), {listeoutduree=~listegenetiqueduree.wrapAt(i)},
-						~algorithmesmusicauxduree.wrapAt(4), {listeoutduree=~listeinduree.wrapAt(i).copy},
-						~algorithmesmusicauxduree.wrapAt(5), {listeoutduree=~listealgo1duree.wrapAt(i)},
-						~algorithmesmusicauxduree.wrapAt(6), {listeoutduree=~listealgo2duree.wrapAt(i)}
-					);
-					// Test si silence
-					time = Main.elapsedTime;
-					flagInstrPlay='on';
-					if((time - ~lastDureeInstrAudio.wrapAt(i)) >= ~dureeanalysesil.wrapAt(i) and: {~indatasfreqinstrument.wrapAt(i).value == "Fhz In Audio" or: {~indatasampinstrument.wrapAt(i).value == "Amp In Audio"} or: {~indatasdureeinstrument.wrapAt(i).value == "Dur In Audio"}},
-						{flagInstrPlay='off';
-							// Set MIDI Off
-							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-								~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
-									if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
-								});
-							});
-						}, {if((time - ~lastDureeInstrMidi.wrapAt(i)) >= ~dureeanalysesil.wrapAt(i) and: {~indatasfreqinstrument.wrapAt(i).value == "Fhz In Midi" or: {~indatasampinstrument.wrapAt(i).value == "Amp In Midi"} or: {~indatasdureeinstrument.wrapAt(i).value == "Dur In Midi"}},
-							{flagInstrPlay='off';
-								// Set MIDI Off
-								if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-									~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
-										if(flagVST =='on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+			~routineinstrument=~routineinstrument.add(
+				Pdef(("instrument"++(i+1).asString).asSymbol,
+					Pbind(
+						\type, \rest,
+						\robotStep, Pfunc({
+							var freq, amp=0, ampPre=0, ampPost=0, duree, listeoutfreq, listeoutamp, listeoutduree, time, flagInstrPlay, octave, ratio, degre, difL, difH, pos=~scale.at(i).degrees.size - 1, audioSynthIn, level1=1, level2=0;
+							// Choix des datas in freq
+							switch(~indatasfreqinstrument.wrapAt(i).value,
+								~choixdatasinfreq.wrapAt(0), {~listeinfreq.wrapPut(i,~listeofffreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(1), {~listeinfreq.wrapPut(i,~listeaudiofreq.wrapAt(i));~listeofffreq.wrapPut(i,~listeaudiofreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(2), {~listeinfreq.wrapPut(i,~listemidifreq.wrapAt(i));~listeofffreq.wrapPut(i,~listemidifreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(3), {~listeinfreq.wrapPut(i,~listechaosfreq.wrapAt(i));~listeofffreq.wrapPut(i,~listechaosfreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(4), {~listeinfreq.wrapPut(i,~listeneuronefreq.wrapAt(i));~listeofffreq.wrapPut(i,~listeneuronefreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(5), {~listeinfreq.wrapPut(i,~listegenetiquefreq.wrapAt(i));~listeofffreq.wrapPut(i,~listegenetiquefreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(6), {~listeinfreq.wrapPut(i,~listealgo1freq.wrapAt(i));~listeofffreq.wrapPut(i,~listealgo1freq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(7), {~listeinfreq.wrapPut(i,~listealgo2freq.wrapAt(i));~listeofffreq.wrapPut(i,~listealgo2freq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(8),	{~listeinfreq.wrapPut(i,~listeGenerateFreq.wrapAt(i));~listeofffreq.wrapPut(i,~listeGenerateFreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(9),	{~listeinfreq.wrapPut(i,~listeGenStepFreq.wrapAt(i));~listeofffreq.wrapPut(i,~listeGenStepFreq.wrapAt(i))},
+								~choixdatasinfreq.wrapAt(10),	{~listeinfreq.wrapPut(i,~listePredictFreq.wrapAt(i));~listeofffreq.wrapPut(i,~listePredictFreq.wrapAt(i))},
+							);
+							// Choix des datas in amp
+							switch(~indatasampinstrument.wrapAt(i).value,
+								~choixdatasinamp.wrapAt(0), {~listeinamp.wrapPut(i,~listeoffamp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(1), {~listeinamp.wrapPut(i,~listeaudioamp.wrapAt(i));~listeoffamp.wrapPut(i,~listeaudioamp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(2), {~listeinamp.wrapPut(i,~listemidiamp.wrapAt(i));~listeoffamp.wrapPut(i,~listemidiamp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(3), {~listeinamp.wrapPut(i,~listechaosamp.wrapAt(i));~listeoffamp.wrapPut(i,~listechaosamp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(4), {~listeinamp.wrapPut(i,~listeneuroneamp.wrapAt(i));~listeoffamp.wrapPut(i,~listeneuroneamp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(5), {~listeinamp.wrapPut(i,~listegenetiqueamp.wrapAt(i));~listeoffamp.wrapPut(i,~listegenetiqueamp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(6), {~listeinamp.wrapPut(i,~listealgo1amp.wrapAt(i));~listeoffamp.wrapPut(i,~listealgo1amp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(7), {~listeinamp.wrapPut(i,~listealgo2amp.wrapAt(i));~listeoffamp.wrapPut(i,~listealgo2amp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(8),
+								{~listeinamp.wrapPut(i,~listeGenerateAmp.wrapAt(i));~listeoffamp.wrapPut(i,~listeGenerateAmp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(9),
+								{~listeinamp.wrapPut(i,~listeGenStepAmp.wrapAt(i));~listeoffamp.wrapPut(i,~listeGenStepAmp.wrapAt(i))},
+								~choixdatasinamp.wrapAt(10),
+								{~listeinamp.wrapPut(i,~listePredictAmp.wrapAt(i));~listeoffamp.wrapPut(i,~listePredictAmp.wrapAt(i))},
+							);
+							// Choix des datas in duree
+							switch(~indatasdureeinstrument.wrapAt(i).value,
+								~choixdatasinduree.wrapAt(0), {~listeinduree.wrapPut(i,~listeoffduree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(1), {~listeinduree.wrapPut(i,~listeaudioduree.wrapAt(i));~listeoffduree.wrapPut(i,~listeaudioduree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(2), {~listeinduree.wrapPut(i,~listemididuree.wrapAt(i));~listeoffduree.wrapPut(i,~listemididuree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(3), {~listeinduree.wrapPut(i,~listechaosduree.wrapAt(i));~listeoffduree.wrapPut(i,~listechaosduree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(4), {~listeinduree.wrapPut(i,~listeneuroneduree.wrapAt(i));~listeoffduree.wrapPut(i,~listeneuroneduree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(5), {~listeinduree.wrapPut(i,~listegenetiqueduree.wrapAt(i));~listeoffduree.wrapPut(i,~listegenetiqueduree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(6), {~listeinduree.wrapPut(i,~listealgo1duree.wrapAt(i));~listeoffduree.wrapPut(i,~listealgo1duree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(7), {~listeinduree.wrapPut(i,~listealgo2duree.wrapAt(i));~listeoffduree.wrapPut(i,~listealgo2duree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(8),		{~listeinduree.wrapPut(i,~listeGenerateDuree.wrapAt(i));~listeoffduree.wrapPut(i,~listeGenerateDuree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(9),		{~listeinduree.wrapPut(i,~listeGenStepDuree.wrapAt(i));~listeoffduree.wrapPut(i,~listeGenStepDuree.wrapAt(i))},
+								~choixdatasinduree.wrapAt(10),		{~listeinduree.wrapPut(i,~listePredictDuree.wrapAt(i));~listeoffduree.wrapPut(i,~listePredictDuree.wrapAt(i))},
+							);
+							// Choix algo freq
+							switch(~algoinstrumentfreq.wrapAt(i).value,
+								~algorithmesmusicauxfreq.wrapAt(0), {listeoutfreq=~listeinfreq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(1), {listeoutfreq=~listeneuronefreq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(2), {listeoutfreq=~listeneuronefreq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(3), {listeoutfreq=~listegenetiquefreq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(4), {listeoutfreq=~listeinfreq.wrapAt(i).copy},
+								~algorithmesmusicauxfreq.wrapAt(5), {listeoutfreq=~listealgo1freq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(6), {listeoutfreq=~listealgo2freq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(7), {listeoutfreq=~listeGenerateFreq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(8), {listeoutfreq=~listeGenStepFreq.wrapAt(i)},
+								~algorithmesmusicauxfreq.wrapAt(9), {listeoutfreq=~listePredictFreq.wrapAt(i)},
+							);
+							// Choix algo amp
+							switch(~algoinstrumentamp.wrapAt(i).value,
+								~algorithmesmusicauxamp.wrapAt(0), {listeoutamp=~listeinamp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(1), {listeoutamp=~listeneuroneamp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(2), {listeoutamp=~listeneuroneamp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(3), {listeoutamp=~listegenetiqueamp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(4), {listeoutamp=~listeinamp.wrapAt(i).copy},
+								~algorithmesmusicauxamp.wrapAt(5), {listeoutamp=~listealgo1amp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(6), {listeoutamp=~listealgo2amp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(7), {listeoutamp=~listeGenerateAmp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(8), {listeoutamp=~listeGenStepAmp.wrapAt(i)},
+								~algorithmesmusicauxamp.wrapAt(9), {listeoutamp=~listePredictAmp.wrapAt(i)},
+							);
+							// Choix algo duree
+							switch(~algoinstrumentduree.wrapAt(i).value,
+								~algorithmesmusicauxduree.wrapAt(0), {listeoutduree=~listeinduree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(1), {listeoutduree=~listeneuroneduree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(2), {listeoutduree=~listeneuroneduree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(3), {listeoutduree=~listegenetiqueduree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(4), {listeoutduree=~listeinduree.wrapAt(i).copy},
+								~algorithmesmusicauxduree.wrapAt(5), {listeoutduree=~listealgo1duree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(6), {listeoutduree=~listealgo2duree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(7), {listeoutduree=~listeGenerateDuree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(8), {listeoutduree=~listeGenStepDuree.wrapAt(i)},
+								~algorithmesmusicauxduree.wrapAt(9), {listeoutduree=~listePredictDuree.wrapAt(i)},
+							);
+							// Test si silence
+							time = Main.elapsedTime;
+							flagInstrPlay='on';
+							if((time - ~lastDureeInstrAudio.wrapAt(i)) >= ~dureeanalysesil.wrapAt(i) and: {~indatasfreqinstrument.wrapAt(i).value == "Fhz In Audio" or: {~indatasampinstrument.wrapAt(i).value == "Amp In Audio"} or: {~indatasdureeinstrument.wrapAt(i).value == "Dur In Audio"}},
+								{flagInstrPlay='off';
+									// Set MIDI Off
+									if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
+										~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+											if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+										});
 									});
-								});
-					})});
-					// set les datas calculees par les algorithmes pour playing
-					# freq, amp, duree = ~setdatasplaying.value(i, flagInstrPlay, listeoutfreq, listeoutamp, listeoutduree);
-					~duree.wrapPut(i,duree);
-					if(~playinstrument.wrapAt(i) != "off",{
-						// Freeze
-						if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
-							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, 1);
-							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, 1);
-						},
-						{
-							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobuffer.wrapAt(i)).value);
-							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobufferAdd.wrapAt(i)).value);
-						}
-						);
-						~bufferTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobuffer.wrapAt(i)));
-						~bufferAddTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobufferAdd.wrapAt(i)));
-						// Set Tuning and Scaling
-						if(~flagScaling.at(i) != 'off', {
-							freq = freq.collect({arg item, index;
-								octave = item.cpsmidi / 12;
-								ratio = (octave.frac * 12).round(0.1);
-								octave = octave.floor;
-								degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
-								if(degre == nil,
-									{
+								}, {if((time - ~lastDureeInstrMidi.wrapAt(i)) >= ~dureeanalysesil.wrapAt(i) and: {~indatasfreqinstrument.wrapAt(i).value == "Fhz In Midi" or: {~indatasampinstrument.wrapAt(i).value == "Amp In Midi"} or: {~indatasdureeinstrument.wrapAt(i).value == "Dur In Midi"}},
+									{flagInstrPlay='off';
+										// Set MIDI Off
+										if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
+											~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+												if(flagVST =='on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+											});
+										});
+							})});
+							// set les datas calculees par les algorithmes pour playing
+							# freq, amp, duree = ~setdatasplaying.value(i, flagInstrPlay, listeoutfreq, listeoutamp, listeoutduree);
+							~duree.wrapPut(i,duree);
+							if(~playinstrument.wrapAt(i) != "off",{
+								// Freeze
+								if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
+									~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, 1);
+									~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, 1);
+								},
+								{
+									~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobuffer.wrapAt(i)).value);
+									~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobufferAdd.wrapAt(i)).value);
+								}
+								);
+								~bufferTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobuffer.wrapAt(i)));
+								~bufferAddTampon.wrapPut(i, ~listebuffer.wrapAt(~numerobufferAdd.wrapAt(i)));
+								// Set Tuning and Scaling
+								if(~flagScaling.at(i) != 'off', {
+									freq = freq.collect({arg item, index;
+										octave = item.cpsmidi / 12;
+										ratio = (octave.frac * 12).round(0.1);
+										octave = octave.floor;
 										degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
 										if(degre == nil,
 											{
-												degre = ~scale.at(i).degrees.last;
+												degre = ~scale.at(i).degrees.indexOfGreaterThan(ratio);
+												if(degre == nil,
+													{
+														degre = ~scale.at(i).degrees.last;
+													},
+													{
+														degre = ~scale.at(i).degrees.at(degre);
+													}
+												);
 											},
 											{
 												degre = ~scale.at(i).degrees.at(degre);
 											}
 										);
-									},
-									{
-										degre = ~scale.at(i).degrees.at(degre);
-									}
-								);
-								item = (octave * 12 + degre).midicps;
+										item = (octave * 12 + degre).midicps;
+									});
+								});
+								// Set MIDI Off
+								if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
+									~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
+										if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
+									});// MIDI OFF
+									// Reset MIDI OUT
+									~freqMidi.wrapPut(i, []);
+									// MidiOut
+									~freqMidi.wrapPut(i, freq.cpsmidi.floor);// Liste freqMidi agents
+								});
+								// Set audio in pour Synth Special HHbufRdLive...
+								if(~flagEntreeMode == 'File IN', {audioSynthIn = ~busFileIn.index},{audioSynthIn = ~canalAudioInInstr.wrapAt(i) + 2});
+								// Accords
+								~freq.wrapPut(i,freq);
+								amp = amp * ~amplitudegeneraleinstrument.dbamp;
+								~amp.wrapPut(i,amp);
+								~ampPre.wrapPut(i, ~sendFXPre.wrapAt(i).value.dbamp);
+								~ampPost.wrapPut(i, ~sendFXPost.wrapAt(i).value.dbamp);
+								~busampsynth.wrapAt(i).set(~amp.wrapAt(i));
+								~buspansynthLo.wrapAt(i).set(~synthpancontrol.wrapAt(i).lo);
+								~buspansynthHi.wrapAt(i).set(~synthpancontrol.wrapAt(i).hi);
+								// Play Synth
+								s.bind{
+									~freq.wrapAt(i).size.do({arg ii;var freqRate;
+										// Send MIDI On
+										if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
+											~midiOut.noteOn(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(ii), ~amp.wrapAt(i) * 127);// Send note MIDI ON
+											if(flagVST == 'on', {~fxVST.midi.noteOn(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(ii), ~amp.wrapAt(i) * 127)});
+										});
+										~busfreqsynth.wrapAt(i).wrapAt(ii).set(~freq.wrapAt(i).wrapAt(ii));
+										freqRate=(~freq.wrapAt(i).wrapAt(ii).cpsmidi - 48).midicps;
+										~busfreqRatesynth.wrapAt(i).wrapAt(ii).set(freqRate);
+										// Creation du synth pour jouer l'evenement musical
+										~listeSynthID.wrapPut(i,Synth.new(~listesynth.wrapAt(i),['out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut,'duree',~duree.wrapAt(i),'controlenvlevel1',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvlevel2',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvlevel3',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvlevel4',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvlevel5',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvlevel6',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvlevel7',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'controlenvlevel8',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7),'controlenvtime1',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvtime2',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2)- ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvtime3',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvtime4',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvtime5',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvtime6',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvtime7',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'buseffetsPost',~buseffetsPostsynth.wrapAt(i).index,'buseffetsPre',~buseffetsPresynth.wrapAt(i).index,'loop',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'loop2',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'buffer', ~bufferTampon.wrapAt(i).bufnum,'buffer2', ~bufferAddTampon.wrapAt(i).bufnum,'reverse',~reversesampledatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'reverse2',~reversesampledatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'wavetable',~wavetable.wrapAt(i).bufnum,'wavetable2',0,'ampPre',~ampPre.wrapAt(i), 'ampPost',~ampPost.wrapAt(i), 'byPass', 1 - ~flagByPassSynth.wrapAt(i), \in, audioSynthIn, \level1, ~synthcontrolviewlevelsdatas.wrapAt(~numerobuffer.wrapAt(i)).at(0), \level2, ~synthcontrolviewlevelsdatas.wrapAt(~numerobuffer.wrapAt(i)).at(1)],~gsynth.wrapAt(i)).mapn('freq',~busfreqsynth.wrapAt(i).wrapAt(ii).index,1,'freqRate', ~busfreqRatesynth.wrapAt(i).wrapAt(ii).index,1,'amp',~busampsynth.wrapAt(i).index,1,'panLo',~buspansynthLo.wrapAt(i).index,1,'panHi',~buspansynthHi.wrapAt(i).index,1,'pos', ~busoffsetplaysampler.wrapAt(i).index,1,'controls',~buscontrolsynth.wrapAt(i).index, 10));
+										// set canal audio out effets
+										~nombreEffetsPre.do({arg ii;
+											~listeeffetsPresynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
+										~nombreEffetsPost.do({arg ii;
+											~listeeffetsPostsynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
+										// Freeze
+										if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
+											~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, 0);
+											~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, 0);
+										},
+										{
+											~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobuffer.wrapAt(i)).value);
+											~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobufferAdd.wrapAt(i)).value);
+										}
+										);
+									});
+								};
 							});
-						});
-						// Set MIDI Off
-						if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-							~freqMidi.wrapAt(i).size.do({arg index; ~midiOut.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0);
-								if(flagVST == 'on', {~fxVST.midi.noteOff(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(index), 0)});
-							});// MIDI OFF
-							// Reset MIDI OUT
-							~freqMidi.wrapPut(i, []);
-							// MidiOut
-							~freqMidi.wrapPut(i, freq.cpsmidi.floor);// Liste freqMidi agents
-						});
-						if(~flagEntreeMode == 'File IN', {audioSynthIn = ~busFileIn.index},{audioSynthIn = ~canalAudioInInstr.wrapAt(i) + 2});
-						// Accords
-						~freq.wrapPut(i,freq);
-						amp = amp * ~amplitudegeneraleinstrument.dbamp;
-						~amp.wrapPut(i,amp);
-						~ampPre.wrapPut(i, ~sendFXPre.wrapAt(i).value.dbamp);
-						~ampPost.wrapPut(i, ~sendFXPost.wrapAt(i).value.dbamp);
-						~busampsynth.wrapAt(i).set(~amp.wrapAt(i));
-						~buspansynthLo.wrapAt(i).set(~synthpancontrol.wrapAt(i).lo);
-						~buspansynthHi.wrapAt(i).set(~synthpancontrol.wrapAt(i).hi);
-						// Play Synth
-						~freq.wrapAt(i).size.do({arg ii;var freqRate;
-							// Send MIDI On
-							if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
-								~midiOut.noteOn(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(ii), ~amp.wrapAt(i) * 127);// Send note MIDI ON
-								if(flagVST == 'on', {~fxVST.midi.noteOn(~canalMidiOutInstr.wrapAt(i), ~freqMidi.wrapAt(i).wrapAt(ii), ~amp.wrapAt(i) * 127)});
-							});
-							~busfreqsynth.wrapAt(i).wrapAt(ii).set(~freq.wrapAt(i).wrapAt(ii));
-							freqRate=(~freq.wrapAt(i).wrapAt(ii).cpsmidi - 48).midicps;
-							~busfreqRatesynth.wrapAt(i).wrapAt(ii).set(freqRate);
-							// Creation du synth pour jouer l'evenement musical
-							~listeSynthID.wrapPut(i,Synth.new(~listesynth.wrapAt(i),['out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut,'duree',~duree.wrapAt(i),'controlenvlevel1',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvlevel2',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvlevel3',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvlevel4',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvlevel5',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvlevel6',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvlevel7',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'controlenvlevel8',~levelenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7),'controlenvtime1',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(0),'controlenvtime2',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2)- ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(1),'controlenvtime3',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(2),'controlenvtime4',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(3),'controlenvtime5',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(4),'controlenvtime6',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(5),'controlenvtime7',~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(7) - ~timeenvsynth.wrapAt(i).wrapAt(~numeroSynth.wrapAt(i).value).wrapAt(6),'buseffetsPost',~buseffetsPostsynth.wrapAt(i).index,'buseffetsPre',~buseffetsPresynth.wrapAt(i).index,'loop',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'loop2',~loopplaysamplerdatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'buffer', ~bufferTampon.wrapAt(i).bufnum,'buffer2', ~bufferAddTampon.wrapAt(i).bufnum,'reverse',~reversesampledatas.wrapAt(i).wrapAt(~numerobuffer.wrapAt(i)),'reverse2',~reversesampledatas.wrapAt(i).wrapAt(~numerobufferAdd.wrapAt(i)),'wavetable',~wavetable.wrapAt(i).bufnum,'wavetable2',0,'ampPre',~ampPre.wrapAt(i), 'ampPost',~ampPost.wrapAt(i), 'byPass', 1 - ~flagByPassSynth.wrapAt(i), \in, audioSynthIn, \level1, ~synthcontrolviewlevelsdatas.wrapAt(~numerobuffer.wrapAt(i)).at(0), \level2, ~synthcontrolviewlevelsdatas.wrapAt(~numerobuffer.wrapAt(i)).at(1)],~gsynth.wrapAt(i)).mapn('freq',~busfreqsynth.wrapAt(i).wrapAt(ii).index,1,'freqRate', ~busfreqRatesynth.wrapAt(i).wrapAt(ii).index,1,'amp',~busampsynth.wrapAt(i).index,1,'panLo',~buspansynthLo.wrapAt(i).index,1,'panHi',~buspansynthHi.wrapAt(i).index,1,'pos', ~busoffsetplaysampler.wrapAt(i).index,1,'controls',~buscontrolsynth.wrapAt(i).index, 10));
-							// set canal audio out effets
-							~nombreEffetsPre.do({arg ii;
-								~listeeffetsPresynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
-							~nombreEffetsPost.do({arg ii;
-								~listeeffetsPostsynth.wrapAt(i).wrapAt(ii).set('out',~canalaudioout.wrapAt(i) + ~startChannelAudioOut)});
-							// Freeze
-						if(~flagBufferFreeze.wrapAt(i) == 'Freeze buffer on', {
-							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, 0);
-							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, 0);
-						},
-						{
-							~listesamplein.wrapAt(~numerobuffer.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobuffer.wrapAt(i)).value);
-							~listesamplein.wrapAt(~numerobufferAdd.wrapAt(i)).set(\run, ~recsamplebuttondatas.wrapAt(~numerobufferAdd.wrapAt(i)).value);
-						}
-						);
-						});
-					});
-					~duree.wrapAt(i).wait;
-				});
-			});
+							0;
+						}),
+						\dur, Pfunc({ (~duree.wrapAt(i) ? 0.01).max(0.01) })
+					)
+				)
 			);
 		});
 
@@ -2358,6 +2457,9 @@ Preset Wek",
 						~listealgo1freq.wrapPut(i,datas.wrapAt(15)/127);~listealgo1amp.wrapPut(i,datas.wrapAt(16).dbamp);~listealgo1duree.wrapPut(i,datas.wrapAt(17));
 						~listealgo2freq.wrapPut(i,datas.wrapAt(18)/127);~listealgo2amp.wrapPut(i,datas.wrapAt(19).dbamp);~listealgo2duree.wrapPut(i,datas.wrapAt(20));
 						~listeofffreq.wrapPut(i,datas.wrapAt(21)/127);~listeoffamp.wrapPut(i,datas.wrapAt(22).dbamp);~listeoffduree.wrapPut(i,datas.wrapAt(23));
+						~listeGenerateFreq.wrapPut(i,datas.wrapAt(24)/127);~listeGenerateAmp.wrapPut(i,datas.wrapAt(25).dbamp);~listeGenerateDuree.wrapPut(i,datas.wrapAt(26));
+						~listeGenStepFreq.wrapPut(i,datas.wrapAt(27)/127);~listeGenStepAmp.wrapPut(i,datas.wrapAt(28).dbamp);~listeGenStepDuree.wrapPut(i,datas.wrapAt(29));
+						~listePredictFreq.wrapPut(i,datas.wrapAt(30)/127);~listePredictAmp.wrapPut(i,datas.wrapAt(31).dbamp);~listePredictDuree.wrapPut(i,datas.wrapAt(32));
 				})},
 				{item=item.value / 2; item = item.asInteger;
 					if(File.exists(~nompathdata++"sequences"+(item.value).asString++".scd"),{file=File(~nompathdata++"sequences"+(item.value).asString++".scd","r");datas=file.readAllString.interpret;file.close;for(0, ~nombreinstrument-1, {arg ii;
@@ -2369,6 +2471,9 @@ Preset Wek",
 						~listealgo1freq.wrapPut(ii,datas.wrapAt(ii*24+15)/127);~listealgo1amp.wrapPut(ii,datas.wrapAt(ii*24+16).dbamp);~listealgo1duree.wrapPut(ii,datas.wrapAt(ii*24+17));
 						~listealgo2freq.wrapPut(ii,datas.wrapAt(ii*24+18)/127);~listealgo2amp.wrapPut(ii,datas.wrapAt(ii*24+19).dbamp);~listealgo2duree.wrapPut(ii,datas.wrapAt(ii*24+20));
 						~listeofffreq.wrapPut(ii,datas.wrapAt(ii*24+21)/127);~listeoffamp.wrapPut(ii,datas.wrapAt(ii*24+22).dbamp);~listeoffduree.wrapPut(ii,datas.wrapAt(ii*24+23));
+						~listeGenerateFreq.wrapPut(ii,datas.wrapAt(ii*24+24)/127);~listeGenerateAmp.wrapPut(ii,datas.wrapAt(ii*24+25).dbamp);~listeGenerateDuree.wrapPut(ii,datas.wrapAt(ii*24+26));
+						~listeGenStepFreq.wrapPut(ii,datas.wrapAt(ii*24+27)/127);~listeGenStepAmp.wrapPut(ii,datas.wrapAt(ii*24+28).dbamp);~listeGenStepDuree.wrapPut(ii,datas.wrapAt(ii*24+29));
+						~listePredictFreq.wrapPut(ii,datas.wrapAt(ii*24+30)/127);~listePredictAmp.wrapPut(ii,datas.wrapAt(ii*24+31).dbamp);~listePredictDuree.wrapPut(ii,datas.wrapAt(ii*24+32));
 			})})})});
 		};
 
@@ -2390,27 +2495,27 @@ Preset Wek",
 				{3}, {Dialog.savePanel({arg path;
 					datasfile=[];
 					datasfile=datasfile.add(~fonctionsavedatasinstrument.value(i));
-					file=File(path++".scd","w");file.write(datasfile.value.asCompileString);file.close;~listewindow.wrapAt(i).name="WekRobot by HP Instrument"+(i+1).asString+path.asString},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
+					file=File(path++".scd","w");file.write(datasfile.value.asCompileString);file.close;~listewindow.wrapAt(i).name="WekRobotTR by HP Instrument"+(i+1).asString+path.asString},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{1}, {Dialog.openPanel({ arg paths;
 					file=File(paths, "r");datas=file.readAllString.interpret;file.close;
-					~fonctionloaddatasinstrument.value(i, datas.wrapAt(0),'on');~listewindow.wrapAt(i).name="WekRobot by HP Instrument"+(i+1).asString+paths.asString},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
+					~fonctionloaddatasinstrument.value(i, datas.wrapAt(0),'on');~listewindow.wrapAt(i).name="WekRobotTR by HP Instrument"+(i+1).asString+paths.asString},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{4}, {Dialog.savePanel({arg path;
 					datasfile=[];
-					for(0, ~nombreinstrument-1, {arg ii;datasfile=datasfile.add(~fonctionsavedatasinstrument.value(ii));~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+path.asString});
+					for(0, ~nombreinstrument-1, {arg ii;datasfile=datasfile.add(~fonctionsavedatasinstrument.value(ii));~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+path.asString});
 					datasfile=datasfile.add([~savecontrolpanel.value]);
 					file=File(path++".scd","w");file.write(datasfile.value.asCompileString);file.close},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{2}, {Dialog.openPanel({ arg paths;
 					file=File(paths, "r");datas=file.readAllString.interpret;file.close;
 					for(0, ~nombreinstrument-1, {arg ii;
-						~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on');~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+paths.asString});
+						~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on');~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+paths.asString});
 					//+ Load datas Control Panel
 					~readcontrolpanel.value(datas.last.at(0));
 				},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
-				{11}, {if(File.exists(~nompathdata++"clear instrument.scd"),{file=File(~nompathdata++"clear instrument.scd", "r");datas=file.readAllString.interpret;file.close;~fonctionloaddatasinstrument.value(i, datas.wrapAt(0),'off');~listewindow.wrapAt(i).name="WekRobot by HP Instrument"+(i+1).asString+"Clear Instrument"});~saveloaddatasinstrument.wrapAt(i).value=0},
+				{11}, {if(File.exists(~nompathdata++"clear instrument.scd"),{file=File(~nompathdata++"clear instrument.scd", "r");datas=file.readAllString.interpret;file.close;~fonctionloaddatasinstrument.value(i, datas.wrapAt(0),'off');~listewindow.wrapAt(i).name="WekRobotTR by HP Instrument"+(i+1).asString+"Clear Instrument"});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{12}, {if(File.exists(~nompathdata++"clear instruments.scd"),{file=File(~nompathdata++"clear instruments.scd", "r");datas=file.readAllString.interpret;file.close;
 					16.do({arg canal; ~midiOut.allNotesOff(canal)});
 					for(0, ~nombreinstrument-1, {arg ii;
-						~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on');~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+"Clear Instruments"})});~saveloaddatasinstrument.wrapAt(i).value=0},
+						~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on');~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+"Clear Instruments"})});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{5}, {Dialog.openPanel({ arg paths;
 					file=File(paths, "r");datas=file.readAllString.interpret;file.close;
 					~listeaudiofreq.wrapPut(i,datas.wrapAt(0)/127);~listeaudioamp.wrapPut(i,datas.wrapAt(1).dbamp);~listeaudioduree.wrapPut(i,datas.wrapAt(2));
@@ -2420,7 +2525,11 @@ Preset Wek",
 					~listegenetiquefreq.wrapPut(i,datas.wrapAt(12)/127);~listegenetiqueamp.wrapPut(i,datas.wrapAt(13).dbamp);~listegenetiqueduree.wrapPut(i,datas.wrapAt(14));
 					~listealgo1freq.wrapPut(i,datas.wrapAt(15)/127);~listealgo1amp.wrapPut(i,datas.wrapAt(16).dbamp);~listealgo1duree.wrapPut(i,datas.wrapAt(17));
 					~listealgo2freq.wrapPut(i,datas.wrapAt(18)/127);~listealgo2amp.wrapPut(i,datas.wrapAt(19).dbamp);~listealgo2duree.wrapPut(i,datas.wrapAt(20));
-					~listeofffreq.wrapPut(i,datas.wrapAt(21)/127);~listeoffamp.wrapPut(i,datas.wrapAt(22).dbamp);~listeoffduree.wrapPut(i,datas.wrapAt(23))},{"cancelled".postln});
+					~listeofffreq.wrapPut(i,datas.wrapAt(21)/127);~listeoffamp.wrapPut(i,datas.wrapAt(22).dbamp);~listeoffduree.wrapPut(i,datas.wrapAt(23));
+					~listeGenerateFreq.wrapPut(i,datas.wrapAt(24)/127);~listeGenerateAmp.wrapPut(i,datas.wrapAt(25).dbamp);~listeGenerateDuree.wrapPut(i,datas.wrapAt(26));
+					~listeGenStepFreq.wrapPut(i,datas.wrapAt(27)/127);~listeGenStepAmp.wrapPut(i,datas.wrapAt(28).dbamp);~listeGenStepDuree.wrapPut(i,datas.wrapAt(29));
+					~listePredictFreq.wrapPut(i,datas.wrapAt(30)/127);~listePredictAmp.wrapPut(i,datas.wrapAt(31).dbamp);~listePredictDuree.wrapPut(i,datas.wrapAt(32));
+				},{"cancelled".postln});
 				~saveloaddatasinstrument.wrapAt(i).value=0},
 				{6}, {Dialog.openPanel({ arg paths;
 					file=File(paths, "r");datas=file.readAllString.interpret;file.close;
@@ -2433,6 +2542,9 @@ Preset Wek",
 						~listealgo1freq.wrapPut(ii,datas.wrapAt(ii*24+15)/127);~listealgo1amp.wrapPut(ii,datas.wrapAt(ii*24+16).dbamp);~listealgo1duree.wrapPut(ii,datas.wrapAt(ii*24+17));
 						~listealgo2freq.wrapPut(ii,datas.wrapAt(ii*24+18)/127);~listealgo2amp.wrapPut(ii,datas.wrapAt(ii*24+19).dbamp);~listealgo2duree.wrapPut(ii,datas.wrapAt(ii*24+20));
 						~listeofffreq.wrapPut(ii,datas.wrapAt(ii*24+21)/127);~listeoffamp.wrapPut(ii,datas.wrapAt(ii*24+22).dbamp);~listeoffduree.wrapPut(ii,datas.wrapAt(ii*24+23));
+						~listeGenerateFreq.wrapPut(ii,datas.wrapAt(ii*24+24)/127);~listeGenerateAmp.wrapPut(ii,datas.wrapAt(ii*24+25).dbamp);~listeGenerateDuree.wrapPut(ii,datas.wrapAt(ii*24+26));
+						~listeGenStepFreq.wrapPut(ii,datas.wrapAt(ii*24+27)/127);~listeGenStepAmp.wrapPut(ii,datas.wrapAt(ii*24+28).dbamp);~listeGenStepDuree.wrapPut(ii,datas.wrapAt(ii*24+29));
+						~listePredictFreq.wrapPut(ii,datas.wrapAt(ii*24+30)/127);~listePredictAmp.wrapPut(ii,datas.wrapAt(ii*24+31).dbamp);~listePredictDuree.wrapPut(ii,datas.wrapAt(ii*24+32));
 					});
 				},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{7}, {Dialog.savePanel({ arg path;datasfile=[];
@@ -2444,6 +2556,9 @@ Preset Wek",
 					datasfile=datasfile.add(~listealgo1freq.wrapAt(i)*127);datasfile=datasfile.add(~listealgo1amp.wrapAt(i).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo1duree.wrapAt(i));
 					datasfile=datasfile.add(~listealgo2freq.wrapAt(i)*127);datasfile=datasfile.add(~listealgo2amp.wrapAt(i).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo2duree.wrapAt(i));
 					datasfile=datasfile.add(~listeofffreq.wrapAt(i)*127);datasfile=datasfile.add(~listeoffamp.wrapAt(i).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeoffduree.wrapAt(i));
+					datasfile=datasfile.add(~listeGenerateFreq.wrapAt(i)*127);datasfile=datasfile.add(~listeGenerateAmp.wrapAt(i).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenerateDuree.wrapAt(i));
+					datasfile=datasfile.add(~listeGenStepFreq.wrapAt(i)*127);datasfile=datasfile.add(~listeGenStepAmp.wrapAt(i).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenStepDuree.wrapAt(i));
+					datasfile=datasfile.add(~listePredictFreq.wrapAt(i)*127);datasfile=datasfile.add(~listePredictAmp.wrapAt(i).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listePredictDuree.wrapAt(i));
 					file=File(path++".scd","w");file.write(datasfile.value.asCompileString);file.close},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{8}, {Dialog.savePanel({arg path;datasfile=[];
 					for(0, ~nombreinstrument-1, {arg ii;
@@ -2455,6 +2570,9 @@ Preset Wek",
 						datasfile=datasfile.add(~listealgo1freq.wrapAt(ii)*127);datasfile=datasfile.add(~listealgo1amp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo1duree.wrapAt(ii));
 						datasfile=datasfile.add(~listealgo2freq.wrapAt(ii)*127);datasfile=datasfile.add(~listealgo2amp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo2duree.wrapAt(ii));
 						datasfile=datasfile.add(~listeofffreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeoffamp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeoffduree.wrapAt(ii));
+						datasfile=datasfile.add(~listeGenerateFreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeGenerateAmp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenerateDuree.wrapAt(ii));
+						datasfile=datasfile.add(~listeGenStepFreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeGenStepAmp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenStepDuree.wrapAt(ii));
+						datasfile=datasfile.add(~listePredictFreq.wrapAt(ii)*127);datasfile=datasfile.add(~listePredictAmp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listePredictDuree.wrapAt(ii));
 					});
 					file=File(path++".scd","w");file.write(datasfile.value.asCompileString);file.close},{"cancelled".postln});~saveloaddatasinstrument.wrapAt(i).value=0},
 				{13}, {if(File.exists(~nompathdata++"clear control panel.scd"),{file=File(~nompathdata++"clear control panel.scd", "r");datas=file.readAllString.interpret;file.close;~readcontrolpanel.value(datas.at(0))});~saveloaddatasinstrument.wrapAt(i).value=0},
@@ -2485,11 +2603,6 @@ Preset Wek",
 				{18}, {Dialog.openPanel({ arg paths;
 					~samplePourAnalyse=paths;
 					s.bind{
-						~listeSamplePourAnalyse.do({arg buffer; buffer.free});
-						~listeSamplePourAnalyse = [];
-						~listeNameSamplePourAnalyse = [];
-						~bufferanalysefile.free;
-						s.sync;
 						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
@@ -2499,7 +2612,7 @@ Preset Wek",
 						~file.openRead(~samplePourAnalyse);
 						s.sync;
 						if(~file.numChannels == 1,
-							{~rawData= FloatArray.newClear(~file.numFrames * 2);
+							{~rawData= FloatArray.newClear(~file.numFrames);
 								s.sync;
 								~file.readData(~rawData);
 								s.sync;
@@ -2518,6 +2631,8 @@ Preset Wek",
 						//~bufferanalysefile = ~bufferanalysefile.normalize(1.0);
 						~file.close;
 						s.sync;
+						~listeSamplePourAnalyse = ~listeSamplePourAnalyse.add(~bufferanalysefile);
+						~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(paths.asString);
 						~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File IN'}, {~synthPlayFile.run(true);
 							s.sync;~synthPlayFile.set('trig', 1);s.sync});
@@ -2574,6 +2689,8 @@ Preset Wek",
 			MIDIdef.freeAll;
 			~listewindow.do({arg w; w.close});
 			windowVST.close;
+			~studio.close;
+			Pdef.removeAll;
 			ProxySpace.clearAll;
 		};
 
@@ -2772,7 +2889,7 @@ Preset Wek",
 		setupKeyboardShortCut.focus;
 
 		// PARTITIONS PANEL
-		~wp =Window("WekRobot by HP Scores", Rect(475, 275, 555, 465), scroll: true);
+		~wp =Window("WekRobotTR by HP Scores", Rect(475, 275, 555, 465), scroll: true);
 		~wp.alpha=1.0;
 		~wp.front;
 		~wp.view.decorator = FlowLayout(~wp.view.bounds);
@@ -2812,7 +2929,7 @@ Preset Wek",
 		// Windows instruments
 		~nombreinstrument.do({arg i;
 			var w;
-			w = Window("WekRobot by HP Instrument"+(i+1).asString, Rect(i*20, 200 - (i*33.33), 905, 525), scroll: true);
+			w = Window("WekRobotTR by HP Instrument"+(i+1).asString, Rect(i*20, 200 - (i*33.33), 905, 525), scroll: true);
 			w.alpha=1.0;w.front;
 			w.view.decorator = FlowLayout(w.view.bounds);
 			StaticText(w, Rect(0, 0, 890, 12)).string_("SYSTEM PARAMETERS").stringColor_(Color.yellow).font_(Font("Helvetica", 10));
@@ -3782,7 +3899,7 @@ Preset Wek",
 				~writepartitions.value(i,'normal','off',"~loadsingleinstrument",item.value);
 				if(item.value ==0 ,{nil},{if(File.exists(~nompathdata++"instrument"+item.value.asString++".scd"),{
 					~flagfreq.wrapPut(i,0);~flagamp.wrapPut(i,0);~flagduree.wrapPut(i,0);~flagneuronefreq.wrapPut(i,0);~flagneuroneamp.wrapPut(i,0);~flagneuroneduree.wrapPut(i,0);~flagoutneuronefreq.wrapPut(i,0);~flagoutneuroneamp.wrapPut(i,0);~flagoutneuroneduree.wrapPut(i,0);~flaggenetiquefreq.wrapPut(i,0);~flaggenetiqueamp.wrapPut(i,0);~flaggenetiqueduree.wrapPut(i,0);~duree.wrapPut(i, 0);
-					file=File(~nompathdata++"instrument"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;~fonctionloaddatasinstrument.value(i, datas.wrapAt(0),'on');~listewindow.wrapAt(i).name="WekRobot by HP Instrument"+(i+1).asString+"instrument"+item.value.asString++".scd"})});
+					file=File(~nompathdata++"instrument"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;~fonctionloaddatasinstrument.value(i, datas.wrapAt(0),'on');~listewindow.wrapAt(i).name="WekRobotTR by HP Instrument"+(i+1).asString+"instrument"+item.value.asString++".scd"})});
 				//~loadsingleinstrument.wrapAt(i).valueAction=0;
 			};
 			//  load multi instruments
@@ -3794,7 +3911,7 @@ Preset Wek",
 					~readcontrolpanel.value(datas.last.at(0));
 					for(0, ~nombreinstrument-1, {arg ii;
 						~flagfreq.wrapPut(ii,0);~flagamp.wrapPut(ii,0);~flagduree.wrapPut(ii,0);~flagneuronefreq.wrapPut(ii,0);~flagneuroneamp.wrapPut(ii,0);~flagneuroneduree.wrapPut(ii,0);~flagoutneuronefreq.wrapPut(ii,0);~flagoutneuroneamp.wrapPut(ii,0);~flagoutneuroneduree.wrapPut(ii,0);~flaggenetiquefreq.wrapPut(ii,0);~flaggenetiqueamp.wrapPut(ii,0);~flaggenetiqueduree.wrapPut(ii,0);~duree.wrapPut(ii, 0);
-						~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on');~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+"instruments"+item.value.asString++".scd"})})});
+						~fonctionloaddatasinstrument.value(ii, datas.wrapAt(ii),'on');~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+"instruments"+item.value.asString++".scd"})})});
 				~loadmultiinstruments.wrapAt(i).value=0;
 			};
 			// Load Sequences musicales
@@ -3837,7 +3954,7 @@ Preset Wek",
 		});
 
 		// Control Panel
-		~wg =Window("WekRobot by HP Control", Rect(0, 125, 305, 465), scroll: true);
+		~wg =Window("WekRobotTR by HP Control", Rect(0, 125, 305, 465), scroll: true);
 		~wg.alpha=1.0;
 		~wg.front;
 		~wg.view.decorator = FlowLayout(~wg.view.bounds);
@@ -4026,10 +4143,10 @@ Preset Wek",
 						s.sync;
 						~audioFile.free;
 						s.sync;
-						~audioFile=Synth.newPaused("OSC WekRobot File Onsets",
+						~audioFile=Synth.newPaused("OSC WekRobotTR File Onsets",
 							[\busFileIn, ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekRobot Onsets",
+						~audioIn=Synth.newPaused("OSC WekRobotTR Onsets",
 							[\in, ~canalAudioIn, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN', {~audioIn.value.run(true);~tempoIn.value.run(true);~tempoFile.value.run(false)});
@@ -4047,10 +4164,10 @@ Preset Wek",
 						s.sync;
 						~audioFile.free;
 						s.sync;
-						~audioFile=Synth.newPaused("OSC WekRobot File Pitch",
+						~audioFile=Synth.newPaused("OSC WekRobotTR File Pitch",
 							[\busFileIn, ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekRobot Pitch",
+						~audioIn=Synth.newPaused("OSC WekRobotTR Pitch",
 							[\in, ~canalAudioIn, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
@@ -4068,10 +4185,10 @@ Preset Wek",
 						s.sync;
 						~audioFile.free;
 						s.sync;
-						~audioFile=Synth.newPaused("OSC WekRobot File Pitch2",
+						~audioFile=Synth.newPaused("OSC WekRobotTR File Pitch2",
 							[\busFileIn, ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekRobot Pitch2",
+						~audioIn=Synth.newPaused("OSC WekRobotTR Pitch2",
 							[\in, ~canalAudioIn, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
@@ -4089,10 +4206,10 @@ Preset Wek",
 						s.sync;
 						~audioFile.free;
 						s.sync;
-						~audioFile=Synth.newPaused("OSC WekRobot File KeyTrack",
+						~audioFile=Synth.newPaused("OSC WekRobotTR File KeyTrack",
 							[\busFileIn, ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekRobot KeyTrack",
+						~audioIn=Synth.newPaused("OSC WekRobotTR KeyTrack",
 							[\in, ~canalAudioIn, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilanalyse.value], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
@@ -4110,9 +4227,9 @@ Preset Wek",
 						s.sync;
 						~audioFile.free;
 						s.sync;
-						~audioFile=Synth.newPaused("OSC WekRobot Keyboard File", [\trigger, 0], ~groupeAnalyse, \addToTail);
+						~audioFile=Synth.newPaused("OSC WekRobotTR Keyboard File", [\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekRobot Keyboard", [\trigger, 0], ~groupeAnalyse, \addToTail);
+						~audioIn=Synth.newPaused("OSC WekRobotTR Keyboard", [\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
 						s.sync;
@@ -4129,9 +4246,9 @@ Preset Wek",
 						s.sync;
 						~audioFile.free;
 						s.sync;
-						~audioFile=Synth.newPaused("OSC WekRobot MIDI File", [\trigger, 0], ~groupeAnalyse, \addToTail);
+						~audioFile=Synth.newPaused("OSC WekRobotTR MIDI File", [\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekRobot MIDI", [\trigger, 0], ~groupeAnalyse, \addToTail);
+						~audioIn=Synth.newPaused("OSC WekRobotTR MIDI", [\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio IN' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~audioFile.value.run(false);~synthPlayFile.run(false);~tempoIn.value.run(true);~tempoFile.value.run(false)});
 						s.sync;
@@ -4241,7 +4358,11 @@ Preset Wek",
 		~calculationalgorithmes.states = [["Algo Off", Color.black,  Color.green(0.8, 0.25)],["Algo On", Color.white, Color.red(0.8, 0.25)]];
 		~calculationalgorithmes.action = {|view| ~writepartitions.value(nil,'control panel normal','off',"~calculationalgorithmes",view.value);if(~startsysteme.value == 1 and: {view.value == 1}, {// set ON les routines de calcul
 			~nombreinstrument.do({arg instr;
-				~listealgo1freq.wrapPut(instr,[]);~listealgo1amp.wrapPut(instr,[]);~listealgo1duree.wrapPut(instr,[]);~listealgo2freq.wrapPut(instr,[]);~listealgo2amp.wrapPut(instr,[]);~listealgo2duree.wrapPut(instr,[])});
+				~listealgo1freq.wrapPut(instr,[]);~listealgo1amp.wrapPut(instr,[]);~listealgo1duree.wrapPut(instr,[]);~listealgo2freq.wrapPut(instr,[]);~listealgo2amp.wrapPut(instr,[]);~listealgo2duree.wrapPut(instr,[]);
+				~listeGenerateFreq.wrapPut(instr,[]);~listeGenerateAmp.wrapPut(instr,[]);~listeGenerateDuree.wrapPut(instr,[]);
+				~listeGenStepFreq.wrapPut(instr,[]);~listeGenStepAmp.wrapPut(instr,[]);~listeGenStepDuree.wrapPut(instr,[]);
+				~listePredictFreq.wrapPut(instr,[]);~listePredictAmp.wrapPut(instr,[]);~listePredictDuree.wrapPut(instr,[]);
+			});
 			~routinealgorithmes.play(quant: Quant.new(1));
 			~tempoprocessalgorithmes.enabled_(true);
 		},
@@ -4308,7 +4429,7 @@ Preset Wek",
 			~writepartitions.value(nil,'control panel normal','off',"~loadinstrument",item.value);
 			if(item.value ==0 ,{nil},{if(File.exists(~nompathdata++"instrument"+item.value.asString++".scd"),{
 				file=File(~nompathdata++"instrument"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;
-				~listewindow.wrapAt(~instrumentactuel).name="WekRobot by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+item.value.asString++".scd";
+				~listewindow.wrapAt(~instrumentactuel).name="WekRobotTR by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+item.value.asString++".scd";
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
 				if(~startsysteme.value==1, {
 					~tempoSystem.schedAbs(duree, {
@@ -4331,7 +4452,7 @@ Preset Wek",
 			~writepartitions.value(nil,'control panel normal','off',"~loadinstruments",item.value);
 			if(item.value ==0 ,{nil},{if(File.exists(~nompathdata++"instruments"+item.value.asString++".scd"),{file=File(~nompathdata++"instruments"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;
 				for(0, ~nombreinstrument-1, {arg ii;
-					~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
+					~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
 				});
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
 				if(~startsysteme.value==1, {
@@ -4428,7 +4549,7 @@ Preset Wek",
 			~writepartitions.value(nil,'control panel normal','off',"~loadinstrument",item.value);
 			if(item.value ==0 ,{nil},{if(File.exists(~nompathdata++"instrument"+item.value.asString++".scd"),{
 				file=File(~nompathdata++"instrument"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;
-				~listewindow.wrapAt(~instrumentactuel).name="WekRobot by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+item.value.asString++".scd";
+				~listewindow.wrapAt(~instrumentactuel).name="WekRobotTR by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+item.value.asString++".scd";
 				if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
 				//if(~startsysteme.value==1, {
 				~tempoSystem.schedAbs(duree, {
@@ -4454,7 +4575,7 @@ Preset Wek",
 					numPreset = item.value; lastNumPreset = item.value;
 					file=File(~nompathdata++"instruments"+item.value.asString++".scd","r");datas=file.readAllString.interpret;file.close;
 					for(0, ~nombreinstrument-1, {arg ii;
-						~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
+						~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+item.value.asString++".scd";
 					});
 					if(~flagSynchro == 'on', {duree = ~tempoSystem.nextBar - 0.1}, {duree=~tempoSystem.beats});
 					//if(~startsysteme.value==1, {
@@ -4753,7 +4874,7 @@ s.sync;
 ~file.openRead(~samplePourAnalyse);
 s.sync;
 if(~file.numChannels == 1,
-{~rawData= FloatArray.newClear(~file.numFrames * 2);
+{~rawData= FloatArray.newClear(~file.numFrames);
 s.sync;
 ~file.readData(~rawData);
 s.sync;
@@ -4775,7 +4896,10 @@ s.sync;
 ~synthPlayFile.set(\bufferplay, ~bufferanalysefile.bufnum);
 s.sync;
 ~synthPlayFile.set(\trig, 1);
-s.sync}},{'cancelled'.asString.postln})",nil);
+s.sync;
+~listeSamplePourAnalyse = ~listeSamplePourAnalyse.add(~bufferanalysefile);
+~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(paths.asString);
+}},{'cancelled'.asString.postln})",nil);
 						Dialog.openPanel({ arg paths;
 							~samplePourAnalyse=paths;
 							s.bind{
@@ -4788,7 +4912,7 @@ s.sync}},{'cancelled'.asString.postln})",nil);
 								~file.openRead(~samplePourAnalyse);
 								s.sync;
 								if(~file.numChannels == 1,
-									{~rawData= FloatArray.newClear(~file.numFrames * 2);
+									{~rawData= FloatArray.newClear(~file.numFrames);
 										s.sync;
 										~file.readData(~rawData);
 										s.sync;
@@ -4994,13 +5118,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				var index;
 				i=i-1;
 				index = ~choixdatasinfreqview.wrapAt(i).value;
-				if(index >= 7, {index = -1});
+				if(index >= 10, {index = 1.neg});
 				~choixdatasinfreqview.wrapAt(i).valueAction=index+1;
 				index = ~choixdatasinampview.wrapAt(i).value;
-				if(index >= 7, {index = -1});
+				if(index >= 10, {index = 1.neg});
 				~choixdatasinampview.wrapAt(i).valueAction=index+1;
 				index = ~choixdatasindureeview.wrapAt(i).value;
-				if(index >= 7, {index = -1});
+				if(index >= 10, {index = 1.neg});
 				~choixdatasindureeview.wrapAt(i).valueAction=index+1;
 			})});
 			});
@@ -5009,13 +5133,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				var index;
 				i=i-1;
 				index = ~choixdatasinfreqview.wrapAt(i).value;
-				if(index <= 0, {index = 8});
+				if(index <= 0, {index = 11});
 				~choixdatasinfreqview.wrapAt(i).valueAction=index-1;
 				index = ~choixdatasinampview.wrapAt(i).value;
-				if(index <= 0, {index = 8});
+				if(index <= 0, {index = 11});
 				~choixdatasinampview.wrapAt(i).valueAction=index-1;
 				index = ~choixdatasindureeview.wrapAt(i).value;
-				if(index <= 0, {index = 8});
+				if(index <= 0, {index = 11});
 				~choixdatasindureeview.wrapAt(i).valueAction=index-1;
 			})});
 			});
@@ -5028,31 +5152,38 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				var index;
 				i=i-1;
 				index = ~choixalgoviewfreq.wrapAt(i).value;
-				if(index >= 6, {index = -1});
+				if(index >= 9, {index = 1.neg});
 				~choixalgoviewfreq.wrapAt(i).valueAction=index+1;
 				index = ~choixalgoviewamp.wrapAt(i).value;
-				if(index >= 6, {index = -1});
+				if(index >= 9, {index = 1.neg});
 				~choixalgoviewamp.wrapAt(i).valueAction=index+1;
 				index = ~choixalgoviewduree.wrapAt(i).value;
-				if(index >= 6, {index = -1});
+				if(index >= 9, {index = 1.neg});
 				~choixalgoviewduree.wrapAt(i).valueAction=index+1;
 			})});
 			});
 			// previous F A D output
-			if(~commande == 'fadoutprevious' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;
-				var index;
-				i=i-1;
-				index = ~choixalgoviewfreq.wrapAt(i).value;
-				if(index <= 0, {index = 7});
-				~choixalgoviewfreq.wrapAt(i).valueAction=index-1;
-				index = ~choixalgoviewamp.wrapAt(i).value;
-				if(index <= 0, {index = 7});
-				~choixalgoviewamp.wrapAt(i).valueAction=index-1;
-				index = ~choixalgoviewduree.wrapAt(i).value;
-				if(index <= 0, {index = 7});
-				~choixalgoviewduree.wrapAt(i).valueAction=index-1;
-			})});
+			if(~commande == 'fadoutprevious' , {
+				if(high <= ~nombreinstrument, {
+					for(low,high,{arg i;
+						var index;
+						i=i-1;
+
+						index = ~choixalgoviewfreq.wrapAt(i).value;
+						if(index <= 0, {index = 10});
+						~choixalgoviewfreq.wrapAt(i).valueAction=index-1;
+
+						index = ~choixalgoviewamp.wrapAt(i).value;
+						if(index <= 0, {index = 10});
+						~choixalgoviewamp.wrapAt(i).valueAction=index-1;
+
+						index = ~choixalgoviewduree.wrapAt(i).value;
+						if(index <= 0, {index = 10});
+						~choixalgoviewduree.wrapAt(i).valueAction=index-1;
+					})
+				});
 			});
+
 			// F A D output off
 			if(~commande == 'fadoutoff' , {if(high <= ~nombreinstrument, {for(low,high,{arg i;i=i-1;
 				~choixalgoviewfreq.wrapAt(i).valueAction=0;~choixalgoviewamp.wrapAt(i).valueAction=0;~choixalgoviewduree.wrapAt(i).valueAction=0})});
@@ -5108,6 +5239,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					datasfile=datasfile.add(~listealgo1freq.wrapAt(~instrumentactuel)*127);datasfile=datasfile.add(~listealgo1amp.wrapAt(~instrumentactuel).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo1duree.wrapAt(~instrumentactuel));
 					datasfile=datasfile.add(~listealgo2freq.wrapAt(~instrumentactuel)*127);datasfile=datasfile.add(~listealgo2amp.wrapAt(~instrumentactuel).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo2duree.wrapAt(~instrumentactuel));
 					datasfile=datasfile.add(~listeofffreq.wrapAt(~instrumentactuel)*127);datasfile=datasfile.add(~listeoffamp.wrapAt(~instrumentactuel).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeoffduree.wrapAt(~instrumentactuel));
+					datasfile=datasfile.add(~listeGenerateFreq.wrapAt(~instrumentactuel)*127);datasfile=datasfile.add(~listeGenerateAmp.wrapAt(~instrumentactuel).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenerateDuree.wrapAt(~instrumentactuel));
+					datasfile=datasfile.add(~listeGenStepFreq.wrapAt(~instrumentactuel)*127);datasfile=datasfile.add(~listeGenStepAmp.wrapAt(~instrumentactuel).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenStepDuree.wrapAt(~instrumentactuel));
+					datasfile=datasfile.add(~listePredictFreq.wrapAt(~instrumentactuel)*127);datasfile=datasfile.add(~listePredictAmp.wrapAt(~instrumentactuel).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listePredictDuree.wrapAt(~instrumentactuel));
 					file=File(~nompathdata++"sequence"+i.asString++".scd","w");file.write(datasfile.value.asCompileString);file.close})});
 			});
 			//save sequences
@@ -5122,6 +5256,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					datasfile=datasfile.add(~listealgo1freq.wrapAt(ii)*127);datasfile=datasfile.add(~listealgo1amp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo1duree.wrapAt(ii));
 					datasfile=datasfile.add(~listealgo2freq.wrapAt(ii)*127);datasfile=datasfile.add(~listealgo2amp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listealgo2duree.wrapAt(ii));
 					datasfile=datasfile.add(~listeofffreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeoffamp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeoffduree.wrapAt(ii));
+					datasfile=datasfile.add(~listeGenerateFreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeGenerateAmp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenerateDuree.wrapAt(ii));
+					datasfile=datasfile.add(~listeGenStepFreq.wrapAt(ii)*127);datasfile=datasfile.add(~listeGenStepAmp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listeGenStepDuree.wrapAt(ii));
+					datasfile=datasfile.add(~listePredictFreq.wrapAt(ii)*127);datasfile=datasfile.add(~listePredictAmp.wrapAt(ii).replace(0, 0.000001).ampdb);datasfile=datasfile.add(~listePredictDuree.wrapAt(ii));
 				});
 				file=File(~nompathdata++"sequences"+i.asString++".scd","w");file.write(datasfile.value.asCompileString);file.close})});
 			});
@@ -5130,13 +5267,13 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 				var datasfile=[], file;
 				datasfile=datasfile.add(~fonctionsavedatasinstrument.value(~instrumentactuel));
 				file=File(~nompathdata++"instrument"+i.asString++".scd","w");file.write(datasfile.value.asCompileString);file.close;
-				~listewindow.wrapAt(~instrumentactuel).name="WekRobot by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+i.asString++".scd"})});
+				~listewindow.wrapAt(~instrumentactuel).name="WekRobotTR by HP Instrument"+(~instrumentactuel+1).asString+~nompathdata+"instrument"+i.asString++".scd"})});
 			});
 			//save instruments
 			if(~commande=='savemulti',{if(high <= 40, {for(low,high,{arg i;
 				var datasfile=[], file;
 				for(0, ~nombreinstrument-1, {arg ii;datasfile=datasfile.add(~fonctionsavedatasinstrument.value(ii));
-					~listewindow.wrapAt(ii).name="WekRobot by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+i.asString++".scd"});
+					~listewindow.wrapAt(ii).name="WekRobotTR by HP Instrument"+(ii+1).asString+~nompathdata+"instruments"+i.asString++".scd"});
 				datasfile=datasfile.add([~savecontrolpanel.value]);
 				file=File(~nompathdata++"instruments"+i.asString++".scd","w");file.write(datasfile.value.asCompileString);file.close})});
 			});
@@ -5538,6 +5675,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			datas=datas.add(~listegenetiquefreq.wrapAt(i)*127.copy);datas=datas.add(~listegenetiqueamp.wrapAt(i).replace(0, 0.000001).ampdb.copy);datas=datas.add(~listegenetiqueduree.wrapAt(i).copy);
 			datas=datas.add(~listealgo1freq.wrapAt(i)*127.copy);datas=datas.add(~listealgo1amp.wrapAt(i).replace(0, 0.000001).ampdb);datas=datas.add(~listealgo1duree.wrapAt(i).copy);datas=datas.add(~listealgo2freq.wrapAt(i)*127.copy);datas=datas.add(~listealgo2amp.wrapAt(i).replace(0, 0.000001).ampdb.copy);datas=datas.add(~listealgo2duree.wrapAt(i).copy);
 			datas=datas.add(~listeofffreq.wrapAt(i)*127.copy);datas=datas.add(~listeoffamp.wrapAt(i).replace(0, 0.000001).ampdb.copy);datas=datas.add(~listeoffduree.wrapAt(i).copy);
+			datas=datas.add(~listeGenerateFreq.wrapAt(i)*127.copy);datas=datas.add(~listeGenerateAmp.wrapAt(i).replace(0, 0.000001).ampdb.copy);datas=datas.add(~listeGenerateDuree.wrapAt(i).copy);
+			datas=datas.add(~listeGenStepFreq.wrapAt(i)*127.copy);datas=datas.add(~listeGenStepAmp.wrapAt(i).replace(0, 0.000001).ampdb.copy);datas=datas.add(~listeGenStepDuree.wrapAt(i).copy);
+			datas=datas.add(~listePredictFreq.wrapAt(i)*127.copy);datas=datas.add(~listePredictAmp.wrapAt(i).replace(0, 0.000001).ampdb.copy);datas=datas.add(~listePredictDuree.wrapAt(i).copy);
 			~datassaveloadinstrument.wrapPut(i,~datassaveloadinstrument.wrapAt(i).add(datas.value));//104
 			// sortie fonction
 			~datassaveloadinstrument.wrapAt(i).value;
@@ -5783,6 +5923,9 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			~listealgo2freq.wrapPut(i,datas.wrapAt(104).wrapAt(18)/127);~listealgo2amp.wrapPut(i,datas.wrapAt(104).wrapAt(19).dbamp);~listealgo2duree.wrapPut(i,datas.wrapAt(104).wrapAt(20));
 			if(datas.wrapAt(104).wrapAt(21) != nil, {~listeofffreq.wrapPut(i,datas.wrapAt(104).wrapAt(21)/127);~listeoffamp.wrapPut(i,datas.wrapAt(104).wrapAt(22).dbamp);~listeoffduree.wrapPut(i,datas.wrapAt(104).wrapAt(23))},
 				{~listeofffreq.wrapPut(i,[]);~listeoffamp.wrapPut(i,[]);~listeoffduree.wrapPut(i,[])});
+			~listeGenerateFreq.wrapPut(i,datas.wrapAt(104).wrapAt(24)/127);~listeGenerateAmp.wrapPut(i,datas.wrapAt(104).wrapAt(25).dbamp);~listeGenerateDuree.wrapPut(i,datas.wrapAt(104).wrapAt(26));
+			~listeGenStepFreq.wrapPut(i,datas.wrapAt(104).wrapAt(27)/127);~listeGenStepAmp.wrapPut(i,datas.wrapAt(104).wrapAt(28).dbamp);~listeGenStepDuree.wrapPut(i,datas.wrapAt(104).wrapAt(29));
+			~listePredictFreq.wrapPut(i,datas.wrapAt(104).wrapAt(30)/127);~listePredictAmp.wrapPut(i,datas.wrapAt(104).wrapAt(31).dbamp);~listePredictDuree.wrapPut(i,datas.wrapAt(104).wrapAt(32));
 			//
 			~startbutton.wrapAt(i).valueAction=datas.wrapAt(50).value;if(datas.wrapAt(50).value == 1 and: {~startsysteme.value == 1}, {~flagfreq.wrapPut(i,0);~flagamp.wrapPut(i,0);~flagduree.wrapPut(i,0);~flagneuronefreq.wrapPut(i,0);~flagneuroneamp.wrapPut(i,0);~flagneuroneduree.wrapPut(i,0);~flagoutneuronefreq.wrapPut(i,0);~flagoutneuroneamp.wrapPut(i,0);~flagoutneuroneduree.wrapPut(i,0);~flaggenetiquefreq.wrapPut(i,0);~flaggenetiqueamp.wrapPut(i,0);~flaggenetiqueduree.wrapPut(i,0);
 			},{~routineinstrument.wrapAt(i).stop;~duree.wrapPut(i, 0);
@@ -6032,7 +6175,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 
 			// Audio In pour analyse
 
-			SynthDef("OSC WekRobot Onsets",
+			SynthDef("OSC WekRobotTR Onsets",
 				{arg in = 0, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, inputFilter, array;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
@@ -6042,10 +6185,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot Pitch",
+			SynthDef("OSC WekRobotTR Pitch",
 				{arg in = 0, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, inputFilter, array;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
@@ -6055,10 +6198,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot Pitch2",
+			SynthDef("OSC WekRobotTR Pitch2",
 				{arg in = 0, seuil=0.25, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, fft2, inputFilter, harmonic, percussive, array;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
@@ -6072,10 +6215,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot KeyTrack",
+			SynthDef("OSC WekRobotTR KeyTrack",
 				{arg in = 0, seuil=0.125, filtre=0.5;
 					var input, detect, freqin, ampin, key, array;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
@@ -6085,30 +6228,30 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
 			// Keyboard Audio
-			SynthDef("OSC WekRobot Keyboard",
+			SynthDef("OSC WekRobotTR Keyboard",
 				{arg in=0,note=60, amp=0.5, trigger = 0;
 					var array, input;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					note = note.cpsmidi / 127;
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
-					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekRobotTR_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
 			}).send(s);
 
 			// MIDI Audio
-			SynthDef("OSC WekRobot MIDI",
+			SynthDef("OSC WekRobotTR MIDI",
 				{arg in=0,note=60, amp=0.5, trigger = 0;
 					var array, input;
 					input= Mix(Limiter.ar(SoundIn.ar(in)));
 					note = note.cpsmidi / 127;
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
-					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekRobotTR_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot File Onsets",
+			SynthDef("OSC WekRobotTR File Onsets",
 				{arg bufferplay, busFileIn, seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, inputFilter, array;
 					input = In.ar(busFileIn);
@@ -6118,10 +6261,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Convertir hertz en midi puis entre (0 et 1) !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot File Pitch",
+			SynthDef("OSC WekRobotTR File Pitch",
 				{arg bufferplay, busFileIn,  seuil=0.125, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, inputFilter, array;
 					input = In.ar(busFileIn);
@@ -6131,10 +6274,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot File Pitch2",
+			SynthDef("OSC WekRobotTR File Pitch2",
 				{arg bufferplay, busFileIn,  seuil=0.25, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, fft2, inputFilter, harmonic, percussive, array;
 					input = In.ar(busFileIn);
@@ -6148,10 +6291,10 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
-			SynthDef("OSC WekRobot File KeyTrack",
+			SynthDef("OSC WekRobotTR File KeyTrack",
 				{arg bufferplay, busFileIn,  seuil=0.125, filtre=0.5;
 					var input, detect, freqin, ampin, key, array;
 					input = In.ar(busFileIn);
@@ -6161,7 +6304,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					ampin = A2K.kr(Amplitude.ar(input));
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekRobot_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekRobotTR_Analyse_Audio', values: [freqin, ampin] ++ array, replyID: 1);
 			}).send(s);
 
 			SynthDef("SampleIn",
@@ -6179,7 +6322,7 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			}).send(s);
 
 			// Synth lecture file pour analyse AudioIn
-			SynthDef("WekRobot Play File",
+			SynthDef("WekRobotTR Play File",
 				{arg out=0, bufferplay, busFileIn, trig=0, offset=0, loop=1, volume=0;
 					var input;
 					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trig, BufFrames.kr(bufferplay)*offset , loop);
@@ -6188,23 +6331,23 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			}).send(s);
 
 			// Keyboard
-			SynthDef("OSC WekRobot Keyboard File",
+			SynthDef("OSC WekRobotTR Keyboard File",
 				{arg in=0, note=60, amp=0.5, trigger = 0;
 					var input, array;
 					input = In.ar(in);
 					note = note.cpsmidi / 127;
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
-					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekRobotTR_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
 			}).send(s);
 
 			// MIDI
-			SynthDef("OSC WekRobot MIDI File",
+			SynthDef("OSC WekRobotTR MIDI File",
 				{arg in=0, note=60, amp=0.5, trigger = 0;
 					var input, array;
 					input = In.ar(in);
 					note = note.cpsmidi / 127;
 					array = MFCC.kr(FFT(LocalBuf(1024, 1), input));// 13 a 40 Bands
-					SendReply.kr(trigger, '/WekRobot_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekRobotTR_Analyse_Audio', values: [note, amp] ++ array, replyID: 1);
 			}).send(s);
 
 			// Synth MasterFX
@@ -6214,21 +6357,21 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 			}).send(s);
 
 			// Analyse Tempo AudioIn
-			SynthDef("OSC WekRobot Tempo AudioIn",
+			SynthDef("OSC WekRobotTR Tempo AudioIn",
 				{arg in = 0, lock=0;
 					var trackb,trackh,trackq,tempo, source;
 					source = Mix(Limiter.ar(SoundIn.ar(in)));
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source), lock);
-					SendReply.kr(trackb, '/WekRobot_Analyse_Tempo', values: [tempo], replyID: [1]);
+					SendReply.kr(trackb, '/WekRobotTR_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
 
 			// Analyse Tempo FileIn
-			SynthDef("OSC WekRobot Tempo FileIn",
+			SynthDef("OSC WekRobotTR Tempo FileIn",
 				{arg busFileIn, lock=0;
 					var trackb,trackh,trackq,tempo, source;
 					source = Limiter.ar(In.ar(busFileIn));
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source), lock);
-					SendReply.kr(trackb, '/WekRobot_Analyse_Tempo', values: [tempo], replyID: [1]);
+					SendReply.kr(trackb, '/WekRobotTR_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
 
 			// Synth VST
@@ -7807,20 +7950,20 @@ if(~flagMidiOut == 'on' and: {~canalMidiOutInstr.wrapAt(i).value >= 0}, {
 					// Envelope
 					envelope = EnvGen.ar(Env.new([controlenvlevel1,controlenvlevel2,controlenvlevel3,controlenvlevel4,controlenvlevel5,controlenvlevel6,controlenvlevel7,controlenvlevel8],[controlenvtime1,controlenvtime2,controlenvtime3,controlenvtime4,controlenvtime5,controlenvtime6,controlenvtime7].normalizeSum,'sine'), 1.0, timeScale: dureesample, levelScale: 1.0, doneAction: 2);
 					writePos = Phasor.ar(0, 1, 0, frames);
-				// BufWr explicite avec conservation du comportement loopRec.
-				writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
-				writeSignal = (input * level1) + (writeOld * level2);
-				BufWr.ar(writeSignal, buffer, writePos, loop: 1);
+					// BufWr explicite avec conservation du comportement loopRec.
+					writeOld = BufRd.ar(1, buffer, writePos, loop: 1, interpolation: 4);
+					writeSignal = (input * level1) + (writeOld * level2);
+					BufWr.ar(writeSignal, buffer, writePos, loop: 1);
 					// V2 : marge dynamique selon la vitesse de lecture.
-				safety = (
-					128 + (pitchRatio.abs * BlockSize.ir)
-				).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
-				phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
-				phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
-				readPosA = (writePos - phaseA - safety).wrap(0, frames);
-				readPosB = (writePos - phaseB - safety).wrap(0, frames);
-				winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
-				winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
+					safety = (
+						128 + (pitchRatio.abs * BlockSize.ir)
+					).clip(128.min(frames * 0.25).max(1), (frames * 0.25).max(1));
+					phaseA = Phasor.ar(0, 1 - pitchRatio, 0, frames);
+					phaseB = (phaseA + (frames * 0.5)).wrap(0, frames);
+					readPosA = (writePos - phaseA - safety).wrap(0, frames);
+					readPosB = (writePos - phaseB - safety).wrap(0, frames);
+					winA = 0.5 - (0.5 * cos(2pi * phaseA / frames));
+					winB = 0.5 - (0.5 * cos(2pi * phaseB / frames));
 					sigA = HPbufRd.ar(1, buffer, readPosA, seuil: 1, sensibilite: 1, interp:4) * winA;
 					sigB = HPbufRd.ar(1, buffer, readPosB, seuil: 1, sensibilite: 1, interp:4) * winB;
 					main = LeakDC.ar(LPF.ar(HPF.ar(sigA + sigB, 10), 12544));

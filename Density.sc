@@ -10,13 +10,13 @@ Density {
 	var menuRecording, jpVerb, groupeLimiter, menuAlgo, sliderAlgorithm, listAlgorithm, algoLo, algoHi, displayAlgo, jitterControls,numFhzBand, bandFHZ, dataFlux, dataFlatness, dataCentroid, dataEnergy, dataBPM, dataFreq, dataAmp, dataDuree, indexDataFlux, indexDataFlatness, indexDataCentroid, indexDataEnergy, indexDataBPM, indexDataFreq, indexDataAmp, indexDataDuree, busOSCfreq, busOSCamp, busOSCduree, flagMemory, flagFhzBand;
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, slaveAppAddr, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, loopMusic;
 
-	*new {arg path = "~/Documents/Density/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path = "~/Documents/Density/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="Density", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort);
+		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort, l);
 
 	}
 
-	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort;
+	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, scPort, l;
 
 		//// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -26,14 +26,6 @@ Density {
 
 		pathData = PathName.new(path).pathOnly;
 		pathSound = "/Applications/SuperCollider.app/Contents/Resources/";
-
-		// MIDI INIT
-		// Connect first device by default
-		MIDIClient.init;
-		MIDIIn.connect(0, 0);
-		midiOut = MIDIOut(0).latency = 0.01;
-		midiOut.connect(0);
-		16.do({arg canal; midiOut.allNotesOff(canal)});
 
 		// Verify Path
 		if(File.exists(pathData).not) {systemCmd("mkdir" + pathData)};
@@ -68,6 +60,14 @@ Density {
 
 		Safety(s);
 		//s.makeGui;
+
+		// MIDI INIT
+		MIDIClient.init;
+		MIDIIn.connect(0, 0);
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		midiOut = MIDIOut(0);
+		midiOut.latency = s.latency;
+		midiOut.connect(0);
 
 		headerFormat = "aiff";
 		sampleFormat = "float";
@@ -791,7 +791,7 @@ Density {
 				f = SoundFile.new;
 				f.openRead(p);
 				if(f.numChannels == 1,
-					{d= FloatArray.newClear(f.numFrames * 2);
+					{d= FloatArray.newClear(f.numFrames);
 						f.readData(d);
 						Post << "Loading sound mono for analyze" << p << Char.nl;
 						d = Array.newFrom(d).stutter(2) / 2;
@@ -1457,21 +1457,23 @@ Density {
 														if(dataInstr.at(21) == indexBand or: {dataInstr.at(21) == 0},
 															{
 																# freqStream, ampStream, dureeStream = computeAlgoFilterDataMusic.value(busOSCfreq.at(dataInstr.at(21)).getSynchronous.asArray.cpsmidi / 127, busOSCamp.at(dataInstr.at(21)).getSynchronous.asArray, busOSCduree.at(dataInstr.at(21)).getSynchronous.asArray / dureeMaximumAnalyze, dataInstr.at(12), dataInstr.at(13), dataInstr.at(14), dataInstr.at(15), dataInstr.at(16), dataInstr.at(17), dataInstr.at(18), dataInstr.at(19), dataInstr.at(20));
-																dataInstr.at(5).set(\freq, freqStream);
-																dataInstr.at(5).set(\amp, ampStream);
-																// Pour New Synth Stream avec EnvGen
-																dataInstr.at(5).set(\dur, dureeStream);
-																// MIDI OUT
-																if(flagMidiOut == 'on', {
-																	// Set MIDI Off
-																	midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
-																	if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
-																	// Reset MIDI OUT
-																	listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
-																	// Send MIDI On
-																	midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
-																	if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
-																});
+																s.bind{
+																	dataInstr.at(5).set(\freq, freqStream);
+																	dataInstr.at(5).set(\amp, ampStream);
+																	// Pour New Synth Stream avec EnvGen
+																	dataInstr.at(5).set(\dur, dureeStream);
+																	// MIDI OUT
+																	if(flagMidiOut == 'on', {
+																		// Set MIDI Off
+																		midiOut.noteOff(dataInstr.at(7), dataInstr.at(10), 0);
+																		if(flagVST == 'on', {fxVST.midi.noteOff(dataInstr.at(7), dataInstr.at(10), 0)});
+																		// Reset MIDI OUT
+																		listeDataInstruments.at(index).wrapPut(10, freqStream.flat.at(0).cpsmidi);
+																		// Send MIDI On
+																		midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
+																		if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
+																	});
+																};
 														});
 												});
 											});
@@ -2467,10 +2469,12 @@ Density {
 							});
 						}, {synthMidi = nil; synthMidiVST = nil});
 						//Play Synth next Beat on BPM
-						synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
-						//Play SynthMidi next Beat on BPM
-						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal))});
-						if(patternVST != nil, {synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
+						s.bind{
+							synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
+							//Play SynthMidi next Beat on BPM
+							if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal))});
+							if(patternVST != nil, {synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
+						};
 					},
 					{
 						// SYNTH STREAM
@@ -2706,6 +2710,8 @@ Density {
 			if(flagVST == 'on', {16.do({arg canal; midiOut.allNotesOff(canal); fxVST.midi.allNotesOff(canal)})});
 			listeWindows.do({arg w; w.close});
 			windowVST.close;
+			Pdef.removeAll;
+			ProxySpace.clearAll;
 			//s.quit;
 		};
 
@@ -2760,13 +2766,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		menuFile = Menu(
 			MenuAction("Load File for Analyze",
 				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
+					listeFileAnalyze = listeFileAnalyze.add(fonctionLoadFileForAnalyse.value(path));
 					// Setup GUI Value
-					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
+					windowEar.view.children.at(6).string = "File In :" + PathName.new(path).fileName;
+					listeNameFileAnalyze = listeNameFileAnalyze.add(PathName.new(path).fileName)},{"cancelled".postln})}),
 			Menu(
 				MenuAction("On", {synthFileIn.set('loop', 1)}),
 				MenuAction("Off", {synthFileIn.set('loop', 0)});
@@ -5025,7 +5028,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay) * offset , loop);
 				Out.ar(busIn, Mix(input)); // Bus File In
 				Out.ar(busRec, Mix(input)); // Bus Rec
-				Out.ar(out, input * volume); // Amp File Out
+				Out.ar(out, input!2 * volume); // Amp File Out
 		}).add;
 
 		///////////////// SYNTH AUDIO IN / RECORDS /////////////////////

@@ -15,13 +15,13 @@ WekDensityTR {
 	var sliderSynthBand, rangeSynthBand, numIndexSynthBand, displayIndex, flagBand, fonctionBand, displayMIDI, midiRange, freqBefore, ampBefore, dureeBefore, freqTampon, ampTampon, lastTimeAnalyse, menuVST, synthVST, fxVST, groupeVST, windowVST, flagVST, flagRecSound, widthMC, orientationMC, numberAudioIn, channelsSynth, channelsVerb, rangeFFT, rangeBand, sender;
 	var dimIn, flagStreamMFCC, loopMusic, responder;
 
-	*new {arg path = "~/Documents/WekDensity/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensity", wek=6448, wekPort=57120, scPort=57110;
+	*new {arg path = "~/Documents/WekDensityTR/", ni = 2, numberOut=2, numberRec=2, format=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekDensityTR", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
+		^super.new.init(name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l);
 
 	}
 
-	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
+	init {arg name, path, ni, numberOut, numberRec, format, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l;
 
 		//// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -31,14 +31,6 @@ WekDensityTR {
 
 		pathData = PathName.new(path).pathOnly;
 		pathSound = "/Applications/SuperCollider.app/Contents/Resources/";
-
-		// MIDI INIT
-		// Connect first device by default
-		MIDIClient.init;
-		MIDIIn.connect(0, 0);
-		midiOut = MIDIOut(0).latency = 0.01;
-		midiOut.connect(0);
-		16.do({arg canal; midiOut.allNotesOff(canal)});
 
 		// Verify Path
 		if(File.exists(pathData).not) {systemCmd("mkdir" + pathData)};
@@ -75,6 +67,14 @@ WekDensityTR {
 		Safety(s);
 		//s.makeGui;
 
+		// MIDI
+		MIDIClient.init;
+		MIDIIn.connect(0, 0);
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		midiOut = MIDIOut(0);
+		midiOut.latency = s.latency;
+		midiOut.connect(0);
+
 		headerFormat = "aiff";
 		sampleFormat = "float";
 
@@ -103,7 +103,7 @@ WekDensityTR {
 			while({cmd != nil},
 				{
 					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'wekdensity'},
+					if(cmd == 'all' or: {cmd == 'wekdensityTR'},
 						{
 							cmd = msg[item+1].postln;
 							// Preset
@@ -115,7 +115,7 @@ WekDensityTR {
 											listeDataInstruments.do({arg data, index;
 												data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 											});
-											windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
+											windowEar.name = "WekDensityTR" + " | " + "Preset" + number.asString;
 											file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
 											fonctionLoadPreset.value(file.readAllString.interpret);
 											file.close;
@@ -898,7 +898,7 @@ WekDensityTR {
 				f = SoundFile.new;
 				f.openRead(p);
 				if(f.numChannels == 1,
-					{d= FloatArray.newClear(f.numFrames * 2);
+					{d= FloatArray.newClear(f.numFrames);
 						f.readData(d);
 						Post << "Loading sound mono for analyze" << p << Char.nl;
 						d = Array.newFrom(d).stutter(2) / 2;
@@ -946,7 +946,7 @@ WekDensityTR {
 								collect = collect.add(Buffer.read(s, path, action: {arg buf; Post << "Finished" << Char.nl}));
 								s.sync;
 							},
-							{rawData= FloatArray.newClear(file.numFrames * 2);
+							{rawData= FloatArray.newClear(file.numFrames);
 								s.sync;
 								file.readData(rawData);
 								s.sync;
@@ -973,7 +973,7 @@ WekDensityTR {
 				s.bind{
 					s.recChannels_(recChannels);
 					s.sync;
-					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekDensity_" ++ Date.localtime.stamp ++ ".aiff");
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekDensityTR_" ++ Date.localtime.stamp ++ ".aiff");
 					s.sync;
 					s.record;
 					s.sync;
@@ -1047,26 +1047,23 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 		menuFile = Menu(
 			MenuAction("Load File for Analyze",
 				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
-					// Setup GUI Value
-					windowEar.view.children.at(6).string = "FileIn :" + PathName.new(path).fileName},{"cancelled".postln})}),
+					listeFileAnalyze = listeFileAnalyze.add(fonctionLoadFileForAnalyse.value(path));
+						// Setup GUI Value
+						windowEar.view.children.at(6).string = "File In :" + PathName.new(path).fileName;
+						listeNameFileAnalyze = listeNameFileAnalyze.add(PathName.new(path).fileName)},{"cancelled".postln})}),
 			Menu(
 				MenuAction("On", {synthFileIn.set('loop', 1)}),
 				MenuAction("Off", {synthFileIn.set('loop', 0)});
 			).title_("Loop");
 		);
-		MainMenu.register(menuFile.title_("File for Analyze"), "WekDensityTools");
+		MainMenu.register(menuFile.title_("File for Analyze"), "WekDensityTRTools");
 
 		menuPreset = Menu(
 			MenuAction("Load Preset", {Dialog.openPanel({ arg path, file;
 				file = File(path,"r");
 				fonctionLoadPreset.value(file.readAllString.interpret);
 				file.close;
-				windowEar.name="WekDensity" + typeMasterOut + " | " + PathName.new(path).fileName;
+				windowEar.name="WekDensityTR" + typeMasterOut + " | " + PathName.new(path).fileName;
 			},
 			{"cancelled".postln})}),
 			MenuAction("Save Preset",{Dialog.savePanel({arg path, name, pathonly, fileName, file;
@@ -1080,10 +1077,10 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				file = File(path ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
 				file.close;
-				windowEar.name = "WekDensity" + typeMasterOut + " | " + fileName;
+				windowEar.name = "WekDensityTR" + typeMasterOut + " | " + fileName;
 			}, {"cancelled".postln})});
 		);
-		MainMenu.register(menuPreset.title_("Preset"), "WekDensityTools");
+		MainMenu.register(menuPreset.title_("Preset"), "WekDensityTRTools");
 
 		menuInitAll = Menu(
 			MenuAction("Init All", {arg file;
@@ -1149,7 +1146,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			).title_("FX")
 		);
-		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "WekDensityTools");
+		MainMenu.register(menuInitAll.title_("Synth/Sound/FX"), "WekDensityTRTools");
 
 		menuRecording = Menu(
 			MenuAction("Start Recording", {
@@ -1162,7 +1159,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				fonctionRecPause.value;
 			});
 		);
-		MainMenu.register(menuRecording.title_("Recording"), "WekDensityTools");
+		MainMenu.register(menuRecording.title_("Recording"), "WekDensityTRTools");
 
 		menuAudio = Menu(
 			MenuAction("Channels FhzBand Out", {
@@ -1296,7 +1293,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				windowGVerb.name = "Reverb Dolby5.1"; windowEar.name = "Reverb Dolby5.1"; windowVST.name = "VST Dolby5.1";
 			});
 		);
-		MainMenu.register(menuAudio.title_("Audio"), "WekDensityTools");
+		MainMenu.register(menuAudio.title_("Audio"), "WekDensityTRTools");
 
 		menuMIDI = Menu(
 			MenuAction("Init", {
@@ -1326,7 +1323,7 @@ ysxdcvgbhnjm,l.e-		Musical Keys.
 				});
 			).title_("Setting");
 		);
-		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTools");
+		MainMenu.register(menuMIDI.title_("Midi"), "WekDensityTRTools");
 
 		menuAlgo = Menu(
 			MenuAction("Wek In Port",
@@ -1353,13 +1350,13 @@ Preset Wek",
 					});
 			});
 		);
-		MainMenu.register(menuAlgo.title_("Wekinator"), "WekDensityTools");
+		MainMenu.register(menuAlgo.title_("Wekinator"), "WekDensityTRTools");
 
 		menuHelp = MenuAction("Help ShortCut", {
-			//Document.new("ShortCut for WekDensity", helpWekDensity);
-			TextView().name_("ShortCut for WekDensity").string_(helpWekDensity).front;
+			//Document.new("ShortCut for WekDensityTR", helpWekDensity);
+			TextView().name_("ShortCut for WekDensityTR").string_(helpWekDensity).front;
 		});
-		MainMenu.register(menuHelp, "WekDensityTools");
+		MainMenu.register(menuHelp, "WekDensityTRTools");
 
 		/*// Utility Transformer
 		~bounds = (
@@ -1420,7 +1417,7 @@ Preset Wek",
 			tempoClock = TempoClock.new;
 			tempoClock.schedAbs(tempoClock.nextBar,{tempoClock.beatsPerBar_(1)});
 
-			"Please Wait... Loading WekDensity... Sending SynthDef on s... Loading Sounds...".postln;
+			"Please Wait... Loading WekDensityTR... Sending SynthDef on s... Loading Sounds...".postln;
 
 			// Load Sound Orchestra
 			fonctionLoadSoundOrchestra.value(soundOrchestra);
@@ -1466,42 +1463,42 @@ Preset Wek",
 			s.sync;
 
 			// Synth AudioIn
-			synthAudioIn = Synth.newPaused("WekDensity AudioIn",
+			synthAudioIn = Synth.newPaused("WekDensityTR AudioIn",
 				[\in, 0, 'busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth play file
-			synthFileIn = Synth.newPaused("WekDensity FileIn",
+			synthFileIn = Synth.newPaused("WekDensityTR FileIn",
 				[\bufferplay, bufferFile, 'busIn', busAnalyzeIn, \busRec, busRecAudioIn, \volume, 0], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Onsets
-			synthAnalyseOnsets = Synth.newPaused("OSC WekDensity Onsets",
+			synthAnalyseOnsets = Synth.newPaused("OSC WekDensityTR Onsets",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Pitch
-			synthAnalysePitch = Synth.newPaused("OSC WekDensity Pitch",
+			synthAnalysePitch = Synth.newPaused("OSC WekDensityTR Pitch",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze Pitch Version 2
-			synthAnalysePitch2 = Synth.newPaused("OSC WekDensity Pitch2",
+			synthAnalysePitch2 = Synth.newPaused("OSC WekDensityTR Pitch2",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth audio analyze KeyTrack
-			synthAnalyseKeyTrack = Synth.newPaused("OSC WekDensity KeyTrack",
+			synthAnalyseKeyTrack = Synth.newPaused("OSC WekDensityTR KeyTrack",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// Synth Keyboard
-			synthKeyboard = Synth.newPaused("OSC WekDensity Keyboard",
+			synthKeyboard = Synth.newPaused("OSC WekDensityTR Keyboard",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
 			// MIDI Keyboard
-			synthMIDI = Synth.newPaused("OSC WekDensity MIDI",
+			synthMIDI = Synth.newPaused("OSC WekDensityTR MIDI",
 				['busIn', busAnalyzeIn], groupeAnalyse, \addToTail);
 			s.sync;
 
@@ -1567,7 +1564,7 @@ Preset Wek",
 			windowEar.view.children.at(83).enabled_(false);
 			windowEar.view.children.at(84).enabled_(false);
 
-			windowEar.name = "WekDensity" + typeMasterOut;
+			windowEar.name = "WekDensityTR" + typeMasterOut;
 			windowGVerb.name = "Reverb" + typeMasterOut;
 			windowVST.name = "VST" + typeMasterOut;
 
@@ -1651,7 +1648,7 @@ Preset Wek",
 								listeDataInstruments.do({arg data, index;
 									data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 								});
-								windowEar.name = "WekDensity" + " | " + "Preset" + numPreset.asInteger.asString;
+								windowEar.name = "WekDensityTR" + " | " + "Preset" + numPreset.asInteger.asString;
 								file=File(pathData ++ "Preset" + numPreset.asInteger.asString ++ ".scd", "r");
 								fonctionLoadPreset.value(file.readAllString.interpret);
 								file.close;
@@ -1916,6 +1913,7 @@ Preset Wek",
 												if(dataInstr.at(21) == indexBand or: {dataInstr.at(21) == 0},
 													{
 														# freqStream, ampStream, dureeStream = computeAlgoFilterDataMusic.value(busOSCfreq.at(dataInstr.at(21)).getSynchronous.asArray.cpsmidi / 127, busOSCamp.at(dataInstr.at(21)).getSynchronous.asArray, busOSCduree.at(dataInstr.at(21)).getSynchronous.asArray / dureeMaximumAnalyze, dataInstr.at(12), dataInstr.at(13), dataInstr.at(14), dataInstr.at(15), dataInstr.at(16), dataInstr.at(17), dataInstr.at(18), dataInstr.at(19), dataInstr.at(20));
+														s.bind{
 														dataInstr.at(5).set(\freq, freqStream);
 														dataInstr.at(5).set(\amp, ampStream);
 														// Pour New Synth Stream avec EnvGen
@@ -1931,6 +1929,7 @@ Preset Wek",
 															midiOut.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127);
 															if(flagVST == 'on', {fxVST.midi.noteOn(dataInstr.at(7), freqStream.flat.at(0).cpsmidi, ampStream.at(0) * 127)});
 														});
+														};
 												});
 										});
 									});
@@ -2035,7 +2034,7 @@ Preset Wek",
 					});
 					dureeAnalyzeOSCMusic = Main.elapsedTime;
 				});
-			}, '/WekDensity_MFCC_FFT');
+			}, '/WekDensityTR_MFCC_FFT');
 
 			// Setup MIDI Responder
 			// NoteOn
@@ -3311,10 +3310,12 @@ Preset Wek",
 							});
 						}, {synthMidi = nil; synthMidiVST = nil});
 						//Play Synth next Beat on BPM
+						s.bind{
 						synth = pattern.play(quant: Quant(quantizationDuree.reciprocal));
 						//Play SynthMidi next Beat on BPM
 						if(patternMidi != nil, {synthMidi = patternMidi.play(quant: Quant(quantizationDuree.reciprocal))});
 						if(patternVST != nil, {synthMidiVST = patternVST.play(quant: Quant(quantizationDuree.reciprocal))});
+						};
 					},
 					{
 						// SYNTH STREAM
@@ -3535,6 +3536,8 @@ Preset Wek",
 			windowVST.close;
 			sender.free;
 			~studio.close;
+			Pdef.removeAll;
+			ProxySpace.clearAll;
 			//s.quit;
 		};
 
@@ -3706,7 +3709,7 @@ Preset Wek",
 					freqBefore=0; ampBefore=0; dureeBefore=0; freqTampon = nil; ampTampon = nil;
 					numIndexSynthBand = 0;
 					if(File.exists(pathData ++ "Init Preset.scd"), {
-						windowEar.name = "WekDensity" + " | " + "Init Preset";
+						windowEar.name = "WekDensityTR" + " | " + "Init Preset";
 						file=File(pathData ++ "Init Preset.scd", "r");
 						fonctionLoadPreset.value(file.readAllString.interpret);
 						file.close;
@@ -3791,14 +3794,14 @@ Preset Wek",
 						{
 							numPreset = number.value; lastNumPreset = number.value;
 							file=File(pathData ++ foldersToScanPreset.at(number),"r");
-							windowEar.name = "WekDensity" + typeMasterOut + " | " + foldersToScanPreset.at(number);
+							windowEar.name = "WekDensityTR" + typeMasterOut + " | " + foldersToScanPreset.at(number);
 							fonctionLoadPreset.value(file.readAllString.interpret);
 							file.close}, {"cancelled".postln});});
 				//key k
 				if(char == $k, {
 					FileDialog.new({arg path;
 						pathData = path.at(0).asString ++"/";
-						windowEar.name="WekDensity" + " | " + pathData.asString;
+						windowEar.name="WekDensityTR" + " | " + pathData.asString;
 						fonctionCollectFolders.value;
 					}, fileMode: 2);
 				});
@@ -3839,7 +3842,7 @@ Preset Wek",
 		// Fonction Commandes
 		fonctionShortCutCommande = {arg number, file;
 			if(shortCutCommande == 'Save Preset', {
-				windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
+				windowEar.name = "WekDensityTR" + " | " + "Preset" + number.asString;
 				file = File(pathData ++ "Preset" + number.asString ++ ".scd", "w");
 				file.write(fonctionSavePreset.value(listeWindows).asCompileString);
 				file.close;
@@ -3850,7 +3853,7 @@ Preset Wek",
 					listeDataInstruments.do({arg data, index;
 						data = data.put(11, 0); data = data.put(2, 0); listeDataInstruments.put(index, data);
 					});
-					windowEar.name = "WekDensity" + " | " + "Preset" + number.asString;
+					windowEar.name = "WekDensityTR" + " | " + "Preset" + number.asString;
 					file=File(pathData ++ "Preset" + number.value.asString ++ ".scd", "r");
 					fonctionLoadPreset.value(file.readAllString.interpret);
 					file.close;
@@ -4480,7 +4483,7 @@ Preset Wek",
 		windowGVerb.front;
 
 		/////// WekDensity Ear Panel
-		windowEar = Window("WekDensity" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
+		windowEar = Window("WekDensityTR" + typeMasterOut, Rect(0, 800, 715, 890), scroll: true);
 		windowEar.alpha=1.0;
 		windowEar.front;
 		windowEar.view.decorator = FlowLayout(windowEar.view.bounds);
@@ -5389,7 +5392,7 @@ Preset Wek",
 	initSynthDef {
 
 		// WekDensity Audio Analyze Onsets
-		SynthDef("OSC WekDensity Onsets",
+		SynthDef("OSC WekDensityTR Onsets",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter;
 				var fft, centroid=440, flatness=0.5, energy=440, flux=0.5,
@@ -5408,11 +5411,11 @@ Preset Wek",
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
-				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
+				SendReply.kr(detect, '/WekDensityTR_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
 		// WekDensity Audio Analyze Pitch
-		SynthDef("OSC WekDensity Pitch",
+		SynthDef("OSC WekDensityTR Pitch",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter;
 				var fft, centroid=440, flatness=0.5, energy=440, flux=0.5,
@@ -5431,11 +5434,11 @@ Preset Wek",
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
-				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
+				SendReply.kr(detect, '/WekDensityTR_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
 		// Pitch v2
-		SynthDef("OSC WekDensity Pitch2",
+		SynthDef("OSC WekDensityTR Pitch2",
 			{arg busIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 				var input, detect, freqIn, hasfreqIn, ampIn, timeIn=0, inputFilter, fft, harmonic, percussive;
 				var fft2, centroid=440, flatness=0.5, energy=440, flux=0.5,
@@ -5459,11 +5462,11 @@ Preset Wek",
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
-				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
+				SendReply.kr(detect, '/WekDensityTR_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// WekDensity Audio Analyze KeyTrack
-		SynthDef("OSC WekDensity KeyTrack",
+		// WekDensityTR Audio Analyze KeyTrack
+		SynthDef("OSC WekDensityTR KeyTrack",
 			{arg busIn, seuil=0.5, filtre=0.5;
 				var input, detect, freqIn, ampIn, timeIn=0, key;
 				var fft, centroid=440, flatness=0.5, energy=440, flux=0.5,
@@ -5482,11 +5485,11 @@ Preset Wek",
 				ampIn = A2K.kr(Amplitude.ar(input));
 				timeIn = Timer.kr(detect);
 				array = array ++ [freqIn, ampIn, timeIn, bpm, centroid, energy, flux, flatness];
-				SendReply.kr(detect, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
+				SendReply.kr(detect, '/WekDensityTR_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// WekDensity Keyboard
-		SynthDef("OSC WekDensity Keyboard",
+		// WekDensityTR Keyboard
+		SynthDef("OSC WekDensityTR Keyboard",
 			{arg busIn, note=60, amp=0.5, trigger=0;
 				var input, timeIn=0;
 				var fft, detect, centroid=440, flatness=0.5, energy=440, flux=0.5,
@@ -5501,11 +5504,11 @@ Preset Wek",
 				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
 				array = array ++ [note.midicps, amp, timeIn, bpm, centroid, energy, flux, flatness];
-				SendReply.kr(trigger, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
+				SendReply.kr(trigger, '/WekDensityTR_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
-		// WekDensity MIDI
-		SynthDef("OSC WekDensity MIDI",
+		// WekDensityTR MIDI
+		SynthDef("OSC WekDensityTR MIDI",
 			{arg busIn, note=60, amp=0.5, trigger=0;
 				var input, timeIn=0;
 				var fft, detect, centroid=440, flatness=0.5, energy=440, flux=0.5,
@@ -5520,11 +5523,11 @@ Preset Wek",
 				# trackB,trackH,trackQ, bpm = BeatTrack.kr(FFT(LocalBuf(1024, 1), input), lock);
 				timeIn = Timer.kr(trigger);
 				array = array ++ [note.midicps, amp, timeIn, bpm, centroid, energy, flux, flatness];
-				SendReply.kr(trigger, '/WekDensity_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
+				SendReply.kr(trigger, '/WekDensityTR_MFCC_FFT', values: array, replyID: 1);//13 MFCC + 8 FFT
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
-		SynthDef("WekDensity AudioIn",
+		SynthDef("WekDensityTR AudioIn",
 			{arg in=0, busIn=0;
 				var input;
 				input=Mix(SoundIn.ar(in));
@@ -5532,13 +5535,13 @@ Preset Wek",
 		}).add;
 
 		// Synth lecture file pour analyse AudioIn
-		SynthDef("WekDensity FileIn",
+		SynthDef("WekDensityTR FileIn",
 			{arg out=0, bufferplay, busIn=0, busRec=0, trigger=0, offset=0, loop=1, volume=0;
 				var input;
 				input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay) * offset , loop);
 				Out.ar(busIn, Mix(input)); // Bus File In
 				Out.ar(busRec, Mix(input)); // Bus Rec
-				Out.ar(out, input * volume); // Amp File Out
+				Out.ar(out, input!2 * volume); // Amp File Out
 		}).add;
 
 		///////////////// SYNTH AUDIO IN / RECORDS /////////////////////

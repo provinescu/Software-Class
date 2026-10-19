@@ -7,13 +7,13 @@ WekAgentsTR {
 
 	var keyboardShortCut, keyboardTranslate, keyboardTranslateBefore, setupKeyboardShortCut, keyboard, keyVolume, windowKeyboard, keyboardVolume, fonctionShortCut, windowVST, flagVST, numberAudioIn, rangeBand, sender, mfccData, flagStreamMFCC, numPreset, lastNumPreset, menuWek, lastTimeWekPreset, timeWekPreset, timeWekData, lastTimeWekData, listeWekPreset, flagWTD, flagWTP, nom, foncSynthOut, foncFXOut, foncVerbOut, scAdr, udpAdr;
 
-	*new	{arg path="~/Documents/WekAgents/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 256, wid=2.0, ori=0.5, flag=0, name="WekAgents", wek=6448, wekPort=57120, scPort=57110;
+	*new	{arg path="~/Documents/WekAgentsTR/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="WekAgentsTR", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l);
 
 	}
 
-	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort;
+	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, wek, wekPort, scPort, l;
 
 		// Setup GUI style
 		QtGUI.palette = QPalette.dark;// light / system
@@ -67,10 +67,11 @@ WekAgentsTR {
 
 		// MIDI
 		MIDIClient.init;
-		// Connect first device by default
 		MIDIIn.connect(0, 0);
-		~midiOut = MIDIOut(0).latency = 0.01;
-		~midiOut.allNotesOff(0);
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		~midiOut = MIDIOut(0);
+		~midiOut.latency = s.latency;
+		~midiOut.connect(0);
 
 		// Collect all Preset
 		~foldersToScanAll = PathName.new(~nompathdata).files.collect{ |path| var file;
@@ -191,11 +192,6 @@ G                       Init Genome Agent (solo).
 				{Dialog.openPanel({ arg paths, file;
 					~samplePourAnalyse=paths;
 					s.bind{
-						~listeSamplePourAnalyse.do({arg buffer; buffer.free});
-						~listeSamplePourAnalyse = [];
-						~listeNameSamplePourAnalyse = [];
-						~bufferanalysefile.free;
-						s.sync;
 						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
@@ -205,7 +201,7 @@ G                       Init Genome Agent (solo).
 						file.openRead(~samplePourAnalyse);
 						s.sync;
 						if(file.numChannels == 1,
-							{~rawData= FloatArray.newClear(file.numFrames * 2);
+							{~rawData= FloatArray.newClear(file.numFrames);
 								s.sync;
 								file.readData(~rawData);
 								s.sync;
@@ -226,7 +222,9 @@ G                       Init Genome Agent (solo).
 						s.sync;
 						~sounds.size.do({arg i; ~recFiles.wrapAt(i).set('in', ~busFileIn.index)});
 						~agents.do({arg i; ~synthRecFileAgents.wrapAt(i).set('in', ~busFileIn.index)});
-						~textFileAnalyze.string_(paths.asString);
+						~textFileAnalyze.string_(PathName.new(paths).fileName);
+						~listeSamplePourAnalyse = ~listeSamplePourAnalyse.add(~bufferanalysefile);
+						~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(PathName.new(paths).fileName);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {
 							~synthPlayFile.run(true);
 							~synthPlayFile.set(\trig, 0);
@@ -256,7 +254,7 @@ G                       Init Genome Agent (solo).
 					};
 			})});
 		);
-		MainMenu.register(~menuFile.title_("File for Analyze"), "WekAgentsTools");
+		MainMenu.register(~menuFile.title_("File for Analyze"), "WekAgentsTRTools");
 
 		~menuFX = MenuAction("Reset FX Group", {
 			~groupeSynthAgents.freeAll;
@@ -293,7 +291,7 @@ G                       Init Genome Agent (solo).
 				~listSynthEffets.wrapAt(effet).set('busverb', ~busVerbAudio.index, 'amp', ~ampSynthEffets.wrapAt(effet).dbamp, 'pan', ~panSynthEffets.wrapAt(effet), 'control1', ~controlsSynthEffets.wrapAt(effet).wrapAt(0),  'control2', ~controlsSynthEffets.wrapAt(effet).wrapAt(1),  'control3', ~controlsSynthEffets.wrapAt(effet).wrapAt(2),  'control4', ~controlsSynthEffets.wrapAt(effet).wrapAt(3),  'control5', ~controlsSynthEffets.wrapAt(effet).wrapAt(4),  'control6', ~controlsSynthEffets.wrapAt(effet).wrapAt(5),  'control7', ~controlsSynthEffets.wrapAt(effet).wrapAt(6),  'control8', ~controlsSynthEffets.wrapAt(effet).wrapAt(7));
 			});
 		});
-		MainMenu.register(~menuFX, "WekAgentsTools");
+		MainMenu.register(~menuFX, "WekAgentsTRTools");
 
 		~menuRecording = Menu(
 			MenuAction("Start", {
@@ -316,7 +314,7 @@ G                       Init Genome Agent (solo).
 					~bufferSonsInstruments.write(path++".aiff","AIFF","float")},{"cancelled".postln})};
 			);
 		);
-		MainMenu.register(~menuRecording.title_("Recording"), "WekAgentsTools");
+		MainMenu.register(~menuRecording.title_("Recording"), "WekAgentsTRTools");
 
 		~menuAudio = Menu(
 			//Menu(
@@ -330,7 +328,7 @@ G                       Init Genome Agent (solo).
 			);
 			//).title_("Audio Out");
 		);
-		MainMenu.register(~menuAudio.title_("Audio"), "WekAgentsTools");
+		MainMenu.register(~menuAudio.title_("Audio"), "WekAgentsTRTools");
 
 		~menuAlgo = Menu(
 			Menu(
@@ -346,7 +344,7 @@ G                       Init Genome Agent (solo).
 				);
 			).title_("Analyze");
 		);
-		MainMenu.register(~menuAlgo.title_("Algorithm"), "WekAgentsTools");
+		MainMenu.register(~menuAlgo.title_("Algorithm"), "WekAgentsTRTools");
 
 
 		~menuMidi = Menu(
@@ -391,7 +389,7 @@ G                       Init Genome Agent (solo).
 				}),
 			).title_("Synth Controls"),
 		);
-		MainMenu.register(~menuMidi.title_("MIDI"), "WekAgentsTools");
+		MainMenu.register(~menuMidi.title_("MIDI"), "WekAgentsTRTools");
 
 		~menuSoft = Menu(
 			MenuAction("Genome Number Editor", {HPgenomeEditorNumber.new};
@@ -407,7 +405,7 @@ G                       Init Genome Agent (solo).
 			MenuAction("Live Coding Editor", {HPliveCoding.new};
 			),
 		);
-		MainMenu.register(~menuSoft.title_("Soft"), "WekAgentsTools");
+		MainMenu.register(~menuSoft.title_("Soft"), "WekAgentsTRTools");
 
 		menuWek = Menu(
 			MenuAction("Wek In Port",
@@ -434,12 +432,12 @@ Preset Wek",
 					});
 			});
 		);
-		MainMenu.register(menuWek.title_("Wekinator"), "WekAgentsTools");
+		MainMenu.register(menuWek.title_("Wekinator"), "WekAgentsTRTools");
 
 		~menuKeys = Menu(
-			MenuAction("List ShortCuts WekAgents", {
-				//Document.new("ShortCut for WekAgents", ~helpHPWekAgents);
-				TextView().name_("ShortCut for WekAgents").string_(~helpHPWekAgents).front
+			MenuAction("List ShortCuts WekAgentsTR", {
+				//Document.new("ShortCut for WekAgentsTR", ~helpHPWekAgents);
+				TextView().name_("ShortCut for WekAgentsTR").string_(~helpHPWekAgents).front
 			};
 			),
 			MenuAction("List ShortCuts Genome + Sequence Editor", {
@@ -447,7 +445,7 @@ Preset Wek",
 				TextView().name_("List ShortCuts Genome + Sequence Editor").string_(~helpHPgenomesequenceEditor).front;
 			});
 		);
-		MainMenu.register(~menuKeys.title_("ShortCuts"), "WekAgentsTools");
+		MainMenu.register(~menuKeys.title_("ShortCuts"), "WekAgentsTRTools");
 
 		~fonctionRecOn={
 			if(~oscStateflag == 'master', {~slaveAppAddr.sendMsg('/HPrec', "Rec On")});// Send Synchro Rec On
@@ -460,7 +458,7 @@ Preset Wek",
 					s.sync;
 					s.recSampleFormat_(~sampleFormat);
 					s.sync;
-					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekAgents_" ++ Date.localtime.stamp ++ "." ++ ~headerFormat);
+					s.prepareForRecord("~/Music/SuperCollider Recordings/".standardizePath ++ "WekAgentsTR_" ++ Date.localtime.stamp ++ "." ++ ~headerFormat);
 					s.sync;
 					s.record;
 					s.sync;
@@ -489,11 +487,6 @@ Preset Wek",
 				1, {Dialog.openPanel({ arg paths;
 					~samplePourAnalyse=paths;
 					s.bind{
-						~listeSamplePourAnalyse.do({arg buffer; buffer.free});
-						~listeSamplePourAnalyse = [];
-						~listeNameSamplePourAnalyse = [];
-						~bufferanalysefile.free;
-						s.sync;
 						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
@@ -503,7 +496,7 @@ Preset Wek",
 						file.openRead(~samplePourAnalyse);
 						s.sync;
 						if(file.numChannels == 1,
-							{~rawData= FloatArray.newClear(file.numFrames * 2);
+							{~rawData= FloatArray.newClear(file.numFrames);
 								s.sync;
 								file.readData(~rawData);
 								s.sync;
@@ -524,7 +517,9 @@ Preset Wek",
 						s.sync;
 						~sounds.size.do({arg i; ~recFiles.wrapAt(i).set('in', ~busFileIn.index)});
 						~agents.do({arg i; ~synthRecFileAgents.wrapAt(i).set('in', ~busFileIn.index)});
-						~textFileAnalyze.string_(paths.asString);
+						~textFileAnalyze.string_(PathName.new(paths).fileName);
+						~listeSamplePourAnalyse = ~listeSamplePourAnalyse.add(~bufferanalysefile);
+						~listeNameSamplePourAnalyse = ~listeNameSamplePourAnalyse.add(PathName.new(paths).fileName);
 						if(~startsysteme.value == 1 and: {~flagEntreeMode == 'File'}, {~synthPlayFile.run(true);
 							s.sync;
 							~synthPlayFile.set('trig', 1);
@@ -1168,7 +1163,7 @@ Preset Wek",
 			while({cmd != nil},
 				{
 					cmd = msg[item].postln;
-					if(cmd == 'all' or: {cmd == 'wekagents'},
+					if(cmd == 'all' or: {cmd == 'wekagentsTR'},
 						{
 							cmd = msg[item+1].postln;
 							// Preset
@@ -1720,7 +1715,7 @@ Preset Wek",
 			~file.openRead(~path);
 			s.sync;
 			if(~file.numChannels == 1,
-				{~rawData= FloatArray.newClear(~file.numFrames * 2);
+				{~rawData= FloatArray.newClear(~file.numFrames);
 					s.sync;
 					~file.readData(~rawData);
 					s.sync;
@@ -1779,7 +1774,7 @@ Preset Wek",
 						~bufferSons=~bufferSons.add(Buffer.read(s, path.standardizePath, action: {Post << "Finished" << Char.nl}));
 						s.sync;
 					},
-					{rawData= FloatArray.newClear(file.numFrames * 2);
+					{rawData= FloatArray.newClear(file.numFrames);
 						s.sync;
 						file.readData(rawData);
 						s.sync;
@@ -1881,17 +1876,17 @@ Preset Wek",
 		~initSynthVerb.value;
 
 		// Creation Synth Analyse
-		~audioFile=Synth.newPaused("OSC WekAgents File Onsets",
+		~audioFile=Synth.newPaused("OSC WekAgentsTR File Onsets",
 			['busFileIn', ~busFileIn.index], ~groupeAnalyse, \addToTail);
 		s.sync;
-		~audioIn=Synth.newPaused("OSC WekAgents Onsets",
+		~audioIn=Synth.newPaused("OSC WekAgentsTR Onsets",
 			[\seuil, 0.5 ], ~groupeAnalyse, \addToTail);
 		s.sync;
 		// Creation Synth Tempo
-		~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+		~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 			['busFileIn', ~busFileIn.index], ~groupeAnalyse, \addToTail);
 		s.sync;
-		~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+		~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 			[\lock, 0], ~groupeAnalyse, \addToTail);
 		s.sync;
 		// Creation MasterFX
@@ -1911,32 +1906,32 @@ Preset Wek",
 				~audioIn.free; ~audioFile.free;~tempoFile.free;~tempoIn.free;
 				s.sync;
 				switch(algo,
-					0, {~audioFile=Synth.newPaused("OSC WekAgents File Onsets",
+					0, {~audioFile=Synth.newPaused("OSC WekAgentsTR File Onsets",
 						['busFileIn', ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilInSlider.value], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~audioIn=Synth.newPaused("OSC WekAgents Onsets",
+					~audioIn=Synth.newPaused("OSC WekAgentsTR Onsets",
 						[\seuil, ~seuilInSlider.value, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1)], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+					~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 						['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+					~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 						[\lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
 					if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
 					if(~flagEntreeMode == 'File' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.value.run(true);~tempoFile.value.run(true)});
 					s.sync;
 					},
-					1, {~audioFile=Synth.newPaused("OSC WekAgents File Pitch",
+					1, {~audioFile=Synth.newPaused("OSC WekAgentsTR File Pitch",
 						[\bufferplay, ~bufferanalysefile.bufnum, 'busFileIn', ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilInSlider.value], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~audioIn=Synth.newPaused("OSC WekAgents Pitch",
+					~audioIn=Synth.newPaused("OSC WekAgentsTR Pitch",
 						[\seuil, ~seuilInSlider.value, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1)], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+					~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 						['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+					~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 						[\lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
 					if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
@@ -1944,16 +1939,16 @@ Preset Wek",
 					if(~flagEntreeMode == 'File' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.value.run(true);~tempoFile.value.run(true)});
 					s.sync;
 					},
-					2, {~audioFile=Synth.newPaused("OSC WekAgents File Pitch2",
+					2, {~audioFile=Synth.newPaused("OSC WekAgentsTR File Pitch2",
 						[\bufferplay, ~bufferanalysefile.bufnum, 'busFileIn', ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilInSlider.value], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~audioIn=Synth.newPaused("OSC WekAgents Pitch2",
+					~audioIn=Synth.newPaused("OSC WekAgentsTR Pitch2",
 						[\seuil, ~seuilInSlider.value, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1)], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+					~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 						['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+					~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 						[\lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
 					if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
@@ -1961,16 +1956,16 @@ Preset Wek",
 					if(~flagEntreeMode == 'File' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.value.run(true);~tempoFile.value.run(true)});
 					s.sync;
 					},
-					3, {~audioFile=Synth.newPaused("OSC WekAgents File KeyTrack",
+					3, {~audioFile=Synth.newPaused("OSC WekAgentsTR File KeyTrack",
 						[\bufferplay, ~bufferanalysefile.bufnum, 'busFileIn', ~busFileIn.index, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1), \seuil, ~seuilInSlider.value], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~audioIn=Synth.newPaused("OSC WekAgents KeyTrack",
+					~audioIn=Synth.newPaused("OSC WekAgentsTR KeyTrack",
 						[\seuil, ~seuilInSlider.value, \filtre, ~paraAlgoAnalyseAudio.wrapAt(~algoAnalyse.value).wrapAt(1)], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+					~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 						['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+					~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 						[\lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
 					if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
@@ -1978,16 +1973,16 @@ Preset Wek",
 					if(~flagEntreeMode == 'File' and: {~startsysteme.value == 1}, {~audioFile.value.run(true);~synthPlayFile.value.run(true);~tempoFile.value.run(true)});
 					s.sync;
 					},
-					4, {~audioFile=Synth.newPaused("OSC WekAgents File Keyboard",
+					4, {~audioFile=Synth.newPaused("OSC WekAgentsTR File Keyboard",
 						['busFileIn', ~busFileIn.index, \trigger, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~audioIn=Synth.newPaused("OSC WekAgents Keyboard",
+					~audioIn=Synth.newPaused("OSC WekAgentsTR Keyboard",
 						[\trigger, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+					~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 						['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
-					~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+					~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 						[\lock, 0], ~groupeAnalyse, \addToTail);
 					s.sync;
 					if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
@@ -1996,16 +1991,16 @@ Preset Wek",
 					s.sync;
 					},
 					5, {
-						~audioFile=Synth.newPaused("OSC WekAgents File MIDI",
+						~audioFile=Synth.newPaused("OSC WekAgentsTR File MIDI",
 							['busFileIn', ~busFileIn.index, \trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~audioIn=Synth.newPaused("OSC WekAgents MIDI",
+						~audioIn=Synth.newPaused("OSC WekAgentsTR MIDI",
 							[\trigger, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~tempoFile=Synth.newPaused("OSC WekAgents Tempo FileIn",
+						~tempoFile=Synth.newPaused("OSC WekAgentsTR Tempo FileIn",
 							['busFileIn', ~busFileIn.index, \lock, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
-						~tempoIn=Synth.newPaused("OSC WekAgents Tempo AudioIn",
+						~tempoIn=Synth.newPaused("OSC WekAgentsTR Tempo AudioIn",
 							[\lock, 0], ~groupeAnalyse, \addToTail);
 						s.sync;
 						if(~flagEntreeMode == 'Audio' and: {~startsysteme.value == 1}, {~audioIn.value.run(true);~tempoIn.value.run(true)});
@@ -2022,7 +2017,7 @@ Preset Wek",
 		};
 
 		//Creation Synth play File
-		~synthPlayFile=Synth.newPaused("WekAgents Play File",
+		~synthPlayFile=Synth.newPaused("WekAgentsTR Play File",
 			[\bufferplay, ~bufferanalysefile.bufnum, 'busFileIn', ~busFileIn.index, \volume, 0], ~groupeAnalyse, \addToHead);
 
 		// OSC Setting
@@ -2040,7 +2035,7 @@ Preset Wek",
 					~tempoMusic = ~tempoMusic.ceil;
 					{~tempoSlider.valueAction = ~tempoMusic}.defer;
 				});
-		})}, '/WekAgents_Analyse_Tempo', ~serverAdresse);
+		})}, '/WekAgentsTR_Analyse_Tempo', ~serverAdresse);
 
 		// Fonction OSC
 		~initOSCresponder = {
@@ -2493,7 +2488,7 @@ Preset Wek",
 					if(duree > ~tempsmaxsignal , // ici duree silence
 						{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[]; ~lastTimeAnalyse=time;~freqBefore=0;~ampBefore=0;~dureeBefore=0;~freqTampon=nil;~ampTampon=nil;~compteurAnalyse=0;
 							~agents.do({arg agent; ~listeagentID.wrapPut(agent, []);if(~listeagentfreq.wrapAt(agent).size != 0 ,{~flagplayagent.wrapPut(agent, 'new');~dureesmusique.wrapPut(agent, ~quantaMusic.reciprocal);~routineMusic.wrapAt(agent).reset})}); ~lastTimeAnalyse=time})});
-		}, '/WekAgents_Analyse_Audio', ~serverAdresse);
+		}, '/WekAgentsTR_Analyse_Audio', ~serverAdresse);
 
 		// Analyse Midi-IN
 		~fonctionOSCMidiIn={
@@ -3722,6 +3717,7 @@ Preset Wek",
 					freq = freq.soloArray;
 					amp = amp.soloArray;
 					// Playing
+					s.bind{
 					freq.size.do({arg index;var a, ar=0;
 						// Amp
 						a = amp.wrapAt(index);
@@ -3734,13 +3730,18 @@ Preset Wek",
 						// Synth
 						Synth.new(synth, ['out', audioOut + ~startChannelAudioOut, 'buseffets', ~busEffetsAudio.index, 'busverb', ~busVerbAudio.index,'freq', freq.wrapAt(index), 'rate', freqRate.wrapAt(index), 'amp', a, 'ampreal', ar, 'duree', duree, 'panLo', pan.wrapAt(0), 'panHi', pan.wrapAt(1), 'offset', offset, 'loop', loopSample, 'reverse', reverseSample,  'buffer', bufferSon.bufnum,  'buffer2', bufferSon2.bufnum, 'controlF', controlF, 'controlA', controlA, 'controlD', controlD, 'antiClick1', ~antiClick.wrapAt(0), 'antiClick2', ~antiClick.wrapAt(1),'controlenvlevel1', envLevel.wrapAt(0), 'controlenvlevel2', envLevel.wrapAt(1), 'controlenvlevel3', envLevel.wrapAt(2), 'controlenvlevel4', envLevel.wrapAt(3), 'controlenvlevel5', envLevel.wrapAt(4),  'controlenvlevel6', envLevel.wrapAt(5),  'controlenvlevel7', envLevel.wrapAt(6),  'controlenvlevel8', envLevel.wrapAt(7), 'controlenvtime1', envDuree.wrapAt(0), 'controlenvtime2', envDuree.wrapAt(1), 'controlenvtime3', envDuree.wrapAt(2), 'controlenvtime4', envDuree.wrapAt(3), 'controlenvtime5', envDuree.wrapAt(4), 'controlenvtime6', envDuree.wrapAt(5), 'controlenvtime7', envDuree.wrapAt(6), 'in', sourceInAgent, 'level1', level1, 'level2', level2], ~groupeSynthAgents, \addToTail);//play
 					});
+					};
 			});
 		};
 
 		// PROCESSUS AGENTS
-		~routineAgents=Tdef(\ProcessSystem, {
-			var flagDead='off', time;
-			loop({
+		// Pbind/Pdef : processus d'agents cadence par le TempoClock.
+		// Pdef conserve les appels play/stop utilises ailleurs dans le programme.
+		~routineAgents=Pdef(\ProcessSystem,
+			Pbind(
+				\type, \rest,
+				\dur, Pfunc({
+					var flagDead='off', time, prochaineDuree;
 				flagDead='off';
 				// Evaluation des agents et traitement....
 				// Phase 1 update Time-Vie
@@ -3813,9 +3814,15 @@ Preset Wek",
 				// Test si silence
 				if((time - ~lastTimeAnalyse) > ~tempsmaxsignal,
 					{~listefreq=[];~listeamp=[];~listeduree=[];~listeID=[];~compteurAnalyse=0});
-				(~tempoagents.value.reciprocal * ~tempoMusicPlay.tempo).wait;
-			});
-		});
+					// La valeur retournee cadence le prochain cycle du processus.
+					prochaineDuree = ~tempoagents.value.reciprocal * ~tempoMusicPlay.tempo;
+					if(prochaineDuree.isNumber.not or: {prochaineDuree <= 0}, {
+						prochaineDuree = 0.0001;
+					});
+					prochaineDuree;
+				})
+			)
+		);
 
 		// PROCESSUS UPDATE VIEW VIRTUAL
 		~routineVirtual=Tdef(\VirtualWorld, {
@@ -4124,8 +4131,9 @@ Preset Wek",
 			MIDIdef.freeAll;
 			~menuAgents.remove;// remove custom menu
 			windowVST.close;
-			ProxySpace.clearAll;
 			~studio.close;
+			Pdef.removeAll;
+			ProxySpace.clearAll;
 			//s.quit;
 		};
 
@@ -5253,9 +5261,9 @@ Preset Wek",
 		~minuteElapsed.enabled_(false);
 		~secondElapsed = NumberBox(~wp, 35@20).stringColor=Color.black(1);
 		~secondElapsed.enabled_(false);
-		StaticText(~wp, Rect(0, 0, 500, 20)).string_("WekAgents by Provinescu's Software Production").stringColor_(Color.white).font_(Font("Georgia", 12)).align = \right;
+		StaticText(~wp, Rect(0, 0, 500, 20)).string_("WekAgentsTR by Provinescu's Software Production").stringColor_(Color.white).font_(Font("Georgia", 12)).align = \right;
 		~wp.view.decorator.nextLine;
-		StaticText(~wp, Rect(10,10,500,20)).string_("System WekAgents").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
+		StaticText(~wp, Rect(10,10,500,20)).string_("System WekAgentsTR").stringColor_(Color.white).font_(Font("Georgia-BoldItalic", 12));
 		~wp.view.decorator.nextLine;
 		~startsysteme = Button(~wp,Rect(10,10,75,20)).states=[["System On", Color.black, Color.green(0.8, 0.25)],["System Off", Color.black, Color.red(0.8, 0.25)]];
 		~startsysteme.action = {arg view;
@@ -6347,8 +6355,6 @@ Preset Wek",
 				if(modifiers==262144 and: {unicode==6} and: {keycode==3}, {Dialog.openPanel({ arg paths;
 					~samplePourAnalyse=paths;
 					s.bind{
-						//~bufferanalysefile.free;
-						s.sync;
 						~synthPlayFile.set('trig', 0);
 						s.sync;
 						~synthPlayFile.run(false);
@@ -6358,7 +6364,7 @@ Preset Wek",
 						file.openRead(~samplePourAnalyse);
 						s.sync;
 						if(file.numChannels == 1,
-							{~rawData= FloatArray.newClear(file.numFrames * 2);
+							{~rawData= FloatArray.newClear(file.numFrames);
 								s.sync;
 								file.readData(~rawData);
 								s.sync;
@@ -8018,7 +8024,7 @@ Preset Wek",
 		};
 
 			// New Analyse Audio
-			SynthDef("OSC WekAgents Onsets",
+			SynthDef("OSC WekAgentsTR Onsets",
 				{arg in=0,  seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin, ampin, centroid, flatness, fft, energy, flux, inputFilter, array;
 					input= SoundIn.ar(in);
@@ -8033,11 +8039,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// New Analyse Audio  2
-			SynthDef("OSC WekAgents Pitch",
+			SynthDef("OSC WekAgentsTR Pitch",
 				{arg in=0, seuil=0.5, filtre=0, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin=0, ampin, centroid, flatness, fft, energy, flux,
 					inputFilter, array;
@@ -8053,11 +8059,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// New Analyse Audio  3
-			SynthDef("OSC WekAgents Pitch2",
+			SynthDef("OSC WekAgentsTR Pitch2",
 				{arg in=0, seuil=0.5, filtre=0, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var input, detect, freqin, hasfreqin=0, ampin, centroid, flatness, fft, fft2, energy, flux,
 					inputFilter, harmonic, percussive, array;
@@ -8077,11 +8083,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// New Analyse Audio  4
-			SynthDef("OSC WekAgents KeyTrack",
+			SynthDef("OSC WekAgentsTR KeyTrack",
 				{arg in=0, seuil=0.5, filtre=1;
 					var input, detect, freqin, ampin, centroid, flatness, fft, energy, key, flux, array;
 					input= SoundIn.ar(in);
@@ -8096,11 +8102,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// Keyboard
-			SynthDef("OSC WekAgents Keyboard",
+			SynthDef("OSC WekAgentsTR Keyboard",
 				{arg in=0, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux, array;
 					input= SoundIn.ar(in);
@@ -8111,11 +8117,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					note = note.cpsmidi / 127;
-					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekAgentsTR_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).add;
 
 			// MIDI
-			SynthDef("OSC WekAgents MIDI",
+			SynthDef("OSC WekAgentsTR MIDI",
 				{arg in=0, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux, array;
 					input= SoundIn.ar(in);
@@ -8126,11 +8132,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					note = note.cpsmidi / 127;
-					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekAgentsTR_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).add;
 
 			// New Analyse File
-			SynthDef("OSC WekAgents File Onsets",
+			SynthDef("OSC WekAgentsTR File Onsets",
 				{arg  busFileIn, seuil=0.5, filtre=0.5, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var detect, freqin, hasfreqin, ampin, input, centroid, flatness, fft, energy, flux,
 					inputFilter, array;
@@ -8146,11 +8152,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// New Analyse File version 2
-			SynthDef("OSC WekAgents File Pitch",
+			SynthDef("OSC WekAgentsTR File Pitch",
 				{arg  busFileIn, seuil=0.5, filtre=0, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var detect, freqin, hasfreqin=0, ampin, input, centroid, flatness, fft, energy, flux,
 					inputFilter, array;
@@ -8166,11 +8172,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// New Analyse File version 3
-			SynthDef("OSC WekAgents File Pitch2",
+			SynthDef("OSC WekAgentsTR File Pitch2",
 				{arg  busFileIn, seuil=0.5, filtre=0, hzPass=440, ampInput = 1, ampLoPass = 0,  ampHiPass = 0;
 					var detect, freqin, hasfreqin=0, ampin, input, centroid, flatness, fft, fft2, energy, flux,
 					inputFilter, harmonic, percussive, array;
@@ -8190,11 +8196,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// New Analyse File version 4
-			SynthDef("OSC WekAgents File KeyTrack",
+			SynthDef("OSC WekAgentsTR File KeyTrack",
 				{arg  busFileIn, seuil=0.5, filtre=1;
 					var detect, freqin, ampin, input, centroid, flatness, fft, energy, key, flux, array;
 					input = In.ar(busFileIn);
@@ -8209,11 +8215,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					freqin=(freqin.cpsmidi)/127;// Normalisation !!!!!
-					SendReply.kr(detect, '/WekAgents_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(detect, '/WekAgentsTR_Analyse_Audio', values: [freqin, ampin, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).send(s);
 
 			// Keyboard file
-			SynthDef("OSC WekAgents File Keyboard",
+			SynthDef("OSC WekAgentsTR File Keyboard",
 				{arg busFileIn, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux, array;
 					input = In.ar(busFileIn);
@@ -8224,11 +8230,11 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					note = note.cpsmidi / 127;
-					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekAgentsTR_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).add;
 
 			// Keyboard file
-			SynthDef("OSC WekAgents File MIDI",
+			SynthDef("OSC WekAgentsTR File MIDI",
 				{arg busFileIn, note=60, amp=0.5, trigger = 0;
 					var input, centroid, flatness, fft, energy, key, flux, array;
 					input = In.ar(busFileIn);
@@ -8239,7 +8245,7 @@ Preset Wek",
 					energy =  SpecPcile.kr(fft);
 					flux =  FFTFlux.kr(fft);
 					note = note.cpsmidi / 127;
-					SendReply.kr(trigger, '/WekAgents_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
+					SendReply.kr(trigger, '/WekAgentsTR_Analyse_Audio', values: [note, amp, centroid, energy, flux.clip(0.0001, 1), flatness.clip(0.0001, 1)] ++ array, replyID: 1);
 			}).add;
 
 			// Synth pour records samples
@@ -8277,7 +8283,7 @@ Preset Wek",
 			}).send(s);
 
 			// Synth lecture file pour analyse AudioIn
-			SynthDef("WekAgents Play File",
+			SynthDef("WekAgentsTR Play File",
 				{arg out=0, bufferplay, busFileIn, trig=0, offset=0, loop=1, volume=0;
 					var input;
 					input=PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trig, BufFrames.kr(bufferplay)*offset , loop);
@@ -8292,21 +8298,21 @@ Preset Wek",
 			}).send(s);
 
 			// Analyse Tempo AudioIn
-			SynthDef("OSC WekAgents Tempo AudioIn",
+			SynthDef("OSC WekAgentsTR Tempo AudioIn",
 				{arg in=0, lock=0;
 					var trackb,trackh,trackq,tempo, source;
 					source = SoundIn.ar(in);
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source, 0.5, 1), lock);
-					SendReply.kr(trackb, '/WekAgents_Analyse_Tempo', values: [tempo], replyID: [1]);
+					SendReply.kr(trackb, '/WekAgentsTR_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
 
 			// Analyse Tempo FileIn
-			SynthDef("OSC WekAgents Tempo FileIn",
+			SynthDef("OSC WekAgentsTR Tempo FileIn",
 				{arg busFileIn, lock=0;
 					var trackb,trackh,trackq,tempo, source;
 					source = In.ar(busFileIn);
 					#trackb,trackh,trackq,tempo=BeatTrack.kr(FFT(LocalBuf(1024, 1), source, 0.5, 1), lock);
-					SendReply.kr(trackb, '/WekAgents_Analyse_Tempo', values: [tempo], replyID: [1]);
+					SendReply.kr(trackb, '/WekAgentsTR_Analyse_Tempo', values: [tempo], replyID: [1]);
 			}).send(s);
 
 			// Synth VST

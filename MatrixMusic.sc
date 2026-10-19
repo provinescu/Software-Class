@@ -9,13 +9,13 @@ MatrixMusic {
 	var degrees, root, scale, tuning, automationSliderTrans, automationSliderStretch, automationSliderQuant, automationSliderPan, automationSliderAmp;
 	var oscKeyboardData, oscMIDIdata, freqBefore, ampBefore, dureeBefore, freqMIDI, ampMIDI, dureeMIDI, lastTimeMIDI, tempoMIDI, freqCentroidMIDI, flatnessMIDI, energyMIDI, fluxMIDI, freqTampon, ampTampon, lastTimeAnalyse, arrayAudioIN, textAudioIn, textFileIn, oscMusicData, lastDataAnalyze, fonctionArrayAudioIN, listAudioIN, synthPlayFile, synthFileIn, loPass, hiPass, threshAlgo, filterAlgo, maxKeybMidi, memKeybMidi, fonctionPlotNode, menuFreeze, foncSynthOut, scAdr, udpAdr;
 
-	*new	{arg path="~/Documents/Matrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="Matrix", wek=6448, wekPort=57120, scPort=57110;
+	*new	{arg path="~/Documents/Matrix/", ni=2, o=2, r=2, f=0, devIn="Built-in Microph", devOut="Built-in Output", size = 512, wid=2.0, ori=0.5, flag=0, name="Matrix", wek=6448, wekPort=57120, scPort=57110, l=0.2;
 
-		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort);
+		^super.new.init(name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort, l);
 
 	}
 
-	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort;
+	init	{arg name, path, ni, o, r, f, devIn, devOut, size, wid, ori, flag, scPort, l;
 
 		// Setup GUI style
 		//GUI.qt;
@@ -64,7 +64,9 @@ MatrixMusic {
 		// Connect first device by default
 		MIDIClient.init;
 		MIDIIn.connect(0, 0);
-		midiOut = MIDIOut(0).latency = 0.01;
+		s.latency = l;// Default 0.2 pour accurate midi/sound
+		midiOut = MIDIOut(0);
+		midiOut.latency = s.latency;
 		midiOut.connect(0);
 
 		this.run;// Run the Soft
@@ -500,11 +502,8 @@ y ... -						Musical keys.
 		menuFile = Menu(
 			MenuAction("Load File for Analyze",
 				{Dialog.openPanel({ arg path;
-					listeFileAnalyze.do({arg buffer; buffer.free});
-					listeFileAnalyze=[];
-					listeNameFileAnalyze=[];
-					bufferFile.free;
-					fonctionLoadFileForAnalyse.value(path);
+					listeFileAnalyze = listeFileAnalyze.add(fonctionLoadFileForAnalyse.value(path));
+					listeNameFileAnalyze = listeNameFileAnalyze.add(PathName.new(path).fileName);
 					// Setup GUI Value
 					windowControl.view.children.at(9).string_("FileIn :" + PathName.new(path).fileName)},{"cancelled".postln})}),
 			Menu(
@@ -792,17 +791,17 @@ y ... -						Musical keys.
 					if(window.name.containsStringAt(0, "WekMatrix Control").not and: {window.name.containsStringAt(0, "MasterFX").not} and: {window.name.containsStringAt(0, "Master Sliders Music Control Synthesizer and FX").not},
 						{
 							s.bind{
-							data = fonctionSaveSynthesizer.value(window);
+								data = fonctionSaveSynthesizer.value(window);
 								s.sync;
-							tampon = [];
-							listeWindowFreeze.do({arg freeze, index;
-								if(listeWindowSynth.at(index) != nil, {
-									if(listeWindowSynth.at(index).name == window.name, {tampon = listeWindowFreeze.at(index)});
+								tampon = [];
+								listeWindowFreeze.do({arg freeze, index;
+									if(listeWindowSynth.at(index) != nil, {
+										if(listeWindowSynth.at(index).name == window.name, {tampon = listeWindowFreeze.at(index)});
+									});
 								});
-							});
-							listeWindowFreeze = listeWindowFreeze.add(tampon);
+								listeWindowFreeze = listeWindowFreeze.add(tampon);
 								s.sync;
-							fonctionLoadSynthesizer.value(data, tampon);
+								fonctionLoadSynthesizer.value(data, tampon);
 								s.sync;
 							};
 					});
@@ -810,29 +809,29 @@ y ... -						Musical keys.
 				// Copy Preset
 				8, {
 					s.bind{
-					data = fonctionSavePreset.value(listeWindowSynth);
-					s.sync;
-					tampon = data.last;// listeWindowFreeze
-					fonctionLoadPreset.value(data, [ ], [ ], listeDataOSC);
-					s.sync;
-					tampon.do({arg freeze, index;
-						listeWindowFreeze = listeWindowFreeze.add(freeze);
-					});
-					s.sync;
-					// Setup Font View Synth
-					listeWindowSynth.do({arg window;
-						window.view.do({arg view;
-							view.children.do({arg subView;
-								subView.font = Font("Helvetica", 9);
+						data = fonctionSavePreset.value(listeWindowSynth);
+						s.sync;
+						tampon = data.last;// listeWindowFreeze
+						fonctionLoadPreset.value(data, [ ], [ ], listeDataOSC);
+						s.sync;
+						tampon.do({arg freeze, index;
+							listeWindowFreeze = listeWindowFreeze.add(freeze);
+						});
+						s.sync;
+						// Setup Font View Synth
+						listeWindowSynth.do({arg window;
+							window.view.do({arg view;
+								view.children.do({arg subView;
+									subView.font = Font("Helvetica", 9);
+								});
 							});
 						});
-					});
 					};
 				},
 				// Close All Windows
 				9, {
 					s.bind{
-					listeWindowSynth.do({arg window;
+						listeWindowSynth.do({arg window;
 							window.close;
 							s.sync;
 						});
@@ -890,6 +889,11 @@ y ... -						Musical keys.
 				while({d.notNil and: {d.contains(n).not} }, { d = p.getLine }); // while to find
 				p.close;
 				p = d;// New Path
+				if(p == nil,
+					{
+						b = Buffer.alloc(s, s.sampleRate * 1, 1);
+					},
+					{
 				f = SoundFile.new;
 				s.sync;
 				f.openRead(p.standardizePath);
@@ -900,7 +904,7 @@ y ... -						Musical keys.
 					b=Buffer.read(s, p);
 					s.sync;
 				}, {
-					d = FloatArray.newClear(f.numFrames * 2);
+					d = FloatArray.newClear(f.numFrames);
 					s.sync;
 					f.readData(d);
 					s.sync;
@@ -912,7 +916,8 @@ y ... -						Musical keys.
 					s.sync;
 				});
 				f.close;
-				s.sync;
+					}
+				)
 			};
 			b;// sortie buffer
 		};
@@ -1083,17 +1088,17 @@ y ... -						Musical keys.
 			preset.remove(preset.last);// Remove FreezeDataOSC
 			tampon = preset.last;// Load OSCmusicData
 			preset.remove(preset.last);// Remove OSCmusicData
-				//s.sync;
+			//s.sync;
 			fonctionLoadControl.value(windowControl, preset.last);//Load Control Panel
-				//s.sync;
+			//s.sync;
 			preset.remove(preset.last);// Remove control panel
 			dataControlSynth = preset.last; // ControlSynth Panel
-				//s.sync;
+			//s.sync;
 			fonctionLoadControlSynth.value(windowControlSynth, preset.last);//Load ControlSynth Panel
-				//s.sync;
+			//s.sync;
 			preset.remove(preset.last);// Remove controlSynth panel
 			preset.do({arg data, index; fonctionLoadSynthesizer.value(data, tampon2.at(index))});// Load Synthesizer
-				//s.sync;
+			//s.sync;
 			listeDataOSC = tampon;
 			b = listeDataOSC.size-1;
 			numberAudioIn.do({arg a;
@@ -1613,30 +1618,16 @@ y ... -						Musical keys.
 			ardourOSC = NetAddr("127.0.0.1", 3819);// define NetAddr on local machine with Ardour's port number
 
 			//Fonction Load file for analyze
-			fonctionLoadFileForAnalyse={arg p;
-				var f, d, n, t;
+			fonctionLoadFileForAnalyse = {arg p;
+				var f, d;
 				s.bind{
 					synthPlayFile.set(\trigger, 0);
 					s.sync;
-					p = PathName.new(p);
-					p = p.fileName;//Name of soundFile
-					n = p;
-					p = "mdfind -name" + p;
-					p = Pipe.new(p, "r");
-					d = p.getLine;// get the first line
-					t = PathName(d);
-					t = t.fileName;
-					while({d.notNil and: {t != n}}, {d = p.getLine; t = PathName(d);
-						t = t.fileName}); // while to find
-					p.close;
-					p = d;// New Path
 					f = SoundFile.new;
-					s.sync;
 					f.openRead(p.standardizePath);
 					s.sync;
 					if(f.numChannels == 1,
-
-						{d= FloatArray.newClear(f.numFrames * 2);
+						{d = FloatArray.newClear(f.numFrames);
 							s.sync;
 							f.readData(d);
 							s.sync;
@@ -1649,7 +1640,7 @@ y ... -						Musical keys.
 						},
 						{Post << "Loading sound stereo for analyze" << p << Char.nl;
 							s.sync;
-							bufferFile=Buffer.readChannel(s, p, channels: [0, 1]);
+							bufferFile=Buffer.readChannel(s, p, 2);
 							s.sync;
 					});
 					f.close;
@@ -2515,12 +2506,12 @@ y ... -						Musical keys.
 				if(char == $d, {
 					if(startSystem.value == 1, {
 						s.bind{
-						listeGroupeSynth.do({arg synth, index;
-							if(listeWindowSynth.at(index).view.children.at(0).value == 1, {
-								listeWindowSynth.at(index).view.children.at(0).valueAction_(0);
-								listeWindowSynth.at(index).view.children.at(0).valueAction_(1);
+							listeGroupeSynth.do({arg synth, index;
+								if(listeWindowSynth.at(index).view.children.at(0).value == 1, {
+									listeWindowSynth.at(index).view.children.at(0).valueAction_(0);
+									listeWindowSynth.at(index).view.children.at(0).valueAction_(1);
+								});
 							});
-						});
 						};
 					});
 				});
@@ -2568,7 +2559,7 @@ y ... -						Musical keys.
 				if(char == $N, {
 					tampon = listeDataOSC;
 					s.bind{
-					fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0);// Fonction Add SinOsc by default
+						fonctionAddSynthFX.value(2, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0);// Fonction Add SinOsc by default
 						s.sync;
 					};
 				});
@@ -2991,7 +2982,7 @@ y ... -						Musical keys.
 						keyboard.setColor(74 + keyboardTranslate.value, Color.red);
 					};
 				});
-				// Key �
+				// Key
 				if(modifiers==256 and: {unicode==233} and: {keycode==41}, {
 					s.bind{
 						keyboard.removeColor(lastNote);
@@ -3836,7 +3827,7 @@ y ... -						Musical keys.
 		}, signalBuffer, true, 45, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		//hiPass
-		EZText(windowControl, Rect(0, 0, 400, 15), "HiPass",
+		EZText(windowControl, Rect(0, 0, 400, 15), "HiCut",
 			{arg string;
 				var z;
 				hiPass = string.value;
@@ -3854,7 +3845,7 @@ y ... -						Musical keys.
 			hiPass, true, 45, 350).font = Font( "Helvetica", 12);
 		windowControl.view.decorator.nextLine;
 		//loPass
-		EZText(windowControl, Rect(0, 0, 400, 15), "LoPass",
+		EZText(windowControl, Rect(0, 0, 400, 15), "LoCut",
 			{arg string;
 				var z;
 				loPass = string.value;
@@ -3979,7 +3970,7 @@ y ... -						Musical keys.
 		addNewSynth.action = {arg item, tampon;
 			tampon = listeDataOSC;
 			s.bind{
-			if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0)});// Fonction Add Synth or FX
+				if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0)});// Fonction Add Synth or FX
 				listeWindowSynth.last.view.children.at(0).valueAction_(1);// Synth Play On
 				s.sync;
 				listeWindowSynth.last.view.children.at(0).valueAction_(0);// Synth Play Off
@@ -5316,7 +5307,7 @@ y ... -						Musical keys.
 						newFreq = freqNeu;
 						newAmp = ampNeu;
 						newDuree = durNeu;
-					}
+					},
 				);
 				newFreq = (newFreq * 127).midicps;
 				//newAmp
@@ -5377,158 +5368,196 @@ y ... -						Musical keys.
 					if(flagModeSynth == 'Tdef' and: {synthNumber < choiceSynth.indexOf('FX (')},
 						// ModeTdef
 						{
-							tdefSynthesizer = Tdef((name ++ groupe.nodeID.asString).asSymbol, {
-								loop({
-									//Reset 1 Trigger Recording
-									s.bind(
-										bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
-										s.sync;
-										bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7));
-										s.sync;
-									);
-									// Setup Data Music
-									if(flagFreezeDataOSC == 'off',
-										{musicData = listeDataOSC.at(audioInID)},
-										{musicData = freezeDataOSC.at(audioInID)};
-									);
-									if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-										if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
-											{
-												// Calcul new music
-												// New Band
-												indexNumFhzBand = rangeNumFhzBand.choose;
-												if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-												if(musicData.at(indexNumFhzBand).size != 0, {
-													flagBand = 'on';
-													#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-												},
-												{
-													flagBand = 'off';
+							// Pbind/Pdef: planification par evenements sur TempoClock.
+							// Pdef conserve l'interface play/stop/reset/clear/remove utilisee ailleurs.
+							tdefSynthesizer = Pdef((name ++ groupe.nodeID.asString).asSymbol,
+								Pbind(
+									\type, \rest,
+									\timingOffset, 0,
+									// Calcul au temps logique; commandes serveur groupees par s.bind.
+									\dur, Pfunc({
+										var prochaineDuree, cycleStartSeconds, cyclePeriodSeconds, elapsedSeconds;
+										var bandData, algoData, scaleDegrees, clockTempo;
+										var audioOutBus, busInValue, busOutValue, busFXoutValue, busFXinValue;
+										var bufferOneNum, bufferTwoNum;
+										var cb0, cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9;
+										// Cache des controles utilises par les triggers et les voix de l'accord.
+										cb0 = ctrlBuffer.at(0); cb1 = ctrlBuffer.at(1);
+										cb2 = ctrlBuffer.at(2); cb3 = ctrlBuffer.at(3);
+										cb4 = ctrlBuffer.at(4); cb5 = ctrlBuffer.at(5);
+										cb6 = ctrlBuffer.at(6); cb7 = ctrlBuffer.at(7);
+										cb8 = ctrlBuffer.at(8); cb9 = ctrlBuffer.at(9);
+										//Reset 1 Trigger Recording
+										s.bind(
+											bufferRecording1.set(\trigger, 1, \preLevel, cb0, \postLevel, cb1, \loop, loopRec1, \run, cb2);
+											bufferRecording2.set(\trigger, 1, \preLevel, cb5, \postLevel, cb6, \loop, loopRec2, \run, cb7);
+										);
+										// Setup Data Music
+										if(flagFreezeDataOSC == 'off',
+											{musicData = listeDataOSC.at(audioInID)},
+											{musicData = freezeDataOSC.at(audioInID)};
+										);
+										// Caches locaux recalcules a chaque evenement.
+										bandData = musicData.at(indexNumFhzBand);
+										algoData = listeDataAlgo.at(0);
+										scaleDegrees = scale.degrees;
+										// Valeurs invariantes pendant cet evenement, lues une seule fois.
+										audioOutBus = out + startChannelAudioOut;
+										busInValue = listeBusInOut.at(busIn);
+										busOutValue = listeBusInOut.at(busOut);
+										busFXoutValue = listeBusFX.at(busFXout);
+										busFXinValue = listeBusFX.at(busFXin);
+										bufferOneNum = bufferOne.bufnum;
+										bufferTwoNum = bufferTwo.bufnum;
+										s.bind{
+											if(bandData.size != 0 and: {onOff == 1}, {
+												if(indexMusicData >= (algoData.size - 1) or: {indexMusicData >= (bandData.size - 1)} ,
+													{
+														// Calcul new music
+														// New Band
+														indexNumFhzBand = rangeNumFhzBand.choose;
+														if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+														bandData = musicData.at(indexNumFhzBand);
+														if(bandData.size != 0, {
+															flagBand = 'on';
+															#newFreq, newAmp, newDuree = calculNewMusic.value(bandData.flop);
+														},
+														{
+															flagBand = 'off';
+														});
 												});
-										});
-										if(flagBand == 'on', {
-											#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = musicData.at(indexNumFhzBand).at(indexMusicData);
-											listeFreq = listeFreq.add(newFreq.at(indexMusicData));
-											listeAmp = listeAmp.add(newAmp.at(indexMusicData));
-											duree = newDuree.at(indexMusicData);
-											indexMusicData = indexMusicData + 1;
-											while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
-												{
+												if(flagBand == 'on', {
+													#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = bandData.at(indexMusicData);
 													listeFreq = listeFreq.add(newFreq.at(indexMusicData));
 													listeAmp = listeAmp.add(newAmp.at(indexMusicData));
 													duree = newDuree.at(indexMusicData);
 													indexMusicData = indexMusicData + 1;
-											});
-											// Set Music Data
-											duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
-											duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
-											duree = if(duree <= 0, quanta.reciprocal, duree);
-											dureeTdef = (duree * durM).max(0.01);
-											duree = (dureeTdef * tempo.reciprocal).max(0.01);
-											listeFreq = listeFreq.soloArray;
-											listeAmp = listeAmp.soloArray;
-											// MIDI OFF
-											if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
-												if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
-											})});
-											lastFreqMidi=[];
-											// Playing
-											s.bind{
-											listeFreq.size.do({arg index;
-												freq = listeFreq.at(index);
-												freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
-												// Setup Freq with Scaling and Tuning
-												if(flagScaling != 'off', {
-													pos = nil;
-													octave = (freq / 12).floor;
-													degre = ((freq / 12).frac * 12).round(0.1);
-													pos = scale.degrees.indexOfEqual(degre);
-													if(pos == nil,
+													while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
 														{
-															pos = scale.degrees.indexOfGreaterThan(degre);
+															listeFreq = listeFreq.add(newFreq.at(indexMusicData));
+															listeAmp = listeAmp.add(newAmp.at(indexMusicData));
+															duree = newDuree.at(indexMusicData);
+															indexMusicData = indexMusicData + 1;
+													});
+													// Set Music Data
+													duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
+													duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
+													duree = if(duree <= 0, quanta.reciprocal, duree);
+													dureeTdef = (duree * durM).max(0.01);
+													duree = (dureeTdef * tempo.reciprocal).max(0.01);
+													listeFreq = listeFreq.soloArray;
+													listeAmp = listeAmp.soloArray;
+													// MIDI OFF
+													if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+														if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
+													})});
+													lastFreqMidi=[];
+													// Playing
+
+													listeFreq.size.do({arg index;
+														freq = listeFreq.at(index);
+														freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
+														// Setup Freq with Scaling and Tuning
+														if(flagScaling != 'off', {
+															pos = nil;
+															octave = (freq / 12).floor;
+															degre = ((freq / 12).frac * 12).round(0.1);
+															pos = scaleDegrees.indexOfEqual(degre);
 															if(pos == nil,
 																{
-																	pos = scale.degrees.last;
+																	pos = scaleDegrees.indexOfGreaterThan(degre);
+																	if(pos == nil,
+																		{
+																			pos = scaleDegrees.last;
+																		},
+																		{
+																			pos = scaleDegrees.at(pos);
+																		}
+																	);
 																},
 																{
-																	pos = scale.degrees.at(pos);
+																	pos = scaleDegrees.at(pos);
 																}
 															);
+															freq = (octave * 12 + pos).midicps;
 														},
-														{
-															pos = scale.degrees.at(pos);
-														}
-													);
-													freq = (octave * 12 + pos).midicps;
-												},
-												{freq = freq.midicps});
-												// SETUP MIDI OFF
-												lastFreqMidi = lastFreqMidi.add(freq);
-												amp = listeAmp.at(index);
-												// MIDI OUT
-												if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {
-													midiFreq = freq.cpsmidi.floor; midiAmp = listeAmp.at(index) * (dbHi - dbLo) + dbLo * 127;
-													midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
-													if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
-												});
-												// Synth
-												Synth.new(name,[
-													\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
-													\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
-													// \freq, busOSC, // controls in realtime
-													\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
-													\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
-													\panLo, panLo, \panHi, panHi, \freqLo, fhzLo, \freqHi, fhzHi, \freqT, fhzT, \ampLo, dbLo, \ampHi, dbHi, \durLo, durLo, \durHi, durHi, \durM, durM, \quanta, quanta, \flagAmpOnOff, flagAmp,
-													\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
-													\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
-													\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-													\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
-											});
-											};
-											// Reset variables
-											listeFreq = [];
-											listeAmp = [];
-											//Reset 0 Trigger Recording
-											s.bind(
-												bufferRecording1.set(\trigger, 0);
-												s.sync;
-												bufferRecording2.set(\trigger, 0);
-												s.sync;
-											);
-										},
-										{
-											flagBand = 'on';
-										});
-									},
-									{
-										// MIDI OFF
-										if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
-											if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, freq.cpsmidi, 0)});
+														{freq = freq.midicps});
+														// SETUP MIDI OFF
+														lastFreqMidi = lastFreqMidi.add(freq);
+														amp = listeAmp.at(index);
+														// MIDI OUT
+														if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {
+															midiFreq = freq.cpsmidi.floor; midiAmp = listeAmp.at(index) * (dbHi - dbLo) + dbLo * 127;
+															midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
+															if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
+														});
+														// Synth
+														Synth.new(name,[
+															\out, audioOutBus, \busIn, busInValue, \busOut, busOutValue, \busFXout, busFXoutValue, \busFXin, busFXinValue, \bufferOne, bufferOneNum, \bufferTwo, bufferTwoNum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
+															\offset1, cb3, \offset2, cb8, \reverse1, cb4, \reverse2, cb9,
+															// \freq, busOSC, // controls in realtime
+															\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
+															\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
+															\panLo, panLo, \panHi, panHi, \freqLo, fhzLo, \freqHi, fhzHi, \freqT, fhzT, \ampLo, dbLo, \ampHi, dbHi, \durLo, durLo, \durHi, durHi, \durM, durM, \quanta, quanta, \flagAmpOnOff, flagAmp,
+															\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
+															\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
+															\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
+															\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, cb0,\level2, cb1,\loop, cb2], groupe, \addToTail);
+													});
 
+													// Reset variables
+													listeFreq = [];
+													listeAmp = [];
+													//Reset 0 Trigger Recording
+													s.bind(
+														bufferRecording1.set(\trigger, 0);
+														bufferRecording2.set(\trigger, 0);
+													);
+												},
+												{
+													flagBand = 'on';
+												});
+											},
+											{
+												// MIDI OFF
+												if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+													if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
+
+												});
+												lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
+												indexMusicData = 9999;
+												newFreq = [];
+												newAmp = [];
+												newDuree = [];
+												listeFreq = [];
+												listeAmp = [];
+												listeDataAlgo = [[], [], []];
+												flagBand = 'on';
+												// New Band
+												indexNumFhzBand = rangeNumFhzBand.choose;
+												if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+												bandData = musicData.at(indexNumFhzBand);
+												if(bandData.size != 0, {
+													flagBand = 'on';
+													#newFreq, newAmp, newDuree = calculNewMusic.value(bandData.flop);
+												},
+												{
+													flagBand = 'off';
+												});
+											});
+										};
+										// Duree musicale en beats, protegee contre nil, zero et valeurs negatives.
+										prochaineDuree = dureeTdef;
+										if(prochaineDuree.isNumber.not or: {prochaineDuree <= 0}, {
+											prochaineDuree = if(quanta.isNumber and: {quanta > 0},
+												{quanta.reciprocal}, {0.0001});
 										});
-										lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
-										indexMusicData = 9999;
-										newFreq = [];
-										newAmp = [];
-										newDuree = [];
-										listeFreq = [];
-										listeAmp = [];
-										listeDataAlgo = [[], [], []];
-										flagBand = 'on';
-										// New Band
-										indexNumFhzBand = rangeNumFhzBand.choose;
-										if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-										if(musicData.at(indexNumFhzBand).size != 0, {
-											flagBand = 'on';
-											#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-										},
-										{
-											flagBand = 'off';
-										});
-									});
-									dureeTdef.wait;
-								});
-							}).quant_(Quant(quanta.reciprocal));
+										prochaineDuree = prochaineDuree.max(0.0001);
+
+										prochaineDuree;
+									})
+								)
+							).quant_(Quant(quanta.reciprocal));
 						},
 						// Mode OnFly1
 						{
@@ -5552,144 +5581,148 @@ y ... -						Musical keys.
 												r.next;
 												r.reset;
 											);
-											if(onOff == 1, {
-												musicData = listeDataOSC.at(audioInID);
-												#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
-												// Setup Data Music
-												if(flagFreezeDataOSC == 'on',
-													{music = freezeDataOSC.at(audioInID).at(0);
-														musicData = freezeDataOSC.at(audioInID);
-													};
-												);
-												// Calcul new music
-												if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-													if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
+											s.bind{
+												if(onOff == 1, {
+													musicData = listeDataOSC.at(audioInID);
+													#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
+													// Setup Data Music
+													if(flagFreezeDataOSC == 'on',
+														{music = freezeDataOSC.at(audioInID).at(0);
+															musicData = freezeDataOSC.at(audioInID);
+														};
+													);
+													// Calcul new music
+													if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
+														if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
+															{
+																// Calcul new music
+																// New Band
+																indexNumFhzBand = rangeNumFhzBand.choose;
+																if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+																if(musicData.at(indexNumFhzBand).size != 0, {
+																	flagBand = 'on';
+																	#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+																},
+																{
+																	flagBand = 'off';
+																});
+														});
+														if(flagBand == 'on', {
+															#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
+															listeFreq = listeFreq.add(newFreq.at(indexMusicData));
+															listeAmp = listeAmp.add(newAmp.at(indexMusicData));
+															duree = newDuree.at(indexMusicData);
+															indexMusicData = indexMusicData + 1;
+															while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
+																{
+																	listeFreq = listeFreq.add(newFreq.at(indexMusicData));
+																	listeAmp = listeAmp.add(newAmp.at(indexMusicData));
+																	duree = newDuree.at(indexMusicData);
+																	indexMusicData = indexMusicData + 1;
+															});
+															// Set Music Data
+															duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
+															duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
+															duree = if(duree <= 0, quanta.reciprocal, duree);
+															dureeTdef = (duree * durM).max(0.01);
+															duree = (dureeTdef * tempo.reciprocal).max(0.01);
+															listeFreq = listeFreq.soloArray;
+															listeAmp = listeAmp.soloArray;
+															// MIDI OFF
+															if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
+															})});
+															lastFreqMidi=[];
+															// Playing
+
+															listeFreq.size.do({arg index;
+																freq = listeFreq.at(index);
+																freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
+																// Setup Freq with Scaling and Tuning
+																if(flagScaling != 'off', {
+																	pos = nil;
+																	octave = (freq / 12).floor;
+																	degre = ((freq / 12).frac * 12).round(0.1);
+																	pos = scale.degrees.indexOfEqual(degre);
+																	if(pos == nil,
+																		{
+																			pos = scale.degrees.indexOfGreaterThan(degre);
+																			if(pos == nil,
+																				{
+																					pos = scale.degrees.last;
+																				},
+																				{
+																					pos = scale.degrees.at(pos);
+																				}
+																			);
+																		},
+																		{
+																			pos = scale.degrees.at(pos);
+																		}
+																	);
+																	freq = (octave * 12 + pos).midicps;
+																},
+																{freq = freq.midicps});
+																// SETUP MIDI OFF
+																lastFreqMidi = lastFreqMidi.add(freq);
+																//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+																//amp = amp * (dbHi - dbLo) + dbLo;
+																amp = listeAmp.at(index);
+																// MIDI OUT
+																if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {
+																	midiFreq = freq.cpsmidi.floor; midiAmp = listeAmp.at(index) * (dbHi - dbLo) + dbLo * 127;
+																	midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
+																	if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
+																});
+																// Synth
+																Synth.new(name,[
+																	\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
+																	\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
+																	// \freq, busOSC, // controls in realtime
+																	\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
+																	\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
+																	\panLo, panLo, \panHi, panHi, \freqLo, fhzLo, \freqHi, fhzHi, \freqT, fhzT, \ampLo, dbLo, \ampHi, dbHi, \durLo, durLo, \durHi, durHi, \durM, durM, \quanta, quanta, \flagAmpOnOff, flagAmp,
+																	\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
+																	\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
+																	\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
+																	\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
+															});
+
+															// Reset variables
+															listeFreq = [];
+															listeAmp = [];
+														},
 														{
-															// Calcul new music
-															// New Band
-															indexNumFhzBand = rangeNumFhzBand.choose;
-															if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-															if(musicData.at(indexNumFhzBand).size != 0, {
-																flagBand = 'on';
-																#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-															},
-															{
-																flagBand = 'off';
-															});
-													});
-													if(flagBand == 'on', {
-														#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
-														listeFreq = listeFreq.add(newFreq.at(indexMusicData));
-														listeAmp = listeAmp.add(newAmp.at(indexMusicData));
-														duree = newDuree.at(indexMusicData);
-														indexMusicData = indexMusicData + 1;
-														while({flagChord == 1 and: {duree < chordDuree} and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
-															{
-																listeFreq = listeFreq.add(newFreq.at(indexMusicData));
-																listeAmp = listeAmp.add(newAmp.at(indexMusicData));
-																duree = newDuree.at(indexMusicData);
-																indexMusicData = indexMusicData + 1;
+															flagBand = 'on';
 														});
-														// Set Music Data
-														duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
-														duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
-														duree = if(duree <= 0, quanta.reciprocal, duree);
-														dureeTdef = (duree * durM).max(0.01);
-														duree = (dureeTdef * tempo.reciprocal).max(0.01);
-														listeFreq = listeFreq.soloArray;
-														listeAmp = listeAmp.soloArray;
+													},
+													{
 														// MIDI OFF
-														if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+														if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
 															if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
-														})});
-														lastFreqMidi=[];
-														// Playing
-														listeFreq.size.do({arg index;
-															freq = listeFreq.at(index);
-															freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
-															// Setup Freq with Scaling and Tuning
-															if(flagScaling != 'off', {
-																pos = nil;
-																octave = (freq / 12).floor;
-																degre = ((freq / 12).frac * 12).round(0.1);
-																pos = scale.degrees.indexOfEqual(degre);
-																if(pos == nil,
-																	{
-																		pos = scale.degrees.indexOfGreaterThan(degre);
-																		if(pos == nil,
-																			{
-																				pos = scale.degrees.last;
-																			},
-																			{
-																				pos = scale.degrees.at(pos);
-																			}
-																		);
-																	},
-																	{
-																		pos = scale.degrees.at(pos);
-																	}
-																);
-																freq = (octave * 12 + pos).midicps;
-															},
-															{freq = freq.midicps});
-															// SETUP MIDI OFF
-															lastFreqMidi = lastFreqMidi.add(freq);
-															//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-															//amp = amp * (dbHi - dbLo) + dbLo;
-															amp = listeAmp.at(index);
-															// MIDI OUT
-															if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {
-																midiFreq = freq.cpsmidi.floor; midiAmp = listeAmp.at(index) * (dbHi - dbLo) + dbLo * 127;
-																midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
-																if(flagVST == 'on', {~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
-															});
-															// Synth
-															Synth.new(name,[
-																\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
-																\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
-																// \freq, busOSC, // controls in realtime
-																\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
-																\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
-																\panLo, panLo, \panHi, panHi, \freqLo, fhzLo, \freqHi, fhzHi, \freqT, fhzT, \ampLo, dbLo, \ampHi, dbHi, \durLo, durLo, \durHi, durHi, \durM, durM, \quanta, quanta, \flagAmpOnOff, flagAmp,
-																\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
-																\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
-																\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-																\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 														});
-														// Reset variables
+														lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
+														indexMusicData = 9999;
+														newFreq = [];
+														newAmp = [];
+														newDuree = [];
 														listeFreq = [];
 														listeAmp = [];
-													},
-													{
+														listeDataAlgo = [[], [], []];
 														flagBand = 'on';
-													});
-												},
-												{
-													// MIDI OFF
-													if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
-														if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
-													});
-													lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
-													indexMusicData = 9999;
-													newFreq = [];
-													newAmp = [];
-													newDuree = [];
-													listeFreq = [];
-													listeAmp = [];
-													listeDataAlgo = [[], [], []];
-													flagBand = 'on';
-													// New Band
-													indexNumFhzBand = rangeNumFhzBand.choose;
-													if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-													if(musicData.at(indexNumFhzBand).size != 0, {
-														flagBand = 'on';
-														#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-													},
-													{
-														flagBand = 'off';
+														// New Band
+														indexNumFhzBand = rangeNumFhzBand.choose;
+														if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+														if(musicData.at(indexNumFhzBand).size != 0, {
+															flagBand = 'on';
+															#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+														},
+														{
+															flagBand = 'off';
+														});
 													});
 												});
-											});
+											};
 									});
 								}, '/NewMusic', musicAppAddr);
 							},
@@ -5715,187 +5748,7 @@ y ... -						Musical keys.
 													r.next;
 													r.reset;
 												);
-												if(onOff == 1, {
-													musicData = listeDataOSC.at(audioInID);
-													#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
-													// Setup Data Music
-													if(flagFreezeDataOSC == 'on',
-														{music = freezeDataOSC.at(audioInID).at(0);
-															musicData = freezeDataOSC.at(audioInID);
-														};
-													);
-													// Set FHZ Band
-													for(1, numFhzBand, {arg i;
-														if(freq >= bandFHZ.at(i).at(0) and: {freq <= bandFHZ.at(i).at(1)}, {
-															if(i == indexNumFhzBand or: {indexNumFhzBand == 0}, {
-																// Calcul new music
-																if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
-																	if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
-																		{// Calcul new music
-																			// New Band
-																			indexNumFhzBand = rangeNumFhzBand.choose;
-																			if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-																			if(musicData.at(indexNumFhzBand).size != 0, {
-																				flagBand = 'on';
-																				#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-																			},
-																			{
-																				flagBand = 'off';
-																			});
-																	});
-																	if(flagBand == 'on', {
-																		#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
-																		listeFreq = listeFreq.add(newFreq.at(indexMusicData));
-																		listeAmp = listeAmp.add(newAmp.at(indexMusicData));
-																		duree = newDuree.at(indexMusicData);
-																		indexMusicData = indexMusicData + 1;
-																		while({flagChord == 1 and: {duree < chordDuree}  and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
-																			{
-																				listeFreq = listeFreq.add(newFreq.at(indexMusicData));
-																				listeAmp = listeAmp.add(newAmp.at(indexMusicData));
-																				duree = newDuree.at(indexMusicData);
-																				indexMusicData = indexMusicData + 1;
-																		});
-																		// Set Music Data
-																		duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
-																		duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
-																		duree = if(duree <= 0, quanta.reciprocal, duree);
-																		dureeTdef = (duree * durM).max(0.01);
-																		duree = (dureeTdef * tempo.reciprocal).max(0.01);
-																		listeFreq = listeFreq.soloArray;
-																		listeAmp = listeAmp.soloArray;
-																		// MIDI OFF
-																		if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
-																			if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
-																		})});
-																		lastFreqMidi=[];
-																		// Playing
-																		listeFreq.size.do({arg index;
-																			freq = listeFreq.at(index);
-																			freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
-																			// Setup Freq with Scaling and Tuning
-																			if(flagScaling != 'off', {
-																				pos = nil;
-																				octave = (freq / 12).floor;
-																				degre = ((freq / 12).frac * 12).round(0.1);
-																				pos = scale.degrees.indexOfEqual(degre);
-																				if(pos == nil,
-																					{
-																						pos = scale.degrees.indexOfGreaterThan(degre);
-																						if(pos == nil,
-																							{
-																								pos = scale.degrees.last;
-																							},
-																							{
-																								pos = scale.degrees.at(pos);
-																							}
-																						);
-																					},
-																					{
-																						pos = scale.degrees.at(pos);
-																					}
-																				);
-																				freq = (octave * 12 + pos).midicps;
-																			},
-																			{freq = freq.midicps});
-																			// SETUP MIDI OFF
-																			lastFreqMidi = lastFreqMidi.add(freq);
-																			//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
-																			//amp = amp * (dbHi - dbLo) + dbLo;
-																			amp = listeAmp.at(index);
-																			// MIDI OUT
-																			if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {
-																				midiFreq = freq.cpsmidi.floor; midiAmp = listeAmp.at(index) * (dbHi - dbLo) + dbLo * 127;
-																				midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
-																				if(flagVST == 'on', {												~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
-																			});
-																			// Synth
-																			Synth.new(name,[
-																				\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
-																				\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
-																				// \freq, busOSC, // controls in realtime
-																				\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
-																				\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
-																				\panLo, panLo, \panHi, panHi, \freqLo, fhzLo, \freqHi, fhzHi, \freqT, fhzT, \ampLo, dbLo, \ampHi, dbHi, \durLo, durLo, \durHi, durHi, \durM, durM, \quanta, quanta, \flagAmpOnOff, flagAmp,
-																				\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
-																				\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
-																				\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
-																				\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
-																		});
-																		// Reset variables
-																		listeFreq = [];
-																		listeAmp = [];
-																	},
-																	{
-																		flagBand = 'on';
-																	});
-																},
-																{
-																	// MIDI OFF
-																	if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
-																		if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
-
-																	});
-																	lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
-																	indexMusicData = 9999;
-																	newFreq = [];
-																	newAmp = [];
-																	newDuree = [];
-																	listeFreq = [];
-																	listeAmp = [];
-																	listeDataAlgo = [[], [], []];
-																	flagBand = 'on';
-																	// New Band
-																	indexNumFhzBand = rangeNumFhzBand.choose;
-																	if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-																	if(musicData.at(indexNumFhzBand).size != 0, {
-																		flagBand = 'on';
-																		#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-																	},
-																	{
-																		flagBand = 'off';
-																	});
-																});
-															},
-															{// New Band
-																indexNumFhzBand = rangeNumFhzBand.choose;
-																if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
-																if(musicData.at(indexNumFhzBand).size != 0, {
-																	flagBand = 'on';
-																	#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
-																},
-																{
-																	flagBand = 'off';
-																});
-															});
-														});
-													});
-												});
-										});
-									}, '/NewMusic', musicAppAddr);
-								},
-								// Mode Stream 1 and 2
-								{
-									if(flagModeSynth == 'Stream1' or: {flagModeSynth == 'Stream2'} and: {synthNumber > choiceSynth.indexOf('END (') or: {synthNumber < choiceSynth.indexOf('PIANO (')}}, {
-										tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
-											var music, musicData, r;
-											music = msg[1].asString.interpret;
-											if(music.at(8) == audioInID,
-												{
-													//Reset Trigger Recording
-													s.bind(
-														r = Routine{
-															bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2)).yield;
-															bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7)).yield;
-															bufferRecording1.set(\trigger, 0).yield;
-															bufferRecording2.set(\trigger, 0).yield;
-														};
-														r.next;
-														r.next;
-														r.next;
-														r.next;
-														r.reset;
-													);
+												s.bind{
 													if(onOff == 1, {
 														musicData = listeDataOSC.at(audioInID);
 														#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
@@ -5951,6 +5804,7 @@ y ... -						Musical keys.
 																			})});
 																			lastFreqMidi=[];
 																			// Playing
+
 																			listeFreq.size.do({arg index;
 																				freq = listeFreq.at(index);
 																				freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
@@ -5990,9 +5844,20 @@ y ... -						Musical keys.
 																					midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
 																					if(flagVST == 'on', {												~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
 																				});
-																				// Set Synth new value
-																				groupe.setn(\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux);
+																				// Synth
+																				Synth.new(name,[
+																					\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
+																					\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),
+																					// \freq, busOSC, // controls in realtime
+																					\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux,
+																					\levelBusOut, levelOut, \levelBusFX, levelFX, \levelLocalIn, levelLocal,
+																					\panLo, panLo, \panHi, panHi, \freqLo, fhzLo, \freqHi, fhzHi, \freqT, fhzT, \ampLo, dbLo, \ampHi, dbHi, \durLo, durLo, \durHi, durHi, \durM, durM, \quanta, quanta, \flagAmpOnOff, flagAmp,
+																					\ctrlHP1, ctrlHP.at(0), \ctrlHP2, ctrlHP.at(1),
+																					\ctrl1, ctrlSynth.at(0), \ctrl2, ctrlSynth.at(1), \ctrl3, ctrlSynth.at(2), \ctrl4, ctrlSynth.at(3), \ctrl5, ctrlSynth.at(4), \ctrl6, ctrlSynth.at(5), \ctrl7, ctrlSynth.at(6), \ctrl8, ctrlSynth.at(7), \ctrl9, ctrlSynth.at(8), \ctrl10, ctrlSynth.at(9), \ctrl11, ctrlSynth.at(10), \ctrl12, ctrlSynth.at(11),
+																					\envLevel1, envLevel.at(0), \envLevel2, envLevel.at(1), \envLevel3, envLevel.at(2), \envLevel4, envLevel.at(3), \envLevel5, envLevel.at(4), \envLevel6, envLevel.at(5), \envLevel7, envLevel.at(6), \envLevel8, envLevel.at(7),
+																					\envTime1, envDuree.at(0), \envTime2, envDuree.at(1), \envTime3, envDuree.at(2), \envTime4, envDuree.at(3), \envTime5, envDuree.at(4), \envTime6, envDuree.at(5), \envTime7, envDuree.at(6), \mode, indexModeSynth, \gate, 1, \level1, ctrlBuffer.at(0),\level2, ctrlBuffer.at(1),\loop, ctrlBuffer.at(2)], groupe, \addToTail);
 																			});
+
 																			// Reset variables
 																			listeFreq = [];
 																			listeAmp = [];
@@ -6042,6 +5907,182 @@ y ... -						Musical keys.
 															});
 														});
 													});
+												};
+										});
+									}, '/NewMusic', musicAppAddr);
+								},
+								// Mode Stream 1 and 2
+								{
+									if(flagModeSynth == 'Stream1' or: {flagModeSynth == 'Stream2'} and: {synthNumber > choiceSynth.indexOf('END (') or: {synthNumber < choiceSynth.indexOf('PIANO (')}}, {
+										tdefSynthesizer = OSCFunc.newMatching({arg msg, time, addr, recvPort;
+											var music, musicData, r;
+											music = msg[1].asString.interpret;
+											if(music.at(8) == audioInID,
+												{
+													//Reset Trigger Recording
+													s.bind(
+														r = Routine{
+															bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2)).yield;
+															bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7)).yield;
+															bufferRecording1.set(\trigger, 0).yield;
+															bufferRecording2.set(\trigger, 0).yield;
+														};
+														r.next;
+														r.next;
+														r.next;
+														r.next;
+														r.reset;
+													);
+													s.bind{
+														if(onOff == 1, {
+															musicData = listeDataOSC.at(audioInID);
+															#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux, indexAudio = music;
+															// Setup Data Music
+															if(flagFreezeDataOSC == 'on',
+																{music = freezeDataOSC.at(audioInID).at(0);
+																	musicData = freezeDataOSC.at(audioInID);
+																};
+															);
+															// Set FHZ Band
+															for(1, numFhzBand, {arg i;
+																if(freq >= bandFHZ.at(i).at(0) and: {freq <= bandFHZ.at(i).at(1)}, {
+																	if(i == indexNumFhzBand or: {indexNumFhzBand == 0}, {
+																		// Calcul new music
+																		if(musicData.at(indexNumFhzBand).size != 0 and: {onOff == 1}, {
+																			if(indexMusicData >= (listeDataAlgo.at(0).size - 1) or: {indexMusicData >= (musicData.at(indexNumFhzBand).size - 1)} ,
+																				{// Calcul new music
+																					// New Band
+																					indexNumFhzBand = rangeNumFhzBand.choose;
+																					if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+																					if(musicData.at(indexNumFhzBand).size != 0, {
+																						flagBand = 'on';
+																						#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+																					},
+																					{
+																						flagBand = 'off';
+																					});
+																			});
+																			if(flagBand == 'on', {
+																				#freq, amp, duree, tempo, freqCentroid, flatness, energy, flux = musicData.at(indexNumFhzBand).at(indexMusicData);
+																				listeFreq = listeFreq.add(newFreq.at(indexMusicData));
+																				listeAmp = listeAmp.add(newAmp.at(indexMusicData));
+																				duree = newDuree.at(indexMusicData);
+																				indexMusicData = indexMusicData + 1;
+																				while({flagChord == 1 and: {duree < chordDuree}  and: {newFreq.size > indexMusicData} and: {listeFreq.size < chordSize}},
+																					{
+																						listeFreq = listeFreq.add(newFreq.at(indexMusicData));
+																						listeAmp = listeAmp.add(newAmp.at(indexMusicData));
+																						duree = newDuree.at(indexMusicData);
+																						indexMusicData = indexMusicData + 1;
+																				});
+																				// Set Music Data
+																				duree = duree / timeMaximum.at(audioInID) * (durHi - durLo) + durLo;
+																				duree = duree.floor + ((duree.frac * quanta + 0.5).floor / quanta);
+																				duree = if(duree <= 0, quanta.reciprocal, duree);
+																				dureeTdef = (duree * durM).max(0.01);
+																				duree = (dureeTdef * tempo.reciprocal).max(0.01);
+																				listeFreq = listeFreq.soloArray;
+																				listeAmp = listeAmp.soloArray;
+																				// MIDI OFF
+																				if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {lastFreqMidi.do({arg freq; midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																					if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
+																				})});
+																				lastFreqMidi=[];
+																				// Playing
+
+																				listeFreq.size.do({arg index;
+																					freq = listeFreq.at(index);
+																					freq = (freq.cpsmidi / 127 * (fhzHi - fhzLo) + fhzLo + fhzT);
+																					// Setup Freq with Scaling and Tuning
+																					if(flagScaling != 'off', {
+																						pos = nil;
+																						octave = (freq / 12).floor;
+																						degre = ((freq / 12).frac * 12).round(0.1);
+																						pos = scale.degrees.indexOfEqual(degre);
+																						if(pos == nil,
+																							{
+																								pos = scale.degrees.indexOfGreaterThan(degre);
+																								if(pos == nil,
+																									{
+																										pos = scale.degrees.last;
+																									},
+																									{
+																										pos = scale.degrees.at(pos);
+																									}
+																								);
+																							},
+																							{
+																								pos = scale.degrees.at(pos);
+																							}
+																						);
+																						freq = (octave * 12 + pos).midicps;
+																					},
+																					{freq = freq.midicps});
+																					// SETUP MIDI OFF
+																					lastFreqMidi = lastFreqMidi.add(freq);
+																					//rate = 2**((freq.cpsmidi - 48).midicps).cpsoct;// Rate freq - 48
+																					//amp = amp * (dbHi - dbLo) + dbLo;
+																					amp = listeAmp.at(index);
+																					// MIDI OUT
+																					if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {
+																						midiFreq = freq.cpsmidi.floor; midiAmp = listeAmp.at(index) * (dbHi - dbLo) + dbLo * 127;
+																						midiOut.noteOn(canalMIDIinstr, midiFreq, midiAmp);
+																						if(flagVST == 'on', {												~fxVST.midi.noteOn(canalMIDIinstr, midiFreq, midiAmp)});
+																					});
+																					// Set Synth new value
+																					groupe.setn(\freq, freq, \amp, amp, \duree, duree, \tempo, tempo.reciprocal, \freqCentroid, freqCentroid, \flatness, flatness, \energy, energy, \flux, flux);
+																				});
+
+																				// Reset variables
+																				listeFreq = [];
+																				listeAmp = [];
+																			},
+																			{
+																				flagBand = 'on';
+																			});
+																		},
+																		{
+																			// MIDI OFF
+																			if(flagMidiOut == 'on' and: {canalMIDIinstr >= 0}, {midiOut.noteOff(canalMIDIinstr, freq.cpsmidi, 0);
+																				if(flagVST == 'on', {~fxVST.midi.noteOff(canalMIDIinstr, freq.cpsmidi, 0)});
+
+																			});
+																			lastFreqMidi=[]; dureeTdef = quanta.reciprocal;
+																			indexMusicData = 9999;
+																			newFreq = [];
+																			newAmp = [];
+																			newDuree = [];
+																			listeFreq = [];
+																			listeAmp = [];
+																			listeDataAlgo = [[], [], []];
+																			flagBand = 'on';
+																			// New Band
+																			indexNumFhzBand = rangeNumFhzBand.choose;
+																			if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+																			if(musicData.at(indexNumFhzBand).size != 0, {
+																				flagBand = 'on';
+																				#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+																			},
+																			{
+																				flagBand = 'off';
+																			});
+																		});
+																	},
+																	{// New Band
+																		indexNumFhzBand = rangeNumFhzBand.choose;
+																		if(indexNumFhzBand == nil, {indexNumFhzBand = 0});
+																		if(musicData.at(indexNumFhzBand).size != 0, {
+																			flagBand = 'on';
+																			#newFreq, newAmp, newDuree = calculNewMusic.value(musicData.at(indexNumFhzBand).flop);
+																		},
+																		{
+																			flagBand = 'off';
+																		});
+																	});
+																});
+															});
+														});
+													};
 											});
 										}, '/NewMusic', musicAppAddr);
 										// Synth
@@ -6299,7 +6340,7 @@ y ... -						Musical keys.
 				input=Mix(PlayBuf.ar(2, bufferplay, BufRateScale.kr(bufferplay), trigger, BufFrames.kr(bufferplay)*offset , loop));
 				Out.ar(busIn, input); // Bus In
 				Out.ar(busAnalyze, input); // Bus Analyze In
-				Out.ar(out, input * volume); // Amp File Out
+				Out.ar(out, input!2 * volume); // Amp File Out
 		}).add;
 
 		// Matrix Keyboard
@@ -10640,7 +10681,7 @@ y ... -						Musical keys.
 				in = Mix(In.ar(busFXin) + (In.ar(busIn) * levelLocalIn));
 				RecordBuf.ar(in, bufferOne, 0, preLevel, postLevel, loop: 1);
 				//FX
-				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, 2, interp: 4, mul: amp);
+				chain = Warp1.ar(1, bufferOne, ctrl1 * BufFrames.kr(bufferOne), ctrl2*4 * reverse1, ctrl3.clip(0.01, 1), -1, (ctrl4*16).clip(1, 16), ctrl5, interp: 4, mul: amp);
 				LocalOut.ar(DelayC.ar(chain, 4, ctrl6, ctrl7));
 				// Switch Audio Out
 				foncSynthOut.value(out, chain, panLo, panHi, duree, durHi, durLo, durM, tempo, envelope, ambisonic, busOut, levelBusOut, busFXout, levelBusFX, flagAmpOnOff);
