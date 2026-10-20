@@ -1,6 +1,6 @@
 // A Software by Herve Provini
 
-MatrixMusicMusicData {
+MatrixMusicData {
 
 	var w, wMenu, wInstrument, instrument, wAudio, audio, wBand, band, upDatePreset, wPreset, preset, musicData, cmdperiodfunc, source, target, si, sa, sb, ti, ta, tb;
 
@@ -26,6 +26,7 @@ MatrixMusicMusicData {
 		band = b;
 		source = [  1  ,  1  ,  0  ];
 		target = [  1  ,  1  ,  0  ];
+		data.postcs;
 		if(data != nil,
 			{
 				f = File(data.standardizePath,"r");

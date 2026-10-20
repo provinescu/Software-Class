@@ -117,7 +117,7 @@ Launcher {
 		// Choose Software
 		StaticText(w, Rect(0, 0, 200, 20)).string_("Choose Soft").stringColor_(Color.yellow);
 		w.view.decorator.nextLine;
-		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "RobotTR", "AgentsTR", "MatrixTR", "DensityTR", "WekRobotTR", "WekAgentsTR", "WekMatrixTR", "WekDensityTR"]).stringColor_(Color.white).action = {|source|
+		PopUpMenu(w,Rect(0, 0, 200, 20)).items_(["Robot", "Agents", "Matrix", "Time", "Density", "WekRobot", "WekAgents", "WekMatrix", "WekTime", "WekDensity", "RobotTR", "AgentsTR", "MatrixTR", "DensityTR", "WekRobotTR", "WekAgentsTR", "WekMatrixTR", "WekDensityTR", "MatrixMusicData", "Scores"]).stringColor_(Color.white).action = {|source|
 	switch (source.value,
 		0, {
 			nameSoft = "Robot";// 57564
@@ -218,7 +218,15 @@ Launcher {
 			path = "~/Documents/WekDensityTR/";
 			SCRequestString("57120", "Wek Out Port", {arg strg; wekPort = strg.asFloat});
 			SCRequestString("6448", "Wek In Port", {arg strg; wek = strg.asFloat});
-		}
+		},
+				18,	{
+			nameSoft = "MatrixMusicData";
+			path = nil;
+		},
+		19,	{
+			nameSoft = "Scores";
+			path = nil;
+		},
 
 	);
 };
