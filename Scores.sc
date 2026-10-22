@@ -246,14 +246,22 @@ Score Commandes:
 'all'
 'robot'
 'wekrobot'
-'agent'
-'wekagent'
+'robotTR'
+'wekRobotTR'
+'agents'
+'wekagents'
+'agentsTR'
+'wekagentsTR'
 'matrix'
 'wekmatrix'
+'matrixTR'
+'wekmatrixTR'
 'time'
 'wektime'
 'density'
 'wekdensity'
+'densityTR'
+'wekdensityTR'
 'provinescu'
 'preset'
 'start'
@@ -335,7 +343,7 @@ Score Commandes:
 								val = cmd.at(item);
 								while({val != nil},
 									{
-										if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'} or: {val == 'provinescu'},
+										if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'} or: {val == 'provinescu'} or: {val == 'robotTR'} or: {val == 'agentsTR'} or: {val == 'matrixTR'} or: {val == 'densityTR'} or: {val == 'wekrobotTR'} or: {val == 'wekagentsTR'} or: {val == 'wekmatrixTR'} or: {val == 'wekdensityTR'},
 											{
 												scoreVal = scoreVal.add(val);
 												val = cmd[item+1];
@@ -542,7 +550,7 @@ Score Commandes:
 									val = cmd.at(item);
 									while({val != nil},
 										{
-											if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'} or: {val == 'provinescu'},
+											if(val == 'all' or: {val == 'robot'} or: {val == 'agents'} or: {val == 'matrix'} or: {val == 'time'} or: {val == 'density'} or: {val == 'wekrobot'} or: {val == 'wekagents'} or: {val == 'wekmatrix'} or: {val == 'wektime'} or: {val == 'wekdensity'} or: {val == 'provinescu'} or: {val == 'robotTR'} or: {val == 'agentsTR'} or: {val == 'matrixTR'} or: {val == 'densityTR'} or: {val == 'wekrobotTR'} or: {val == 'wekagentsTR'} or: {val == 'wekmatrixTR'} or: {val == 'wekdensityTR'},
 												{
 													scoreVal = scoreVal.add(val);
 													val = cmd[item+1];
