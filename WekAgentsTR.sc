@@ -844,7 +844,7 @@ Preset Wek",
 			);
 		};*/
 		~hpTR = HPtransformerRT.new(3, 3, 6, 12, 16, 2, 8, 3);// réglages i7 temps reel
-		//~hpTR.setIntelUltraCPUFastLearn;// Ultra minimal CPU rapide pour utiliser sans le Studio
+		//~hpTR.setClassicUltraCPUFastLearn;// Ultra minimal CPU rapide pour utiliser sans le Studio
 		~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
 		//~studio = HPTransformerStudio.new(~hpTR).front;//par default
 		//~studio.window.view.palette_(QPalette.light); // plus necessaire

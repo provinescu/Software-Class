@@ -3271,11 +3271,9 @@ G                       Init Genome Agent (solo).
 				\timingOffset, 0,
 				\dur, Pfunc({
 					var flagDead='off', time, prochaineDuree;
-					var cycleSeconds, cycleStartBeat, cycleStartSeconds, elapsedSeconds;
+					var cycleSeconds;
 
 					// Capture atomique des parametres temporels du cycle.
-					cycleStartBeat = thisThread.clock.beats;
-					cycleStartSeconds = Main.elapsedTime;
 					cycleSeconds = ~tempoagents.value.asFloat.reciprocal;
 					if(cycleSeconds.isNumber.not or: {cycleSeconds <= 0}, {
 						cycleSeconds = 0.0001;
