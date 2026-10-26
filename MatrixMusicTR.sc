@@ -4031,11 +4031,11 @@ y ... -						Musical keys.
 		addNewSynth.action = {arg item, tampon;
 			tampon = listeDataOSC;
 			s.bind{
-				if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0)});// Fonction Add Synth or FX
-				listeWindowSynth.last.view.children.at(0).valueAction_(1);// Synth Play On
-				s.sync;
-				listeWindowSynth.last.view.children.at(0).valueAction_(0);// Synth Play Off
-				s.sync;
+			Routine({
+				if(item.value != 1, {fonctionAddSynthFX.value(item.value, "Nil", "Nil", 0, 4.0, 4.0, tampon, 0)}).yield;// Fonction Add Synth or FX
+				listeWindowSynth.last.view.children.at(0).valueAction_(1).yield;// Synth Play On
+				listeWindowSynth.last.view.children.at(0).valueAction_(0).yield;// Synth Play Off
+			}).next.next.next.reset;
 			};
 			addNewSynth.value=0;
 		};
@@ -5458,9 +5458,9 @@ y ... -						Musical keys.
 						freq = (octave * 12 + pos).midicps;
 					},
 					{freq = freq.midicps});
-					//Reset 1 Trigger Recording
+					/*//Reset 1 Trigger Recording
 					bufferRecording1.set(\trigger, 1, \preLevel, ctrlBuffer.at(0), \postLevel, ctrlBuffer.at(1), \loop, loopRec1, \run, ctrlBuffer.at(2));
-					bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7));
+					bufferRecording2.set(\trigger, 1, \preLevel, ctrlBuffer.at(5), \postLevel, ctrlBuffer.at(6), \loop, loopRec2, \run, ctrlBuffer.at(7));*/
 					synthAndFX = Synth.new(name,[
 						\out, out + startChannelAudioOut, \busIn, listeBusInOut.at(busIn), \busOut, listeBusInOut.at(busOut), \busFXout, listeBusFX.at(busFXout), \busFXin, listeBusFX.at(busFXin), \bufferOne, bufferOne.bufnum, \bufferTwo, bufferTwo.bufnum, \loopOne, loop1, \loopTwo, loop2, \switchBuffer1, switch1, \switchBuffer2, switch2, \recBuffer1, recBuffer1, \recBuffer2, recBuffer2,
 						\offset1, ctrlBuffer.at(3), \offset2, ctrlBuffer.at(8), \reverse1, ctrlBuffer.at(4), \reverse2, ctrlBuffer.at(9),

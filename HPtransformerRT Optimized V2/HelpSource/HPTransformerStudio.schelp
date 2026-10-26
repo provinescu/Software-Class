@@ -1,0 +1,191 @@
+TITLE:: HPTransformerStudio
+SUMMARY:: Studio Classic Musical RT 8D avec presets harmonises, Live Concert et Mode Scene
+CATEGORIES:: Libraries>HPTransformer, GUI, Machine Learning
+RELATED:: Classes/HPtransformerRT
+
+DESCRIPTION::
+HPTransformerStudio V8.7.3 pilote HPtransformerRT V30.3.0 Classic Musical RT. Cette edition utilise des noms de presets coherents avec le moteur Classic, ajoute le preset Classic Live Concert et conserve le Mode Scene pour suspendre les affichages periodiques.
+
+Le Studio comprend Dashboard, controles runtime, parametres manuels, morphing, generation, memoire, surprise, OSC, ControlBus, jeux complets, graphes, heatmaps, presets, sessions, RCU et journaux. Il ne contient pas de page Advanced RT.
+
+Le worker OSC demarre a 20 Hz, Learn/N vaut 8 par defaut et le rafraichissement visuel est espace a 0.75 seconde.
+
+CLASSMETHODS::
+
+METHOD:: new
+Cree un Studio associe a un moteur.
+
+ARGUMENT:: transformer
+Instance de HPtransformerRT. Si la valeur est nil, le Studio cree un moteur 8 x 8 par defaut.
+
+ARGUMENT:: externalTransformerKey
+Symbole de la variable externe a synchroniser. Valeur par defaut : code::\hpTR::.
+
+RETURNS::
+Une instance de HPTransformerStudio.
+
+INSTANCEMETHODS::
+
+METHOD:: front
+Construit la fenetre si necessaire et la place au premier plan.
+
+RETURNS::
+Le Studio.
+
+METHOD:: close
+Ferme la fenetre et les routines associees.
+
+RETURNS::
+Le Studio.
+
+METHOD:: transformer
+Retourne le moteur actif.
+
+RETURNS::
+Une instance de HPtransformerRT.
+
+METHOD:: externalTransformerKey
+Retourne la cle de synchronisation externe.
+
+RETURNS::
+Un symbole.
+
+METHOD:: attachControlBus
+Attache un Bus de controle. Pour le profil par defaut, utiliser 8 canaux.
+
+ARGUMENT:: bus
+Bus.control destine aux sorties.
+
+RETURNS::
+Le Studio.
+
+METHOD:: detachControlBus
+Detache le bus de controle.
+
+RETURNS::
+Le Studio.
+
+SECTION:: Creation du Studio
+
+CODE::
+(
+~hpTR = HPtransformerRT.new;
+~studio = HPTransformerStudio.new(~hpTR, \hpTR).front;
+)
+::
+
+SECTION:: Presets generaux Classic
+
+LIST::
+## Classic - Prudent : apprentissage lent, protection forte, replay modere et exploration faible.
+## Classic - Equilibre : compromis general entre adaptation, memoire et generation.
+## Classic - Reactif : apprentissage plus rapide, contexte court et generation plus mobile.
+## Classic - Continuite legere : continuite obtenue par memoire et trajectoire classiques, sans lissage temporel additionnel.
+## Classic - Stabilite maximale : apprentissage lent, gradient borne, protection et replay renforces.
+## Classic Musical Direct : base musicale legere, 20 Hz, Learn/N = 8, RCU et Details OFF.
+## Classic Live Concert : equilibre scene, 20 Hz, Learn/N = 6, apprentissage et generation actifs.
+## Classic Generation Only : apprentissage externe OFF, 20 Hz, Learn/N = 16.
+## Classic Ultra CPU - Apprentissage rapide : charge minimale, adaptation forte, 20 Hz et Learn/N = 4.
+::
+
+SECTION:: Classic Live Concert
+Le preset Live Concert applique notamment un apprentissage modere, un replay faible, un seul rappel memoire, un seul rappel de trajectoire, une fenetre de generation de 4 et une variation moderee.
+
+CODE::
+learningRate = 0.00030
+replayRate = 0.03
+memoryRecallSize = 1
+trajectoryRecallSize = 1
+generationWindowSize = 4
+attentionTemperature = 1.10
+deltaScale = 0.34
+trajectoryExplorationGain = 0.004
+::
+
+Reglage operationnel du preset :
+
+LIST::
+## Traitement OSC : 20 Hz.
+## Learn/N : 6.
+## Learning : ON.
+## Generation : ON.
+## Details OSC : OFF.
+## RCU : OFF.
+::
+
+SECTION:: Jeux complets Classic
+
+LIST::
+## Classic Prudent : suivi 8D proche du geste et generation contenue.
+## Classic Equilibre : compromis general et suivi differencie par sortie.
+## Classic Expressif : temperature plus ouverte et suivi faible.
+## Classic Installation : apprentissage lent, protection forte et generation prudente.
+::
+
+SECTION:: Mode Scene
+Le bouton du Dashboard alterne entre Mode Controle et Mode Scene.
+
+LIST::
+## Mode Controle : diagnostics, graphes, heatmaps, journaux et voyants sont actualises.
+## Mode Scene : la routine periodique de rafraichissement est suspendue et Details OSC est force sur OFF.
+## OSC, worker, learnEvent, generateStep, sortie reseau et ControlBus continuent.
+## Le retour en Mode Controle declenche un rafraichissement unique.
+::
+
+NOTE::
+Le Mode Scene reduit la charge de l'interface, mais ne diminue pas le cout interne de learnEvent. Pour reduire ce cout, augmenter Learn/N ou diminuer Traitement Hz.
+::
+
+SECTION:: Suivi direct par dimension
+Le suivi direct est applique apres generateStep dans la chaine OSC du Studio.
+
+CODE::
+output[i] = (output[i] * (1.0 - mix[i])) + (input[i] * mix[i]);
+::
+
+Exemple 8D leger pour le concert :
+
+CODE::
+0.12,0.06,0.03,0.12,0.06,0.03,0.12,0.06
+::
+
+Pour evaluer le moteur brut, utiliser un suivi global de 0 ou huit valeurs nulles.
+
+SECTION:: OSC 8D
+Le chemin d'entree attend exactement huit valeurs avec le profil par defaut.
+
+CODE::
+n = NetAddr("127.0.0.1", 57120);
+n.sendMsg("/hptransformer/input", 0.20,0.40,0.70,0.50,0.30,0.80,0.60,0.10);
+::
+
+SECTION:: ControlBus 8D
+
+CODE::
+~bus = Bus.control(s, 8);
+~studio.attachControlBus(~bus);
+::
+
+SECTION:: Strategie de concert
+
+NUMBEREDLIST::
+## Creer un moteur neuf.
+## Appliquer Classic Live Concert.
+## Commencer avec Suivi direct = 0.
+## Verifier 20 Hz, Learn/N = 6 et Details OFF.
+## Activer le Mode Scene une fois les reglages termines.
+## Si le CPU est trop eleve, passer a 15 Hz et Learn/N = 8.
+## Si l'adaptation est trop lente, essayer Learn/N = 4 ou 2.
+::
+
+SECTION:: Sessions
+Les sessions sauvegardent le moteur, les parametres runtime, l'etat RCU, les reglages OSC, le suivi direct, les graphes et les journaux. Apres chargement, la variable externe configuree est reaffectee au moteur restaure.
+
+SECTION:: Verification apres chargement
+
+CODE::
+[
+    \cle, ~studio.externalTransformerKey,
+    \memeObjet, ~hpTR === ~studio.transformer
+].postln;
+::
