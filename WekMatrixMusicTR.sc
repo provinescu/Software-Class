@@ -6765,7 +6765,7 @@ Preset Wek",
 		}).add;
 
 		// Synth pour analyse AudioIn send audio -> busIn
-		SynthDef("WekMatrix AudioIn",
+		SynthDef("WekMatrixTR AudioIn",
 			{arg in=0, busIn;
 				var input;
 				input=Mix(SoundIn.ar(in));
