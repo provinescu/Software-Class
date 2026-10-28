@@ -3,4 +3,7 @@
 SuperCollider Software Class
 Made with SuperCollider 3.14
 
-To use these classes, you need to install the ‘extensions’ folder.
+Notes:
+
+To use these classes, you will need the contents of the ‘extensions’ folder.
+
