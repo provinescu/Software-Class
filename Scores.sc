@@ -26,7 +26,7 @@ Scores {
 		// RobotTR = 57150, AgentsTR = 57151, MatrixTR = 57152, DensityTR = 57154
 		// WekRobotTR = 57155, WekAgentsTR = 57156, WekMatrixTR = 57157,  WekDensityTR = 57159
 		// SuperCollider
-		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", NetAddr.langPort));
+		netScoreAddr = netScoreAddr.add(NetAddr.new("127.0.0.1", 57120));
 
 		// Standalone
 		10.do({arg i;
